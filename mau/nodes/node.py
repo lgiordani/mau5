@@ -33,6 +33,7 @@ class NodeInfo:
 
     def asdict(self):
         return {
+            "context": self.context,
             "position": self.position,
             "unnamed_args": self.unnamed_args,
             "named_args": self.named_args,

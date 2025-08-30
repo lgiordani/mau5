@@ -14,6 +14,7 @@ def test_node():
         "children": [],
         "content": {"type": "none"},
         "info": {
+            "context": None,
             "unnamed_args": [],
             "named_args": {},
             "position": None,

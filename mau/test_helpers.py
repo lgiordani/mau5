@@ -4,9 +4,15 @@ from mau.environment.environment import Environment
 from mau.text_buffer.context import Context
 from mau.text_buffer.text_buffer import TextBuffer
 
+TEST_CONTEXT_SOURCE = "test.py"
+
 
 def dedent(text):
     return textwrap.dedent(text).strip()
+
+
+def generate_context(line: int, column: int):
+    return Context(line, column, TEST_CONTEXT_SOURCE)
 
 
 def init_lexer_factory(lexer_class):
@@ -54,7 +60,7 @@ def init_parser_factory(lexer_class, parser_class):
     """
 
     def _init_parser(text: str, environment, *args, **kwargs):
-        text_buffer = TextBuffer(text, Context(source="main"))
+        text_buffer = TextBuffer(text, Context(source=TEST_CONTEXT_SOURCE))
 
         lex = lexer_class(text_buffer, environment)
         lex.process()

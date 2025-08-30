@@ -10,7 +10,7 @@ from mau.parsers.base_parser import (
     TokenError,
     format_parser_error,
 )
-from mau.test_helpers import dedent, init_parser_factory
+from mau.test_helpers import dedent, init_parser_factory, TEST_CONTEXT_SOURCE
 from mau.text_buffer.context import Context
 from mau.tokens.token import Token, TokenType
 
@@ -393,7 +393,7 @@ def test_force_token():
     # This is the position of the expected token,
     # EOL in this case.
     assert exc.value.token.type == TokenType.EOL
-    assert exc.value.token.context == Context(1, 15, "main")
+    assert exc.value.token.context == Context(1, 15, TEST_CONTEXT_SOURCE)
 
 
 def test_collect():

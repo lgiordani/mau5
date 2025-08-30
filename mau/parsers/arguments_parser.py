@@ -1,7 +1,7 @@
 from mau.environment.environment import Environment
 from mau.lexers.arguments_lexer import ArgumentsLexer
 from mau.nodes.arguments import NamedArgumentNodeContent, UnnamedArgumentNodeContent
-from mau.nodes.node import Node
+from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser import BaseParser
 from mau.tokens.token import Token, TokenType
 
@@ -125,7 +125,11 @@ class ArgumentsParser(BaseParser):
         # key="value"
 
         # Get the token with the key.
-        key = self._get_token(TokenType.TEXT).value
+        key_token = self._get_token(TokenType.TEXT)
+
+        # The context of the argument is the
+        # context of the key.
+        context = key_token.context
 
         # After a key there should be an equal.
         # If not, this function fails.
@@ -157,7 +161,12 @@ class ArgumentsParser(BaseParser):
 
         # Save the node.
         # Remove leading and trailing spaces from the value.
-        self._save(Node(content=NamedArgumentNodeContent(key, value.strip())))
+        self._save(
+            Node(
+                info=NodeInfo(context=context),
+                content=NamedArgumentNodeContent(key_token.value, value.strip()),
+            ),
+        )
 
         # Mark the beginning of named arguments
         self._named_arguments = True
@@ -180,12 +189,20 @@ class ArgumentsParser(BaseParser):
             # Read and discard the opening quotes
             self._get_token(TokenType.LITERAL, '"')
 
+            # The context of the argument is the
+            # context of the first token.
+            context = self._peek_token().context
+
             # Get everything until the next double quotes.
             value = self._collect_join([Token(TokenType.LITERAL, '"')])
 
             # Read and discard the closing quotes
             self._get_token(TokenType.LITERAL, '"')
         else:
+            # The context of the argument is the
+            # context of the first token.
+            context = self._peek_token().context
+
             # Get everything until the comma or EOF.
             value = self._collect_join([Token(TokenType.LITERAL, ",")])
 
@@ -199,7 +216,12 @@ class ArgumentsParser(BaseParser):
             self._get_token(TokenType.WHITESPACE)
 
         # Save the node.
-        self._save(Node(content=UnnamedArgumentNodeContent(value)))
+        self._save(
+            Node(
+                info=NodeInfo(context=context),
+                content=UnnamedArgumentNodeContent(value),
+            ),
+        )
 
         return True
 
