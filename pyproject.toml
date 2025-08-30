@@ -24,8 +24,8 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies = [
 # "Jinja2",
-# "pyyaml",
-# "tabulate",
+"pyyaml",
+"rich",
 ]
 readme = "README.md"
 
@@ -34,17 +34,17 @@ Home = "https://github.com/Project-Mau/mau"
 
 [project.optional-dependencies]
 testing = [
-"nox",
-"pytest",
-"pytest-cov",
-"pytest-icdiff",
+  "nox",
+  "pytest",
+  "pytest-cov",
+  "pytest-icdiff",
 ]
 development = [
-"ruff",
-"flit",
-"pip",
-"pylint",
-"wheel",
+  "flit",
+  "pip",
+  "pylint",
+  "ruff",
+  "wheel",
 ]
 
 [project.scripts]
@@ -52,32 +52,38 @@ mau = "mau.main:main"
 
 [tool.coverage.run]
 source = ["mau"]
-omit=["mau/main.py", "mau/__init__.py", "mau/test_helpers.py"]
+omit=[
+  "mau/__init__.py",
+  "mau/errors.py",
+  "mau/helpers.py",
+  "mau/main.py",
+  "mau/test_helpers.py",
+]
 
 [tool.coverage.report]
 include = ["mau/*"]
 exclude_lines = [
-'if TYPE_CHECKING:',
-'pragma: no cover'
+  'if TYPE_CHECKING:',
+  'pragma: no cover'
 ]
 exclude_also = [
-"def __hash__",
-"def __repr__",
-"def __str__",
+  "def __hash__",
+  "def __repr__",
+  "def __str__",
 ]
 
 [tool.pylint.main]
 disable = [
-"import-error",
-"missing-class-docstring",
-"missing-function-docstring",
-"missing-module-docstring",
-"protected-access",
-"too-few-public-methods",
-"too-many-arguments",
-"too-many-instance-attributes",
-"too-many-return-statements",
-"use-implicit-booleaness-not-comparison"
+  "import-error",
+  "missing-class-docstring",
+  "missing-function-docstring",
+  "missing-module-docstring",
+  "protected-access",
+  "too-few-public-methods",
+  "too-many-arguments",
+  "too-many-instance-attributes",
+  "too-many-return-statements",
+  "use-implicit-booleaness-not-comparison"
 ]
 
 [tool.pytest.ini_options]
@@ -87,4 +93,5 @@ addopts = """\
 --no-cov-on-fail \
 """
 
-
+[tool.ruff.lint]
+extend-select = ["I"]

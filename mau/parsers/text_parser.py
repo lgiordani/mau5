@@ -1,0 +1,746 @@
+import itertools
+import logging
+
+from mau.environment.environment import Environment
+from mau.lexers.text_lexer import TextLexer
+from mau.nodes.footnotes import FootnoteNodeContent
+from mau.nodes.inline import (
+    SentenceNodeContent,
+    StyleNodeContent,
+    TextNodeContent,
+    VerbatimNodeContent,
+    WordNodeContent,
+)
+from mau.nodes.macros import (
+    MacroClassNodeContent,
+    MacroHeaderNodeContent,
+    MacroImageNodeContent,
+    MacroLinkNodeContent,
+    MacroNodeContent,
+)
+from mau.nodes.node import Node, NodeInfo
+from mau.parsers.arguments_parser import ArgumentsParser, set_names_and_defaults
+from mau.parsers.base_parser import BaseParser, TokenError
+from mau.text_buffer.context import Context
+from mau.tokens.token import Token, TokenType
+
+logger = logging.getLogger(__name__)
+
+# This is a simple map to keep track of the official
+# name of styles introduced by special characters.
+MAP_STYLES = {"_": "underscore", "*": "star", "^": "caret", "~": "tilde"}
+
+
+# The TextParser is a resursive parser.
+# The parsing always starts with parse_sentence
+# and from there all components of the text are explored.
+class TextParser(BaseParser):
+    lexer_class = TextLexer
+
+    def __init__(
+        self,
+        tokens: list[Token],
+        environment: Environment | None = None,
+        parent_node=None,
+        parent_position=None,
+    ):
+        super().__init__(tokens, environment, parent_node, parent_position)
+
+        # These are the footnotes found in this text
+        # The format of this dictionary is
+        # {"name": node}.
+        self.footnotes: dict[str, Node] = {}
+
+        # These are the internal links found
+        # in this piece of text.
+        self.header_links: list[Node] = []
+
+    def _collect_macro_args(self):
+        # A helper that reads macro arguments.
+        # We already consumed the opening
+        # round bracket.
+        #
+        # This is not a trivial task. Arguments
+        # might contain a closing round bracket,
+        # but if the argument is between double quotes
+        # we ignore such brackets.
+
+        all_args = []
+
+        # Continue until you find a closing round bracket or EOL.
+        while not (
+            self._peek_token_is(TokenType.LITERAL, ")")
+            or self._peek_token_is(TokenType.EOL)
+        ):
+            # If we find double quotes we need to blindly
+            # collect everything until we meet the closing
+            # double quotes or EOL.
+            if self._peek_token_is(TokenType.LITERAL, '"'):
+                # Consume the double quotes.
+                self._get_token(TokenType.LITERAL, '"')
+
+                # Collect and join everything.
+                # Stop at quotes or EOL.
+                value = self._collect_join(
+                    stop_tokens=[
+                        Token(TokenType.LITERAL, '"'),
+                        Token(TokenType.EOL),
+                    ],
+                )
+
+                # As we stopped, the next token should be
+                # double quotes. If not, we hit EOL and
+                # macro arguments are not closed correctly.
+                self._get_token(TokenType.LITERAL, '"')
+
+                arguments = f'"{value}"'
+            else:
+                # No double quotes, we can proceed,
+                # until we find the closing round bracket
+                # or a comma, which is the arguments separator.
+                arguments = self._collect_join(
+                    stop_tokens=[
+                        Token(TokenType.LITERAL, ","),
+                        Token(TokenType.LITERAL, ")"),
+                        Token(TokenType.EOL),
+                    ],
+                )
+
+            # We can add the arguments we found to the
+            # global list.
+            all_args.append(arguments)
+
+        # If we get here, we stopped because of
+        # closing brackets or EOL. If we can't find
+        # the closing bracket the next token is EOL
+        # and macro arguments are not closed correctly.
+        self._get_token(TokenType.LITERAL, ")")
+
+        # Arguments will be processed by the arguments
+        # parser, for now just merge all of them into
+        # a single piece of text.
+        return "".join(all_args)
+
+    def _process_functions(self):
+        # This is a recursive parser, so the list
+        # of processing functions is pretty small.
+        # We check for the EOL to skip empty
+        # lines and then we move on with a sentence.
+        return [self._process_eol, self._process_sentence]
+
+    def _process_eol(self) -> bool:
+        # This simply ignores the end of line.
+
+        self._get_token(TokenType.EOL)
+
+        return True
+
+    def _process_sentence(self) -> bool:
+        # A sentence node is a pure container for other
+        # nodes. The parsing starts at _parse_sentence
+        # and recursively explores the other functions.
+
+        for node in self._parse_sentence():
+            self._save(node)
+
+        return True
+
+    def _parse_sentence(self, stop_tokens=None) -> list[Node]:
+        # Parse a sentence, which is made of multiple
+        # elements identified by _parse_text, until
+        # the EOF, the EOL, or a specific set of tokens
+        # passed as argument.
+        #
+        # Custom stop tokens are useful for example when
+        # parsing text like *text*. In this case we need
+        # to stop parsing when we meet the second asterisk.
+
+        # The list of nodes we find in this process.
+        content = []
+
+        # The set of tokens that trigger the end of
+        # the process.
+        stop_tokens = stop_tokens or set()
+
+        # EOF and EOL always act as stoppers.
+        stop_tokens = stop_tokens.union({Token(TokenType.EOF), Token(TokenType.EOL)})
+
+        # Try to parse some text.
+        result = self._parse_text(stop_tokens)
+
+        # Continue parsing text until it
+        # stops returning nodes.
+        while result is not None:
+            content.append(result)
+            result = self._parse_text(stop_tokens)
+
+        # Group consecutive WordNodeContent nodes into a single TextNodeContent.
+        # This scans the nodes we found and tries to collect consecutive
+        # word nodes. We want to merge all of them into a single text node.
+
+        # This iterator yields (key, group) where key is the grouping
+        # key according to the lambda function. In this case it's
+        # either True if the group contains word nodes or False otherwise.
+        grouped_iter = itertools.groupby(
+            content, lambda x: x.content.__class__ == WordNodeContent
+        )
+
+        # The final list of nodes.
+        nodes = []
+
+        # Here, key is True if the group is made of word nodes,
+        # which means that we need to merge them.
+        for key, group in grouped_iter:
+            if key:
+                # Get the first node to access the context
+                first_node = next(group)
+
+                # A group of word nodes. Merge them.
+                text = first_node.content.value
+                text += "".join([n.content.value for n in group])
+
+                node = Node(
+                    parent=self.parent_node,
+                    content=TextNodeContent(text),
+                    info=NodeInfo(
+                        context=first_node.info.context,
+                        position=self.parent_position,
+                    ),
+                )
+                nodes.append(node)
+            else:
+                # This is a group of non-word nodes.
+                # Just add them to the list.
+                nodes.extend(list(group))
+
+        return nodes
+
+    def _parse_text(self, stop_tokens=None):
+        # Parse multiple possible elements: escapes, classes,
+        # macros, verbatim, styles, links, words.
+        # This is the non-recursive part of the parser. It tries
+        # each function until one of them returns a node
+        # without raising an exception.
+        # Each function is wrapped in a context manager to
+        # make sure the index is restored to the original
+        # value when a function raises an exception.
+
+        stop_tokens = stop_tokens or set()
+
+        if self._peek_token() in stop_tokens:
+            return None
+
+        with self:
+            return self._parse_backslash_escaped()
+
+        with self:
+            return self._parse_macro()
+
+        with self:
+            return self._parse_verbatim()
+
+        with self:
+            return self._parse_escaped()
+
+        with self:
+            return self._parse_style()
+
+        return self._parse_word()
+
+    def _parse_backslash_escaped(self) -> Node:
+        # This tries to parse a backslash-escaped element.
+        # Backslash escape allows Mau special characters
+        # to be interpreted as simple text.
+        # E.g "\_" or "\[text\]"
+
+        # Drop the backslash.
+        backslash = self._get_token(TokenType.LITERAL, "\\")
+
+        # Create a word node with the next token.
+        node = Node(
+            parent=self.parent_node,
+            content=WordNodeContent(
+                self._get_token().value,
+            ),
+            info=NodeInfo(
+                context=backslash.context,
+                position=self.parent_position,
+            ),
+        )
+
+        return node
+
+    def _parse_macro(self) -> Node:
+        # Parse a macro in the form
+        # [name](arguments)
+
+        # Extract the macro name getting rid
+        # of the square brackets.
+        # If the processing succeds, we need the
+        # opening bracket to store the context
+        # in the resulting node.
+        opening_bracket = self._get_token(TokenType.LITERAL, "[")
+        macro_name = self._get_token(TokenType.TEXT).value
+        self._get_token(TokenType.LITERAL, "]")
+
+        # If this is a macro, there should be an
+        # opening round bracket that contains arguments.
+        self._get_token(TokenType.LITERAL, "(")
+
+        # We need to parse the macro arguments.
+        # The context of the parsing is that of the
+        # first token after the opening bracket.
+        current_context = self._peek_token().context
+
+        # Get the macro arguments between round brackets.
+        # The function might fail because the text might
+        # not be a macro after all, the user might
+        # want to literally write "[name](".
+        # Chances are low, however, so it's a good idea
+        # to log that we are stopping the macro parsing,
+        # but that we suspect the user made a mistake.
+        try:
+            arguments = self._collect_macro_args()
+        except TokenError:
+            logger.warning("Suspected incomplete macro at %s", current_context)
+            raise
+
+        # Parse the arguments.
+        parser = ArgumentsParser.lex_and_parse(
+            arguments,
+            current_context,
+            self.environment,
+        )
+
+        # Extract unnamed and named arguments.
+        unnamed_args, named_args, _, _ = parser.process_arguments()
+
+        # Select the specific parsing function
+        # according to the name of the macro.
+
+        if macro_name.startswith("@"):
+            return self._parse_macro_control(
+                macro_name, unnamed_args, named_args, context=opening_bracket.context
+            )
+
+        if macro_name == "link":
+            return self._parse_macro_link(
+                unnamed_args, named_args, context=opening_bracket.context
+            )
+
+        if macro_name == "header":
+            return self._parse_macro_header_link(
+                unnamed_args, named_args, context=opening_bracket.context
+            )
+
+        if macro_name == "mailto":
+            return self._parse_macro_mailto(
+                unnamed_args, named_args, context=opening_bracket.context
+            )
+
+        if macro_name == "image":
+            return self._parse_macro_image(
+                unnamed_args, named_args, context=opening_bracket.context
+            )
+
+        if macro_name == "footnote":
+            return self._parse_macro_footnote(
+                unnamed_args, named_args, context=opening_bracket.context
+            )
+
+        if macro_name == "class":
+            return self._parse_macro_class(
+                unnamed_args, named_args, context=opening_bracket.context
+            )
+
+        # This is a generic macro, there is no
+        # special code for it.
+        node = Node(
+            parent=self.parent_node,
+            content=MacroNodeContent(macro_name),
+            info=NodeInfo(
+                context=opening_bracket.context,
+                position=self.parent_position,
+                unnamed_args=unnamed_args,
+                named_args=named_args,
+            ),
+        )
+
+        return node
+
+    def _parse_verbatim(self) -> Node:
+        # Parse verbatim text between backticks.
+        # E.g. `text`.
+
+        # Get the verbatim marker.
+        marker = self._get_token(TokenType.LITERAL, "`")
+
+        # Get all tokens from here to the next
+        # verbatim marker or EOL.
+        content = self._collect_join(
+            [Token(TokenType.LITERAL, "`"), Token(TokenType.EOL)],
+        )
+
+        # Remove the closing marker.
+        self._get_token(TokenType.LITERAL, "`")
+
+        node = Node(
+            parent=self.parent_node,
+            content=VerbatimNodeContent(content),
+            info=NodeInfo(position=self.parent_position, context=marker.context),
+        )
+
+        return node
+
+    def _parse_escaped(self) -> Node:
+        # Parse text between dollar or percent signs.
+        # This is useful when we need to escape multiple
+        # character and we don't want to put a backslash
+        # in front of all of them.
+        # E.g. $escaped$ or %escaped%.
+
+        # Get the escaped marker.
+        marker = self._get_token(
+            TokenType.LITERAL, value_check_function=lambda x: x in "$%"
+        )
+
+        # Get the content tokens until the
+        # next escaped marker or EOL.
+        content = self._collect_join(
+            [Token(TokenType.LITERAL, marker.value), Token(TokenType.EOL)],
+        )
+
+        # Remove the closing marker
+        self._get_token(TokenType.LITERAL, marker.value)
+
+        node = Node(
+            parent=self.parent_node,
+            content=TextNodeContent(content),
+            info=NodeInfo(position=self.parent_position, context=marker.context),
+        )
+
+        return node
+
+    def _parse_style(self) -> Node:
+        # Parse text surrounded by style markers.
+
+        # Get the style marker
+        marker = self._get_token(
+            TokenType.LITERAL,
+            value_check_function=lambda x: x in MAP_STYLES,
+        )
+
+        # Get everything until the next marker
+        content = self._parse_sentence(
+            stop_tokens={Token(TokenType.LITERAL, marker.value)}
+        )
+
+        # Get the closing marker
+        self._get_token(TokenType.LITERAL, marker.value)
+
+        node = Node(
+            parent=self.parent_node,
+            children=content,
+            content=StyleNodeContent(MAP_STYLES[marker.value]),
+            info=NodeInfo(position=self.parent_position, context=marker.context),
+        )
+
+        return node
+
+    def _parse_word(self) -> Node:
+        # Parse a single word.
+
+        token = self._get_token()
+
+        node = Node(
+            parent=self.parent_node,
+            content=WordNodeContent(token.value),
+            info=NodeInfo(
+                context=token.context,
+                position=self.parent_position,
+            ),
+        )
+
+        return node
+
+    def _parse_macro_link(
+        self, unnamed_args, named_args, context: Context | None
+    ) -> Node:
+        # Parse a link macro in the form [link](target, text).
+
+        # Assign names and default values to arguments.
+        unnamed_args, named_args = set_names_and_defaults(
+            unnamed_args, named_args, ["target", "text"], {"text": None}
+        )
+
+        # Extract the target of the link.
+        target = named_args["target"]
+
+        # Extract the text of the link if present.
+        text = named_args["text"]
+
+        # If the text is present we need to parse it
+        # as it might contain Mau syntax.
+        # If the text is not present we use the
+        # link as text.
+        if text is not None:
+            current_context = self._current_token.context
+            parser = self.lex_and_parse(text, current_context, self.environment)
+            nodes = parser.nodes
+        else:
+            nodes = [Node(content=TextNodeContent(target))]
+
+        node = Node(
+            parent=self.parent_node,
+            children=nodes,
+            content=MacroLinkNodeContent(target),
+            info=NodeInfo(position=self.parent_position, context=context),
+        )
+
+        return node
+
+    def _parse_macro_header_link(
+        self, unnamed_args, named_args, context: Context | None
+    ) -> Node:
+        # Parse a header link macro in the form [header](header_id, text).
+        # This is similar to a macro link but the URI is an internal header ID.
+
+        # Assign names and default values to arguments.
+        unnamed_args, named_args = set_names_and_defaults(
+            unnamed_args, named_args, ["header_id", "text"], {"text": None}
+        )
+
+        # Extract the header ID.
+        header_id = named_args["header_id"]
+
+        # Extract the text of the link if present.
+        text = named_args["text"]
+
+        # If the text is present we need to parse it
+        # as it might contain Mau syntax.
+        # If the text is not present we use the
+        # link as text.
+        if text is not None:
+            current_context = self._current_token.context
+            parser = self.lex_and_parse(text, current_context, self.environment)
+            nodes = parser.nodes
+        else:
+            nodes = []
+
+        node = Node(
+            parent=self.parent_node,
+            children=nodes,
+            content=MacroHeaderNodeContent(_id=header_id),
+            info=NodeInfo(position=self.parent_position, context=context),
+        )
+
+        self.header_links.append(node)
+
+        return node
+
+    def _parse_macro_mailto(
+        self, unnamed_args, named_args, context: Context | None
+    ) -> Node:
+        # Parse a mailto macro in the form [mailto](email, text).
+        # This is similar to a macro link but the URI is a `mailto:`.
+
+        # Assign names and default values to arguments.
+        unnamed_args, named_args = set_names_and_defaults(
+            unnamed_args, named_args, ["email", "text"], {"text": None}
+        )
+
+        # Extract the linked email and add the `mailto:` prefix.
+        email = named_args["email"]
+        target = f"mailto:{email}"
+
+        # Extract the text of the link if present.
+        text = named_args["text"]
+
+        # If the text is present we need to parse it
+        # as it might contain Mau syntax.
+        # If the text is not present we use the
+        # link as text.
+        if text is not None:
+            current_context = self._current_token.context
+            parser = self.lex_and_parse(text, current_context, self.environment)
+            nodes = parser.nodes
+        else:
+            nodes = [Node(content=TextNodeContent(email))]
+
+        node = Node(
+            parent=self.parent_node,
+            children=nodes,
+            content=MacroLinkNodeContent(target),
+            info=NodeInfo(position=self.parent_position, context=context),
+        )
+
+        return node
+
+    def _parse_macro_class(
+        self, unnamed_args, named_args, context: Context | None
+    ) -> Node:
+        # Parse a class macro in the form [class](text, class1, class2, ...).
+
+        # Assign names and default values to arguments.
+        unnamed_args, named_args = set_names_and_defaults(
+            unnamed_args, named_args, ["text"]
+        )
+
+        # Extract the text.
+        text = named_args["text"]
+
+        # We need to parse the text as it might contain Mau syntax.
+        current_context = self._current_token.context
+        parser = self.lex_and_parse(text, current_context, self.environment)
+
+        node = Node(
+            parent=self.parent_node,
+            children=parser.nodes,
+            content=MacroClassNodeContent(unnamed_args),
+            info=NodeInfo(position=self.parent_position, context=context),
+        )
+
+        return node
+
+    def _parse_macro_image(
+        self, unnamed_args, named_args, context: Context | None
+    ) -> Node:
+        # Parse an inline image macro in the form [image](uri, alt_text, width, height).
+
+        # Assign names and default values to arguments.
+        unnamed_args, named_args = set_names_and_defaults(
+            unnamed_args,
+            named_args,
+            ["uri", "alt_text", "width", "height"],
+            {"alt_text": None, "width": None, "height": None},
+        )
+
+        node = Node(
+            parent=self.parent_node,
+            content=MacroImageNodeContent(
+                uri=named_args["uri"],
+                alt_text=named_args["alt_text"],
+                width=named_args["width"],
+                height=named_args["height"],
+            ),
+            info=NodeInfo(position=self.parent_position, context=context),
+        )
+
+        return node
+
+    def _parse_macro_footnote(
+        self, unnamed_args, named_args, context: Context | None
+    ) -> Node:
+        # Parse a footnote macro in the form [footnote](name).
+
+        # Assign names and default values to arguments.
+        unnamed_args, named_args = set_names_and_defaults(
+            unnamed_args, named_args, ["name"]
+        )
+
+        name = named_args["name"]
+
+        node = Node(
+            parent=self.parent_node,
+            content=FootnoteNodeContent(),
+            info=NodeInfo(position=self.parent_position, context=context),
+        )
+
+        self.footnotes[name] = node
+
+        return node
+
+    def _process_test(self, test: str, value: str) -> bool:
+        # Check if the given value passes the test.
+
+        # Checking equality.
+        if test.startswith("="):
+            test_value = test[1:]
+            return value == test_value
+
+        # Checking inequality.
+        if test.startswith("!="):
+            test_value = test[2:]
+            return value != test_value
+
+        # Checking a boolean value.
+        if test.startswith("&"):
+            test_value = test[1:]
+
+            if test_value not in ["true", "false"]:
+                self._error(f"Boolean value '{test_value}' is invalid")
+
+            # pylint: disable=simplifiable-if-expression
+            boolean_test_value = True if test_value == "true" else False
+
+            # Boolean AND to check if the boolean
+            # value in the test and the provided
+            # value match.
+            return bool(value) and boolean_test_value
+
+        return self._error(f"Test '{test}' is not supported")
+
+    def _parse_macro_control(
+        self, macro_name, unnamed_args, named_args, context: Context | None
+    ) -> Node:
+        # Parse a class macro in the form [@if:variable:test](true, false).
+        #
+        # Example:
+        #
+        # If the value of flag is 42 return "TRUE", otherwise return "FALSE"
+        # [@if:flag:=42]("TRUE", "FALSE")
+
+        # Skip the initial `@`
+        operator = macro_name[1:]
+
+        # Check if the operator is supported.
+        if operator not in ["if", "ifeval"]:
+            self._error(f"Control operator '{operator}' is not supported")
+
+        # Assign names and default values to arguments.
+        unnamed_args, named_args = set_names_and_defaults(
+            unnamed_args,
+            named_args,
+            ["variable", "test", "true_case", "false_case"],
+            {"false_case": ""},
+        )
+
+        # Get the value of the variable.
+        variable = named_args["variable"]
+        variable_value = self.environment.getvar(variable, None)
+        if variable_value is None:
+            self._error(f"Variable '{variable}' has not been defined")
+
+        # Check if the variable value passes the test.
+        test = named_args["test"]
+        test_result = self._process_test(test, variable_value)
+
+        current_context = self._current_token.context
+
+        # Get the result value according to the test result.
+        value = (
+            named_args["true_case"] if test_result is True else named_args["false_case"]
+        )
+
+        # The operator `ifeval` uses the result value
+        # as the name of a variable.
+        if operator == "ifeval":
+            # Find the value of the variable.
+            value = self.environment.getvar(value)
+
+            # If the variable wasn't defined yell at the user.
+            if value is None:
+                self._error(f"Variable '{value}' has not been defined")
+
+        # The resulting value needs to be parsed
+        # as it might contain Mau syntax.
+        parser = self.lex_and_parse(value, current_context, self.environment)
+
+        node = Node(
+            parent=self.parent_node,
+            children=parser.nodes,
+            content=SentenceNodeContent(),
+            info=NodeInfo(position=self.parent_position, context=context),
+        )
+
+        return node
