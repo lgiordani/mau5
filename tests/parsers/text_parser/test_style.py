@@ -3,9 +3,9 @@ from mau.nodes.inline import StyleNodeContent, TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
+    generate_context,
     init_parser_factory,
     parser_runner_factory,
-    generate_context,
 )
 
 init_parser = init_parser_factory(TextLexer, TextParser)

@@ -1,91 +1,8 @@
 from mau.environment.environment import Environment
 from mau.lexers.arguments_lexer import ArgumentsLexer
-from mau.nodes.arguments import NamedArgumentNodeContent, UnnamedArgumentNodeContent
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import Node, NodeInfo, ValueNodeContent
 from mau.parsers.base_parser import BaseParser
 from mau.tokens.token import Token, TokenType
-
-
-def set_names_and_defaults(
-    args: list[str],
-    kwargs: dict[str, str],
-    positional_names: list[str],
-    default_values: dict[str, str | None] | None = None,
-):
-    """
-    Give names to positional arguments and assign
-    default values to the ones that have not been
-    initialised.
-
-    This function uses the given `positional_names`
-    to convert unnamed args to named ones. Each
-    value in `args` is assigned to a key from
-    `positional_names` in order.
-
-    The values in the final dictionary are
-    set according to the following hierarchy:
-
-    args + positional > kwargs > default
-
-    So, the following input
-
-    args: [3],
-    kwargs: {"price": 42},
-    positional_names: ["price"],
-    default_values: {"price": 0}
-
-    results in
-
-    {"price": 3}
-
-    because the default value 0 is overridden by
-    the kwargs value 42, which in turn is overridden
-    by the poritional value 3.
-    """
-
-    # Copy default values so that we can update
-    # it without affecting the original dictionary.
-    results = default_values.copy() if default_values else {}
-
-    # Filter the given positional names.
-    # If a named argument provides the value for a
-    # positional name we consider it already set and ignore it.
-    positional_names = [i for i in positional_names if i not in kwargs]
-
-    # If we pass more positional values than names,
-    # some of them won't be converted and become flags
-    remaining_args = args[len(positional_names) :]
-
-    # Merge positional names and args into a dictionary.
-    positional_arguments = dict(zip(positional_names, args))
-
-    # Update the default values with the given
-    # named arguments.
-    results.update(kwargs)
-
-    # Update the default values with the given
-    # positional arguments.
-    results.update(positional_arguments)
-
-    # Positional names identify mandatory keys,
-    # so all of them have to be present in the
-    # final dictionary.
-    # This might not be true if we pass less
-    # positional values (args) than names
-    # and there are no kwargs or defaults to
-    # provide values.
-
-    available_keys = set(results.keys())
-    mandatory_keys = set(positional_names)
-
-    if not mandatory_keys.issubset(available_keys):
-        missing_keys = mandatory_keys - available_keys
-
-        raise ValueError(
-            f"The following attributes need to be specified: {missing_keys}"
-        )
-
-    return remaining_args, results
 
 
 class ArgumentsParser(BaseParser):
@@ -102,7 +19,19 @@ class ArgumentsParser(BaseParser):
 
         # This flag is turned on as soon as
         # a named argument is parsed
-        self._named_arguments = False
+        self._named_arguments_on = False
+
+        # This is the list of unnamed argument nodes.
+        self.unnamed_argument_nodes: list[Node[ValueNodeContent]] = []
+
+        # This is the list of named argument nodes.
+        self.named_argument_nodes: dict[str, Node[ValueNodeContent]] = {}
+
+        # This is the list of tag nodes.
+        self.tag_nodes: list[Node[ValueNodeContent]] = []
+
+        # This is the subtype node.
+        self.subtype: Node[ValueNodeContent] | None = None
 
     def _process_functions(self):
         return [
@@ -160,16 +89,17 @@ class ArgumentsParser(BaseParser):
             self._get_token(TokenType.WHITESPACE)
 
         # Save the node.
-        # Remove leading and trailing spaces from the value.
-        self._save(
-            Node(
-                info=NodeInfo(context=context),
-                content=NamedArgumentNodeContent(key_token.value, value.strip()),
-            ),
+        node = Node(
+            info=NodeInfo(context=context),
+            # Remove leading and trailing spaces from the value.
+            content=ValueNodeContent(value.strip()),
+            parent=self.parent_node,
         )
 
+        self.named_argument_nodes[key_token.value] = node
+
         # Mark the beginning of named arguments
-        self._named_arguments = True
+        self._named_arguments_on = True
 
         return True
 
@@ -180,8 +110,8 @@ class ArgumentsParser(BaseParser):
         # "value"
 
         # Unnamed arguments can't appear after named ones.
-        if self._named_arguments:
-            self._error("Unnamed arguments after named arguments are forbidden")
+        if self._named_arguments_on:
+            raise self._error("Unnamed arguments after named arguments are forbidden")
 
         # Values can be surrounded by quotes
         # If there are quotes we skip them.
@@ -216,16 +146,95 @@ class ArgumentsParser(BaseParser):
             self._get_token(TokenType.WHITESPACE)
 
         # Save the node.
-        self._save(
-            Node(
-                info=NodeInfo(context=context),
-                content=UnnamedArgumentNodeContent(value),
-            ),
+        node = Node(
+            info=NodeInfo(context=context),
+            content=ValueNodeContent(value),
+            parent=self.parent_node,
         )
+
+        self.unnamed_argument_nodes.append(node)
 
         return True
 
-    def process_arguments(self):
+    def _isolate_tags_and_subtype(self):
+        # Isolate tags.
+        self.tag_nodes = []
+        for i in self.unnamed_argument_nodes:
+            # Discard arguments that do not start with `#`.
+            if not i.content.value.startswith("#"):
+                continue
+
+            # Remove the initial `#`.
+            i.content.value = i.content.value[1:]
+
+            # Append the node to the list of tags.
+            self.tag_nodes.append(i)
+
+        # Isolate subtypes.
+        subtypes = []
+        for i in self.unnamed_argument_nodes:
+            # Discard arguments that do not start with `*`.
+            if not i.content.value.startswith("*"):
+                continue
+
+            # Remove the initial `*`.
+            i.content.value = i.content.value[1:]
+
+            # Append the node to the list of subtypes.
+            subtypes.append(i)
+
+        # There can be only one subtype.
+        if len(subtypes) > 1:
+            raise self._error("Multiple subtypes detected")
+
+        # Extract the subtype if present.
+        if len(subtypes) == 1:
+            # Get the only subtype and remove the leading "*"
+            self.subtype = subtypes[0]
+
+        # Remove tags and subtype from unnamed arguments.
+        self.unnamed_argument_nodes = [
+            i for i in self.unnamed_argument_nodes if i not in self.tag_nodes + subtypes
+        ]
+
+    def set_names(self, positional_names: list[str]):
+        """
+        Give names to positional arguments.
+
+        This function uses the given `positional_names`
+        to convert unnamed args to named ones. Each node
+        in `self.unnamed_argument_nodes` is assigned a
+        key from `positional_names` in order.
+
+        If a positional name is used that is already
+        present in `self.named_argument_nodes`, the
+        key is ignored and the corresponding unnamed
+        node remains unassigned.
+        """
+
+        # Filter the given positional names.
+        # If a named argument provides the value for a
+        # positional name we consider it already set and ignore it.
+        positional_names = [
+            i for i in positional_names if i not in self.named_argument_nodes
+        ]
+
+        # Merge positional names and args into a dictionary.
+        # Then create a named argument out of each value.
+        # The zip() will ignore arguments that don't have a
+        # corresponding value.
+        positional_arguments = dict(zip(positional_names, self.unnamed_argument_nodes))
+
+        # If we pass more positional values than names,
+        # some of them won't be converted and become flags
+        self.unnamed_argument_nodes = self.unnamed_argument_nodes[
+            len(positional_names) :
+        ]
+
+        # Update the named dictionary with the
+        self.named_argument_nodes.update(positional_arguments)
+
+    def parse(self):
         """
         Process the extracted nodes and converts them into Python structures.
         Unnamed arguments become a list of values (similar to *args).
@@ -235,41 +244,6 @@ class ArgumentsParser(BaseParser):
         There can't be more than one subtype.
         """
 
-        # Filter the nodes and extract all the unnamed arguments.
-        unnamed_arguments = [
-            node.content.value
-            for node in self.nodes
-            if node.content.type == "unnamed_argument"
-        ]
+        super().parse()
 
-        # Filter the nodes and extract all the named arguments.
-        named_arguments = {
-            node.content.key: node.content.value
-            for node in self.nodes
-            if node.content.type == "named_argument"
-        }
-
-        # Isolate tags.
-        tags = [i for i in unnamed_arguments if i.startswith("#")]
-
-        # Isolate subtypes.
-        subtypes = [i for i in unnamed_arguments if i.startswith("*")]
-
-        # There can be only one subtype.
-        if len(subtypes) > 1:
-            self._error("Multiple subtypes detected")
-
-        # The default subtype is None.
-        # Extract the subtype if present.
-        subtype = None
-        if len(subtypes) == 1:
-            # Get the first subtype and remove the leading "*"
-            subtype = subtypes[0][1:]
-
-        # Remove tags and subtype from unnamed arguments.
-        unnamed_arguments = [i for i in unnamed_arguments if i not in tags + subtypes]
-
-        # Remove the leading "#" from tags.
-        tags = [i[1:] for i in tags]
-
-        return unnamed_arguments, named_arguments, tags, subtype
+        self._isolate_tags_and_subtype()

@@ -3,23 +3,34 @@ import pytest
 from mau.environment.environment import Environment
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.inline import SentenceNodeContent, StyleNodeContent, TextNodeContent
-from mau.nodes.node import Node
+from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.text_parser import TextParser
-from mau.test_helpers import init_parser_factory, parser_runner_factory
+from mau.test_helpers import (
+    generate_context,
+    init_parser_factory,
+    parser_runner_factory,
+)
 
 init_parser = init_parser_factory(TextLexer, TextParser)
 
 runner = parser_runner_factory(TextLexer, TextParser)
 
 
-def test_control_if_true():
+def test_macro_control_if_true():
     environment = Environment.from_dict({"flag": True})
 
     source = '[@if](flag, &true, "TRUE", "FALSE")'
 
     sentence_node = Node(
-        children=[Node(content=TextNodeContent("TRUE"))], content=SentenceNodeContent()
+        children=[
+            Node(
+                content=TextNodeContent("TRUE"),
+                info=NodeInfo(context=generate_context(0, 20)),
+            )
+        ],
+        content=SentenceNodeContent(),
+        info=NodeInfo(context=generate_context(0, 0)),
     )
 
     expected = [sentence_node]
@@ -27,15 +38,21 @@ def test_control_if_true():
     assert runner(source, environment=environment).nodes == expected
 
 
-def test_control_if_false():
+def test_macro_control_if_false():
     environment = Environment.from_dict({"flag": True})
 
     source = '[@if](flag, &false, "TRUE", "FALSE")'
 
     expected = [
         Node(
-            children=[Node(content=TextNodeContent("FALSE"))],
+            children=[
+                Node(
+                    content=TextNodeContent("FALSE"),
+                    info=NodeInfo(context=generate_context(0, 29)),
+                )
+            ],
             content=SentenceNodeContent(),
+            info=NodeInfo(context=generate_context(0, 0)),
         ),
     ]
 
@@ -44,37 +61,49 @@ def test_control_if_false():
     assert nodes == expected
 
 
-def test_control_if_equal():
+def test_macro_control_if_equal():
     environment = Environment.from_dict({"flag": "42"})
 
     source = '[@if](flag, "=42", "TRUE", "FALSE")'
 
     expected = [
         Node(
-            children=[Node(content=TextNodeContent("TRUE"))],
+            children=[
+                Node(
+                    content=TextNodeContent("TRUE"),
+                    info=NodeInfo(context=generate_context(0, 20)),
+                )
+            ],
             content=SentenceNodeContent(),
+            info=NodeInfo(context=generate_context(0, 0)),
         ),
     ]
 
     assert runner(source, environment=environment).nodes == expected
 
 
-def test_control_if_not_equal():
+def test_macro_control_if_not_equal():
     environment = Environment.from_dict({"flag": "42"})
 
-    source = '[@if](flag, "!=42", TRUE", "FALSE")'
+    source = '[@if](flag, "!=42", "TRUE", "FALSE")'
 
     expected = [
         Node(
-            children=[Node(content=TextNodeContent("FALSE"))],
+            children=[
+                Node(
+                    content=TextNodeContent("FALSE"),
+                    info=NodeInfo(context=generate_context(0, 29)),
+                )
+            ],
             content=SentenceNodeContent(),
+            info=NodeInfo(context=generate_context(0, 0)),
         ),
     ]
 
     assert runner(source, environment=environment).nodes == expected
 
 
-def test_control_wrong_name_format():
+def test_macro_control_wrong_name_format():
     environment = Environment.from_dict({"flag": "42"})
 
     source = '[@if](flag, "TRUE", "FALSE")'
@@ -83,7 +112,7 @@ def test_control_wrong_name_format():
         runner(source, environment=environment)
 
 
-def test_control_unsupported_operator():
+def test_macro_control_unsupported_operator():
     environment = Environment.from_dict({"flag": "42"})
 
     source = '[@something](flag, &true, "TRUE", "FALSE")'
@@ -92,14 +121,14 @@ def test_control_unsupported_operator():
         runner(source, environment=environment)
 
 
-def test_control_undefined_variable():
+def test_macro_control_undefined_variable():
     source = '[@if](flag, &true, "TRUE", "FALSE")'
 
     with pytest.raises(MauParserException):
         runner(source)
 
 
-def test_control_invalid_boolean():
+def test_macro_control_invalid_boolean():
     environment = Environment.from_dict({"flag": "42"})
 
     source = '[@if](flag, &something, "TRUE", "FALSE")'
@@ -108,7 +137,7 @@ def test_control_invalid_boolean():
         runner(source, environment)
 
 
-def test_control_invalid_test():
+def test_macro_control_invalid_test():
     environment = Environment.from_dict({"flag": "42"})
 
     source = '[@if](flag, -something, "TRUE", "FALSE")'
@@ -117,7 +146,7 @@ def test_control_invalid_test():
         runner(source, environment)
 
 
-def test_macro_ifeval_true():
+def test_macro_control_ifeval_true():
     environment = Environment.from_dict(
         {
             "flag": True,
@@ -133,19 +162,24 @@ def test_macro_ifeval_true():
             children=[
                 Node(
                     children=[
-                        Node(content=TextNodeContent("sometext")),
+                        Node(
+                            content=TextNodeContent("sometext"),
+                            info=NodeInfo(context=generate_context(0, 24)),
+                        ),
                     ],
                     content=StyleNodeContent("underscore"),
+                    info=NodeInfo(context=generate_context(0, 23)),
                 )
             ],
             content=SentenceNodeContent(),
+            info=NodeInfo(context=generate_context(0, 0)),
         ),
     ]
 
     assert runner(source, environment=environment).nodes == expected
 
 
-def test_macro_ifeval_false():
+def test_macro_control_ifeval_false():
     environment = Environment.from_dict(
         {
             "flag": True,
@@ -161,19 +195,24 @@ def test_macro_ifeval_false():
             children=[
                 Node(
                     children=[
-                        Node(content=TextNodeContent("othertext")),
+                        Node(
+                            content=TextNodeContent("othertext"),
+                            info=NodeInfo(context=generate_context(0, 37)),
+                        ),
                     ],
                     content=StyleNodeContent("star"),
+                    info=NodeInfo(context=generate_context(0, 36)),
                 )
             ],
             content=SentenceNodeContent(),
+            info=NodeInfo(context=generate_context(0, 0)),
         ),
     ]
 
     assert runner(source, environment=environment).nodes == expected
 
 
-def test_macro_ifeval_false_is_not_evaluated():
+def test_macro_control_ifeval_false_is_not_evaluated():
     environment = Environment.from_dict(
         {
             "flag": True,
@@ -189,19 +228,24 @@ def test_macro_ifeval_false_is_not_evaluated():
             children=[
                 Node(
                     children=[
-                        Node(content=TextNodeContent("sometext")),
+                        Node(
+                            content=TextNodeContent("sometext"),
+                            info=NodeInfo(context=generate_context(0, 24)),
+                        ),
                     ],
                     content=StyleNodeContent("underscore"),
+                    info=NodeInfo(context=generate_context(0, 23)),
                 )
             ],
             content=SentenceNodeContent(),
+            info=NodeInfo(context=generate_context(0, 0)),
         ),
     ]
 
     assert runner(source, environment=environment).nodes == expected
 
 
-def test_macro_ifeval_true_is_not_evaluated():
+def test_macro_control_ifeval_true_is_not_evaluated():
     environment = Environment.from_dict(
         {
             "flag": True,
@@ -217,19 +261,33 @@ def test_macro_ifeval_true_is_not_evaluated():
             children=[
                 Node(
                     children=[
-                        Node(content=TextNodeContent("sometext")),
+                        Node(
+                            content=TextNodeContent("sometext"),
+                            info=NodeInfo(context=generate_context(0, 33)),
+                        ),
                     ],
                     content=StyleNodeContent("underscore"),
+                    info=NodeInfo(context=generate_context(0, 32)),
                 )
             ],
             content=SentenceNodeContent(),
+            info=NodeInfo(context=generate_context(0, 0)),
         ),
     ]
 
     assert runner(source, environment=environment).nodes == expected
 
 
-def test_macro_ifeval_true_not_defined():
+def test_macro_control_ifeval_undefined_variable():
+    environment = Environment.from_dict({"flag": False})
+
+    source = "[@ifeval](flag, &true, var)"
+
+    with pytest.raises(MauParserException):
+        runner(source, environment)
+
+
+def test_macro_control_ifeval_true_not_defined():
     environment = Environment.from_dict(
         {
             "flag": True,
@@ -243,7 +301,7 @@ def test_macro_ifeval_true_not_defined():
         runner(source, environment)
 
 
-def test_macro_ifeval_false_not_defined():
+def test_macro_control_ifeval_false_not_defined():
     environment = Environment.from_dict(
         {
             "flag": True,
@@ -255,3 +313,48 @@ def test_macro_ifeval_false_not_defined():
 
     with pytest.raises(MauParserException):
         runner(source, environment)
+
+
+def test_macro_control_default_false():
+    environment = Environment.from_dict({"flag": False})
+
+    source = '[@if](flag, &false, "TRUE")'
+
+    expected = [
+        Node(
+            children=[],
+            content=SentenceNodeContent(),
+            info=NodeInfo(context=generate_context(0, 0)),
+        ),
+    ]
+
+    nodes = runner(source, environment=environment).nodes
+
+    assert nodes == expected
+
+
+def test_macro_control_without_true_case():
+    source = "[@if](flag, &false)"
+
+    with pytest.raises(MauParserException) as exc:
+        runner(source)
+
+    assert exc.value.context == generate_context(0, 0)
+
+
+def test_macro_control_without_value():
+    source = "[@if](flag)"
+
+    with pytest.raises(MauParserException) as exc:
+        runner(source)
+
+    assert exc.value.context == generate_context(0, 0)
+
+
+def test_macro_control_without_variable():
+    source = "[@if]()"
+
+    with pytest.raises(MauParserException) as exc:
+        runner(source)
+
+    assert exc.value.context == generate_context(0, 0)

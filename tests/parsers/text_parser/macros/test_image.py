@@ -1,8 +1,15 @@
+import pytest
+
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.macros import MacroImageNodeContent
-from mau.nodes.node import Node
+from mau.nodes.node import Node, NodeInfo
+from mau.parsers.base_parser import MauParserException
 from mau.parsers.text_parser import TextParser
-from mau.test_helpers import init_parser_factory, parser_runner_factory
+from mau.test_helpers import (
+    generate_context,
+    init_parser_factory,
+    parser_runner_factory,
+)
 
 init_parser = init_parser_factory(TextLexer, TextParser)
 
@@ -13,31 +20,47 @@ def test_macro_image():
     source = "[image](/the/path.jpg)"
 
     expected = [
-        Node(content=MacroImageNodeContent("/the/path.jpg")),
+        Node(
+            content=MacroImageNodeContent("/the/path.jpg"),
+            info=NodeInfo(context=generate_context(0, 0)),
+        ),
     ]
 
     assert runner(source).nodes == expected
 
 
 def test_macro_image_with_alt_text():
-    source = '[image](/the/path.jpg,"alt name")'
+    source = '[image](/the/path.jpg, "alt name")'
 
     expected = [
-        Node(content=MacroImageNodeContent("/the/path.jpg", alt_text="alt name")),
+        Node(
+            content=MacroImageNodeContent("/the/path.jpg", alt_text="alt name"),
+            info=NodeInfo(context=generate_context(0, 0)),
+        ),
     ]
 
     assert runner(source).nodes == expected
 
 
 def test_macro_image_with_width_and_height():
-    source = "[image](/the/path.jpg,width=1200,height=600)"
+    source = "[image](/the/path.jpg, width=1200, height=600)"
 
     expected = [
         Node(
             content=MacroImageNodeContent(
                 "/the/path.jpg", alt_text=None, width="1200", height="600"
-            )
+            ),
+            info=NodeInfo(context=generate_context(0, 0)),
         ),
     ]
 
     assert runner(source).nodes == expected
+
+
+def test_macro_image_without_uri():
+    source = "[image]()"
+
+    with pytest.raises(MauParserException) as exc:
+        runner(source)
+
+    assert exc.value.context == generate_context(0, 0)

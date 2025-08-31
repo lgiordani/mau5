@@ -1,12 +1,15 @@
+import pytest
+
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.inline import StyleNodeContent, TextNodeContent
 from mau.nodes.macros import MacroLinkNodeContent
 from mau.nodes.node import Node, NodeInfo
+from mau.parsers.base_parser import MauParserException
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
+    generate_context,
     init_parser_factory,
     parser_runner_factory,
-    generate_context,
 )
 
 init_parser = init_parser_factory(TextLexer, TextParser)
@@ -22,7 +25,7 @@ def test_macro_link():
             children=[
                 Node(
                     content=TextNodeContent("link text"),
-                    info=NodeInfo(context=generate_context(0, 40)),
+                    info=NodeInfo(context=generate_context(0, 41)),
                 )
             ],
             content=MacroLinkNodeContent(
@@ -49,10 +52,20 @@ def test_macro_link_without_text():
             content=MacroLinkNodeContent(
                 "https://somedomain.org/the/path",
             ),
+            info=NodeInfo(context=generate_context(0, 0)),
         ),
     ]
 
     assert runner(source).nodes == expected
+
+
+def test_macro_link_without_target():
+    source = "[link]()"
+
+    with pytest.raises(MauParserException) as exc:
+        runner(source)
+
+    assert exc.value.context == generate_context(0, 0)
 
 
 def test_macro_link_with_rich_text():
@@ -65,17 +78,17 @@ def test_macro_link_with_rich_text():
             children=[
                 Node(
                     content=TextNodeContent("Some text with "),
-                    info=NodeInfo(context=generate_context(0, 38)),
+                    info=NodeInfo(context=generate_context(0, 43)),
                 ),
                 Node(
                     children=[
                         Node(
                             content=TextNodeContent("styled words"),
-                            info=NodeInfo(context=generate_context(0, 54)),
+                            info=NodeInfo(context=generate_context(0, 59)),
                         ),
                     ],
                     content=StyleNodeContent("underscore"),
-                    info=NodeInfo(context=generate_context(0, 53)),
+                    info=NodeInfo(context=generate_context(0, 58)),
                 ),
             ],
             content=MacroLinkNodeContent(
@@ -102,7 +115,7 @@ def test_macro_mailto():
             content=MacroLinkNodeContent(
                 "mailto:info@projectmau.org",
             ),
-            info=NodeInfo(context=generate_context(0, 9)),
+            info=NodeInfo(context=generate_context(0, 0)),
         ),
     ]
 
@@ -123,8 +136,17 @@ def test_macro_mailto_custom_text():
             content=MacroLinkNodeContent(
                 "mailto:info@projectmau.org",
             ),
-            info=NodeInfo(context=generate_context(0, 9)),
+            info=NodeInfo(context=generate_context(0, 0)),
         ),
     ]
 
     assert runner(source).nodes == expected
+
+
+def test_macro_mailto_without_target():
+    source = "[mailto]()"
+
+    with pytest.raises(MauParserException) as exc:
+        runner(source)
+
+    assert exc.value.context == generate_context(0, 0)

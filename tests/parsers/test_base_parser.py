@@ -10,8 +10,11 @@ from mau.parsers.base_parser import (
     TokenError,
     format_parser_error,
 )
-from mau.test_helpers import dedent, init_parser_factory, TEST_CONTEXT_SOURCE
-from mau.text_buffer.context import Context
+from mau.test_helpers import (
+    dedent,
+    generate_context,
+    init_parser_factory,
+)
 from mau.tokens.token import Token, TokenType
 
 init_parser = init_parser_factory(BaseLexer, BaseParser)
@@ -45,11 +48,11 @@ def test_format_parser_error():
     assert format_parser_error(exception) == expected
 
 
-def test_format_parser_error_with_token():
+def test_format_parser_error_with_context():
     test_message = "A test message"
-    test_token = Token(TokenType.TEXT, "Some token", Context(42, 24, "source.py"))
+    test_context = generate_context(42, 4242)
 
-    exception = MauParserException(test_message, test_token)
+    exception = MauParserException(test_message, test_context)
 
     expected = dedent(
         """
@@ -58,12 +61,9 @@ def test_format_parser_error_with_token():
 
         Message: A test message
 
-        Token: TEXT
         Line: 42
-        Column: 24
-        Source: source.py
-
-        Some token
+        Column: 4242
+        Source: test.py
         """
     )
 
@@ -392,8 +392,7 @@ def test_force_token():
 
     # This is the position of the expected token,
     # EOL in this case.
-    assert exc.value.token.type == TokenType.EOL
-    assert exc.value.token.context == Context(1, 15, TEST_CONTEXT_SOURCE)
+    assert exc.value.context == generate_context(1, 15)
 
 
 def test_collect():
@@ -483,27 +482,27 @@ def test_collect_escape_stop_tokens_are_removed2():
     ]
 
 
-def test_error_no_token():
+def test_error_no_context():
     parser = init_parser("Some text", Environment())
 
     # This advances to the first token
     parser._get_token()
 
     with pytest.raises(MauParserException) as exc:
-        parser._error("A message")
+        raise parser._error("A message")
 
     assert exc.value.message == "A message"
-    assert exc.value.token == Token(TokenType.TEXT, "Some text")
+    assert exc.value.context == generate_context(0, 0)
 
 
-def test_error_with_token():
+def test_error_with_context():
     parser = init_parser("Some text", Environment())
 
     with pytest.raises(MauParserException) as exc:
-        parser._error("A message", Token(TokenType.TEXT, "Random text"))
+        raise parser._error("A message", generate_context(42, 4242))
 
     assert exc.value.message == "A message"
-    assert exc.value.token == Token(TokenType.TEXT, "Random text")
+    assert exc.value.context == generate_context(42, 4242)
 
 
 def test_unknown_token():
@@ -514,4 +513,4 @@ def test_unknown_token():
         parser.parse()
 
     assert exc.value.message == "Cannot parse token"
-    assert exc.value.token == Token("UNKNOWN", "")
+    assert exc.value.context is parser.tokens[0].context

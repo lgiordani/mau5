@@ -1,8 +1,6 @@
-from typing import Optional, Tuple
-
 from mau.text_buffer.context import Context
 
-Position = Tuple[int, int]
+Position = tuple[int, int]
 
 # The TextBuffer is an object used to interact with a text file.
 #
@@ -47,11 +45,11 @@ Position = Tuple[int, int]
 
 
 class TextBuffer:
-    def __init__(self, text: str = "", context: Optional[Context] = None):
+    def __init__(self, text: str = "", context: Context | None = None):
         self.lines: list[str] = []
         self.load(text, context)
 
-    def load(self, text: str, context: Optional[Context] = None) -> None:
+    def load(self, text: str, context: Context | None = None) -> None:
         self.lines = text.split("\n") if text != "" else []
 
         self.initial_context = context or Context()
@@ -133,7 +131,7 @@ class TextBuffer:
         return self.current_line[self.column :]
 
     @property
-    def position(self) -> Tuple[int, int]:
+    def position(self) -> tuple[int, int]:
         """
         Returns a tuple with the current position.
         """

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
+from typing import Generic, TypeVar
 
 from mau.text_buffer.context import Context
 
@@ -47,21 +48,28 @@ class NodeContent(ABC):
         return {"type": self.type}
 
 
-class Node:
+Content_co = TypeVar("Content_co", bound=NodeContent, covariant=True)
+
+
+class Node(Generic[Content_co]):
     def __init__(
         self,
-        content: NodeContent | None = None,
-        parent: Node | None = None,
-        children: list[Node] | None = None,
+        content: Content_co | None = None,
+        parent: Node[NodeContent] | None = None,
+        children: list[Node[NodeContent]] | None = None,
         info: NodeInfo | None = None,
     ):
+        # If we provided no content just
+        # add an empty one.
         self.content: NodeContent = content or NodeContent()
 
-        self.parent: Node | None = None
-        if parent:
-            self.set_parent(parent)
+        # Set the parent of this node.
+        self.parent: Node[NodeContent] | None = parent
 
-        self.children: list[Node] = []
+        # Initialise children as an empty list,
+        # then set them using the method that
+        # adds the current node as parent.
+        self.children: list[Node[NodeContent]] = []
         if children:
             self.set_children(children)
 
@@ -98,7 +106,7 @@ class Node:
 
         # Add this node as parent of each of them.
         for child in children:
-            child.parent = self
+            child.set_parent(self)
 
         return self
 
@@ -108,7 +116,7 @@ class Node:
 
         # Add this node as parent of each of them.
         for child in children:
-            child.parent = self
+            child.set_parent(self)
 
         return self
 

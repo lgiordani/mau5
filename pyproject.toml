@@ -41,6 +41,7 @@ testing = [
 ]
 development = [
   "flit",
+  "mypy",
   "pip",
   "pylint",
   "ruff",

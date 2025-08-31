@@ -16,9 +16,9 @@ logger = logging.getLogger(__name__)
 
 
 class MauParserException(ValueError):
-    def __init__(self, message: str, token: Token | None = None):
+    def __init__(self, message: str, context: Context | None = None):
         self.message = message
-        self.token = token
+        self.context = context
 
 
 def format_parser_error(exception: MauParserException) -> str:
@@ -32,17 +32,11 @@ def format_parser_error(exception: MauParserException) -> str:
     output.append("")
     output.append(f"Message: {exception.message}")
 
-    if t := exception.token:
+    if c := exception.context:
         output.append("")
-        output.append(f"Token: {t.type.value}")
-
-        if c := t.context:
-            output.append(f"Line: {c.line}")
-            output.append(f"Column: {c.column}")
-            output.append(f"Source: {c.source}")
-            output.append("")
-
-        output.append(f"{t.value}")
+        output.append(f"Line: {c.line}")
+        output.append(f"Column: {c.column}")
+        output.append(f"Source: {c.source}")
 
     return "\n".join(output)
 
@@ -264,10 +258,10 @@ class BaseParser:
         # The parse functions available in this parser
         return []
 
-    def _error(self, message: str, token: Token | None = None):
-        token = token or self._current_token
+    def _error(self, message: str, context: Context | None = None):
+        context = context or self._current_token.context
 
-        raise MauParserException(message=message, token=token)
+        return MauParserException(message=message, context=context)
 
     def _put_token(self, token: Token):
         self.tokens.insert(self.index + 1, token)
@@ -372,7 +366,7 @@ class BaseParser:
             if tvalue is not None:
                 error_message = f"{error_message} with value '{tvalue}'"
 
-            self._error(error_message, token)
+            raise self._error(error_message, token.context)
 
         return token
 
@@ -446,21 +440,6 @@ class BaseParser:
 
         return join_with.join(token_values)
 
-    # # pylint: disable=inconsistent-return-statements
-    # def _set_names_and_defaults(
-    #     self,
-    #     args,
-    #     kwargs,
-    #     positional_names,
-    #     default_values=None,
-    # ):  # pragma: no cover
-    #     try:
-    #         return set_names_and_defaults(
-    #             args, kwargs, positional_names, default_values
-    #         )
-    #     except ValueError as exception:
-    #         self._error(str(exception))
-
     def parse(self):
         """
         Run the parser on the lexed tokens.
@@ -479,7 +458,9 @@ class BaseParser:
                 next_token == self.last_processed_token
                 and next_token.context == self.last_processed_token.context
             ):
-                self._error("Loop detected, cannot parse token")  # pragma: no cover
+                raise self._error(
+                    "Loop detected, cannot parse token"
+                )  # pragma: no cover
             else:
                 self.last_processed_token = next_token
 
@@ -508,7 +489,7 @@ class BaseParser:
             # we didn't find any function to parse the
             # current token.
             if result is False:
-                self._error("Cannot parse token")
+                raise self._error("Cannot parse token")
 
     @classmethod
     def lex_and_parse(cls, text, context, environment, *args, **kwargs):

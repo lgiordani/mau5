@@ -1,3 +1,5 @@
+# mypy: disable-error-code="attr-defined"
+
 import itertools
 import logging
 
@@ -19,7 +21,7 @@ from mau.nodes.macros import (
     MacroNodeContent,
 )
 from mau.nodes.node import Node, NodeInfo
-from mau.parsers.arguments_parser import ArgumentsParser, set_names_and_defaults
+from mau.parsers.arguments_parser import ArgumentsParser
 from mau.parsers.base_parser import BaseParser, TokenError
 from mau.text_buffer.context import Context
 from mau.tokens.token import Token, TokenType
@@ -312,57 +314,51 @@ class TextParser(BaseParser):
             self.environment,
         )
 
-        # Extract unnamed and named arguments.
-        unnamed_args, named_args, _, _ = parser.process_arguments()
-
         # Select the specific parsing function
         # according to the name of the macro.
 
         if macro_name.startswith("@"):
             return self._parse_macro_control(
-                macro_name, unnamed_args, named_args, context=opening_bracket.context
+                macro_name, parser, context=opening_bracket.context
             )
 
         if macro_name == "link":
-            return self._parse_macro_link(
-                unnamed_args, named_args, context=opening_bracket.context
-            )
+            return self._parse_macro_link(parser, context=opening_bracket.context)
 
         if macro_name == "header":
             return self._parse_macro_header_link(
-                unnamed_args, named_args, context=opening_bracket.context
+                parser, context=opening_bracket.context
             )
 
         if macro_name == "mailto":
-            return self._parse_macro_mailto(
-                unnamed_args, named_args, context=opening_bracket.context
-            )
+            return self._parse_macro_mailto(parser, context=opening_bracket.context)
 
         if macro_name == "image":
-            return self._parse_macro_image(
-                unnamed_args, named_args, context=opening_bracket.context
-            )
+            return self._parse_macro_image(parser, context=opening_bracket.context)
 
         if macro_name == "footnote":
-            return self._parse_macro_footnote(
-                unnamed_args, named_args, context=opening_bracket.context
-            )
+            return self._parse_macro_footnote(parser, context=opening_bracket.context)
 
         if macro_name == "class":
-            return self._parse_macro_class(
-                unnamed_args, named_args, context=opening_bracket.context
-            )
+            return self._parse_macro_class(parser, context=opening_bracket.context)
 
         # This is a generic macro, there is no
         # special code for it.
         node = Node(
             parent=self.parent_node,
-            content=MacroNodeContent(macro_name),
+            content=MacroNodeContent(
+                name=macro_name,
+                unnamed_args=[
+                    node.content.value for node in parser.unnamed_argument_nodes
+                ],
+                named_args={
+                    key: node.content.value
+                    for key, node in parser.named_argument_nodes.items()
+                },
+            ),
             info=NodeInfo(
                 context=opening_bracket.context,
                 position=self.parent_position,
-                unnamed_args=unnamed_args,
-                named_args=named_args,
             ),
         )
 
@@ -464,73 +460,85 @@ class TextParser(BaseParser):
         return node
 
     def _parse_macro_link(
-        self, unnamed_args, named_args, context: Context | None
+        self, parser: ArgumentsParser, context: Context | None
     ) -> Node:
         # Parse a link macro in the form [link](target, text).
 
         # Assign names and default values to arguments.
-        unnamed_args, named_args = set_names_and_defaults(
-            unnamed_args, named_args, ["target", "text"], {"text": None}
-        )
+        parser.set_names(["target", "text"])
 
         # Extract the target of the link.
-        target = named_args["target"]
+        try:
+            target = parser.named_argument_nodes["target"]
+        except KeyError as exc:
+            raise self._error(
+                message="Syntax: [link](TARGET, text)", context=context
+            ) from exc
 
         # Extract the text of the link if present.
-        text = named_args["text"]
+        text = parser.named_argument_nodes.get("text")
 
         # If the text is present we need to parse it
         # as it might contain Mau syntax.
         # If the text is not present we use the
         # link as text.
         if text is not None:
-            current_context = self._current_token.context
-            parser = self.lex_and_parse(text, current_context, self.environment)
+            parser = self.lex_and_parse(
+                text.content.value, text.info.context, self.environment
+            )
             nodes = parser.nodes
         else:
-            nodes = [Node(content=TextNodeContent(target))]
+            nodes = [
+                Node(
+                    content=TextNodeContent(target.content.value),
+                    info=target.info,
+                )
+            ]
 
         node = Node(
             parent=self.parent_node,
             children=nodes,
-            content=MacroLinkNodeContent(target),
+            content=MacroLinkNodeContent(target.content.value),
             info=NodeInfo(position=self.parent_position, context=context),
         )
 
         return node
 
     def _parse_macro_header_link(
-        self, unnamed_args, named_args, context: Context | None
+        self, parser: ArgumentsParser, context: Context | None
     ) -> Node:
         # Parse a header link macro in the form [header](header_id, text).
         # This is similar to a macro link but the URI is an internal header ID.
 
         # Assign names and default values to arguments.
-        unnamed_args, named_args = set_names_and_defaults(
-            unnamed_args, named_args, ["header_id", "text"], {"text": None}
-        )
+        parser.set_names(["header_id", "text"])
 
         # Extract the header ID.
-        header_id = named_args["header_id"]
+        try:
+            header_id = parser.named_argument_nodes["header_id"]
+        except KeyError as exc:
+            raise self._error(
+                message="Syntax: [header](ID, text)", context=context
+            ) from exc
 
         # Extract the text of the link if present.
-        text = named_args["text"]
+        text = parser.named_argument_nodes.get("text")
 
         # If the text is present we need to parse it
         # as it might contain Mau syntax.
         # If the text is not present we use the
         # link as text.
+        nodes = []
         if text is not None:
-            current_context = self._current_token.context
-            parser = self.lex_and_parse(text, current_context, self.environment)
+            parser = self.lex_and_parse(
+                text.content.value, text.info.context, self.environment
+            )
             nodes = parser.nodes
-        else:
-            nodes = []
 
         node = Node(
             parent=self.parent_node,
             children=nodes,
-            content=MacroHeaderNodeContent(_id=header_id),
+            content=MacroHeaderNodeContent(_id=header_id.content.value),
             info=NodeInfo(position=self.parent_position, context=context),
         )
 
@@ -539,89 +547,117 @@ class TextParser(BaseParser):
         return node
 
     def _parse_macro_mailto(
-        self, unnamed_args, named_args, context: Context | None
+        self, parser: ArgumentsParser, context: Context | None
     ) -> Node:
         # Parse a mailto macro in the form [mailto](email, text).
         # This is similar to a macro link but the URI is a `mailto:`.
 
         # Assign names and default values to arguments.
-        unnamed_args, named_args = set_names_and_defaults(
-            unnamed_args, named_args, ["email", "text"], {"text": None}
-        )
+        parser.set_names(["email", "text"])
 
         # Extract the linked email and add the `mailto:` prefix.
-        email = named_args["email"]
-        target = f"mailto:{email}"
+        try:
+            target = parser.named_argument_nodes["email"]
+        except KeyError as exc:
+            raise self._error(
+                message="Syntax: [mailto](EMAIL, text)", context=context
+            ) from exc
 
         # Extract the text of the link if present.
-        text = named_args["text"]
+        text = parser.named_argument_nodes.get("text")
 
         # If the text is present we need to parse it
         # as it might contain Mau syntax.
         # If the text is not present we use the
         # link as text.
         if text is not None:
-            current_context = self._current_token.context
-            parser = self.lex_and_parse(text, current_context, self.environment)
+            parser = self.lex_and_parse(
+                text.content.value, text.info.context, self.environment
+            )
             nodes = parser.nodes
         else:
-            nodes = [Node(content=TextNodeContent(email))]
+            nodes = [
+                Node(
+                    content=TextNodeContent(target.content.value),
+                    info=target.info,
+                )
+            ]
 
         node = Node(
             parent=self.parent_node,
             children=nodes,
-            content=MacroLinkNodeContent(target),
+            content=MacroLinkNodeContent(f"mailto:{target.content.value}"),
             info=NodeInfo(position=self.parent_position, context=context),
         )
 
         return node
 
     def _parse_macro_class(
-        self, unnamed_args, named_args, context: Context | None
+        self, parser: ArgumentsParser, context: Context | None
     ) -> Node:
         # Parse a class macro in the form [class](text, class1, class2, ...).
 
         # Assign names and default values to arguments.
-        unnamed_args, named_args = set_names_and_defaults(
-            unnamed_args, named_args, ["text"]
-        )
+        parser.set_names(["text"])
+
+        # Extract the classes.
+        classes = [node.content.value for node in parser.unnamed_argument_nodes]
 
         # Extract the text.
-        text = named_args["text"]
+        try:
+            text = parser.named_argument_nodes["text"]
+        except KeyError as exc:
+            raise self._error(
+                message="Syntax: [class](TEXT, class1, class2, ...)", context=context
+            ) from exc
 
         # We need to parse the text as it might contain Mau syntax.
-        current_context = self._current_token.context
-        parser = self.lex_and_parse(text, current_context, self.environment)
+        parser = self.lex_and_parse(
+            text.content.value, text.info.context, self.environment
+        )
 
         node = Node(
             parent=self.parent_node,
             children=parser.nodes,
-            content=MacroClassNodeContent(unnamed_args),
+            content=MacroClassNodeContent(classes),
             info=NodeInfo(position=self.parent_position, context=context),
         )
 
         return node
 
     def _parse_macro_image(
-        self, unnamed_args, named_args, context: Context | None
+        self, parser: ArgumentsParser, context: Context | None
     ) -> Node:
         # Parse an inline image macro in the form [image](uri, alt_text, width, height).
 
         # Assign names and default values to arguments.
-        unnamed_args, named_args = set_names_and_defaults(
-            unnamed_args,
-            named_args,
-            ["uri", "alt_text", "width", "height"],
-            {"alt_text": None, "width": None, "height": None},
-        )
+        parser.set_names(["uri", "alt_text", "width", "height"])
+
+        # Extract the URI.
+        try:
+            uri = parser.named_argument_nodes["uri"]
+        except KeyError as exc:
+            raise self._error(
+                message="Syntax: [image](URI, alt_text, width, height)", context=context
+            ) from exc
+
+        # Get the remaining parameters
+        alt_text = parser.named_argument_nodes.get("alt_text")
+        width = parser.named_argument_nodes.get("width")
+        height = parser.named_argument_nodes.get("height")
+
+        # Extract the value if the parameter is not None.
+        alt_text = alt_text.content.value if alt_text else None
+        width = width.content.value if width else None
+        height = height.content.value if height else None
 
         node = Node(
             parent=self.parent_node,
             content=MacroImageNodeContent(
-                uri=named_args["uri"],
-                alt_text=named_args["alt_text"],
-                width=named_args["width"],
-                height=named_args["height"],
+                uri=uri.content.value,
+                alt_text=alt_text,
+                width=width,
+                height=height,
             ),
             info=NodeInfo(position=self.parent_position, context=context),
         )
@@ -629,16 +665,20 @@ class TextParser(BaseParser):
         return node
 
     def _parse_macro_footnote(
-        self, unnamed_args, named_args, context: Context | None
+        self, parser: ArgumentsParser, context: Context | None
     ) -> Node:
         # Parse a footnote macro in the form [footnote](name).
 
         # Assign names and default values to arguments.
-        unnamed_args, named_args = set_names_and_defaults(
-            unnamed_args, named_args, ["name"]
-        )
+        parser.set_names(["name"])
 
-        name = named_args["name"]
+        # Extract the footnote name.
+        try:
+            name = parser.named_argument_nodes["name"]
+        except KeyError as exc:
+            raise self._error(
+                message="Syntax: [footnote](NAME)", context=context
+            ) from exc
 
         node = Node(
             parent=self.parent_node,
@@ -646,7 +686,7 @@ class TextParser(BaseParser):
             info=NodeInfo(position=self.parent_position, context=context),
         )
 
-        self.footnotes[name] = node
+        self.footnotes[name.content.value] = node
 
         return node
 
@@ -668,7 +708,7 @@ class TextParser(BaseParser):
             test_value = test[1:]
 
             if test_value not in ["true", "false"]:
-                self._error(f"Boolean value '{test_value}' is invalid")
+                raise self._error(f"Boolean value '{test_value}' is invalid")
 
             # pylint: disable=simplifiable-if-expression
             boolean_test_value = True if test_value == "true" else False
@@ -678,10 +718,10 @@ class TextParser(BaseParser):
             # value match.
             return bool(value) and boolean_test_value
 
-        return self._error(f"Test '{test}' is not supported")
+        raise self._error(f"Test '{test}' is not supported")
 
     def _parse_macro_control(
-        self, macro_name, unnamed_args, named_args, context: Context | None
+        self, macro_name: str, parser: ArgumentsParser, context: Context | None
     ) -> Node:
         # Parse a class macro in the form [@if:variable:test](true, false).
         #
@@ -695,50 +735,74 @@ class TextParser(BaseParser):
 
         # Check if the operator is supported.
         if operator not in ["if", "ifeval"]:
-            self._error(f"Control operator '{operator}' is not supported")
+            raise self._error(f"Control operator '{operator}' is not supported")
 
         # Assign names and default values to arguments.
-        unnamed_args, named_args = set_names_and_defaults(
-            unnamed_args,
-            named_args,
-            ["variable", "test", "true_case", "false_case"],
-            {"false_case": ""},
-        )
+        parser.set_names(["variable", "test", "true_case", "false_case"])
 
-        # Get the value of the variable.
-        variable = named_args["variable"]
-        variable_value = self.environment.getvar(variable, None)
+        # Get the mandatory values
+        try:
+            variable = parser.named_argument_nodes["variable"]
+            test = parser.named_argument_nodes["test"]
+            true_case = parser.named_argument_nodes["true_case"]
+        except KeyError as exc:
+            raise self._error(
+                message=f"Syntax: [{macro_name}](VARIABLE, TEST, TRUE_CASE, false_case)",
+                context=context,
+            ) from exc
+
+        # The false case is not mandatory, default is None.
+        false_case = parser.named_argument_nodes.get("false_case")
+
+        variable_value = self.environment.getvar(
+            variable.content.value,
+            None,
+        )
         if variable_value is None:
-            self._error(f"Variable '{variable}' has not been defined")
+            raise self._error(f"Variable '{variable}' has not been defined")
 
         # Check if the variable value passes the test.
-        test = named_args["test"]
-        test_result = self._process_test(test, variable_value)
-
-        current_context = self._current_token.context
+        test_result = self._process_test(
+            test.content.value,
+            variable_value,
+        )
 
         # Get the result value according to the test result.
-        value = (
-            named_args["true_case"] if test_result is True else named_args["false_case"]
-        )
+        result = true_case if test_result is True else false_case
 
         # The operator `ifeval` uses the result value
         # as the name of a variable.
         if operator == "ifeval":
+            if result is None:
+                raise self._error(
+                    "Test result negative but evaluation variable has not been defined for that case."
+                )
+
             # Find the value of the variable.
-            value = self.environment.getvar(value)
+            variable_value = self.environment.getvar(
+                result.content.value,
+            )
 
             # If the variable wasn't defined yell at the user.
-            if value is None:
-                self._error(f"Variable '{value}' has not been defined")
+            if variable_value is None:
+                raise self._error(
+                    f"Variable '{result.content.value}' has not been defined"
+                )
 
-        # The resulting value needs to be parsed
-        # as it might contain Mau syntax.
-        parser = self.lex_and_parse(value, current_context, self.environment)
+            result.content.value = variable_value
+
+        nodes = []
+        if result is not None:
+            parser = self.lex_and_parse(
+                result.content.value,
+                result.info.context,
+                self.environment,
+            )
+            nodes = parser.nodes
 
         node = Node(
             parent=self.parent_node,
-            children=parser.nodes,
+            children=nodes,
             content=SentenceNodeContent(),
             info=NodeInfo(position=self.parent_position, context=context),
         )
