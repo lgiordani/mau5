@@ -2,21 +2,21 @@
 
 # import pytest
 # from mau.errors import MauErrorException
-# from mau.lexers.main_lexer import MainLexer
+# from mau.lexers.document_lexer import DocumentLexer
 # from mau.nodes.block import BlockNode
 # from mau.nodes.header import HeaderNode
 # from mau.nodes.inline import SentenceNode, TextNode
 # from mau.nodes.toc import TocEntryNode, TocNode
-# from mau.parsers.main_parser import MainParser
+# from mau.parsers.document_parser import DocumentParser
 
 # from mau.test_helpers import init_parser_factory, parser_runner_factory
 
-# init_parser = init_parser_factory(MainLexer, MainParser)
+# init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 
-# runner = parser_runner_factory(MainLexer, MainParser)
+# runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-# @patch("mau.parsers.main_parser.header_anchor")
+# @patch("mau.parsers.document_parser.header_anchor")
 # def test_engine_mau(mock_header_anchor):
 #     mock_header_anchor.return_value = "XXYY"
 
@@ -84,7 +84,7 @@
 #     ]
 
 
-# @patch("mau.parsers.main_parser.header_anchor")
+# @patch("mau.parsers.document_parser.header_anchor")
 # def test_engine_mau_multiple_blocks_are_independent(mock_header_anchor):
 #     mock_header_anchor.return_value = "XXYY"
 
@@ -181,7 +181,7 @@
 #     ]
 
 
-# @patch("mau.parsers.main_parser.header_anchor")
+# @patch("mau.parsers.document_parser.header_anchor")
 # def test_engine_mau_toc(mock_header_anchor):
 #     mock_header_anchor.return_value = "XXYY"
 

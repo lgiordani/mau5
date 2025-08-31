@@ -8,7 +8,7 @@ from mau.tokens.token import TokenType
 logger = logging.getLogger(__name__)
 
 
-class MainLexer(BaseLexer):
+class DocumentLexer(BaseLexer):
     def _process_functions(self):
         return [
             self._process_multiline_comment,
@@ -127,7 +127,7 @@ class MainLexer(BaseLexer):
                 # come from another file.
                 text_buffer = self.text_buffer.__class__(text, Context(source=value))
 
-                lexer = MainLexer(text_buffer, self.environment)
+                lexer = DocumentLexer(text_buffer, self.environment)
                 lexer.process()
 
                 # Remove the last token as it is an EOF

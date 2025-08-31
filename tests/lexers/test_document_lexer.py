@@ -1,14 +1,14 @@
 from unittest.mock import mock_open, patch
 
 from mau.lexers.base_lexer import TokenType
-from mau.lexers.main_lexer import MainLexer
+from mau.lexers.document_lexer import DocumentLexer
 from mau.test_helpers import dedent, init_lexer_factory, lexer_runner_factory
 from mau.text_buffer.text_buffer import TextBuffer
 from mau.tokens.token import Token
 
-init_lexer = init_lexer_factory(MainLexer)
+init_lexer = init_lexer_factory(DocumentLexer)
 
-runner = lexer_runner_factory(MainLexer)
+runner = lexer_runner_factory(DocumentLexer)
 
 
 def test_horizontal_rule():
@@ -433,7 +433,7 @@ def test_header_markers_in_text():
     ]
 
 
-@patch("mau.lexers.main_lexer.MainLexer._run_directive")
+@patch("mau.lexers.document_lexer.DocumentLexer._run_directive")
 def test_directive(mock_run_directive):
     runner("::#name:/path/to/file")
 

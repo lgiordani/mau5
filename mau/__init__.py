@@ -1,10 +1,10 @@
 # pylint: disable=unused-import
 
 from mau.environment.environment import Environment
-from mau.lexers.main_lexer import MainLexer
+from mau.lexers.document_lexer import DocumentLexer
 from mau.lexers.text_lexer import TextLexer
 
-# from mau.parsers.main_parser import MainParser
+# from mau.parsers.document_parser import DocumentParser
 from mau.parsers.text_parser import TextParser
 from mau.text_buffer.context import Context
 from mau.text_buffer.text_buffer import TextBuffer
@@ -70,7 +70,7 @@ class Mau:
         return lexer.tokens
 
     def run_parser(self, tokens):
-        # self.parser = MainParser(self.environment)
+        # self.parser = DocumentParser(self.environment)
         parser = TextParser(tokens, self.environment)
 
         parser.parse()

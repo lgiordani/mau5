@@ -1,20 +1,20 @@
 # import pytest
 # from mau.environment.environment import Environment
 # from mau.errors import MauErrorException
-# from mau.lexers.main_lexer import MainLexer
+# from mau.lexers.document_lexer import DocumentLexer
 # from mau.nodes.block import BlockNode
 # from mau.nodes.content import ContentNode
 # from mau.nodes.header import HeaderNode
 # from mau.nodes.inline import SentenceNode, TextNode
 # from mau.nodes.paragraph import ParagraphNode
-# from mau.parsers.main_parser import MainParser
+# from mau.parsers.document_parser import DocumentParser
 # from mau.text_buffer.context import Context
 
 # from mau.test_helpers import init_parser_factory, parser_runner_factory
 
-# init_parser = init_parser_factory(MainLexer, MainParser)
+# init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 
-# runner = parser_runner_factory(MainLexer, MainParser)
+# runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
 # def test_initial_control():

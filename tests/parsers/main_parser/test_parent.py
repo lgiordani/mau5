@@ -1,9 +1,9 @@
-# from mau.lexers.main_lexer import MainLexer
-# from mau.parsers.main_parser import MainParser
+# from mau.lexers.document_lexer import DocumentLexer
+# from mau.parsers.document_parser import DocumentParser
 
 # from mau.test_helpers import parser_runner_factory
 
-# mainrunner = parser_runner_factory(MainLexer, MainParser)
+# mainrunner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
 # def test_parent_block():
