@@ -2,7 +2,7 @@ import pytest
 
 from mau.lexers.arguments_lexer import ArgumentsLexer
 from mau.nodes.node import Node, NodeInfo, ValueNodeContent
-from mau.parsers.arguments_parser import ArgumentsParser
+from mau.parsers.arguments_parser import ArgumentsParser, Attributes
 from mau.parsers.base_parser import MauParserException
 from mau.test_helpers import generate_context, parser_runner_factory
 
@@ -705,3 +705,21 @@ def test_set_names_not_enough_positional_values():
 
     assert parser.unnamed_argument_nodes == expected_unnamed_nodes
     assert parser.named_argument_nodes == expected_named_nodes
+
+
+def test_attributes():
+    source = "value1, #tag1, *subtype1, name=value2"
+
+    parser = runner(source)
+
+    assert parser.attributes == Attributes(
+        ["value1"], {"name": "value2"}, ["tag1"], "subtype1"
+    )
+
+
+def test_attributes_empty():
+    source = ""
+
+    parser = runner(source)
+
+    assert parser.attributes == Attributes([], {}, [], None)

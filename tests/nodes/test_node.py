@@ -5,13 +5,13 @@ def test_node():
     node = Node()
 
     assert node.parent is None
-    assert node.children == []
+    assert node.children == {}
     assert node.info.position is None
 
     assert node.content.asdict() == {"type": "none"}
 
     assert node.asdict() == {
-        "children": [],
+        "children": {},
         "content": {"type": "none"},
         "info": {
             "context": None,
@@ -41,10 +41,10 @@ def test_node_set_parent():
 def test_node_children():
     child1 = Node()
     child2 = Node()
-    node = Node(children=[child1, child2])
+    node = Node(children={"content": [child1, child2]})
 
-    assert child1 in node.children
-    assert child2 in node.children
+    assert child1 in node.children["content"]
+    assert child2 in node.children["content"]
     assert child1.parent is node
     assert child2.parent is node
 
@@ -54,10 +54,10 @@ def test_node_set_children():
     child2 = Node()
     node = Node()
 
-    node.set_children([child1, child2])
+    node.set_children({"content": [child1, child2]})
 
-    assert child1 in node.children
-    assert child2 in node.children
+    assert child1 in node.children["content"]
+    assert child2 in node.children["content"]
     assert child1.parent is node
     assert child2.parent is node
 
@@ -65,12 +65,12 @@ def test_node_set_children():
 def test_node_add_children():
     child1 = Node()
     child2 = Node()
-    node = Node(children=[child1])
+    node = Node(children={"content": [child1]})
 
-    node.add_children([child2])
+    node.add_children({"content": [child2]})
 
-    assert child1 in node.children
-    assert child2 in node.children
+    assert child1 in node.children["content"]
+    assert child2 in node.children["content"]
     assert child1.parent is node
     assert child2.parent is node
 

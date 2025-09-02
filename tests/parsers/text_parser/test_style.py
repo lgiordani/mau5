@@ -17,12 +17,14 @@ def test_underscore():
     source = "_Some text_"
 
     expected_node = Node(
-        children=[
-            Node(
-                content=TextNodeContent("Some text"),
-                info=NodeInfo(context=generate_context(0, 1)),
-            )
-        ],
+        children={
+            "content": [
+                Node(
+                    content=TextNodeContent("Some text"),
+                    info=NodeInfo(context=generate_context(0, 1)),
+                )
+            ]
+        },
         content=StyleNodeContent("underscore"),
         info=NodeInfo(context=generate_context(0, 0)),
     )
@@ -34,12 +36,14 @@ def test_star():
     source = "*Some text*"
 
     expected_node = Node(
-        children=[
-            Node(
-                content=TextNodeContent("Some text"),
-                info=NodeInfo(context=generate_context(0, 1)),
-            )
-        ],
+        children={
+            "content": [
+                Node(
+                    content=TextNodeContent("Some text"),
+                    info=NodeInfo(context=generate_context(0, 1)),
+                )
+            ]
+        },
         content=StyleNodeContent("star"),
         info=NodeInfo(context=generate_context(0, 0)),
     )
@@ -51,12 +55,14 @@ def test_caret():
     source = "^Some text^"
 
     expected_node = Node(
-        children=[
-            Node(
-                content=TextNodeContent("Some text"),
-                info=NodeInfo(context=generate_context(0, 1)),
-            )
-        ],
+        children={
+            "content": [
+                Node(
+                    content=TextNodeContent("Some text"),
+                    info=NodeInfo(context=generate_context(0, 1)),
+                )
+            ]
+        },
         content=StyleNodeContent("caret"),
         info=NodeInfo(context=generate_context(0, 0)),
     )
@@ -68,12 +74,14 @@ def test_tilde():
     source = "~Some text~"
 
     expected_node = Node(
-        children=[
-            Node(
-                content=TextNodeContent("Some text"),
-                info=NodeInfo(context=generate_context(0, 1)),
-            )
-        ],
+        children={
+            "content": [
+                Node(
+                    content=TextNodeContent("Some text"),
+                    info=NodeInfo(context=generate_context(0, 1)),
+                )
+            ]
+        },
         content=StyleNodeContent("tilde"),
         info=NodeInfo(context=generate_context(0, 0)),
     )
@@ -87,18 +95,22 @@ def test_style_within_style():
     expected_node = Node(
         content=StyleNodeContent("underscore"),
         info=NodeInfo(context=generate_context(0, 0)),
-        children=[
-            Node(
-                content=StyleNodeContent("star"),
-                info=NodeInfo(context=generate_context(0, 1)),
-                children=[
-                    Node(
-                        content=TextNodeContent("Words with two styles"),
-                        info=NodeInfo(context=generate_context(0, 2)),
-                    )
-                ],
-            )
-        ],
+        children={
+            "content": [
+                Node(
+                    content=StyleNodeContent("star"),
+                    info=NodeInfo(context=generate_context(0, 1)),
+                    children={
+                        "content": [
+                            Node(
+                                content=TextNodeContent("Words with two styles"),
+                                info=NodeInfo(context=generate_context(0, 2)),
+                            )
+                        ]
+                    },
+                )
+            ]
+        },
     )
 
     assert runner(source).nodes == [expected_node]
@@ -134,12 +146,14 @@ def test_mix_text_and_styles():
             info=NodeInfo(context=generate_context(0, 0)),
         ),
         Node(
-            children=[
-                Node(
-                    content=TextNodeContent("and style"),
-                    info=NodeInfo(context=generate_context(0, 11)),
-                )
-            ],
+            children={
+                "content": [
+                    Node(
+                        content=TextNodeContent("and style"),
+                        info=NodeInfo(context=generate_context(0, 11)),
+                    )
+                ]
+            },
             content=StyleNodeContent("underscore"),
             info=NodeInfo(context=generate_context(0, 10)),
         ),
@@ -148,12 +162,14 @@ def test_mix_text_and_styles():
             info=NodeInfo(context=generate_context(0, 21)),
         ),
         Node(
-            children=[
-                Node(
-                    content=TextNodeContent("more style"),
-                    info=NodeInfo(context=generate_context(0, 27)),
-                )
-            ],
+            children={
+                "content": [
+                    Node(
+                        content=TextNodeContent("more style"),
+                        info=NodeInfo(context=generate_context(0, 27)),
+                    )
+                ]
+            },
             content=StyleNodeContent("star"),
             info=NodeInfo(context=generate_context(0, 26)),
         ),

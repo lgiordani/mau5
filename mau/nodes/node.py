@@ -19,16 +19,37 @@ class NodeInfo:
         position: str | None = None,
         unnamed_args: list | None = None,
         named_args: dict | None = None,
+        tags: list | None = None,
+        subtype: str | None = None,
     ):
+        self.context = context
         self.position = position
         self.unnamed_args = unnamed_args or []
         self.named_args = named_args or {}
-        # self.subtype = subtype
-        # self.tags = tags or []
-        self.context = context
+        self.tags = tags or []
+        self.subtype = subtype
 
     def set_position(self, position: str) -> NodeInfo:
         self.position = position
+
+        return self
+
+    def set_context(self, context: Context) -> NodeInfo:
+        self.context = context
+
+        return self
+
+    def set_attributes(
+        self,
+        unnamed_args: list | None = None,
+        named_args: dict | None = None,
+        tags: list | None = None,
+        subtype: str | None = None,
+    ) -> NodeInfo:
+        self.unnamed_args = unnamed_args or []
+        self.named_args = named_args or {}
+        self.tags = tags or []
+        self.subtype = subtype
 
         return self
 
@@ -56,7 +77,7 @@ class Node(Generic[Content_co]):
         self,
         content: Content_co | None = None,
         parent: Node[NodeContent] | None = None,
-        children: list[Node[NodeContent]] | None = None,
+        children: dict[str, list[Node[NodeContent]]] | None = None,
         info: NodeInfo | None = None,
     ):
         # If we provided no content just
@@ -69,30 +90,11 @@ class Node(Generic[Content_co]):
         # Initialise children as an empty list,
         # then set them using the method that
         # adds the current node as parent.
-        self.children: list[Node[NodeContent]] = []
+        self.children: dict[str, list[Node[NodeContent]]] = {}
         if children:
             self.set_children(children)
 
         self.info: NodeInfo = info or NodeInfo()
-
-    #     self,
-    #     parent=None,
-    #     parent_position=None,
-    #     children=None,
-    #     subtype=None,
-    #     args=None,
-    #     kwargs=None,
-    #     tags=None,
-    #     context=None,
-    # ):
-    # self.parent = parent
-    # self.parent_position = parent_position
-    # self.subtype = subtype
-    # self.children = children or []
-    # self.args = args or []
-    # self.kwargs = kwargs or {}
-    # self.tags = tags or []
-    # self.context = context
 
     def set_parent(self, parent: Node) -> Node:
         # Set the parent of this node.
@@ -100,31 +102,37 @@ class Node(Generic[Content_co]):
 
         return self
 
-    def set_children(self, children: list[Node]) -> Node:
+    def set_children(self, children: dict[str, list[Node[NodeContent]]]) -> Node:
         # Set the children nodes.
         self.children = children
 
         # Add this node as parent of each of them.
-        for child in children:
-            child.set_parent(self)
+        for value in children.values():
+            for child in value:
+                child.set_parent(self)
 
         return self
 
-    def add_children(self, children: list[Node]) -> Node:
+    def add_children(self, children: dict[str, list[Node[NodeContent]]]) -> Node:
         # Add the children nodes to the list.
-        self.children.extend(children)
+        self.children.update(children)
 
         # Add this node as parent of each of them.
-        for child in children:
-            child.set_parent(self)
+        for value in children.values():
+            for child in value:
+                child.set_parent(self)
 
         return self
 
     def asdict(self):
+        children = {}
+        for key, value in self.children.items():
+            children[key] = [i.asdict() for i in value]
+
         return {
             # Parent is excluded to avoid
             # having to deal with recursion
-            "children": [i.asdict() for i in self.children],
+            "children": children,
             "content": self.content.asdict(),
             "info": self.info.asdict(),
         }

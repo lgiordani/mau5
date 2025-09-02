@@ -23,12 +23,14 @@ def test_macro_control_if_true():
     source = '[@if](flag, &true, "TRUE", "FALSE")'
 
     sentence_node = Node(
-        children=[
-            Node(
-                content=TextNodeContent("TRUE"),
-                info=NodeInfo(context=generate_context(0, 20)),
-            )
-        ],
+        children={
+            "result": [
+                Node(
+                    content=TextNodeContent("TRUE"),
+                    info=NodeInfo(context=generate_context(0, 20)),
+                )
+            ]
+        },
         content=SentenceNodeContent(),
         info=NodeInfo(context=generate_context(0, 0)),
     )
@@ -45,12 +47,14 @@ def test_macro_control_if_false():
 
     expected = [
         Node(
-            children=[
-                Node(
-                    content=TextNodeContent("FALSE"),
-                    info=NodeInfo(context=generate_context(0, 29)),
-                )
-            ],
+            children={
+                "result": [
+                    Node(
+                        content=TextNodeContent("FALSE"),
+                        info=NodeInfo(context=generate_context(0, 29)),
+                    )
+                ]
+            },
             content=SentenceNodeContent(),
             info=NodeInfo(context=generate_context(0, 0)),
         ),
@@ -68,12 +72,14 @@ def test_macro_control_if_equal():
 
     expected = [
         Node(
-            children=[
-                Node(
-                    content=TextNodeContent("TRUE"),
-                    info=NodeInfo(context=generate_context(0, 20)),
-                )
-            ],
+            children={
+                "result": [
+                    Node(
+                        content=TextNodeContent("TRUE"),
+                        info=NodeInfo(context=generate_context(0, 20)),
+                    )
+                ]
+            },
             content=SentenceNodeContent(),
             info=NodeInfo(context=generate_context(0, 0)),
         ),
@@ -89,12 +95,14 @@ def test_macro_control_if_not_equal():
 
     expected = [
         Node(
-            children=[
-                Node(
-                    content=TextNodeContent("FALSE"),
-                    info=NodeInfo(context=generate_context(0, 29)),
-                )
-            ],
+            children={
+                "result": [
+                    Node(
+                        content=TextNodeContent("FALSE"),
+                        info=NodeInfo(context=generate_context(0, 29)),
+                    )
+                ]
+            },
             content=SentenceNodeContent(),
             info=NodeInfo(context=generate_context(0, 0)),
         ),
@@ -159,18 +167,22 @@ def test_macro_control_ifeval_true():
 
     expected = [
         Node(
-            children=[
-                Node(
-                    children=[
-                        Node(
-                            content=TextNodeContent("sometext"),
-                            info=NodeInfo(context=generate_context(0, 24)),
-                        ),
-                    ],
-                    content=StyleNodeContent("underscore"),
-                    info=NodeInfo(context=generate_context(0, 23)),
-                )
-            ],
+            children={
+                "result": [
+                    Node(
+                        children={
+                            "content": [
+                                Node(
+                                    content=TextNodeContent("sometext"),
+                                    info=NodeInfo(context=generate_context(0, 24)),
+                                ),
+                            ]
+                        },
+                        content=StyleNodeContent("underscore"),
+                        info=NodeInfo(context=generate_context(0, 23)),
+                    )
+                ]
+            },
             content=SentenceNodeContent(),
             info=NodeInfo(context=generate_context(0, 0)),
         ),
@@ -192,18 +204,22 @@ def test_macro_control_ifeval_false():
 
     expected = [
         Node(
-            children=[
-                Node(
-                    children=[
-                        Node(
-                            content=TextNodeContent("othertext"),
-                            info=NodeInfo(context=generate_context(0, 37)),
-                        ),
-                    ],
-                    content=StyleNodeContent("star"),
-                    info=NodeInfo(context=generate_context(0, 36)),
-                )
-            ],
+            children={
+                "result": [
+                    Node(
+                        children={
+                            "content": [
+                                Node(
+                                    content=TextNodeContent("othertext"),
+                                    info=NodeInfo(context=generate_context(0, 37)),
+                                ),
+                            ]
+                        },
+                        content=StyleNodeContent("star"),
+                        info=NodeInfo(context=generate_context(0, 36)),
+                    )
+                ]
+            },
             content=SentenceNodeContent(),
             info=NodeInfo(context=generate_context(0, 0)),
         ),
@@ -225,18 +241,22 @@ def test_macro_control_ifeval_false_is_not_evaluated():
 
     expected = [
         Node(
-            children=[
-                Node(
-                    children=[
-                        Node(
-                            content=TextNodeContent("sometext"),
-                            info=NodeInfo(context=generate_context(0, 24)),
-                        ),
-                    ],
-                    content=StyleNodeContent("underscore"),
-                    info=NodeInfo(context=generate_context(0, 23)),
-                )
-            ],
+            children={
+                "result": [
+                    Node(
+                        children={
+                            "content": [
+                                Node(
+                                    content=TextNodeContent("sometext"),
+                                    info=NodeInfo(context=generate_context(0, 24)),
+                                ),
+                            ]
+                        },
+                        content=StyleNodeContent("underscore"),
+                        info=NodeInfo(context=generate_context(0, 23)),
+                    )
+                ]
+            },
             content=SentenceNodeContent(),
             info=NodeInfo(context=generate_context(0, 0)),
         ),
@@ -258,18 +278,22 @@ def test_macro_control_ifeval_true_is_not_evaluated():
 
     expected = [
         Node(
-            children=[
-                Node(
-                    children=[
-                        Node(
-                            content=TextNodeContent("sometext"),
-                            info=NodeInfo(context=generate_context(0, 33)),
-                        ),
-                    ],
-                    content=StyleNodeContent("underscore"),
-                    info=NodeInfo(context=generate_context(0, 32)),
-                )
-            ],
+            children={
+                "result": [
+                    Node(
+                        children={
+                            "content": [
+                                Node(
+                                    content=TextNodeContent("sometext"),
+                                    info=NodeInfo(context=generate_context(0, 33)),
+                                ),
+                            ]
+                        },
+                        content=StyleNodeContent("underscore"),
+                        info=NodeInfo(context=generate_context(0, 32)),
+                    )
+                ]
+            },
             content=SentenceNodeContent(),
             info=NodeInfo(context=generate_context(0, 0)),
         ),
@@ -322,7 +346,7 @@ def test_macro_control_default_false():
 
     expected = [
         Node(
-            children=[],
+            children={"result": []},
             content=SentenceNodeContent(),
             info=NodeInfo(context=generate_context(0, 0)),
         ),

@@ -1,8 +1,21 @@
+from dataclasses import asdict, dataclass
+
 from mau.environment.environment import Environment
 from mau.lexers.arguments_lexer import ArgumentsLexer
 from mau.nodes.node import Node, NodeInfo, ValueNodeContent
 from mau.parsers.base_parser import BaseParser
 from mau.tokens.token import Token, TokenType
+
+
+@dataclass
+class Attributes:
+    unnamed_args: list[str]
+    named_args: dict[str, str]
+    tags: list[str]
+    subtype: str | None
+
+    def asdict(self):
+        return asdict(self)
 
 
 class ArgumentsParser(BaseParser):
@@ -70,13 +83,13 @@ class ArgumentsParser(BaseParser):
             # Read and discard the opening quotes
             self._get_token(TokenType.LITERAL, '"')
 
-            # Get everything until the next double quotes.
+            # Get everything before the next double quotes.
             value = self._collect_join([Token(TokenType.LITERAL, '"')])
 
             # Read and discard the closing quotes
             self._get_token(TokenType.LITERAL, '"')
         else:
-            # Get everything until the comma or EOF.
+            # Get everything before the comma or EOF.
             value = self._collect_join([Token(TokenType.LITERAL, ",")])
 
         # The comma is not there after the last argument,
@@ -123,7 +136,7 @@ class ArgumentsParser(BaseParser):
             # context of the first token.
             context = self._peek_token().context
 
-            # Get everything until the next double quotes.
+            # Get everything before the next double quotes.
             value = self._collect_join([Token(TokenType.LITERAL, '"')])
 
             # Read and discard the closing quotes
@@ -133,7 +146,7 @@ class ArgumentsParser(BaseParser):
             # context of the first token.
             context = self._peek_token().context
 
-            # Get everything until the comma or EOF.
+            # Get everything before the comma or EOF.
             value = self._collect_join([Token(TokenType.LITERAL, ",")])
 
         # The comma is not there after the last argument,
@@ -233,6 +246,18 @@ class ArgumentsParser(BaseParser):
 
         # Update the named dictionary with the
         self.named_argument_nodes.update(positional_arguments)
+
+    @property
+    def attributes(self):
+        return Attributes(
+            unnamed_args=[node.content.value for node in self.unnamed_argument_nodes],
+            named_args={
+                key: node.content.value
+                for key, node in self.named_argument_nodes.items()
+            },
+            tags=[node.content.value for node in self.tag_nodes],
+            subtype=self.subtype.content.value if self.subtype else None,
+        )
 
     def parse(self):
         """

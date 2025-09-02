@@ -22,12 +22,14 @@ def test_macro_link():
 
     expected = [
         Node(
-            children=[
-                Node(
-                    content=TextNodeContent("link text"),
-                    info=NodeInfo(context=generate_context(0, 41)),
-                )
-            ],
+            children={
+                "text": [
+                    Node(
+                        content=TextNodeContent("link text"),
+                        info=NodeInfo(context=generate_context(0, 41)),
+                    )
+                ]
+            },
             content=MacroLinkNodeContent(
                 "https://somedomain.org/the/path",
             ),
@@ -43,12 +45,14 @@ def test_macro_link_without_text():
 
     expected = [
         Node(
-            children=[
-                Node(
-                    content=TextNodeContent("https://somedomain.org/the/path"),
-                    info=NodeInfo(context=generate_context(0, 8)),
-                )
-            ],
+            children={
+                "text": [
+                    Node(
+                        content=TextNodeContent("https://somedomain.org/the/path"),
+                        info=NodeInfo(context=generate_context(0, 8)),
+                    )
+                ]
+            },
             content=MacroLinkNodeContent(
                 "https://somedomain.org/the/path",
             ),
@@ -75,22 +79,26 @@ def test_macro_link_with_rich_text():
 
     expected = [
         Node(
-            children=[
-                Node(
-                    content=TextNodeContent("Some text with "),
-                    info=NodeInfo(context=generate_context(0, 43)),
-                ),
-                Node(
-                    children=[
-                        Node(
-                            content=TextNodeContent("styled words"),
-                            info=NodeInfo(context=generate_context(0, 59)),
-                        ),
-                    ],
-                    content=StyleNodeContent("underscore"),
-                    info=NodeInfo(context=generate_context(0, 58)),
-                ),
-            ],
+            children={
+                "text": [
+                    Node(
+                        content=TextNodeContent("Some text with "),
+                        info=NodeInfo(context=generate_context(0, 43)),
+                    ),
+                    Node(
+                        children={
+                            "content": [
+                                Node(
+                                    content=TextNodeContent("styled words"),
+                                    info=NodeInfo(context=generate_context(0, 59)),
+                                ),
+                            ]
+                        },
+                        content=StyleNodeContent("underscore"),
+                        info=NodeInfo(context=generate_context(0, 58)),
+                    ),
+                ]
+            },
             content=MacroLinkNodeContent(
                 "https://somedomain.org/the/path",
             ),
@@ -106,12 +114,14 @@ def test_macro_mailto():
 
     expected = [
         Node(
-            children=[
-                Node(
-                    content=TextNodeContent("info@projectmau.org"),
-                    info=NodeInfo(context=generate_context(0, 9)),
-                ),
-            ],
+            children={
+                "text": [
+                    Node(
+                        content=TextNodeContent("info@projectmau.org"),
+                        info=NodeInfo(context=generate_context(0, 9)),
+                    ),
+                ]
+            },
             content=MacroLinkNodeContent(
                 "mailto:info@projectmau.org",
             ),
@@ -127,12 +137,14 @@ def test_macro_mailto_custom_text():
 
     expected = [
         Node(
-            children=[
-                Node(
-                    content=TextNodeContent("my email"),
-                    info=NodeInfo(context=generate_context(0, 31)),
-                ),
-            ],
+            children={
+                "text": [
+                    Node(
+                        content=TextNodeContent("my email"),
+                        info=NodeInfo(context=generate_context(0, 31)),
+                    ),
+                ]
+            },
             content=MacroLinkNodeContent(
                 "mailto:info@projectmau.org",
             ),

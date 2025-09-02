@@ -21,12 +21,14 @@ def test_macro_header():
     source = '[header](id, "link text")'
 
     expected_node = Node(
-        children=[
-            Node(
-                content=TextNodeContent("link text"),
-                info=NodeInfo(context=generate_context(0, 14)),
-            )
-        ],
+        children={
+            "text": [
+                Node(
+                    content=TextNodeContent("link text"),
+                    info=NodeInfo(context=generate_context(0, 14)),
+                )
+            ]
+        },
         content=MacroHeaderNodeContent("id"),
         info=NodeInfo(context=generate_context(0, 0)),
     )
@@ -40,7 +42,7 @@ def test_macro_header_without_text():
     source = "[header](id)"
 
     expected_node = Node(
-        children=[],
+        children={"text": []},
         content=MacroHeaderNodeContent("id"),
         info=NodeInfo(context=generate_context(0, 0)),
     )

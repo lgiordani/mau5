@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 MAP_STYLES = {"_": "underscore", "*": "star", "^": "caret", "~": "tilde"}
 
 
-# The TextParser is a resursive parser.
+# The TextParser is a recursive parser.
 # The parsing always starts with parse_sentence
 # and from there all components of the text are explored.
 class TextParser(BaseParser):
@@ -149,7 +149,7 @@ class TextParser(BaseParser):
 
     def _parse_sentence(self, stop_tokens=None) -> list[Node]:
         # Parse a sentence, which is made of multiple
-        # elements identified by _parse_text, until
+        # elements identified by _parse_text, before
         # the EOF, the EOL, or a specific set of tokens
         # passed as argument.
         #
@@ -400,7 +400,7 @@ class TextParser(BaseParser):
             TokenType.LITERAL, value_check_function=lambda x: x in "$%"
         )
 
-        # Get the content tokens until the
+        # Get the content tokens before the
         # next escaped marker or EOL.
         content = self._collect_join(
             [Token(TokenType.LITERAL, marker.value), Token(TokenType.EOL)],
@@ -426,7 +426,7 @@ class TextParser(BaseParser):
             value_check_function=lambda x: x in MAP_STYLES,
         )
 
-        # Get everything until the next marker
+        # Get everything before the next marker
         content = self._parse_sentence(
             stop_tokens={Token(TokenType.LITERAL, marker.value)}
         )
@@ -434,9 +434,13 @@ class TextParser(BaseParser):
         # Get the closing marker
         self._get_token(TokenType.LITERAL, marker.value)
 
+        children = {}
+        if content:
+            children["content"] = content
+
         node = Node(
             parent=self.parent_node,
-            children=content,
+            children=children,
             content=StyleNodeContent(MAP_STYLES[marker.value]),
             info=NodeInfo(position=self.parent_position, context=marker.context),
         )
@@ -497,7 +501,7 @@ class TextParser(BaseParser):
 
         node = Node(
             parent=self.parent_node,
-            children=nodes,
+            children={"text": nodes},
             content=MacroLinkNodeContent(target.content.value),
             info=NodeInfo(position=self.parent_position, context=context),
         )
@@ -537,7 +541,7 @@ class TextParser(BaseParser):
 
         node = Node(
             parent=self.parent_node,
-            children=nodes,
+            children={"text": nodes},
             content=MacroHeaderNodeContent(_id=header_id.content.value),
             info=NodeInfo(position=self.parent_position, context=context),
         )
@@ -585,7 +589,7 @@ class TextParser(BaseParser):
 
         node = Node(
             parent=self.parent_node,
-            children=nodes,
+            children={"text": nodes},
             content=MacroLinkNodeContent(f"mailto:{target.content.value}"),
             info=NodeInfo(position=self.parent_position, context=context),
         )
@@ -618,7 +622,7 @@ class TextParser(BaseParser):
 
         node = Node(
             parent=self.parent_node,
-            children=parser.nodes,
+            children={"text": parser.nodes},
             content=MacroClassNodeContent(classes),
             info=NodeInfo(position=self.parent_position, context=context),
         )
@@ -802,7 +806,7 @@ class TextParser(BaseParser):
 
         node = Node(
             parent=self.parent_node,
-            children=nodes,
+            children={"result": nodes},
             content=SentenceNodeContent(),
             info=NodeInfo(position=self.parent_position, context=context),
         )

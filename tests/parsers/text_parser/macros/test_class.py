@@ -22,12 +22,14 @@ def test_macro_class_with_single_class():
 
     expected_nodes = [
         Node(
-            children=[
-                Node(
-                    content=TextNodeContent("text with that class"),
-                    info=NodeInfo(context=generate_context(0, 9)),
-                )
-            ],
+            children={
+                "text": [
+                    Node(
+                        content=TextNodeContent("text with that class"),
+                        info=NodeInfo(context=generate_context(0, 9)),
+                    )
+                ]
+            },
             content=MacroClassNodeContent(["classname"]),
             info=NodeInfo(context=generate_context(0, 0)),
         ),
@@ -41,12 +43,14 @@ def test_macro_class_with_multiple_classes():
 
     expected_nodes = [
         Node(
-            children=[
-                Node(
-                    content=TextNodeContent("text with that class"),
-                    info=NodeInfo(context=generate_context(0, 9)),
-                )
-            ],
+            children={
+                "text": [
+                    Node(
+                        content=TextNodeContent("text with that class"),
+                        info=NodeInfo(context=generate_context(0, 9)),
+                    )
+                ]
+            },
             content=MacroClassNodeContent(["classname1", "classname2"]),
             info=NodeInfo(context=generate_context(0, 0)),
         ),
@@ -60,30 +64,34 @@ def test_macro_class_with_rich_text():
 
     expected_nodes = [
         Node(
-            children=[
-                Node(
-                    content=TextNodeContent("Some text with "),
-                    info=NodeInfo(context=generate_context(0, 9)),
-                ),
-                Node(
-                    content=VerbatimNodeContent("verbatim words"),
-                    info=NodeInfo(context=generate_context(0, 24)),
-                ),
-                Node(
-                    content=TextNodeContent(" and "),
-                    info=NodeInfo(context=generate_context(0, 40)),
-                ),
-                Node(
-                    children=[
-                        Node(
-                            content=TextNodeContent("styled ones"),
-                            info=NodeInfo(context=generate_context(0, 46)),
-                        )
-                    ],
-                    content=StyleNodeContent("underscore"),
-                    info=NodeInfo(context=generate_context(0, 45)),
-                ),
-            ],
+            children={
+                "text": [
+                    Node(
+                        content=TextNodeContent("Some text with "),
+                        info=NodeInfo(context=generate_context(0, 9)),
+                    ),
+                    Node(
+                        content=VerbatimNodeContent("verbatim words"),
+                        info=NodeInfo(context=generate_context(0, 24)),
+                    ),
+                    Node(
+                        content=TextNodeContent(" and "),
+                        info=NodeInfo(context=generate_context(0, 40)),
+                    ),
+                    Node(
+                        children={
+                            "content": [
+                                Node(
+                                    content=TextNodeContent("styled ones"),
+                                    info=NodeInfo(context=generate_context(0, 46)),
+                                )
+                            ]
+                        },
+                        content=StyleNodeContent("underscore"),
+                        info=NodeInfo(context=generate_context(0, 45)),
+                    ),
+                ]
+            },
             content=MacroClassNodeContent(["classname"]),
             info=NodeInfo(context=generate_context(0, 0)),
         ),
@@ -97,12 +105,14 @@ def test_macro_class_without_classes():
 
     expected_nodes = [
         Node(
-            children=[
-                Node(
-                    content=TextNodeContent("text with that class"),
-                    info=NodeInfo(context=generate_context(0, 9)),
-                )
-            ],
+            children={
+                "text": [
+                    Node(
+                        content=TextNodeContent("text with that class"),
+                        info=NodeInfo(context=generate_context(0, 9)),
+                    )
+                ]
+            },
             content=MacroClassNodeContent([]),
             info=NodeInfo(context=generate_context(0, 0)),
         ),

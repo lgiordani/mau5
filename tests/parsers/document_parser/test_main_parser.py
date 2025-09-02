@@ -1,24 +1,23 @@
-# import pytest
-# from mau.environment.environment import Environment
-# from mau.errors import MauErrorException
-# from mau.lexers.document_lexer import DocumentLexer
-# from mau.nodes.inline import StyleNode, TextNode
-# from mau.nodes.page import ContainerNode, DocumentNode
-# from mau.nodes.paragraph import ParagraphNode
-# from mau.nodes.toc import TocNode
-# from mau.parsers.document_parser import DocumentParser
+from mau.lexers.document_lexer import DocumentLexer
+from mau.parsers.document_parser import DocumentParser
+from mau.test_helpers import (
+    init_parser_factory,
+    parser_runner_factory,
+)
 
-# from mau.test_helpers import init_parser_factory, parser_runner_factory
+init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 
-# init_parser = init_parser_factory(DocumentLexer, DocumentParser)
-
-# runner = parser_runner_factory(DocumentLexer, DocumentParser)
+runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-# def test_parse_discards_empty_lines():
-#     source = "\n\n\n\n"
+def test_parse_discards_empty_lines():
+    source = "\n\n\n\n"
 
-#     assert runner(source).nodes == []
+    expected_nodes = []
+
+    parser = runner(source)
+
+    assert parser.nodes == expected_nodes
 
 
 # def test_parse_output():
@@ -54,50 +53,6 @@
 #         "content": ContainerNode(children=[]),
 #         "toc": document,
 #     }
-
-
-# def test_parse_single_line_comments():
-#     source = "// Just a comment"
-
-#     assert runner(source).nodes == []
-
-
-# def test_parse_multi_line_comments():
-#     source = """
-#     ////
-#     This is a
-#     multiline
-#     comment
-#     ////
-#     """
-
-#     assert runner(source).nodes == []
-
-
-# def test_parse_multi_line_comments_with_dangerous_characters():
-#     source = """
-#     ////
-#     .This is a
-#     [multiline]
-#     ----
-#     comment
-#     ////
-#     """
-
-#     assert runner(source).nodes == []
-
-
-# def test_parse_open_multi_line_comments():
-#     source = """
-#     ////
-#     .This is a
-#     [multiline]
-#     ----
-#     comment
-#     """
-
-#     with pytest.raises(MauErrorException):
-#         runner(source)
 
 
 # def test_command():
