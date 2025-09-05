@@ -8,13 +8,13 @@ class TokenType(Enum):
     BLOCK = "BLOCK"
     COMMAND = "COMMAND"
     COMMENT = "COMMENT"
-    CONTENT = "CONTENT"
     CONTROL = "CONTROL"
     EMPTY = "EMPTY"
     EOF = "EOF"
     EOL = "EOL"
     HEADER = "HEADER"
     HORIZONTAL_RULE = "HORIZONTAL_RULE"
+    INCLUDE = "INCLUDE"
     LIST = "LIST"
     # Characters with specific syntax value like
     # commas to separate between arguments, colons,

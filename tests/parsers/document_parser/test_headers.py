@@ -1,18 +1,24 @@
-# from unittest.mock import patch
+from unittest.mock import patch
 
-# import pytest
-# from mau.environment.environment import Environment
-# from mau.errors import MauErrorException
-# from mau.lexers.document_lexer import DocumentLexer
-# from mau.nodes.header import HeaderNode
-# from mau.nodes.inline import SentenceNode, TextNode
-# from mau.parsers.document_parser import DocumentParser, header_anchor
+from mau.environment.environment import Environment
+from mau.lexers.document_lexer import DocumentLexer
+from mau.parsers.document_parser import DocumentParser
+from mau.nodes.node import Node, NodeInfo
+from mau.nodes.inline import TextNodeContent, SentenceNodeContent
+from mau.nodes.header import HeaderNodeContent
+from mau.nodes.include import IncludeNodeContent
+from mau.nodes.macros import MacroLinkNodeContent
+from mau.nodes.paragraph import ParagraphNodeContent
+from mau.test_helpers import (
+    init_parser_factory,
+    parser_runner_factory,
+    generate_context,
+    compare_nodes,
+)
 
-# from mau.test_helpers import init_parser_factory, parser_runner_factory
+init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 
-# init_parser = init_parser_factory(DocumentLexer, DocumentParser)
-
-# runner = parser_runner_factory(DocumentLexer, DocumentParser)
+runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
 # @patch("mau.parsers.toc.hashlib.md5")
@@ -67,13 +73,33 @@
 #     = Title of the section
 #     """
 
-#     assert runner(source, environment).nodes == [
-#         HeaderNode(
-#             value=SentenceNode(children=[TextNode("Title of the section")]),
-#             level="1",
-#             anchor="XXXXXY",
-#         )
-#     ]
+#     parser = runner(source)
+
+#     compare_nodes(
+#         parser.nodes,
+#         [
+#             Node(
+#                 content=HeaderNodeContent(1, "XXXXXY"),
+#                 info=NodeInfo(context=generate_context(1, 0)),
+#                 children={
+#                     "content": [
+#                         Node(
+#                             content=SentenceNodeContent(),
+#                             info=NodeInfo(context=generate_context(1, 2)),
+#                             children={
+#                                 "content": [
+#                                     Node(
+#                                         content=TextNodeContent("Title of the section"),
+#                                         info=NodeInfo(context=generate_context(1, 2)),
+#                                     )
+#                                 ]
+#                             },
+#                         )
+#                     ]
+#                 },
+#             )
+#         ],
+#     )
 
 
 # def test_parse_header_level_3():

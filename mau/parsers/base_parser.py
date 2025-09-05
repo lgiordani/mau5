@@ -491,6 +491,12 @@ class BaseParser:
             if result is False:
                 raise self._error("Cannot parse token")
 
+        # Check the produced nodes.
+        # This is going to scan each node and each child
+        # looking for inconsistencies between the allowed
+        # keys and the actual children keys.
+        recursive_check_nodes(self.nodes)
+
     @classmethod
     def lex_and_parse(cls, text, context, environment, *args, **kwargs):
         text_buffer = cls.text_buffer_class(text, context)
@@ -505,3 +511,17 @@ class BaseParser:
 
     def finalise(self):
         pass
+
+
+def recursive_check_nodes(nodes: list[Node]):
+    if not nodes:
+        return
+
+    for node in nodes:
+        if node.check_children():
+            raise ValueError(
+                f"{node.content.__class__} accepts {node.content.allowed_keys} - found {node.children.keys()} "
+            )
+
+        for key, value in node.children.items():
+            recursive_check_nodes(value)

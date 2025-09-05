@@ -1,4 +1,4 @@
-from mau.nodes.node import Node, ValueNodeContent
+from mau.nodes.node import Node, NodeContent, ValueNodeContent
 
 
 def test_node():
@@ -49,19 +49,6 @@ def test_node_children():
     assert child2.parent is node
 
 
-def test_node_set_children():
-    child1 = Node()
-    child2 = Node()
-    node = Node()
-
-    node.set_children({"content": [child1, child2]})
-
-    assert child1 in node.children["content"]
-    assert child2 in node.children["content"]
-    assert child1.parent is node
-    assert child2.parent is node
-
-
 def test_node_add_children():
     child1 = Node()
     child2 = Node()
@@ -69,8 +56,32 @@ def test_node_add_children():
 
     node.add_children({"content": [child2]})
 
-    assert child1 in node.children["content"]
-    assert child2 in node.children["content"]
+    assert len(node.children["content"]) == 2
+    assert child1.parent is node
+    assert child2.parent is node
+
+
+def test_node_add_children_at_existing_position():
+    child1 = Node()
+    child2 = Node()
+    node = Node(children={"content": [child1]})
+
+    node.add_children_at_position("content", [child2])
+
+    assert len(node.children["content"]) == 2
+    assert child1.parent is node
+    assert child2.parent is node
+
+
+def test_node_add_children_at_non_existing_position():
+    child1 = Node()
+    child2 = Node()
+    node = Node(children={"content": [child1]})
+
+    node.add_children_at_position("title", [child2])
+
+    assert len(node.children["content"]) == 1
+    assert len(node.children["title"]) == 1
     assert child1.parent is node
     assert child2.parent is node
 
@@ -88,6 +99,26 @@ def test_value_node_content():
     assert content.type == "value"
     assert content.value == "somevalue"
     assert content.asdict() == {"type": "value", "value": "somevalue"}
+
+
+def test_node_check_children_allowed():
+    class TestNodeContent(NodeContent):
+        type = "test"
+        allowed_keys = ["content"]
+
+    node = Node(content=TestNodeContent(), children={"content": []})
+
+    assert node.check_children() == set()
+
+
+def test_node_check_children_not_allowed():
+    class TestNodeContent(NodeContent):
+        type = "test"
+        allowed_keys = ["content"]
+
+    node = Node(content=TestNodeContent(), children={"title": []})
+
+    assert node.check_children() == {"title"}
 
 
 # def test_node_accept():

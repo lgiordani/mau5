@@ -254,7 +254,7 @@ class DocumentLexer(BaseLexer):
         tokens = []
 
         tokens = [
-            self._create_token_and_skip(TokenType.CONTENT, prefix),
+            self._create_token_and_skip(TokenType.INCLUDE, prefix),
             self._create_token_and_skip(TokenType.TEXT, content_type),
             self._create_token_and_skip(TokenType.LITERAL, separator),
         ]
@@ -315,7 +315,7 @@ class DocumentLexer(BaseLexer):
         # [ARGUMENTS]
 
         match = rematch(
-            r"^(?P<prefix>\[)(?P<arguments>.*)(?P<suffix>\])",
+            r"^(?P<prefix>\[)(?P<arguments>.*)(?P<suffix>\])$",
             self._current_line,
         )
 

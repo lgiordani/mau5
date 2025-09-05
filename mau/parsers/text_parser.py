@@ -468,7 +468,7 @@ class TextParser(BaseParser):
     ) -> Node:
         # Parse a link macro in the form [link](target, text).
 
-        # Assign names and default values to arguments.
+        # Assign names to arguments.
         parser.set_names(["target", "text"])
 
         # Extract the target of the link.
@@ -514,7 +514,7 @@ class TextParser(BaseParser):
         # Parse a header link macro in the form [header](header_id, text).
         # This is similar to a macro link but the URI is an internal header ID.
 
-        # Assign names and default values to arguments.
+        # Assign names to arguments.
         parser.set_names(["header_id", "text"])
 
         # Extract the header ID.
@@ -556,7 +556,7 @@ class TextParser(BaseParser):
         # Parse a mailto macro in the form [mailto](email, text).
         # This is similar to a macro link but the URI is a `mailto:`.
 
-        # Assign names and default values to arguments.
+        # Assign names to arguments.
         parser.set_names(["email", "text"])
 
         # Extract the linked email and add the `mailto:` prefix.
@@ -601,7 +601,7 @@ class TextParser(BaseParser):
     ) -> Node:
         # Parse a class macro in the form [class](text, class1, class2, ...).
 
-        # Assign names and default values to arguments.
+        # Assign names to arguments.
         parser.set_names(["text"])
 
         # Extract the classes.
@@ -634,7 +634,7 @@ class TextParser(BaseParser):
     ) -> Node:
         # Parse an inline image macro in the form [image](uri, alt_text, width, height).
 
-        # Assign names and default values to arguments.
+        # Assign names to arguments.
         parser.set_names(["uri", "alt_text", "width", "height"])
 
         # Extract the URI.
@@ -673,7 +673,7 @@ class TextParser(BaseParser):
     ) -> Node:
         # Parse a footnote macro in the form [footnote](name).
 
-        # Assign names and default values to arguments.
+        # Assign names to arguments.
         parser.set_names(["name"])
 
         # Extract the footnote name.
@@ -741,7 +741,7 @@ class TextParser(BaseParser):
         if operator not in ["if", "ifeval"]:
             raise self._error(f"Control operator '{operator}' is not supported")
 
-        # Assign names and default values to arguments.
+        # Assign names to arguments.
         parser.set_names(["variable", "test", "true_case", "false_case"])
 
         # Get the mandatory values
@@ -806,7 +806,7 @@ class TextParser(BaseParser):
 
         node = Node(
             parent=self.parent_node,
-            children={"result": nodes},
+            children={"content": nodes},
             content=SentenceNodeContent(),
             info=NodeInfo(position=self.parent_position, context=context),
         )

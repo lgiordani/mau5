@@ -33,6 +33,7 @@ class MacroClassNodeContent(NodeContent):
     """Text with one or more classes."""
 
     type = "macro.class"
+    allowed_keys = ["text"]
 
     def __init__(self, classes: list[str]):
         self.classes = classes
@@ -53,6 +54,7 @@ class MacroLinkNodeContent(ValueNodeContent):
 
     type = "macro.link"
     value_key = "target"
+    allowed_keys = ["text"]
 
 
 class MacroImageNodeContent(NodeContent):
@@ -90,6 +92,7 @@ class MacroHeaderNodeContent(NodeContent):
     """This node contains a link to a header node."""
 
     type = "macro.header"
+    allowed_keys = ["text"]
 
     def __init__(self, _id: str, text: str | None = None):
         self.id = _id

@@ -2,6 +2,8 @@
 
 from mau.environment.environment import Environment
 
+from mau.nodes.include import IncludeNodeContent
+
 # from mau.lexers.base_lexer import TokenTypes as TokenType
 from mau.lexers.document_lexer import DocumentLexer
 
@@ -9,11 +11,12 @@ from mau.lexers.document_lexer import DocumentLexer
 # from mau.nodes.block import BlockGroupNode, BlockNode
 # from mau.nodes.content import ContentImageNode, ContentNode
 # from mau.nodes.header import HeaderNode
-# from mau.nodes.inline import RawNode, SentenceNode
+from mau.nodes.inline import SentenceNodeContent
+
 # from mau.nodes.lists import ListItemNode, ListNode
 from mau.nodes.paragraph import ParagraphNodeContent
 from mau.nodes.document import HorizontalRuleNodeContent
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import Node, NodeInfo, NodeContent
 
 # from mau.nodes.page import ContainerNode
 # from mau.nodes.paragraph import ParagraphNode
@@ -28,7 +31,7 @@ from mau.parsers.base_parser import BaseParser
 from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.tokens.token import Token, TokenType
 
-# from mau.parsers.text_parser import TextParser
+from mau.parsers.text_parser import TextParser
 # from mau.parsers.toc import TocManager, header_anchor
 
 
@@ -94,33 +97,33 @@ class DocumentParser(BaseParser):
 
         self.attributes_stack: list[Attributes] = []
 
-    #     # These are the default block aliases
-    #     # If subtype is not set it will be the alias itself.
-    #     self.block_aliases = {
-    #         "source": {
-    #             "subtype": None,
-    #             "mandatory_args": ["language"],
-    #             "defaults": {"engine": "source", "language": "text"},
-    #         },
-    #         "footnote": {
-    #             "subtype": None,
-    #             "mandatory_args": ["name"],
-    #             "defaults": {"engine": "footnote"},
-    #         },
-    #         "admonition": {
-    #             "mandatory_args": ["class", "icon"],
-    #         },
-    #     }
+        #     # These are the default block aliases
+        #     # If subtype is not set it will be the alias itself.
+        #     self.block_aliases = {
+        #         "source": {
+        #             "subtype": None,
+        #             "mandatory_args": ["language"],
+        #             "defaults": {"engine": "source", "language": "text"},
+        #         },
+        #         "footnote": {
+        #             "subtype": None,
+        #             "mandatory_args": ["name"],
+        #             "defaults": {"engine": "footnote"},
+        #         },
+        #         "admonition": {
+        #             "mandatory_args": ["class", "icon"],
+        #         },
+        #     }
 
-    #     # Iterate through block definitions passed as variables
-    #     self.block_aliases.update(
-    #         self.environment.getvar(
-    #             "mau.parser.block_definitions", Environment()
-    #         ).asdict()
-    #     )
+        #     # Iterate through block definitions passed as variables
+        #     self.block_aliases.update(
+        #         self.environment.getvar(
+        #             "mau.parser.block_definitions", Environment()
+        #         ).asdict()
+        #     )
 
-    #     # This is a buffer for a block title
-    #     self.title = (None, None)
+        # This is a buffer for a block title
+        self.title = None
 
     #     # This is a buffer for a control
     #     self.control = (None, None, None)
@@ -153,48 +156,46 @@ class DocumentParser(BaseParser):
             self._process_multi_line_comment,
             self._parse_variable_definition,
             #         self._process_command,
-            #         self._process_title,
+            self._process_title,
             #         self._process_control,
             self._process_arguments,
-            #         self._process_header,
+            self._process_header,
             #         self._process_block,
-            #         self._process_content,
+            self._process_include,
             #         self._process_list,
             self._process_paragraph,
         ]
 
-    # def _push_title(self, text, context):
-    #     # When we parse a title we can store it here
-    #     # so that it is available to the next block
-    #     # that will use it.
-    #     self.title = (text, context)
+    def _push_title(self, text, context):
+        # When we parse a title we can store it here
+        # so that it is available to the next block
+        # that will use it.
 
-    # def _pop_title(self, node):
-    #     # This return the title and resets the
-    #     # cached one, so no other block will
-    #     # use it.
-    #     text, context = self.title
-    #     self._reset_title()
+        text_parser = TextParser.lex_and_parse(
+            text,
+            context,
+            self.environment,
+        )
 
-    #     if text is None:
-    #         return None
+        if not text_parser.nodes:
+            return
 
-    #     text_parser = TextParser.analyse(
-    #         text,
-    #         context,
-    #         self.environment,
-    #         parent_node=node,
-    #         parent_position="title",
-    #     )
+        node = Node(
+            content=SentenceNodeContent(),
+            children={"content": text_parser.nodes},
+            info=NodeInfo(context=context),
+        )
 
-    #     return SentenceNode(
-    #         parent=node,
-    #         parent_position="title",
-    #         children=text_parser.nodes,
-    #     )
+        self.title = node
 
-    # def _reset_title(self):
-    #     self.title = (None, None)
+    def _pop_title(self):
+        # This return the title and resets the
+        # cached one, so no other block will
+        # use it.
+        node = self.title
+        self.title = None
+
+        return node
 
     # def _push_control(self, operator, statement, context):
     #     self.control = (operator, statement, context)
@@ -263,39 +264,49 @@ class DocumentParser(BaseParser):
 
     #     return " ".join(values)
 
-    # def _parse_text_content(
-    #     self, text, parent_node=None, parent_position=None, context=None
-    # ):
-    #     # Parse a piece of text using the TextParser.
+    def _parse_text(self, text, context=None) -> list[Node[NodeContent]]:
+        # This parses a piece of text.
+        # It runs the text through the preprocessor to
+        # replace variables, then parses it storing
+        # footnotes and internal links, and finally
+        # returns the nodes.
 
-    #     current_context = context or self._current_token.context
+        # Find the context of the parsing.
+        current_context = context or self._current_token.context
 
-    #     # Replace variables
-    #     preprocess_parser = PreprocessVariablesParser.analyse(
-    #         text,
-    #         current_context,
-    #         self.environment,
-    #     )
-    #     text = preprocess_parser.nodes[0].value
+        # Replace variables
+        preprocess_parser = PreprocessVariablesParser.lex_and_parse(
+            text,
+            current_context,
+            self.environment,
+        )
 
-    #     # Parse the text
-    #     text_parser = TextParser.analyse(
-    #         text,
-    #         current_context,
-    #         self.environment,
-    #         parent_node=parent_node,
-    #         parent_position=parent_position,
-    #     )
+        # If the preprocessor doesn't return any
+        # node we can stop here.
+        if not preprocess_parser.nodes:
+            return []
 
-    #     # Extract the footnote mentions
-    #     # found in this piece of text
-    #     self.footnotes_manager.update_mentions(text_parser.footnotes)
+        # The preprocess parser outputs a single node.
+        text = preprocess_parser.nodes[0].content.value
 
-    #     # Extract the internal links
-    #     # found in this piece of text
-    #     self.internal_links_manager.update_links(text_parser.links)
+        # Parse the text
+        text_parser = TextParser.lex_and_parse(
+            text,
+            current_context,
+            self.environment,
+        )
 
-    #     return text_parser.nodes
+        # Extract the footnote mentions
+        # found in this piece of text
+        # TODO
+        # self.footnotes_manager.update_mentions(text_parser.footnotes)
+
+        # Extract the internal links
+        # found in this piece of text
+        # TODO
+        # self.internal_links_manager.update_links(text_parser.links)
+
+        return text_parser.nodes
 
     def _process_eol(self) -> bool:
         # This simply ignores the end of line.
@@ -504,27 +515,23 @@ class DocumentParser(BaseParser):
 
     #     return True
 
-    # def _process_title(self):
-    #     # Parse a title in the form
-    #     #
-    #     # . This is a title
-    #     # or
-    #     # .This is a title
+    def _process_title(self):
+        # Parse a title in the form
+        #
+        # . This is a title
+        # or
+        # .This is a title
 
-    #     # Parse the mandatory dot
-    #     dot = self._get_token(TokenType.TITLE, ".")
+        # Parse the mandatory dot
+        dot = self._get_token(TokenType.TITLE, ".")
 
-    #     # Parse the optional white spaces
-    #     with self:
-    #         self._get_token(TokenType.WHITESPACE)
+        # Get the text of the title
+        text = self._get_token(TokenType.TEXT).value
+        self._get_token(TokenType.EOL)
 
-    #     # Get the text of the title
-    #     text = self._get_token(TokenType.TEXT).value
-    #     self._get_token(TokenType.EOL)
+        self._push_title(text, dot.context)
 
-    #     self._push_title(text, dot.context)
-
-    #     return True
+        return True
 
     # def _process_control(self):
     #     # Parse a control statement in the form
@@ -589,74 +596,90 @@ class DocumentParser(BaseParser):
 
         return True
 
-    # def _process_header(self):
-    #     # Parse a header in the form
-    #     #
-    #     # = Header
-    #     #
-    #     # The number of equal signs is arbitrary
-    #     # and represents the level of the header.
-    #     # Headers are automatically assigned an anchor
-    #     # created using the provided function self.header_anchor
+    def _process_header(self):
+        # Parse a header in the form
+        #
+        # = Header
+        #
+        # The number of equal signs is arbitrary
+        # and represents the level of the header.
+        # Headers are automatically assigned an anchor
+        # created using the provided function self.header_anchor
 
-    #     # Get all the equal signs
-    #     header = self._get_token(TokenType.HEADER).value
+        # Get all the equal signs.
+        header = self._get_token(TokenType.HEADER).value
 
-    #     # Get the mandatory white spaces
-    #     self._get_token(TokenType.WHITESPACE)
+        # Get the text of the header.
+        text_token = self._get_token(TokenType.TEXT)
 
-    #     # Get the text of the header and calculate the level
-    #     text_token = self._get_token(TokenType.TEXT)
-    #     level = len(header)
+        # Calculate the level of the header.
+        level = len(header)
 
-    #     preprocess_parser = PreprocessVariablesParser.analyse(
-    #         text_token.value,
-    #         text_token.context,
-    #         self.environment,
-    #     )
-    #     text = preprocess_parser.nodes[0].value
+        # Replace variables
+        preprocess_parser = PreprocessVariablesParser.lex_and_parse(
+            text_token.value,
+            text_token.context,
+            self.environment,
+        )
 
-    #     # Check the control
-    #     if self._pop_control() is False:
-    #         return True
+        # If the preprocessor doesn't return any
+        # node we can stop here.
+        if not preprocess_parser.nodes:
+            return []
 
-    #     # Consume the parser arguments
-    #     args, kwargs, tags, subtype = self.attributes_manager.pop()
+        # The preprocess parser outputs a single node.
+        text = preprocess_parser.nodes[0].content.value
 
-    #     # Create the anchor
-    #     anchor = kwargs.pop("anchor", self.header_anchor(text, level))
+        # # Check the control
+        # if self._pop_control() is False:
+        #     return True
 
-    #     node = HeaderNode(
-    #         level=str(level),
-    #         anchor=anchor,
-    #         subtype=subtype,
-    #         args=args,
-    #         kwargs=kwargs,
-    #         tags=tags,
-    #     )
+        # Initialise the info for this node.
+        info = NodeInfo(context=header.context)
 
-    #     # Titles can contain Mau code
-    #     text_parser = TextParser.analyse(
-    #         text,
-    #         text_token.context,
-    #         self.environment,
-    #         parent_node=node,
-    #     )
-    #     node.value = SentenceNode(
-    #         parent=node,
-    #         children=text_parser.nodes,
-    #     )
+        # If there are attributes in the stack
+        # we need to use them to initialise the
+        # node info.
+        if self.attributes_stack:
+            attributes = self.attributes_stack.pop()
 
-    #     # If there is an id store the header
-    #     # to be processed by internal links
-    #     if "id" in node.kwargs:
-    #         self.internal_links_manager.add_header(node.kwargs["id"], node)
+            # I need to get anchor from the attributes.
+            info = NodeInfo(context=header.context, **attributes.asdict())
 
-    #     self.toc_manager.add_header_node(node)
+        # Create the anchor
+        anchor = kwargs.pop("anchor", self.header_anchor(text, level))
 
-    #     self._save(node)
+        node = HeaderNode(
+            level=str(level),
+            anchor=anchor,
+            subtype=subtype,
+            args=args,
+            kwargs=kwargs,
+            tags=tags,
+        )
 
-    #     return True
+        # Titles can contain Mau code
+        text_parser = TextParser.analyse(
+            text,
+            text_token.context,
+            self.environment,
+            parent_node=node,
+        )
+        node.value = SentenceNode(
+            parent=node,
+            children=text_parser.nodes,
+        )
+
+        # If there is an id store the header
+        # to be processed by internal links
+        if "id" in node.kwargs:
+            self.internal_links_manager.add_header(node.kwargs["id"], node)
+
+        self.toc_manager.add_header_node(node)
+
+        self._save(node)
+
+        return True
 
     # def _collect_lines(self, stop_tokens):
     #     # This collects several lines of text in a list
@@ -1023,42 +1046,55 @@ class DocumentParser(BaseParser):
 
     #     self._save(node)
 
-    # def _process_content(self):
-    #     # Parse content in the form
-    #     #
-    #     # << content_type:URI
+    def _process_include(self):
+        # Parse content in the form
+        #
+        # << content_type:URI
 
-    #     # Get the mandatory "<<"
-    #     self._get_token(TokenType.CONTENT)
+        # Get the mandatory prefix.
+        prefix = self._get_token(TokenType.INCLUDE)
 
-    #     with self:
-    #         self._get_token(TokenType.WHITESPACE)
+        # Get the content type.
+        content_type = self._get_token(TokenType.TEXT).value
 
-    #     # Get the content type
-    #     content_type = self._get_token(TokenType.TEXT).value
-    #     self._get_token(TokenType.LITERAL, ":")
+        # Get the mandatory colon.
+        self._get_token(TokenType.LITERAL, ":")
 
-    #     args, kwargs, tags, subtype = self.attributes_manager.pop()
+        # Get the listed URIs.
+        arguments = self._get_token(TokenType.TEXT)
 
-    #     uris = self._get_token(TokenType.TEXT)
+        with self:
+            arguments_parser = ArgumentsParser.lex_and_parse(
+                arguments.value, arguments.context, self.environment
+            )
 
-    #     with self:
-    #         arguments_parser = ArgumentsParser.analyse(
-    #             uris.value, uris.context, self.environment
-    #         )
+        # Get the URIs list.
+        uris = arguments_parser.attributes.unnamed_args
 
-    #         uris, _, _, _ = arguments_parser.process_arguments()
+        # If there are attributes in the stack
+        # we need to use them to initialise the
+        # node info.
+        info = NodeInfo(context=prefix.context)
+        if self.attributes_stack:
+            attributes = self.attributes_stack.pop()
 
-    #     # Check the control
-    #     if self._pop_control() is False:
-    #         return True
+            info = NodeInfo(context=prefix.context, **attributes.asdict())
 
-    #     if content_type == "image":
-    #         return self._parse_content_image(uris, subtype, args, kwargs, tags)
+        # # Check the control
+        # if self._pop_control() is False:
+        #     return True
 
-    #     return self._parse_standard_content(
-    #         content_type, uris, subtype, args, kwargs, tags
-    #     )
+        # if content_type == "image":
+        #     return self._parse_content_image(uris, subtype, args, kwargs, tags)
+
+        node = Node(content=IncludeNodeContent(content_type, uris), info=info)
+
+        if title := self._pop_title():
+            node.add_children({"title": [title]})
+
+        self._save(node)
+
+        return True
 
     # def _parse_content_image(self, uris, subtype, args, kwargs, tags):
     #     # Parse a content image in the form
@@ -1309,17 +1345,20 @@ class DocumentParser(BaseParser):
 
             info.set_attributes(**attributes.asdict())
 
+        # Process the text of the paragraph.
+        text_nodes = self._parse_text(text, context=context)
+
         node = Node(
+            children={
+                "content": text_nodes,
+            },
             content=ParagraphNodeContent(),
             parent=self.parent_node,
             info=info,
         )
 
-        node.title = self._pop_title(node)
-
-        node.children = self._parse_text_content(
-            text, parent_node=node, context=context
-        )
+        if title := self._pop_title():
+            node.add_children({"title": [title]})
 
         self._save(node)
 

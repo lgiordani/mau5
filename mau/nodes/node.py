@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
+from collections import defaultdict
 from typing import Generic, TypeVar
 
 from mau.text_buffer.context import Context
@@ -63,7 +64,8 @@ class NodeInfo:
 
 
 class NodeContent(ABC):
-    type = "none"
+    type: str = "none"
+    allowed_keys: list[str] = []
 
     def asdict(self):
         return {"type": self.type}
@@ -90,9 +92,9 @@ class Node(Generic[Content_co]):
         # Initialise children as an empty list,
         # then set them using the method that
         # adds the current node as parent.
-        self.children: dict[str, list[Node[NodeContent]]] = {}
+        self.children: dict[str, list[Node[NodeContent]]] = defaultdict(list)
         if children:
-            self.set_children(children)
+            self.add_children(children)
 
         self.info: NodeInfo = info or NodeInfo()
 
@@ -102,27 +104,31 @@ class Node(Generic[Content_co]):
 
         return self
 
-    def set_children(self, children: dict[str, list[Node[NodeContent]]]) -> Node:
-        # Set the children nodes.
-        self.children = children
+    def add_children_at_position(self, position, children: list[Node[NodeContent]]):
+        # Add the children nodes to the list at the given position.
+        self.children[position].extend(children)
 
-        # Add this node as parent of each of them.
-        for value in children.values():
-            for child in value:
-                child.set_parent(self)
-
-        return self
+        # Add this node as parent of each element.
+        for child in children:
+            child.set_parent(self)
 
     def add_children(self, children: dict[str, list[Node[NodeContent]]]) -> Node:
-        # Add the children nodes to the list.
-        self.children.update(children)
-
-        # Add this node as parent of each of them.
-        for value in children.values():
-            for child in value:
-                child.set_parent(self)
+        for position, elements in children.items():
+            self.add_children_at_position(position, elements)
 
         return self
+
+    def check_children(self) -> set[str]:
+        if not self.content:
+            return set()
+
+        children_keys = set(self.children.keys())
+        allowed_keys = set(self.content.allowed_keys)
+
+        if not children_keys.issubset(allowed_keys):
+            return children_keys - allowed_keys
+
+        return set()
 
     def asdict(self):
         children = {}

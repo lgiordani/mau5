@@ -63,11 +63,21 @@ def test_attributes_no_closing_bracket():
     ]
 
 
-def test_attributes_marker_in_text():
+def test_square_brackets_in_text():
     lex = runner("Not [attributes]")
 
     assert lex.tokens == [
         Token(TokenType.TEXT, "Not [attributes]"),
+        Token(TokenType.EOL),
+        Token(TokenType.EOF),
+    ]
+
+
+def test_square_brackets_at_the_beginning():
+    lex = runner("[not] attributes")
+
+    assert lex.tokens == [
+        Token(TokenType.TEXT, "[not] attributes"),
         Token(TokenType.EOL),
         Token(TokenType.EOF),
     ]
@@ -267,7 +277,7 @@ def test_include_content():
     lex = runner("<<type:/path/to/it.jpg")
 
     assert lex.tokens == [
-        Token(TokenType.CONTENT, "<<"),
+        Token(TokenType.INCLUDE, "<<"),
         Token(TokenType.TEXT, "type"),
         Token(TokenType.LITERAL, ":"),
         Token(TokenType.TEXT, "/path/to/it.jpg"),
@@ -280,7 +290,7 @@ def test_include_content_without_arguments():
     lex = runner("<<type:")
 
     assert lex.tokens == [
-        Token(TokenType.CONTENT, "<<"),
+        Token(TokenType.INCLUDE, "<<"),
         Token(TokenType.TEXT, "type"),
         Token(TokenType.LITERAL, ":"),
         Token(TokenType.EOL),
@@ -292,7 +302,7 @@ def test_include_content_with_space():
     lex = runner("<<  type:/path/to/it.jpg")
 
     assert lex.tokens == [
-        Token(TokenType.CONTENT, "<<"),
+        Token(TokenType.INCLUDE, "<<"),
         Token(TokenType.TEXT, "type"),
         Token(TokenType.LITERAL, ":"),
         Token(TokenType.TEXT, "/path/to/it.jpg"),

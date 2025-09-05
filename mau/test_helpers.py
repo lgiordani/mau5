@@ -11,6 +11,10 @@ def dedent(text):
     return textwrap.dedent(text).strip()
 
 
+def compare_nodes(nodes_left, nodes_right):
+    assert [i.asdict() for i in nodes_left] == [i.asdict() for i in nodes_right]
+
+
 def generate_context(line: int, column: int):
     return Context(line, column, TEST_CONTEXT_SOURCE)
 

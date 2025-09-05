@@ -24,7 +24,7 @@ def test_macro_control_if_true():
 
     sentence_node = Node(
         children={
-            "result": [
+            "content": [
                 Node(
                     content=TextNodeContent("TRUE"),
                     info=NodeInfo(context=generate_context(0, 20)),
@@ -48,7 +48,7 @@ def test_macro_control_if_false():
     expected = [
         Node(
             children={
-                "result": [
+                "content": [
                     Node(
                         content=TextNodeContent("FALSE"),
                         info=NodeInfo(context=generate_context(0, 29)),
@@ -73,7 +73,7 @@ def test_macro_control_if_equal():
     expected = [
         Node(
             children={
-                "result": [
+                "content": [
                     Node(
                         content=TextNodeContent("TRUE"),
                         info=NodeInfo(context=generate_context(0, 20)),
@@ -96,7 +96,7 @@ def test_macro_control_if_not_equal():
     expected = [
         Node(
             children={
-                "result": [
+                "content": [
                     Node(
                         content=TextNodeContent("FALSE"),
                         info=NodeInfo(context=generate_context(0, 29)),
@@ -168,7 +168,7 @@ def test_macro_control_ifeval_true():
     expected = [
         Node(
             children={
-                "result": [
+                "content": [
                     Node(
                         children={
                             "content": [
@@ -205,7 +205,7 @@ def test_macro_control_ifeval_false():
     expected = [
         Node(
             children={
-                "result": [
+                "content": [
                     Node(
                         children={
                             "content": [
@@ -242,7 +242,7 @@ def test_macro_control_ifeval_false_is_not_evaluated():
     expected = [
         Node(
             children={
-                "result": [
+                "content": [
                     Node(
                         children={
                             "content": [
@@ -279,7 +279,7 @@ def test_macro_control_ifeval_true_is_not_evaluated():
     expected = [
         Node(
             children={
-                "result": [
+                "content": [
                     Node(
                         children={
                             "content": [
@@ -346,7 +346,7 @@ def test_macro_control_default_false():
 
     expected = [
         Node(
-            children={"result": []},
+            children={"content": []},
             content=SentenceNodeContent(),
             info=NodeInfo(context=generate_context(0, 0)),
         ),
