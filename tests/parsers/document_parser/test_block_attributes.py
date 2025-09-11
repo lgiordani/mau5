@@ -16,48 +16,7 @@
 # runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-# def test_block_attributes_args_and_kwargs():
-#     source = """
-#     [*subtype,arg1,key1=value1]
-#     ----
-#     ----
-#     """
-
-#     assert runner(source).nodes == [
-#         BlockNode(
-#             subtype="subtype",
-#             classes=[],
-#             title=None,
-#             engine=None,
-#             preprocessor="none",
-#             args=["arg1"],
-#             kwargs={"key1": "value1"},
-#         )
-#     ]
-
-
-# def test_block_attributes_can_contain_variables():
-#     source = """
-#     :value1:42
-
-#     [*subtype,key1={value1}]
-#     ----
-#     ----
-#     """
-
-#     assert runner(source).nodes == [
-#         BlockNode(
-#             subtype="subtype",
-#             classes=[],
-#             title=None,
-#             engine=None,
-#             preprocessor="none",
-#             args=[],
-#             kwargs={"key1": "42"},
-#         )
-#     ]
-
-
+# WITH TAGS!
 # def test_parse_block_title_and_attributes():
 #     source = """
 #     .Just a title
@@ -89,44 +48,6 @@
 
 #     assert text_node.parent == block_node
 #     assert text_node.parent_position == "title"
-
-
-# def test_parse_block_title_and_attributes_are_reset():
-#     source = """
-#     .Just a title
-#     [*subtype1, name1=value1, name2=value2]
-#     ----
-#     ----
-
-#     [*subtype2]
-#     ----
-#     ----
-#     """
-
-#     assert runner(source).nodes == [
-#         BlockNode(
-#             subtype="subtype1",
-#             classes=[],
-#             title=SentenceNode(
-#                 children=[
-#                     TextNode("Just a title"),
-#                 ]
-#             ),
-#             engine=None,
-#             preprocessor="none",
-#             args=[],
-#             kwargs={"name1": "value1", "name2": "value2"},
-#         ),
-#         BlockNode(
-#             subtype="subtype2",
-#             classes=[],
-#             title=None,
-#             engine=None,
-#             preprocessor="none",
-#             args=[],
-#             kwargs={},
-#         ),
-#     ]
 
 
 # def test_block_classes_single_class():

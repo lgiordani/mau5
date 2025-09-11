@@ -8,9 +8,14 @@ from mau.lexers.base_lexer import (
     MauLexerException,
     format_lexer_error,
 )
-from mau.test_helpers import dedent, init_lexer_factory, lexer_runner_factory
+from mau.test_helpers import (
+    compare_tokens,
+    dedent,
+    generate_context,
+    init_lexer_factory,
+    lexer_runner_factory,
+)
 from mau.text_buffer.context import Context
-from mau.text_buffer.text_buffer import TextBuffer
 from mau.tokens.token import Token, TokenType
 
 init_lexer = init_lexer_factory(BaseLexer)
@@ -95,40 +100,51 @@ def test_error():
 def test_empty_text():
     lex = runner("")
 
-    assert lex.tokens == [
-        Token(TokenType.EOF, ""),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.EOF, "", generate_context(0, 0)),
+        ],
+    )
 
 
 def test_empty_lines():
     lex = runner("\n")
 
-    assert lex.tokens == [
-        Token(TokenType.EOL),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.EOL, "", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(1, 0)),
+            Token(TokenType.EOF, "", generate_context(2, 0)),
+        ],
+    )
 
 
 def test_lines_with_only_spaces():
     lex = runner("      \n      ")
 
-    assert lex.tokens == [
-        Token(TokenType.EOL),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.EOL, "", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(1, 0)),
+            Token(TokenType.EOF, "", generate_context(2, 0)),
+        ],
+    )
 
 
 def test_text():
-    text = "Just simple text"
-    lex = runner(text)
+    lex = runner("Just simple text")
 
-    assert lex.tokens == [
-        Token(TokenType.TEXT, text),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, "Just simple text", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 16)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_multiple_lines():
@@ -142,89 +158,16 @@ def test_multiple_lines():
     )
     lex = runner(text)
 
-    assert lex.tokens == [
-        Token(TokenType.TEXT, "This is text"),
-        Token(TokenType.EOL),
-        Token(TokenType.TEXT, "split into multiple lines"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOL),
-        Token(TokenType.TEXT, "with an empty line"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
-
-
-def test_positions_default_context():
-    text = dedent(
-        """
-        This is a line of text
-
-        ---
-
-        This is another line of text
-        """
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, "This is text", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 12)),
+            Token(TokenType.TEXT, "split into multiple lines", generate_context(1, 0)),
+            Token(TokenType.EOL, "", generate_context(1, 25)),
+            Token(TokenType.EOL, "", generate_context(2, 0)),
+            Token(TokenType.TEXT, "with an empty line", generate_context(3, 0)),
+            Token(TokenType.EOL, "", generate_context(3, 18)),
+            Token(TokenType.EOF, "", generate_context(4, 0)),
+        ],
     )
-    lex = runner(text)
-
-    assert [i.context.asdict() for i in lex.tokens] == [
-        {"column": 0, "line": 0, "source": None},
-        {"column": 22, "line": 0, "source": None},
-        {"column": 0, "line": 1, "source": None},
-        {"column": 0, "line": 2, "source": None},
-        {"column": 3, "line": 2, "source": None},
-        {"column": 0, "line": 3, "source": None},
-        {
-            "column": 0,
-            "line": 4,
-            "source": None,
-        },
-        {
-            "column": 28,
-            "line": 4,
-            "source": None,
-        },
-        {
-            "column": 0,
-            "line": 5,
-            "source": None,
-        },
-    ]
-
-
-def test_positions():
-    text = dedent(
-        """
-        This is a line of text
-
-        ---
-
-        This is another line of text
-        """
-    )
-    text_buffer = TextBuffer(text, Context(line=42, column=123, source="main"))
-    lex = BaseLexer(text_buffer, Environment())
-    lex.process()
-
-    assert [i.context.asdict() for i in lex.tokens] == [
-        {"column": 123, "line": 42, "source": "main"},
-        {"column": 145, "line": 42, "source": "main"},
-        {"column": 123, "line": 43, "source": "main"},
-        {"column": 123, "line": 44, "source": "main"},
-        {"column": 126, "line": 44, "source": "main"},
-        {"column": 123, "line": 45, "source": "main"},
-        {
-            "column": 123,
-            "line": 46,
-            "source": "main",
-        },
-        {
-            "column": 151,
-            "line": 46,
-            "source": "main",
-        },
-        {
-            "column": 123,
-            "line": 47,
-            "source": "main",
-        },
-    ]

@@ -1,4 +1,41 @@
-from mau.nodes.node import Node, NodeContent, ValueNodeContent
+from unittest.mock import Mock
+
+from mau.nodes.node import Node, NodeContent, NodeInfo, ValueNodeContent
+from mau.test_helpers import generate_context
+
+
+def test_info():
+    info = NodeInfo(
+        context=generate_context(0, 0),
+        position="title",
+        unnamed_args=["arg1"],
+        named_args={"key1": "value1"},
+        tags=["tag1"],
+        subtype="subtype1",
+    )
+
+    assert info.asdict() == {
+        "context": generate_context(0, 0),
+        "position": "title",
+        "unnamed_args": ["arg1"],
+        "named_args": {"key1": "value1"},
+        "tags": ["tag1"],
+        "subtype": "subtype1",
+    }
+
+
+def test_info_set_position():
+    info = NodeInfo()
+    info.set_position("top")
+
+    assert info.position == "top"
+
+
+def test_info_set_context():
+    info = NodeInfo()
+    info.set_context(generate_context(0, 0))
+
+    assert info.context == generate_context(0, 0)
 
 
 def test_node():
@@ -15,11 +52,41 @@ def test_node():
         "content": {"type": "none"},
         "info": {
             "context": None,
+            "position": None,
             "unnamed_args": [],
             "named_args": {},
-            "position": None,
+            "tags": [],
+            "subtype": None,
         },
     }
+
+
+def test_node_children():
+    mock_node = Mock()
+
+    node = Node()
+    node.add_children({"title": [mock_node]})
+
+    assert node.parent is None
+    assert node.children == {"title": [mock_node]}
+    assert node.info.position is None
+
+    assert node.content.asdict() == {"type": "none"}
+
+    assert node.asdict() == {
+        "children": {"title": [mock_node.asdict()]},
+        "content": {"type": "none"},
+        "info": {
+            "context": None,
+            "position": None,
+            "unnamed_args": [],
+            "named_args": {},
+            "tags": [],
+            "subtype": None,
+        },
+    }
+
+    mock_node.set_parent.assert_called_with(node)
 
 
 def test_node_parent():
@@ -38,15 +105,11 @@ def test_node_set_parent():
     assert node.parent is parent
 
 
-def test_node_children():
-    child1 = Node()
-    child2 = Node()
-    node = Node(children={"content": [child1, child2]})
+def test_node_equality():
+    node1 = Node()
+    node2 = Node()
 
-    assert child1 in node.children["content"]
-    assert child2 in node.children["content"]
-    assert child1.parent is node
-    assert child2.parent is node
+    assert node1 == node2
 
 
 def test_node_add_children():
@@ -86,13 +149,6 @@ def test_node_add_children_at_non_existing_position():
     assert child2.parent is node
 
 
-def test_info_position():
-    node = Node()
-    node.info.set_position("top")
-
-    assert node.info.position == "top"
-
-
 def test_value_node_content():
     content = ValueNodeContent(value="somevalue")
 
@@ -104,7 +160,7 @@ def test_value_node_content():
 def test_node_check_children_allowed():
     class TestNodeContent(NodeContent):
         type = "test"
-        allowed_keys = ["content"]
+        allowed_keys = {"content": "Some description"}
 
     node = Node(content=TestNodeContent(), children={"content": []})
 
@@ -114,7 +170,7 @@ def test_node_check_children_allowed():
 def test_node_check_children_not_allowed():
     class TestNodeContent(NodeContent):
         type = "test"
-        allowed_keys = ["content"]
+        allowed_keys = {"content": "Some description"}
 
     node = Node(content=TestNodeContent(), children={"title": []})
 

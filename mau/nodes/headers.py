@@ -5,7 +5,10 @@ class HeaderNodeContent(NodeContent):
     """A header."""
 
     type = "header"
-    allowed_keys = ["content"]
+    allowed_keys = {
+        "text": "The text of the header.",
+        "entries": "All headers nested under this in the ToC.",
+    }
 
     def __init__(
         self,

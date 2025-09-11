@@ -42,6 +42,8 @@ def test_horizontal_rule_with_arguments():
                 named_args={
                     "key1": "value1",
                 },
+                tags=[],
+                subtype="break",
                 context=generate_context(2, 0),
             ),
         )

@@ -1,5 +1,11 @@
 from mau.nodes.node import NodeContent
 
+LONG_HELP = """
+Syntax: << TYPE URI1, [URI2, ...]
+
+The include operator `<<` includes content of type TYPE using the provided URIs.
+"""
+
 
 class IncludeNodeContent(NodeContent):
     """Content included in the page.
@@ -7,8 +13,9 @@ class IncludeNodeContent(NodeContent):
     This represents generic content included in the page.
     """
 
-    type = "content"
-    allowed_keys = ["title"]
+    type = "include"
+    allowed_keys = {"title": "The title of the included content."}
+    long_help = LONG_HELP
 
     def __init__(
         self,

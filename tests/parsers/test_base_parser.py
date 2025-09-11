@@ -1,4 +1,4 @@
-from unittest.mock import Mock
+from unittest.mock import Mock, patch, mock_open
 
 import pytest
 
@@ -23,7 +23,7 @@ init_parser = init_parser_factory(BaseLexer, BaseParser)
 def test_save():
     parent_node = Mock()
     node = Mock()
-    parser = BaseParser(Environment(), parent_node=parent_node)
+    parser = BaseParser([], Environment(), parent_node=parent_node)
 
     parser._save(node)
 
@@ -48,9 +48,10 @@ def test_format_parser_error():
     assert format_parser_error(exception) == expected
 
 
-def test_format_parser_error_with_context():
+@patch("builtins.open", new_callable=mock_open, read_data="just some data")
+def test_format_parser_error_with_context(mock_open):
     test_message = "A test message"
-    test_context = generate_context(42, 4242)
+    test_context = generate_context(0, 5)
 
     exception = MauParserException(test_message, test_context)
 
@@ -61,9 +62,12 @@ def test_format_parser_error_with_context():
 
         Message: A test message
 
-        Line: 42
-        Column: 4242
+        Line: 0
+        Column: 5
         Source: test.py
+
+        just some data
+             ^
         """
     )
 

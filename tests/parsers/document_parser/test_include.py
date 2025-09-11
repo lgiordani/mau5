@@ -1,15 +1,17 @@
+import pytest
+
+from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
-from mau.parsers.document_parser import DocumentParser
-from mau.nodes.node import Node, NodeInfo
-from mau.nodes.inline import TextNodeContent, SentenceNodeContent
 from mau.nodes.include import IncludeNodeContent
-from mau.nodes.macros import MacroLinkNodeContent
-from mau.nodes.paragraph import ParagraphNodeContent
+from mau.nodes.inline import SentenceNodeContent, TextNodeContent
+from mau.nodes.node import Node, NodeInfo
+from mau.parsers.base_parser import MauParserException
+from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
+    compare_nodes,
+    generate_context,
     init_parser_factory,
     parser_runner_factory,
-    generate_context,
-    compare_nodes,
 )
 
 init_parser = init_parser_factory(DocumentLexer, DocumentParser)
@@ -17,9 +19,9 @@ init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-def test_include_content():
+def test_include_content_inline_arguments():
     source = """
-    << ctype1:/path/to/it,/another/path
+    << ctype1:/path/to/it, /another/path, #tag1, *subtype1, key1=value1
     """
 
     parser = runner(source)
@@ -29,16 +31,22 @@ def test_include_content():
         [
             Node(
                 content=IncludeNodeContent("ctype1", ["/path/to/it", "/another/path"]),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(
+                    context=generate_context(1, 0),
+                    unnamed_args=[],
+                    named_args={"key1": "value1"},
+                    tags=["tag1"],
+                    subtype="subtype1",
+                ),
             ),
         ],
     )
 
 
-def test_include_content_attributes():
+def test_include_content_boxed_arguments():
     source = """
-    ["text", #tag1, *subtype1, key1=value1]
-    << ctype1:/path/to/it,/another/path
+    [/path/to/it, /another/path, #tag1, *subtype1, key1=value1]
+    << ctype1
     """
 
     parser = runner(source)
@@ -50,17 +58,90 @@ def test_include_content_attributes():
                 content=IncludeNodeContent("ctype1", ["/path/to/it", "/another/path"]),
                 info=NodeInfo(
                     context=generate_context(2, 0),
-                    subtype="subtype1",
-                    unnamed_args=["text"],
+                    unnamed_args=[],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
+                    subtype="subtype1",
                 ),
             ),
         ],
     )
 
 
-# TODO title
+def test_include_content_boxed_and_inline_arguments_are_forbidden():
+    source = """
+    [/path/to/it]
+    << ctype1:/another/path
+    """
+
+    with pytest.raises(MauParserException) as exc:
+        runner(source)
+
+    assert (
+        exc.value.message
+        == "Syntax error. You cannot specify both boxed and inline arguments."
+    )
+    assert exc.value.context == generate_context(2, 0)
+
+
+def test_include_content_without_arguments_is_forbidden():
+    source = """
+    << ctype1
+    """
+
+    with pytest.raises(MauParserException) as exc:
+        runner(source)
+
+    assert exc.value.message == "Syntax error. You need to specify a list of URIs."
+    assert exc.value.context == generate_context(1, 0)
+
+
+def test_include_content_without_unnamed_arguments_is_forbidden():
+    source = """
+    << ctype1:key1=value1
+    """
+
+    with pytest.raises(MauParserException) as exc:
+        runner(source)
+
+    assert exc.value.message == "Syntax error. You need to specify a list of URIs."
+    assert exc.value.context == generate_context(1, 0)
+
+
+def test_include_content_with_title():
+    source = """
+    . A title
+    << ctype1:/path/to/it,/another/path
+    """
+
+    parser = runner(source)
+
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=IncludeNodeContent("ctype1", ["/path/to/it", "/another/path"]),
+                info=NodeInfo(context=generate_context(2, 0)),
+                children={
+                    "title": [
+                        Node(
+                            content=SentenceNodeContent(),
+                            info=NodeInfo(context=generate_context(1, 0)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent("A title"),
+                                        info=NodeInfo(context=generate_context(1, 0)),
+                                    )
+                                ]
+                            },
+                        )
+                    ]
+                },
+            ),
+        ],
+    )
+
 
 # def test_include_image_with_only_path():
 #     source = """

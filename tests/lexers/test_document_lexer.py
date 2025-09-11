@@ -1,9 +1,17 @@
+import pytest
 from unittest.mock import mock_open, patch
 
-from mau.lexers.base_lexer import TokenType
+from mau.lexers.base_lexer import TokenType, MauLexerException
 from mau.lexers.document_lexer import DocumentLexer
-from mau.test_helpers import dedent, init_lexer_factory, lexer_runner_factory
-from mau.text_buffer.text_buffer import TextBuffer
+from mau.test_helpers import (
+    TEST_CONTEXT_SOURCE,
+    compare_tokens,
+    dedent,
+    generate_context,
+    init_lexer_factory,
+    lexer_runner_factory,
+)
+from mau.text_buffer.text_buffer import Context, TextBuffer
 from mau.tokens.token import Token
 
 init_lexer = init_lexer_factory(DocumentLexer)
@@ -14,143 +22,194 @@ runner = lexer_runner_factory(DocumentLexer)
 def test_horizontal_rule():
     lex = runner("---")
 
-    assert lex.tokens == [
-        Token(TokenType.HORIZONTAL_RULE, "---"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.HORIZONTAL_RULE, "---", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 3)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_escape_line():
     lex = runner(r"\[name]")
 
-    assert lex.tokens == [
-        Token(TokenType.TEXT, r"\[name]"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, r"\[name]", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 7)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_escape_line_beginning_with_backslash():
     lex = runner(r"\\[name]")
 
-    assert lex.tokens == [
-        Token(TokenType.TEXT, r"\\[name]"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, r"\\[name]", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 8)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_arguments():
     lex = runner("[name]")
 
-    assert lex.tokens == [
-        Token(TokenType.ARGUMENTS, "["),
-        Token(TokenType.TEXT, "name"),
-        Token(TokenType.LITERAL, "]"),
-        Token(TokenType.EOL, ""),
-        Token(TokenType.EOF, ""),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.ARGUMENTS, "[", generate_context(0, 0)),
+            Token(TokenType.TEXT, "name", generate_context(0, 1)),
+            Token(TokenType.LITERAL, "]", generate_context(0, 5)),
+            Token(TokenType.EOL, "", generate_context(0, 6)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
-def test_attributes_no_closing_bracket():
+def test_arguments_no_closing_bracket():
     lex = runner("[name")
 
-    assert lex.tokens == [
-        Token(TokenType.TEXT, "[name"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, "[name", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 5)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_square_brackets_in_text():
-    lex = runner("Not [attributes]")
+    lex = runner("Not [arguments]")
 
-    assert lex.tokens == [
-        Token(TokenType.TEXT, "Not [attributes]"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, "Not [arguments]", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 15)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_square_brackets_at_the_beginning():
-    lex = runner("[not] attributes")
+    lex = runner("[not] arguments")
 
-    assert lex.tokens == [
-        Token(TokenType.TEXT, "[not] attributes"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, "[not] arguments", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 15)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_variable_definition():
     lex = runner(":variable:value123")
 
-    assert lex.tokens == [
-        Token(TokenType.VARIABLE, ":"),
-        Token(TokenType.TEXT, "variable"),
-        Token(TokenType.LITERAL, ":"),
-        Token(TokenType.TEXT, "value123"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.VARIABLE, ":", generate_context(0, 0)),
+            Token(TokenType.TEXT, "variable", generate_context(0, 1)),
+            Token(TokenType.LITERAL, ":", generate_context(0, 9)),
+            Token(TokenType.TEXT, "value123", generate_context(0, 10)),
+            Token(TokenType.EOL, "", generate_context(0, 18)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
+
+
+def test_variable_definition_without_arguments():
+    lex = runner(":variable")
+
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.VARIABLE, ":", generate_context(0, 0)),
+            Token(TokenType.TEXT, "variable", generate_context(0, 1)),
+            Token(TokenType.EOL, "", generate_context(0, 9)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_variable_flag_true():
-    lex = runner(":+variable:")
+    lex = runner(":+variable")
 
-    assert lex.tokens == [
-        Token(TokenType.VARIABLE, ":"),
-        Token(TokenType.TEXT, "+variable"),
-        Token(TokenType.LITERAL, ":"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.VARIABLE, ":", generate_context(0, 0)),
+            Token(TokenType.TEXT, "+variable", generate_context(0, 1)),
+            Token(TokenType.EOL, "", generate_context(0, 10)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_variable_flag_false():
-    lex = runner(":-variable:")
+    lex = runner(":-variable")
 
-    assert lex.tokens == [
-        Token(TokenType.VARIABLE, ":"),
-        Token(TokenType.TEXT, "-variable"),
-        Token(TokenType.LITERAL, ":"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.VARIABLE, ":", generate_context(0, 0)),
+            Token(TokenType.TEXT, "-variable", generate_context(0, 1)),
+            Token(TokenType.EOL, "", generate_context(0, 10)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_variable_marker_in_text():
     lex = runner("Not a :variable:")
 
-    assert lex.tokens == [
-        Token(TokenType.TEXT, "Not a :variable:"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, "Not a :variable:", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 16)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_variable_marker_with_space():
     lex = runner(": not a variable:")
 
-    assert lex.tokens == [
-        Token(TokenType.TEXT, ": not a variable:"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, ": not a variable:", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 17)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_variable_definition_accepted_characters():
     lex = runner(":abcAB.C0123-_:value123")
 
-    assert lex.tokens == [
-        Token(TokenType.VARIABLE, ":"),
-        Token(TokenType.TEXT, "abcAB.C0123-_"),
-        Token(TokenType.LITERAL, ":"),
-        Token(TokenType.TEXT, "value123"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.VARIABLE, ":", generate_context(0, 0)),
+            Token(TokenType.TEXT, "abcAB.C0123-_", generate_context(0, 1)),
+            Token(TokenType.LITERAL, ":", generate_context(0, 14)),
+            Token(TokenType.TEXT, "value123", generate_context(0, 15)),
+            Token(TokenType.EOL, "", generate_context(0, 23)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_multiple_lines():
@@ -165,85 +224,104 @@ def test_multiple_lines():
         )
     )
 
-    assert lex.tokens == [
-        Token(TokenType.TEXT, "This is text"),
-        Token(TokenType.EOL),
-        Token(TokenType.TEXT, "split into multiple lines"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOL),
-        Token(TokenType.TEXT, "with an empty line"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, "This is text", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 12)),
+            Token(TokenType.TEXT, "split into multiple lines", generate_context(1, 0)),
+            Token(TokenType.EOL, "", generate_context(1, 25)),
+            Token(TokenType.EOL, "", generate_context(2, 0)),
+            Token(TokenType.TEXT, "with an empty line", generate_context(3, 0)),
+            Token(TokenType.EOL, "", generate_context(3, 18)),
+            Token(TokenType.EOF, "", generate_context(4, 0)),
+        ],
+    )
 
 
 def test_title():
     lex = runner(".A title")
 
-    assert lex.tokens == [
-        Token(TokenType.TITLE, "."),
-        Token(TokenType.TEXT, "A title"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TITLE, ".", generate_context(0, 0)),
+            Token(TokenType.TEXT, "A title", generate_context(0, 1)),
+            Token(TokenType.EOL, "", generate_context(0, 8)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_title_with_space():
     lex = runner(".  A title")
 
-    assert lex.tokens == [
-        Token(TokenType.TITLE, "."),
-        Token(TokenType.TEXT, "A title"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TITLE, ".", generate_context(0, 0)),
+            Token(TokenType.TEXT, "A title", generate_context(0, 3)),
+            Token(TokenType.EOL, "", generate_context(0, 10)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_command():
     lex = runner("::command:arg0,arg1")
 
-    assert lex.tokens == [
-        Token(TokenType.COMMAND, "::"),
-        Token(TokenType.TEXT, "command"),
-        Token(TokenType.LITERAL, ":"),
-        Token(TokenType.TEXT, "arg0,arg1"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.COMMAND, "::", generate_context(0, 0)),
+            Token(TokenType.TEXT, "command", generate_context(0, 2)),
+            Token(TokenType.LITERAL, ":", generate_context(0, 9)),
+            Token(TokenType.TEXT, "arg0,arg1", generate_context(0, 10)),
+            Token(TokenType.EOL, "", generate_context(0, 19)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_command_without_arguments():
-    lex = runner("::command:")
+    lex = runner("::command")
 
-    assert lex.tokens == [
-        Token(TokenType.COMMAND, "::"),
-        Token(TokenType.TEXT, "command"),
-        Token(TokenType.LITERAL, ":"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.COMMAND, "::", generate_context(0, 0)),
+            Token(TokenType.TEXT, "command", generate_context(0, 2)),
+            Token(TokenType.EOL, "", generate_context(0, 9)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_command_with_space():
-    lex = runner("::  command:")
+    lex = runner("::  command")
 
-    assert lex.tokens == [
-        Token(TokenType.COMMAND, "::"),
-        Token(TokenType.TEXT, "command"),
-        Token(TokenType.LITERAL, ":"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.COMMAND, "::", generate_context(0, 0)),
+            Token(TokenType.TEXT, "command", generate_context(0, 4)),
+            Token(TokenType.EOL, "", generate_context(0, 11)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_comment():
     lex = runner("// Some comment")
 
-    assert lex.tokens == [
-        Token(TokenType.COMMENT, "// Some comment"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.COMMENT, "// Some comment", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 15)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_multiline_comment():
@@ -259,206 +337,295 @@ def test_multiline_comment():
         )
     )
 
-    assert lex.tokens == [
-        Token(TokenType.MULTILINE_COMMENT, "////"),
-        Token(TokenType.EOL),
-        Token(TokenType.TEXT, "Some comment"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOL),
-        Token(TokenType.TEXT, "   another line"),
-        Token(TokenType.EOL),
-        Token(TokenType.MULTILINE_COMMENT, "////"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.MULTILINE_COMMENT, "////", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 4)),
+            Token(TokenType.TEXT, "Some comment", generate_context(1, 0)),
+            Token(TokenType.EOL, "", generate_context(1, 12)),
+            Token(TokenType.EOL, "", generate_context(2, 0)),
+            Token(TokenType.TEXT, "   another line", generate_context(3, 0)),
+            Token(TokenType.EOL, "", generate_context(3, 15)),
+            Token(TokenType.MULTILINE_COMMENT, "////", generate_context(4, 0)),
+            Token(TokenType.EOL, "", generate_context(4, 4)),
+            Token(TokenType.EOF, "", generate_context(5, 0)),
+        ],
+    )
 
 
 def test_include_content():
     lex = runner("<<type:/path/to/it.jpg")
 
-    assert lex.tokens == [
-        Token(TokenType.INCLUDE, "<<"),
-        Token(TokenType.TEXT, "type"),
-        Token(TokenType.LITERAL, ":"),
-        Token(TokenType.TEXT, "/path/to/it.jpg"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.INCLUDE, "<<", generate_context(0, 0)),
+            Token(TokenType.TEXT, "type", generate_context(0, 2)),
+            Token(TokenType.LITERAL, ":", generate_context(0, 6)),
+            Token(TokenType.TEXT, "/path/to/it.jpg", generate_context(0, 7)),
+            Token(TokenType.EOL, "", generate_context(0, 22)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_include_content_without_arguments():
-    lex = runner("<<type:")
+    lex = runner("<<type")
 
-    assert lex.tokens == [
-        Token(TokenType.INCLUDE, "<<"),
-        Token(TokenType.TEXT, "type"),
-        Token(TokenType.LITERAL, ":"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.INCLUDE, "<<", generate_context(0, 0)),
+            Token(TokenType.TEXT, "type", generate_context(0, 2)),
+            Token(TokenType.EOL, "", generate_context(0, 6)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_include_content_with_space():
     lex = runner("<<  type:/path/to/it.jpg")
 
-    assert lex.tokens == [
-        Token(TokenType.INCLUDE, "<<"),
-        Token(TokenType.TEXT, "type"),
-        Token(TokenType.LITERAL, ":"),
-        Token(TokenType.TEXT, "/path/to/it.jpg"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.INCLUDE, "<<", generate_context(0, 0)),
+            Token(TokenType.TEXT, "type", generate_context(0, 4)),
+            Token(TokenType.LITERAL, ":", generate_context(0, 8)),
+            Token(TokenType.TEXT, "/path/to/it.jpg", generate_context(0, 9)),
+            Token(TokenType.EOL, "", generate_context(0, 24)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_unordered_list():
     lex = runner("* Item")
 
-    assert lex.tokens == [
-        Token(TokenType.LIST, "*"),
-        Token(TokenType.TEXT, "Item"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.LIST, "*", generate_context(0, 0)),
+            Token(TokenType.TEXT, "Item", generate_context(0, 2)),
+            Token(TokenType.EOL, "", generate_context(0, 6)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_unordered_list_leading_space():
-    text_buffer = TextBuffer("  * Item")
+    # This is done to skip the dedent() in the default runner.
+    text_buffer = TextBuffer("  * Item", Context(source=TEST_CONTEXT_SOURCE))
     lex = init_lexer(text_buffer)
     lex.process()
 
-    assert lex.tokens == [
-        Token(TokenType.LIST, "*"),
-        Token(TokenType.TEXT, "Item"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.LIST, "*", generate_context(0, 2)),
+            Token(TokenType.TEXT, "Item", generate_context(0, 4)),
+            Token(TokenType.EOL, "", generate_context(0, 8)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_unordered_list_trailing_space():
     lex = runner("*  Item")
 
-    assert lex.tokens == [
-        Token(TokenType.LIST, "*"),
-        Token(TokenType.TEXT, "Item"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.LIST, "*", generate_context(0, 0)),
+            Token(TokenType.TEXT, "Item", generate_context(0, 3)),
+            Token(TokenType.EOL, "", generate_context(0, 7)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_unordered_list_multiple_stars():
     lex = runner("*** Item")
 
-    assert lex.tokens == [
-        Token(TokenType.LIST, "***"),
-        Token(TokenType.TEXT, "Item"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.LIST, "***", generate_context(0, 0)),
+            Token(TokenType.TEXT, "Item", generate_context(0, 4)),
+            Token(TokenType.EOL, "", generate_context(0, 8)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_ordered_list():
     lex = runner("# Item")
 
-    assert lex.tokens == [
-        Token(TokenType.LIST, "#"),
-        Token(TokenType.TEXT, "Item"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.LIST, "#", generate_context(0, 0)),
+            Token(TokenType.TEXT, "Item", generate_context(0, 2)),
+            Token(TokenType.EOL, "", generate_context(0, 6)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_ordered_list_multiple_stars():
     lex = runner("### Item")
 
-    assert lex.tokens == [
-        Token(TokenType.LIST, "###"),
-        Token(TokenType.TEXT, "Item"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.LIST, "###", generate_context(0, 0)),
+            Token(TokenType.TEXT, "Item", generate_context(0, 4)),
+            Token(TokenType.EOL, "", generate_context(0, 8)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_header():
     lex = runner("=Header")
 
-    assert lex.tokens == [
-        Token(TokenType.HEADER, "="),
-        Token(TokenType.TEXT, "Header"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.HEADER, "=", generate_context(0, 0)),
+            Token(TokenType.TEXT, "Header", generate_context(0, 1)),
+            Token(TokenType.EOL, "", generate_context(0, 7)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_header_with_space():
     lex = runner("=  Header")
 
-    assert lex.tokens == [
-        Token(TokenType.HEADER, "="),
-        Token(TokenType.TEXT, "Header"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.HEADER, "=", generate_context(0, 0)),
+            Token(TokenType.TEXT, "Header", generate_context(0, 3)),
+            Token(TokenType.EOL, "", generate_context(0, 9)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_empty_header():
     lex = runner("=")
 
-    assert lex.tokens == [
-        Token(TokenType.TEXT, "="),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, "=", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 1)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_multiple_header_markers():
     lex = runner("=== Header")
 
-    assert lex.tokens == [
-        Token(TokenType.HEADER, "==="),
-        Token(TokenType.TEXT, "Header"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.HEADER, "===", generate_context(0, 0)),
+            Token(TokenType.TEXT, "Header", generate_context(0, 4)),
+            Token(TokenType.EOL, "", generate_context(0, 10)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_header_marker_in_header_text():
     lex = runner("= a=b")
 
-    assert lex.tokens == [
-        Token(TokenType.HEADER, "="),
-        Token(TokenType.TEXT, "a=b"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.HEADER, "=", generate_context(0, 0)),
+            Token(TokenType.TEXT, "a=b", generate_context(0, 2)),
+            Token(TokenType.EOL, "", generate_context(0, 5)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 def test_header_markers_in_text():
     lex = runner("Definitely not a === header")
 
-    assert lex.tokens == [
-        Token(TokenType.TEXT, "Definitely not a === header"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(
+                TokenType.TEXT, "Definitely not a === header", generate_context(0, 0)
+            ),
+            Token(TokenType.EOL, "", generate_context(0, 27)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
 @patch("mau.lexers.document_lexer.DocumentLexer._run_directive")
 def test_directive(mock_run_directive):
     runner("::#name:/path/to/file")
 
-    mock_run_directive.assert_called_with("name", "/path/to/file")
+    mock_run_directive.assert_called_with(
+        Token(TokenType.COMMAND, "::", generate_context(0, 0)),
+        Token(TokenType.TEXT, "#name", generate_context(0, 2)),
+        Token(TokenType.TEXT, "/path/to/file", generate_context(0, 8)),
+    )
+
+
+def test_directive_wrong_name():
+    with pytest.raises(MauLexerException) as exc:
+        runner("::#name:/path/to/file")
+
+    assert exc.value.message == "Directive 'name' is not valid."
+    assert exc.value.context == generate_context(0, 0)
 
 
 @patch("builtins.open", new_callable=mock_open, read_data="just some data")
-def test_import_directive(mock_file):  # pylint: disable=unused-argument
+def test_import_directive(mock_open):
     lex = runner("::#include:/path/to/file")
 
-    assert lex.tokens == [
-        Token(TokenType.TEXT, "just some data"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(
+                TokenType.TEXT, "just some data", Context(0, 0, source="/path/to/file")
+            ),
+            Token(TokenType.EOL, "", Context(0, 14, source="/path/to/file")),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
+
+
+@patch("builtins.open")
+def test_import_directive_cannot_open(mock_open):
+    mock_open.side_effect = OSError
+
+    with pytest.raises(MauLexerException) as exc:
+        runner("::#include:/path/to/file")
+
+    assert (
+        exc.value.message
+        == "Error with directive 'include'. Cannot read file /path/to/file."
+    )
+    assert exc.value.context == generate_context(0, 0)
+
+
+def test_import_directive_without_arguments():
+    with pytest.raises(MauLexerException) as exc:
+        runner("::#include")
+
+    assert exc.value.message == "Directive 'include' requires a file name."
+    assert exc.value.context == generate_context(0, 0)
 
 
 def test_block():
@@ -474,18 +641,21 @@ def test_block():
         )
     )
 
-    assert lex.tokens == [
-        Token(TokenType.BLOCK, "----"),
-        Token(TokenType.EOL),
-        Token(TokenType.TEXT, "Some comment"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOL),
-        Token(TokenType.TEXT, "   another line"),
-        Token(TokenType.EOL),
-        Token(TokenType.BLOCK, "----"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.BLOCK, "----", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 4)),
+            Token(TokenType.TEXT, "Some comment", generate_context(1, 0)),
+            Token(TokenType.EOL, "", generate_context(1, 12)),
+            Token(TokenType.EOL, "", generate_context(2, 0)),
+            Token(TokenType.TEXT, "   another line", generate_context(3, 0)),
+            Token(TokenType.EOL, "", generate_context(3, 15)),
+            Token(TokenType.BLOCK, "----", generate_context(4, 0)),
+            Token(TokenType.EOL, "", generate_context(4, 4)),
+            Token(TokenType.EOF, "", generate_context(5, 0)),
+        ],
+    )
 
 
 def test_block_four_characters():
@@ -501,18 +671,21 @@ def test_block_four_characters():
         )
     )
 
-    assert lex.tokens == [
-        Token(TokenType.BLOCK, "####"),
-        Token(TokenType.EOL),
-        Token(TokenType.TEXT, "Some comment"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOL),
-        Token(TokenType.TEXT, "   another line"),
-        Token(TokenType.EOL),
-        Token(TokenType.BLOCK, "####"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.BLOCK, "####", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 4)),
+            Token(TokenType.TEXT, "Some comment", generate_context(1, 0)),
+            Token(TokenType.EOL, "", generate_context(1, 12)),
+            Token(TokenType.EOL, "", generate_context(2, 0)),
+            Token(TokenType.TEXT, "   another line", generate_context(3, 0)),
+            Token(TokenType.EOL, "", generate_context(3, 15)),
+            Token(TokenType.BLOCK, "####", generate_context(4, 0)),
+            Token(TokenType.EOL, "", generate_context(4, 4)),
+            Token(TokenType.EOF, "", generate_context(5, 0)),
+        ],
+    )
 
 
 def test_block_with_comment():
@@ -526,15 +699,18 @@ def test_block_with_comment():
         )
     )
 
-    assert lex.tokens == [
-        Token(TokenType.BLOCK, "----"),
-        Token(TokenType.EOL),
-        Token(TokenType.COMMENT, "// Comment"),
-        Token(TokenType.EOL),
-        Token(TokenType.BLOCK, "----"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.BLOCK, "----", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 4)),
+            Token(TokenType.COMMENT, "// Comment", generate_context(1, 0)),
+            Token(TokenType.EOL, "", generate_context(1, 10)),
+            Token(TokenType.BLOCK, "----", generate_context(2, 0)),
+            Token(TokenType.EOL, "", generate_context(2, 4)),
+            Token(TokenType.EOF, "", generate_context(3, 0)),
+        ],
+    )
 
 
 def test_block_has_to_begin_with_four_identical_characters():
@@ -546,34 +722,57 @@ def test_block_has_to_begin_with_four_identical_characters():
         )
     )
 
-    assert lex.tokens == [
-        Token(TokenType.TEXT, "abcd"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, "abcd", generate_context(0, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 4)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
-def test_conditional():
+def test_control():
     lex = runner("@if:somevar:=value")
 
-    assert lex.tokens == [
-        Token(TokenType.CONTROL, "@"),
-        Token(TokenType.TEXT, "if"),
-        Token(TokenType.LITERAL, ":"),
-        Token(TokenType.TEXT, "somevar:=value"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.CONTROL, "@", generate_context(0, 0)),
+            Token(TokenType.TEXT, "if", generate_context(0, 1)),
+            Token(TokenType.LITERAL, ":", generate_context(0, 3)),
+            Token(TokenType.TEXT, "somevar:=value", generate_context(0, 4)),
+            Token(TokenType.EOL, "", generate_context(0, 18)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
 
 
-def test_conditional_with_space():
+def test_control_with_space():
     lex = runner("@  if:somevar:=value")
 
-    assert lex.tokens == [
-        Token(TokenType.CONTROL, "@"),
-        Token(TokenType.TEXT, "if"),
-        Token(TokenType.LITERAL, ":"),
-        Token(TokenType.TEXT, "somevar:=value"),
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.CONTROL, "@", generate_context(0, 0)),
+            Token(TokenType.TEXT, "if", generate_context(0, 3)),
+            Token(TokenType.LITERAL, ":", generate_context(0, 5)),
+            Token(TokenType.TEXT, "somevar:=value", generate_context(0, 6)),
+            Token(TokenType.EOL, "", generate_context(0, 20)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
+
+
+def test_control_without_arguments():
+    lex = runner("@if")
+
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.CONTROL, "@", generate_context(0, 0)),
+            Token(TokenType.TEXT, "if", generate_context(0, 1)),
+            Token(TokenType.EOL, "", generate_context(0, 3)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )

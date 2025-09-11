@@ -94,7 +94,7 @@ class PreprocessVariablesParser(BaseParser):
             variable_value = self.environment.getvar_nodefault(variable_name)
         except KeyError as exp:
             raise self._error(
-                f'Attribute "{variable_name}" has not been defined',
+                f'Variable "{variable_name}" has not been defined.',
                 context=opening_bracket.context,
             ) from exp
 
@@ -144,7 +144,7 @@ class PreprocessVariablesParser(BaseParser):
         # After having parsed the text and replaced the
         # variables, this should return a piece of text again.
         context = self.nodes[0].info.context
-        text = "".join([str(i.content.value) for i in self.nodes])
+        text = "".join([str(i.content.value) for i in self.nodes])  # type: ignore[attr-defined]
 
         self.nodes = [
             Node(content=TextNodeContent(text), info=NodeInfo(context=context))

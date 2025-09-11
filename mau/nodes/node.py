@@ -40,19 +40,19 @@ class NodeInfo:
 
         return self
 
-    def set_attributes(
-        self,
-        unnamed_args: list | None = None,
-        named_args: dict | None = None,
-        tags: list | None = None,
-        subtype: str | None = None,
-    ) -> NodeInfo:
-        self.unnamed_args = unnamed_args or []
-        self.named_args = named_args or {}
-        self.tags = tags or []
-        self.subtype = subtype
+    # def set_attributes(
+    #     self,
+    #     unnamed_args: list | None = None,
+    #     named_args: dict | None = None,
+    #     tags: list | None = None,
+    #     subtype: str | None = None,
+    # ) -> NodeInfo:
+    #     self.unnamed_args = unnamed_args or []
+    #     self.named_args = named_args or {}
+    #     self.tags = tags or []
+    #     self.subtype = subtype
 
-        return self
+    #     return self
 
     def asdict(self):
         return {
@@ -60,12 +60,26 @@ class NodeInfo:
             "position": self.position,
             "unnamed_args": self.unnamed_args,
             "named_args": self.named_args,
+            "tags": self.tags,
+            "subtype": self.subtype,
         }
 
 
 class NodeContent(ABC):
     type: str = "none"
-    allowed_keys: list[str] = []
+
+    # When a node contains content,
+    # the node itself can have children.
+    # Children are recorded in a dictionary
+    # under a key that is the position of
+    # the children in the parent.
+    # Each node content allows only
+    # certain positions, which are listed
+    # in this dictionary as keys.
+    # The value of each key is the description
+    # of the position for self-documentation
+    # purposes.
+    allowed_keys: dict[str, str] = {}
 
     def asdict(self):
         return {"type": self.type}
@@ -119,11 +133,8 @@ class Node(Generic[Content_co]):
         return self
 
     def check_children(self) -> set[str]:
-        if not self.content:
-            return set()
-
         children_keys = set(self.children.keys())
-        allowed_keys = set(self.content.allowed_keys)
+        allowed_keys = set(self.content.allowed_keys.keys())
 
         if not children_keys.issubset(allowed_keys):
             return children_keys - allowed_keys

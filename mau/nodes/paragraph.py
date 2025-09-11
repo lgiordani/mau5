@@ -8,4 +8,7 @@ class ParagraphNodeContent(NodeContent):
     """
 
     type = "paragraph"
-    allowed_keys = ["content", "title"]
+    allowed_keys = {
+        "content": "The text contained in this paragraph.",
+        "title": "The title of this paragraph.",
+    }

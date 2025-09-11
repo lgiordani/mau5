@@ -20,4 +20,4 @@ class Context:
         }
 
     def __repr__(self):
-        return f"{self.source}:{self.line},{self.column}"
+        return str(self.asdict())

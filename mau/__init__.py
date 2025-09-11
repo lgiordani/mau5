@@ -6,6 +6,7 @@ from mau.lexers.text_lexer import TextLexer
 
 # from mau.parsers.document_parser import DocumentParser
 from mau.parsers.text_parser import TextParser
+from mau.parsers.document_parser import DocumentParser
 from mau.text_buffer.context import Context
 from mau.text_buffer.text_buffer import TextBuffer
 from mau.tokens.token import Token
@@ -63,7 +64,7 @@ class Mau:
         self.environment = environment or Environment()
 
     def run_lexer(self) -> list[Token]:
-        lexer = TextLexer(self.text_buffer, self.environment)
+        lexer = DocumentLexer(self.text_buffer, self.environment)
 
         lexer.process()
 
@@ -71,7 +72,7 @@ class Mau:
 
     def run_parser(self, tokens):
         # self.parser = DocumentParser(self.environment)
-        parser = TextParser(tokens, self.environment)
+        parser = DocumentParser(tokens, self.environment)
 
         parser.parse()
         parser.finalise()

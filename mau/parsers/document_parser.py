@@ -1,77 +1,62 @@
 # pylint: disable=too-many-lines
 
-from mau.environment.environment import Environment
+from __future__ import annotations
 
-from mau.nodes.include import IncludeNodeContent
+import hashlib
+import re
+from functools import partial
+from mau.environment.environment import Environment
 
 # from mau.lexers.base_lexer import TokenTypes as TokenType
 from mau.lexers.document_lexer import DocumentLexer
+from mau.nodes.document import HorizontalRuleNodeContent
 
 # from mau.lexers.document_lexer import TokenTypes as TokenType
 # from mau.nodes.block import BlockGroupNode, BlockNode
 # from mau.nodes.content import ContentImageNode, ContentNode
-# from mau.nodes.header import HeaderNode
+from mau.nodes.headers import HeaderNodeContent
+from mau.nodes.include import IncludeNodeContent
 from mau.nodes.inline import SentenceNodeContent
-
-# from mau.nodes.lists import ListItemNode, ListNode
+from mau.nodes.lists import ListItemNodeContent, ListNodeContent
+from mau.nodes.node import Node, NodeContent, NodeInfo
 from mau.nodes.paragraph import ParagraphNodeContent
-from mau.nodes.document import HorizontalRuleNodeContent
-from mau.nodes.node import Node, NodeInfo, NodeContent
 
 # from mau.nodes.page import ContainerNode
 # from mau.nodes.paragraph import ParagraphNode
 # from mau.nodes.source import MarkerNode, CalloutsEntryNode, SourceNode, SourceLineNode
-from mau.parsers.arguments_parser import ArgumentsParser, Attributes
-
-# from mau.parsers.attributes import AttributesManager
-from mau.parsers.base_parser import BaseParser
+from mau.parsers.arguments_parser import Arguments, ArgumentsParser
+from mau.parsers.base_parser import BaseParser, MauParserException
 
 # from mau.parsers.footnotes import FootnotesManager
-# from mau.parsers.internal_links import InternalLinksManager
 from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
+from mau.parsers.text_parser import TextParser
 from mau.tokens.token import Token, TokenType
 
-from mau.parsers.text_parser import TextParser
-# from mau.parsers.toc import TocManager, header_anchor
+from .managers.header_links_manager import HeaderLinksManager
+from .managers.toc_manager import TocManager
+from .managers.arguments_manager import ArgumentsManager
+
+# TODO check if we really want to use the current context
+# TODO self._peek_token(with arguments) is basically self._peek_token_is()
 
 
-class AttributesManager:
-    def __init__(self):
-        self.args: list[str] = []
-        self.kwargs: dict[str, str] = {}
-        self.tags: list[str] = []
-        self.subtype: str | None = None
+def header_anchor(text, level):  # pragma: no cover
+    """
+    Return a sanitised anchor for a header.
+    """
 
-    @property
-    def attributes(self):
-        return (
-            self.args,
-            self.kwargs,
-            self.tags,
-            self.subtype,
-        )
+    # Everything lowercase
+    sanitised_text = text.lower()
 
-    def push(
-        self,
-        args=None,
-        kwargs=None,
-        tags=None,
-        subtype=None,
-    ):
-        self.args = args or self.args
-        self.kwargs = kwargs or self.kwargs
-        self.tags = tags or self.tags
-        self.subtype = subtype or self.subtype
+    # Get only letters, numbers, dashes, spaces, and dots
+    sanitised_text = "".join(re.findall("[a-z0-9-\\. ]+", sanitised_text))
 
-    def pop(self):
-        args, kwargs, tags, subtype = self.attributes
+    # Remove multiple spaces
+    sanitised_text = "-".join(sanitised_text.split())
 
-        self.args = []
-        self.kwargs = {}
-        self.tags = []
-        self.subtype = None
+    hashed_value = hashlib.md5(f"{level} {text}".encode("utf-8")).hexdigest()[:4]
 
-        return (args, kwargs, tags, subtype)
+    return f"{sanitised_text}-{hashed_value}"
 
 
 # The DocumentParser is in charge of parsing
@@ -90,12 +75,10 @@ class DocumentParser(BaseParser):
     ):
         super().__init__(tokens, environment, parent_node, parent_position)
 
-        #     self.internal_links_manager = InternalLinksManager(self)
+        self.internal_links_manager: HeaderLinksManager = HeaderLinksManager()
         #     self.footnotes_manager = FootnotesManager(self)
-        #     self.toc_manager = TocManager(self)
-        # self.attributes_manager = AttributesManager()
-
-        self.attributes_stack: list[Attributes] = []
+        self.toc_manager: TocManager = TocManager()
+        self.arguments_manager: ArgumentsManager = ArgumentsManager()
 
         #     # These are the default block aliases
         #     # If subtype is not set it will be the alias itself.
@@ -125,19 +108,19 @@ class DocumentParser(BaseParser):
         # This is a buffer for a block title
         self.title = None
 
-    #     # This is a buffer for a control
-    #     self.control = (None, None, None)
+        #     # This is a buffer for a control
+        #     self.control = (None, None, None)
 
-    #     # This is the function used to create the header
-    #     # anchors.
-    #     self.header_anchor = self.environment.getvar(
-    #         "mau.parser.header_anchor_function", header_anchor
-    #     )
+        # This is the function used to create the header
+        # anchors.
+        self.header_anchor = self.environment.getvar(
+            "mau.parser.header_anchor_function", header_anchor
+        )
 
-    #     # The last index in the latest ordered list,
-    #     # used to calculate the beginning value of them
-    #     # next one when start=auto
-    #     self.latest_ordered_list_index = 0
+        # The last index in the latest ordered list,
+        # used to calculate the beginning value of them
+        # next one when start=auto
+        self.latest_ordered_list_index = 0
 
     #     # This is the dictionary of block groups
     #     # defineed in the document
@@ -155,14 +138,14 @@ class DocumentParser(BaseParser):
             self._process_single_line_comment,
             self._process_multi_line_comment,
             self._parse_variable_definition,
-            #         self._process_command,
+            # self._process_command,
             self._process_title,
             #         self._process_control,
             self._process_arguments,
             self._process_header,
             #         self._process_block,
             self._process_include,
-            #         self._process_list,
+            self._process_list,
             self._process_paragraph,
         ]
 
@@ -301,10 +284,8 @@ class DocumentParser(BaseParser):
         # TODO
         # self.footnotes_manager.update_mentions(text_parser.footnotes)
 
-        # Extract the internal links
-        # found in this piece of text
-        # TODO
-        # self.internal_links_manager.update_links(text_parser.links)
+        # Extract the header links found in this piece of text.
+        self.internal_links_manager.add_links(text_parser.header_links)
 
         return text_parser.nodes
 
@@ -321,14 +302,13 @@ class DocumentParser(BaseParser):
         # Get the horizontal rule token.
         rule = self._get_token(TokenType.HORIZONTAL_RULE)
 
-        # If there are attributes in the stack
-        # we need to use them to initialise the
-        # node info.
-        info = NodeInfo(context=rule.context)
-        if self.attributes_stack:
-            attributes = self.attributes_stack.pop()
+        # Get the stored arguments.
+        # Horizontal rules can receive arguments
+        # only through the arguments manager.
+        arguments = self.arguments_manager.pop_or_default()
 
-            info = NodeInfo(context=rule.context, **attributes.asdict())
+        # Build the node info.
+        info = NodeInfo(context=rule.context, **arguments.asdict())
 
         self._save(
             Node(
@@ -383,7 +363,7 @@ class DocumentParser(BaseParser):
         # :namespace.name:value
 
         # Get the opening colon.
-        self._get_token(TokenType.VARIABLE, ":")
+        opening_colon = self._get_token(TokenType.VARIABLE, ":")
 
         # Get the mandatory variable name token.
         variable_token = self._get_token(TokenType.TEXT)
@@ -427,6 +407,12 @@ class DocumentParser(BaseParser):
             # a single node.
             value = preprocess_parser.nodes[0].content.value
 
+        if value == "":
+            raise MauParserException(
+                f"Error in variable definition. Variable '{variable_name}' has no value.",
+                opening_colon.context,
+            )
+
         # Now that we have name and value,
         # create or update the variable in
         # the environment.
@@ -437,15 +423,21 @@ class DocumentParser(BaseParser):
     # def _process_command(self):
     #     # Parse a command in the form ::command:arguments
 
-    #     self._get_token(TokenType.COMMAND, "::")
+    #     # Get the opening double colon.
+    #     prefix = self._get_token(TokenType.COMMAND, "::")
+
+    #     # Get the name of the command.
     #     name = self._get_token(TokenType.TEXT).value
+
+    #     # Get the separator colon.
     #     self._get_token(TokenType.LITERAL, ":")
 
-    #     args, kwargs, tags, subtype = self.attributes_manager.pop()
+    #     # Get the stored arguments.
+    #     arguments = self.arguments_manager.pop()
 
-    #     # Commands can have arguments
-    #     command_args = []
-    #     command_kwargs = {}
+    #     # Build the node info.
+    #     info = NodeInfo(context=prefix.context, **arguments.asdict())
+
     #     with self:
     #         arguments = self._get_token(TokenType.TEXT)
 
@@ -591,8 +583,8 @@ class DocumentParser(BaseParser):
             self.environment,
         )
 
-        # Store the whole parser into the stack.
-        self.attributes_stack.append(arguments_parser.attributes)
+        # Store the arguments.
+        self.arguments_manager.push(arguments_parser.arguments)
 
         return True
 
@@ -607,13 +599,13 @@ class DocumentParser(BaseParser):
         # created using the provided function self.header_anchor
 
         # Get all the equal signs.
-        header = self._get_token(TokenType.HEADER).value
+        header = self._get_token(TokenType.HEADER)
 
         # Get the text of the header.
         text_token = self._get_token(TokenType.TEXT)
 
         # Calculate the level of the header.
-        level = len(header)
+        level = len(header.value)
 
         # Replace variables
         preprocess_parser = PreprocessVariablesParser.lex_and_parse(
@@ -628,54 +620,53 @@ class DocumentParser(BaseParser):
             return []
 
         # The preprocess parser outputs a single node.
-        text = preprocess_parser.nodes[0].content.value
+        text_node = preprocess_parser.nodes[0]
+
+        # Get the content of the text_node
+        text = text_node.content
 
         # # Check the control
         # if self._pop_control() is False:
         #     return True
 
-        # Initialise the info for this node.
-        info = NodeInfo(context=header.context)
+        # Get the stored arguments.
+        # Headers can receive arguments
+        # only through the arguments manager.
+        arguments = self.arguments_manager.pop_or_default()
 
-        # If there are attributes in the stack
-        # we need to use them to initialise the
-        # node info.
-        if self.attributes_stack:
-            attributes = self.attributes_stack.pop()
-
-            # I need to get anchor from the attributes.
-            info = NodeInfo(context=header.context, **attributes.asdict())
-
-        # Create the anchor
-        anchor = kwargs.pop("anchor", self.header_anchor(text, level))
-
-        node = HeaderNode(
-            level=str(level),
-            anchor=anchor,
-            subtype=subtype,
-            args=args,
-            kwargs=kwargs,
-            tags=tags,
+        # Create the anchor.
+        # This uses the actual text contained in
+        # the TextNodeContent object.
+        anchor = arguments.named_args.pop(  # TODO get
+            "anchor", self.header_anchor(text.value, level)
         )
 
-        # Titles can contain Mau code
-        text_parser = TextParser.analyse(
-            text,
-            text_token.context,
-            self.environment,
-            parent_node=node,
-        )
-        node.value = SentenceNode(
-            parent=node,
-            children=text_parser.nodes,
+        # Extract the header id if specified.
+        header_id = arguments.named_args.get("id", None)
+
+        # Build the node info.
+        info = NodeInfo(context=header.context, **arguments.asdict())
+
+        node = Node(
+            content=HeaderNodeContent(level, anchor),
+            info=info,
+            children={
+                "text": [
+                    Node(
+                        content=SentenceNodeContent(),
+                        children={"content": [text_node]},
+                        info=NodeInfo(context=text_token.context),
+                    )
+                ]
+            },
         )
 
-        # If there is an id store the header
-        # to be processed by internal links
-        if "id" in node.kwargs:
-            self.internal_links_manager.add_header(node.kwargs["id"], node)
+        # If there is an id store the header node
+        # to be matched with potential header links.
+        if header_id:
+            self.internal_links_manager.add_header(header_id, node)
 
-        self.toc_manager.add_header_node(node)
+        self.toc_manager.add_header(node)
 
         self._save(node)
 
@@ -748,7 +739,7 @@ class DocumentParser(BaseParser):
     #     block.title = self._pop_title(block)
 
     #     # Consume the arguments
-    #     args, kwargs, tags, subtype = self.attributes_manager.pop()
+    #     args, kwargs, tags, subtype = self.arguments_manager.pop()
 
     #     # Check the control
     #     if self._pop_control() is False:
@@ -1057,28 +1048,54 @@ class DocumentParser(BaseParser):
         # Get the content type.
         content_type = self._get_token(TokenType.TEXT).value
 
-        # Get the mandatory colon.
-        self._get_token(TokenType.LITERAL, ":")
+        arguments: Arguments | None = self.arguments_manager.pop()
 
-        # Get the listed URIs.
-        arguments = self._get_token(TokenType.TEXT)
+        if self._peek_token_is(TokenType.LITERAL, ":"):
+            # In this case arguments are inline
 
-        with self:
-            arguments_parser = ArgumentsParser.lex_and_parse(
-                arguments.value, arguments.context, self.environment
+            # Check if boxed arguments have been defined.
+            # In that case we need to stop with an error.
+            if arguments:
+                raise MauParserException(
+                    "Syntax error. You cannot specify both boxed and inline arguments.",
+                    prefix.context,
+                    IncludeNodeContent.long_help,
+                )
+
+            # Get the colon.
+            self._get_token(TokenType.LITERAL, ":")
+
+            # Get the inline arguments.
+            arguments_token = self._get_token(TokenType.TEXT)
+
+            # Parse the arguments.
+            with self:
+                arguments_parser = ArgumentsParser.lex_and_parse(
+                    arguments_token.value, arguments_token.context, self.environment
+                )
+
+            arguments = arguments_parser.arguments
+
+        if not arguments:
+            raise MauParserException(
+                "Syntax error. You need to specify a list of URIs.",
+                prefix.context,
+                IncludeNodeContent.long_help,
             )
 
-        # Get the URIs list.
-        uris = arguments_parser.attributes.unnamed_args
+        # Get the URIs list and empty the unnamed arguments
+        uris = arguments.unnamed_args[:]
+        arguments.unnamed_args = []
 
-        # If there are attributes in the stack
-        # we need to use them to initialise the
-        # node info.
-        info = NodeInfo(context=prefix.context)
-        if self.attributes_stack:
-            attributes = self.attributes_stack.pop()
+        if not uris:
+            raise MauParserException(
+                "Syntax error. You need to specify a list of URIs.",
+                prefix.context,
+                IncludeNodeContent.long_help,
+            )
 
-            info = NodeInfo(context=prefix.context, **attributes.asdict())
+        # Build the node info.
+        info = NodeInfo(context=prefix.context, **arguments.asdict())
 
         # # Check the control
         # if self._pop_control() is False:
@@ -1151,149 +1168,151 @@ class DocumentParser(BaseParser):
 
     #     return True
 
-    # def _process_list(self):
-    #     # Parse a list.
-    #     # Lists can be ordered (using numbers)
-    #     #
-    #     # * One item
-    #     # * Another item
-    #     #
-    #     # or unordered (using bullets)
-    #     #
-    #     # # Item 1
-    #     # # Item 2
-    #     #
-    #     # The number of headers increases
-    #     # the depth of each item
-    #     #
-    #     # # Item 1
-    #     # ## Sub-Item 1.1
-    #     #
-    #     # Spaces before and after the header are ignored.
-    #     # So the previous list can be also written
-    #     #
-    #     # # Item 1
-    #     #   ## Sub-Item 1.1
-    #     #
-    #     # Ordered and unordered lists can be mixed.
-    #     #
-    #     # * One item
-    #     # ## Sub Item 1
-    #     # ## Sub Item 2
-    #     #
+    def _process_list(self):
+        # Parse a list.
+        # Lists can be ordered (using numbers)
+        #
+        # * One item
+        # * Another item
+        #
+        # or unordered (using bullets)
+        #
+        # # Item 1
+        # # Item 2
+        #
+        # The number of headers increases
+        # the depth of each item
+        #
+        # # Item 1
+        # ## Sub-Item 1.1
+        #
+        # Spaces before and after the header are ignored.
+        # So the previous list can be also written
+        #
+        # # Item 1
+        #   ## Sub-Item 1.1
+        #
+        # Ordered and unordered lists can be mixed.
+        #
+        # * One item
+        # ## Sub Item 1
+        # ## Sub Item 2
+        #
 
-    #     # Ignore initial white spaces
-    #     with self:
-    #         self._get_token(TokenType.WHITESPACE)
+        # Get the header and decide if it's a numbered or unnumbered list
+        header = self._peek_token(TokenType.LIST)
+        ordered = header.value[0] == "#"
 
-    #     # Get the header and decide if it's a numbered or unnumbered list
-    #     header = self._peek_token(TokenType.LIST)
-    #     ordered = header.value[0] == "#"
+        # Parse all the following items
+        nodes = self._process_list_nodes()
 
-    #     args, kwargs, tags, subtype = self.attributes_manager.pop()
+        # Get the stored arguments.
+        # Lists can receive arguments
+        # only through the arguments manager.
+        arguments = self.arguments_manager.pop_or_default()
 
-    #     # Parse all the following items
-    #     nodes = self._process_list_nodes()
+        # Check if the list has a forced start.
+        if (start := arguments.named_args.pop("start", 1)) == "auto":  # TODO:get
+            start = self.latest_ordered_list_index
+            self.latest_ordered_list_index += len(nodes)
+        else:
+            start = int(start)
+            self.latest_ordered_list_index = len(nodes) + start
 
-    #     if (start := kwargs.pop("start", 1)) == "auto":
-    #         start = self.latest_ordered_list_index
-    #         self.latest_ordered_list_index += len(nodes)
-    #     else:
-    #         start = int(start)
-    #         self.latest_ordered_list_index = len(nodes) + start
+        node = Node(
+            content=ListNodeContent(ordered=ordered, main_node=True, start=start),
+            info=NodeInfo(context=header.context, **arguments.asdict()),
+            children={"nodes": nodes},
+        )
 
-    #     self._save(
-    #         ListNode(
-    #             ordered=ordered,
-    #             main_node=True,
-    #             start=start,
-    #             children=nodes,
-    #             subtype=subtype,
-    #             args=args,
-    #             kwargs=kwargs,
-    #             tags=tags,
-    #         )
-    #     )
+        self._save(node)
 
-    #     return True
+        return True
 
-    # def _process_list_nodes(self):
-    #     # This parses all items of a list
+    def _process_list_nodes(self):
+        # This parses all items of a list
 
-    #     # Ignore initial white spaces
-    #     with self:
-    #         self._get_token(TokenType.WHITESPACE)
+        # Parse the header.
+        header = self._get_token(TokenType.LIST)
 
-    #     # Parse the header and ignore the following white spaces
-    #     header = self._get_token(TokenType.LIST).value
-    #     self._get_token(TokenType.WHITESPACE)
+        # Get the text of the item.
+        text = self._get_token(TokenType.TEXT)
 
-    #     # Get the context of the first text token
-    #     context = self._peek_token().context
+        # Get the EOL.
+        self._get_token(TokenType.EOL)
 
-    #     # Collect and parse the text of the item
-    #     text = self._collect_text_content()
-    #     content = self._parse_text_content(
-    #         text,
-    #         parent_node=self.parent_node,
-    #         parent_position=self.parent_position,
-    #         context=context,
-    #     )
+        # Parse the text of the item.
+        content = self._parse_text(
+            text.value,
+            context=text.context,
+        )
 
-    #     # Compute the level of the item
-    #     level = len(header)
+        # Compute the level of the item
+        level = len(header.value)
 
-    #     nodes = []
-    #     nodes.append(ListItemNode(level=str(level), children=content))
+        nodes = []
+        nodes.append(
+            Node(
+                content=ListItemNodeContent(str(level)),
+                info=NodeInfo(context=header.context),
+                children={"text": content},
+            )
+        )
 
-    #     while self._peek_token() not in [
-    #         Token(TokenType.EOF),
-    #         Token(TokenType.EOL),
-    #     ]:
-    #         # This are the nodes inside the last element added to the list
-    #         # which is used to append potential nested elements
-    #         last_element_nodes = nodes[-1].children
+        while self._peek_token() not in [
+            Token(TokenType.EOF),
+            Token(TokenType.EOL),
+        ]:
+            if len(self._peek_token().value) == level:
+                # The new item is on the same level
 
-    #         # Ignore the initial white spaces
-    #         with self:
-    #             self._get_token(TokenType.WHITESPACE)
+                # Get the header
+                header = self._get_token()
 
-    #         if len(self._peek_token().value) == level:
-    #             # The new item is on the same level
+                # Get the text of the item.
+                text = self._get_token(TokenType.TEXT)
 
-    #             # Get the header
-    #             header = self._get_token().value
+                # Get the EOL.
+                self._get_token(TokenType.EOL)
 
-    #             # Ignore white spaces
-    #             self._get_token(TokenType.WHITESPACE)
+                # Parse the text of the item.
+                content = self._parse_text(
+                    text.value,
+                    context=text.context,
+                )
 
-    #             # Get the context of the first text token
-    #             context = self._peek_token().context
+                # Compute the level of the item
+                level = len(header.value)
 
-    #             # Collect and parse the text of the item
-    #             text = self._collect_text_content()
-    #             content = self._parse_text_content(
-    #                 text,
-    #                 parent_node=self.parent_node,
-    #                 parent_position=self.parent_position,
-    #                 context=context,
-    #             )
+                nodes.append(
+                    Node(
+                        content=ListItemNodeContent(str(level)),
+                        info=NodeInfo(context=header.context),
+                        children={"text": content},
+                    )
+                )
 
-    #             level = len(header)
+            elif len(self._peek_token().value) > level:
+                # The new item is on a deeper level
 
-    #             nodes.append(ListItemNode(level=str(level), children=content))
-    #         elif len(self._peek_token().value) > level:
-    #             # The new item is on a deeper level
+                # Peek the header
+                header = self._peek_token(TokenType.LIST)
+                ordered = header.value[0] == "#"
 
-    #             # Treat the new line as a new list
-    #             numbered = self._peek_token().value[0] == "#"
-    #             subnodes = self._process_list_nodes()
+                # Parse all the items at this level or higher.
+                subnodes = self._process_list_nodes()
 
-    #             last_element_nodes.append(ListNode(ordered=numbered, children=subnodes))
-    #         else:
-    #             break
+                nodes.append(
+                    Node(
+                        content=ListNodeContent(ordered=ordered),
+                        info=NodeInfo(context=header.context),
+                        children={"nodes": subnodes},
+                    )
+                )
+            else:
+                break
 
-    #     return nodes
+        return nodes
 
     def _process_paragraph(self):
         # This parses a paragraph.
@@ -1335,15 +1354,15 @@ class DocumentParser(BaseParser):
         # Join them with a space.
         text = " ".join(lines)
 
-        # If there are attributes in the stack
-        # we need to use them to initialise the
-        # node info.
-        info = NodeInfo(context=context, position=self.parent_position)
+        # Get the stored arguments.
+        # Paragraphs can receive arguments
+        # only through the arguments manager.
+        arguments = self.arguments_manager.pop_or_default()
 
-        if self.attributes_stack:
-            attributes = self.attributes_stack.pop()
-
-            info.set_attributes(**attributes.asdict())
+        # Build the node info.
+        info = NodeInfo(
+            context=context, position=self.parent_position, **arguments.asdict()
+        )
 
         # Process the text of the paragraph.
         text_nodes = self._parse_text(text, context=context)
@@ -1364,22 +1383,22 @@ class DocumentParser(BaseParser):
 
         return True
 
-    # def finalise(self):
-    #     super().finalise()
+    def finalise(self):
+        super().finalise()
 
-    #     # This processes all footnotes stored in
-    #     # the manager merging mentions and data
-    #     # and updating the nodes that contain
-    #     # a list of footnotes
-    #     self.footnotes_manager.process_footnotes()
+        #     # This processes all footnotes stored in
+        #     # the manager merging mentions and data
+        #     # and updating the nodes that contain
+        #     # a list of footnotes
+        #     self.footnotes_manager.process_footnotes()
 
-    #     # This processes all links stored in
-    #     # the manager linking them to the
-    #     # correct headers
-    #     self.internal_links_manager.process_links()
+        # This processes all links stored in
+        # the manager linking them to the
+        # correct headers
+        self.internal_links_manager.process()
 
-    #     # Process ToC
-    #     toc = self.toc_manager.process_toc()
+        # Process ToC nodes.
+        self.toc_manager.process()
 
     #     # The content wrappers are cloned to avoid
     #     # storing the whole parsed document in the

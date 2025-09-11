@@ -92,7 +92,11 @@ addopts = """\
 --cov mau \
 --cov-report term-missing \
 --no-cov-on-fail \
+--force-short-summary \
 """
 
 [tool.ruff.lint]
 extend-select = ["I"]
+
+[tool.mypy]
+check_untyped_defs = true

@@ -2,7 +2,7 @@ from mau.nodes.node import NodeContent
 
 
 class FootnoteNodeContent(NodeContent):
-    node_type = "footnote"
+    type = "footnote"
 
     # def __init__(
     #     self,
@@ -38,19 +38,19 @@ class FootnoteNodeContent(NodeContent):
     #     )
 
 
-class MacroFootnoteNodeContent(FootnoteNodeContent):
-    """A footnote created inside a piece of text."""
+# class MacroFootnoteNodeContent(FootnoteNodeContent):
+#     """A footnote created inside a piece of text."""
 
-    node_type = "footnote"
-
-
-class FootnotesEntryNodeContent(FootnoteNodeContent):
-    """An entry of the list of footnotes."""
-
-    node_type = "footnotes_entry"
+#     node_type = "footnote"
 
 
-class FootnotesNodeContent(NodeContent):
-    """This instructs Mau to insert the list of footnotes."""
+# class FootnotesEntryNodeContent(FootnoteNodeContent):
+#     """An entry of the list of footnotes."""
 
-    node_type = "footnotes"
+#     node_type = "footnotes_entry"
+
+
+# class FootnotesNodeContent(NodeContent):
+#     """This instructs Mau to insert the list of footnotes."""
+
+#     node_type = "footnotes"

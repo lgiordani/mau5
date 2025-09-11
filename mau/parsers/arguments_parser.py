@@ -1,4 +1,4 @@
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 
 from mau.environment.environment import Environment
 from mau.lexers.arguments_lexer import ArgumentsLexer
@@ -8,11 +8,11 @@ from mau.tokens.token import Token, TokenType
 
 
 @dataclass
-class Attributes:
-    unnamed_args: list[str]
-    named_args: dict[str, str]
-    tags: list[str]
-    subtype: str | None
+class Arguments:
+    unnamed_args: list[str] = field(default_factory=list)
+    named_args: dict[str, str] = field(default_factory=dict)
+    tags: list[str] = field(default_factory=list)
+    subtype: str | None = None
 
     def asdict(self):
         return asdict(self)
@@ -174,11 +174,11 @@ class ArgumentsParser(BaseParser):
         self.tag_nodes = []
         for i in self.unnamed_argument_nodes:
             # Discard arguments that do not start with `#`.
-            if not i.content.value.startswith("#"):
+            if not i.content.value.startswith("#"):  # type: ignore[attr-defined]
                 continue
 
             # Remove the initial `#`.
-            i.content.value = i.content.value[1:]
+            i.content.value = i.content.value[1:]  # type: ignore[attr-defined]
 
             # Append the node to the list of tags.
             self.tag_nodes.append(i)
@@ -187,11 +187,11 @@ class ArgumentsParser(BaseParser):
         subtypes = []
         for i in self.unnamed_argument_nodes:
             # Discard arguments that do not start with `*`.
-            if not i.content.value.startswith("*"):
+            if not i.content.value.startswith("*"):  # type: ignore[attr-defined]
                 continue
 
             # Remove the initial `*`.
-            i.content.value = i.content.value[1:]
+            i.content.value = i.content.value[1:]  # type: ignore[attr-defined]
 
             # Append the node to the list of subtypes.
             subtypes.append(i)
@@ -248,15 +248,15 @@ class ArgumentsParser(BaseParser):
         self.named_argument_nodes.update(positional_arguments)
 
     @property
-    def attributes(self):
-        return Attributes(
-            unnamed_args=[node.content.value for node in self.unnamed_argument_nodes],
+    def arguments(self):
+        return Arguments(
+            unnamed_args=[node.content.value for node in self.unnamed_argument_nodes],  # type: ignore[attr-defined]
             named_args={
-                key: node.content.value
+                key: node.content.value  # type: ignore[attr-defined]
                 for key, node in self.named_argument_nodes.items()
             },
-            tags=[node.content.value for node in self.tag_nodes],
-            subtype=self.subtype.content.value if self.subtype else None,
+            tags=[node.content.value for node in self.tag_nodes],  # type: ignore[attr-defined]
+            subtype=self.subtype.content.value if self.subtype else None,  # type: ignore[attr-defined]
         )
 
     def parse(self):

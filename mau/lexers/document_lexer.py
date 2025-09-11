@@ -1,9 +1,9 @@
 import logging
 
 from mau.helpers import rematch
-from mau.lexers.base_lexer import BaseLexer
+from mau.lexers.base_lexer import BaseLexer, MauLexerException
 from mau.text_buffer.context import Context
-from mau.tokens.token import TokenType
+from mau.tokens.token import TokenType, Token
 
 logger = logging.getLogger(__name__)
 
@@ -112,26 +112,53 @@ class DocumentLexer(BaseLexer):
 
         return tokens
 
-    def _run_directive(self, name, value):
+    def _run_directive(
+        self, prefix_token: Token, name_token: Token, arguments_token: Token
+    ):
         # This executes a lexer directive found in the source text.
         # Currently, Mau supports only one directive,
         # `#include` that includes another source file.
 
+        # Remove the prefix `#`
+        name = name_token.value[1:]
+
         if name == "include":
-            with open(value, encoding="utf-8") as included_file:
-                # Read the content of the included file.
-                text = included_file.read()
+            # Get the arguments.
+            arguments = arguments_token.value
 
-                # Create a text buffer with the correct
-                # context. Tokens created by this lexer
-                # come from another file.
-                text_buffer = self.text_buffer.__class__(text, Context(source=value))
+            if not arguments:
+                raise MauLexerException(
+                    "Directive 'include' requires a file name.", prefix_token.context
+                )
 
-                lexer = DocumentLexer(text_buffer, self.environment)
-                lexer.process()
+            try:
+                with open(arguments, encoding="utf-8") as included_file:
+                    # Read the content of the included file.
+                    text = included_file.read()
 
-                # Remove the last token as it is an EOF
-                self.tokens.extend(lexer.tokens[:-1])
+                    # Create a text buffer with the correct
+                    # context. Tokens created by this lexer
+                    # come from another file.
+                    text_buffer = self.text_buffer.__class__(
+                        text, Context(source=arguments)
+                    )
+
+                    lexer = DocumentLexer(text_buffer, self.environment)
+                    lexer.process()
+
+                    # Remove the last token as it is an EOF
+                    self.tokens.extend(lexer.tokens[:-1])
+
+                    return
+            except OSError as exc:
+                raise MauLexerException(
+                    f"Error with directive 'include'. Cannot read file {arguments}.",
+                    prefix_token.context,
+                ) from exc
+
+        raise MauLexerException(
+            f"Directive '{name}' is not valid.", prefix_token.context
+        )
 
     def _process_command_or_directive(self):
         # Detect a command or directive in the form
@@ -140,7 +167,7 @@ class DocumentLexer(BaseLexer):
         # :: COMMAND:[ARGUMENTS]
 
         match = rematch(
-            r"^(?P<prefix>::) *(?P<command>[a-z0-9_#]+)(?P<separator>:)(?P<arguments>.*)?",
+            r"^(?P<prefix>::)(?P<whitespace> *)(?P<command>[a-z0-9_#]+)(?P<separator>:)?(?P<arguments>.*)?",
             self._current_line,
         )
 
@@ -148,9 +175,16 @@ class DocumentLexer(BaseLexer):
             return None
 
         prefix = match.groupdict().get("prefix")
+        whitespace = match.groupdict().get("whitespace")
         command = match.groupdict().get("command")
         separator = match.groupdict().get("separator")
         arguments = match.groupdict().get("arguments")
+
+        prefix_token = self._create_token_and_skip(TokenType.COMMAND, prefix)
+        self._skip(whitespace)
+        command_token = self._create_token_and_skip(TokenType.TEXT, command)
+        separator_token = self._create_token_and_skip(TokenType.LITERAL, separator)
+        arguments_token = self._create_token_and_skip(TokenType.TEXT, arguments)
 
         if command.startswith("#"):
             # Lexer directives are disguised as commands, but
@@ -160,7 +194,7 @@ class DocumentLexer(BaseLexer):
 
             # This is a lexer directive, remove the prefix and
             # execute it.
-            self._run_directive(command[1:], arguments)
+            self._run_directive(prefix_token, command_token, arguments_token)
 
             self._nextline()
 
@@ -168,16 +202,13 @@ class DocumentLexer(BaseLexer):
 
         # If the command is not a lexer directive we can
         # process it as usual, generating tokens.
+        tokens = [prefix_token, command_token]
 
-        tokens = [
-            self._create_token_and_skip(TokenType.COMMAND, prefix),
-            self._create_token_and_skip(TokenType.TEXT, command),
-            self._create_token_and_skip(TokenType.LITERAL, separator),
-        ]
+        if separator:
+            tokens.append(separator_token)
 
-        # A command might or might not have arguments.
         if arguments:
-            tokens.append(self._create_token_and_skip(TokenType.TEXT, arguments))
+            tokens.append(arguments_token)
 
         tokens.append(self._create_token_and_skip(TokenType.EOL))
 
@@ -198,7 +229,7 @@ class DocumentLexer(BaseLexer):
         # custom syntax depends on the specific control.
 
         match = rematch(
-            r"^(?P<prefix>@) *(?P<operator>[^:]+)(?P<separator>:)(?P<logic>.*)",
+            r"^(?P<prefix>@)(?P<whitespace> *)(?P<operator>[^:]+)(?P<separator>:)?(?P<logic>.*)?",
             self._current_line,
         )
 
@@ -206,17 +237,26 @@ class DocumentLexer(BaseLexer):
             return None
 
         prefix = match.groupdict().get("prefix")
+        whitespace = match.groupdict().get("whitespace")
         operator = match.groupdict().get("operator")
         separator = match.groupdict().get("separator")
         logic = match.groupdict().get("logic")
 
         tokens = [
             self._create_token_and_skip(TokenType.CONTROL, prefix),
-            self._create_token_and_skip(TokenType.TEXT, operator),
-            self._create_token_and_skip(TokenType.LITERAL, separator),
-            self._create_token_and_skip(TokenType.TEXT, logic),
-            self._create_token_and_skip(TokenType.EOL),
         ]
+
+        self._skip(whitespace)
+
+        tokens.append(self._create_token_and_skip(TokenType.TEXT, operator))
+
+        if separator:
+            tokens.append(self._create_token_and_skip(TokenType.LITERAL, separator))
+
+        if logic:
+            tokens.append(self._create_token_and_skip(TokenType.TEXT, logic))
+
+        tokens.append(self._create_token_and_skip(TokenType.EOL))
 
         self._nextline()
 
@@ -236,7 +276,7 @@ class DocumentLexer(BaseLexer):
         # _ # \ .
 
         match = rematch(
-            r"^(?P<prefix><<) *(?P<type>[a-z0-9_#\\\.]+)(?P<separator>:)(?P<arguments>.*)?",
+            r"^(?P<prefix><<)(?P<whitespace> *)(?P<type>[a-z0-9_#\\\.]+)(?P<separator>:)?(?P<arguments>.*)?",
             self._current_line,
         )
 
@@ -244,6 +284,7 @@ class DocumentLexer(BaseLexer):
             return None
 
         prefix = match.groupdict().get("prefix")
+        whitespace = match.groupdict().get("whitespace")
         content_type = match.groupdict().get("type")
         separator = match.groupdict().get("separator")
         arguments = match.groupdict().get("arguments")
@@ -251,13 +292,16 @@ class DocumentLexer(BaseLexer):
         if not content_type:  # pragma: no cover
             return None
 
-        tokens = []
-
         tokens = [
             self._create_token_and_skip(TokenType.INCLUDE, prefix),
-            self._create_token_and_skip(TokenType.TEXT, content_type),
-            self._create_token_and_skip(TokenType.LITERAL, separator),
         ]
+
+        self._skip(whitespace)
+
+        tokens.append(self._create_token_and_skip(TokenType.TEXT, content_type))
+
+        if separator:
+            tokens.append(self._create_token_and_skip(TokenType.LITERAL, separator))
 
         if arguments:
             tokens.append(self._create_token_and_skip(TokenType.TEXT, arguments))
@@ -280,7 +324,7 @@ class DocumentLexer(BaseLexer):
         # _ . + -
 
         match = rematch(
-            r"^(?P<prefix>:)(?P<name>[a-zA-Z0-9_\.\+\-]+)(?P<separator>:)(?P<value>.*)?",
+            r"^(?P<prefix>:)(?P<name>[a-zA-Z0-9_\.\+\-]+)(?P<separator>:)?(?P<value>.*)?",
             self._current_line,
         )
 
@@ -295,8 +339,10 @@ class DocumentLexer(BaseLexer):
         tokens = [
             self._create_token_and_skip(TokenType.VARIABLE, prefix),
             self._create_token_and_skip(TokenType.TEXT, name),
-            self._create_token_and_skip(TokenType.LITERAL, separator),
         ]
+
+        if separator:
+            tokens.append(self._create_token_and_skip(TokenType.LITERAL, separator))
 
         if value:
             tokens.append(self._create_token_and_skip(TokenType.TEXT, value))
@@ -347,7 +393,7 @@ class DocumentLexer(BaseLexer):
         # . TITLE
 
         match = rematch(
-            r"^(?P<prefix>\.) *(?P<title>.*)",
+            r"^(?P<prefix>\.)(?P<whitespace> *)(?P<title>.*)",
             self._current_line,
         )
 
@@ -355,13 +401,21 @@ class DocumentLexer(BaseLexer):
             return None
 
         prefix = match.groupdict().get("prefix")
+        whitespace = match.groupdict().get("whitespace")
         title = match.groupdict().get("title")
 
         tokens = [
             self._create_token_and_skip(TokenType.TITLE, prefix),
-            self._create_token_and_skip(TokenType.TEXT, title),
-            self._create_token_and_skip(TokenType.EOL),
         ]
+
+        self._skip(whitespace)
+
+        tokens.extend(
+            [
+                self._create_token_and_skip(TokenType.TEXT, title),
+                self._create_token_and_skip(TokenType.EOL),
+            ]
+        )
 
         self._nextline()
 
@@ -382,19 +436,33 @@ class DocumentLexer(BaseLexer):
         # to decide the nesting level.
         # Space between the prefix symbol and text is ignored as well.
 
-        match = rematch(r"^ *(?P<prefix>[\*#]+) +(?P<item>.*)", self._current_line)
+        match = rematch(
+            r"^(?P<whitespace1> *)(?P<prefix>[\*#]+)(?P<whitespace2> +)(?P<item>.*)",
+            self._current_line,
+        )
 
         if not match:
             return None
 
+        whitespace1 = match.groupdict().get("whitespace1")
         prefix = match.groupdict().get("prefix")
+        whitespace2 = match.groupdict().get("whitespace2")
         item = match.groupdict().get("item")
+
+        self._skip(whitespace1)
 
         tokens = [
             self._create_token_and_skip(TokenType.LIST, prefix),
-            self._create_token_and_skip(TokenType.TEXT, item),
-            self._create_token_and_skip(TokenType.EOL),
         ]
+
+        self._skip(whitespace2)
+
+        tokens.extend(
+            [
+                self._create_token_and_skip(TokenType.TEXT, item),
+                self._create_token_and_skip(TokenType.EOL),
+            ]
+        )
 
         self._nextline()
 
@@ -411,12 +479,15 @@ class DocumentLexer(BaseLexer):
         #
         # Multiple prefix symbols can be specified.
 
-        match = rematch("^(?P<prefix>=+) *(?P<header>.*)", self._current_line)
+        match = rematch(
+            "^(?P<prefix>=+)(?P<whitespace> *)(?P<header>.*)", self._current_line
+        )
 
         if not match:
             return None
 
         prefix = match.groupdict().get("prefix")
+        whitespace = match.groupdict().get("whitespace")
         header = match.groupdict().get("header")
 
         if not header:
@@ -424,9 +495,16 @@ class DocumentLexer(BaseLexer):
 
         tokens = [
             self._create_token_and_skip(TokenType.HEADER, prefix),
-            self._create_token_and_skip(TokenType.TEXT, header),
-            self._create_token_and_skip(TokenType.EOL),
         ]
+
+        self._skip(whitespace)
+
+        tokens.extend(
+            [
+                self._create_token_and_skip(TokenType.TEXT, header),
+                self._create_token_and_skip(TokenType.EOL),
+            ]
+        )
 
         self._nextline()
 

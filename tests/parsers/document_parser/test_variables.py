@@ -1,12 +1,15 @@
+import pytest
+
 from mau.lexers.document_lexer import DocumentLexer
-from mau.parsers.document_parser import DocumentParser
+from mau.nodes.inline import StyleNodeContent, TextNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.inline import TextNodeContent, StyleNodeContent
 from mau.nodes.paragraph import ParagraphNodeContent
+from mau.parsers.base_parser import MauParserException
+from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
+    generate_context,
     init_parser_factory,
     parser_runner_factory,
-    generate_context,
 )
 
 init_parser = init_parser_factory(DocumentLexer, DocumentParser)
@@ -17,10 +20,14 @@ runner = parser_runner_factory(DocumentLexer, DocumentParser)
 def test_parse_variable_definition_without_value_is_empty():
     source = ":attr:"
 
-    parser = runner(source)
+    with pytest.raises(MauParserException) as exc:
+        runner(source)
 
-    assert parser.nodes == []
-    assert parser.environment.asdict() == {"attr": ""}
+    assert (
+        exc.value.message
+        == "Error in variable definition. Variable 'attr' has no value."
+    )
+    assert exc.value.context == generate_context(0, 0)
 
 
 def test_parse_variable_definition_with_plus_is_true():

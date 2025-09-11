@@ -1,17 +1,36 @@
-# from mau.environment.environment import Environment
-# from mau.lexers.document_lexer import DocumentLexer
-# from mau.nodes.block import BlockNode
-# from mau.nodes.header import HeaderNode
-# from mau.nodes.inline import SentenceNode, TextNode
-# from mau.nodes.page import ContainerNode
-# from mau.nodes.toc import TocEntryNode, TocNode
-# from mau.parsers.document_parser import DocumentParser
+import pytest
 
-# from mau.test_helpers import init_parser_factory, parser_runner_factory
+from mau.environment.environment import Environment
+from mau.lexers.document_lexer import DocumentLexer
+from mau.nodes.headers import HeaderNodeContent
+from mau.nodes.inline import SentenceNodeContent, TextNodeContent
+from mau.nodes.toc import TocNodeContent
+from mau.nodes.node import Node, NodeInfo
+from mau.parsers.base_parser import MauParserException
+from mau.parsers.document_parser import DocumentParser
+from mau.test_helpers import (
+    compare_nodes,
+    generate_context,
+    init_parser_factory,
+    parser_runner_factory,
+)
 
-# init_parser = init_parser_factory(DocumentLexer, DocumentParser)
+init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 
-# runner = parser_runner_factory(DocumentLexer, DocumentParser)
+runner = parser_runner_factory(DocumentLexer, DocumentParser)
+
+
+# def test_command_toc():
+#     source = """
+#     ::toc:
+#     """
+
+#     parser = runner(source)
+
+#     compare_nodes(
+#         parser.toc_manager._toc_nodes,
+#         [Node(content=TocNodeContent(), children={})],
+#     )
 
 
 # def test_command_toc():

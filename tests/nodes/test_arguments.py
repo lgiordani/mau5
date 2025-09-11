@@ -1,7 +1,7 @@
 from mau.nodes.arguments import NamedArgumentNodeContent, UnnamedArgumentNodeContent
 
 
-def test_unnamed_argument_node_value():
+def test_unnamed_argument_node_content():
     node_content = UnnamedArgumentNodeContent("somevalue")
 
     assert node_content.type == "unnamed_argument"
@@ -9,13 +9,13 @@ def test_unnamed_argument_node_value():
     assert node_content.asdict() == {"type": "unnamed_argument", "value": "somevalue"}
 
 
-def test_named_argument_node_value():
-    node = NamedArgumentNodeContent("somekey", "somevalue")
+def test_named_argument_node_content():
+    node_content = NamedArgumentNodeContent("somekey", "somevalue")
 
-    assert node.type == "named_argument"
-    assert node.key == "somekey"
-    assert node.value == "somevalue"
-    assert node.asdict() == {
+    assert node_content.type == "named_argument"
+    assert node_content.key == "somekey"
+    assert node_content.value == "somevalue"
+    assert node_content.asdict() == {
         "key": "somekey",
         "value": "somevalue",
         "type": "named_argument",

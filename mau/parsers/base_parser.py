@@ -16,9 +16,12 @@ logger = logging.getLogger(__name__)
 
 
 class MauParserException(ValueError):
-    def __init__(self, message: str, context: Context | None = None):
+    def __init__(
+        self, message: str, context: Context | None = None, long_help: str | None = None
+    ):
         self.message = message
         self.context = context
+        self.long_help = long_help
 
 
 def format_parser_error(exception: MauParserException) -> str:
@@ -37,6 +40,17 @@ def format_parser_error(exception: MauParserException) -> str:
         output.append(f"Line: {c.line}")
         output.append(f"Column: {c.column}")
         output.append(f"Source: {c.source}")
+
+        with open(c.source) as f:
+            lines = f.readlines()
+
+            output.append("")
+            output.append(lines[c.line].replace("\n", ""))
+            output.append(" " * c.column + "^")
+
+    if lh := exception.long_help:
+        output.append("")
+        output.append(lh)
 
     return "\n".join(output)
 
@@ -86,6 +100,9 @@ class TokenError(ValueError):
     def __init__(self, message: str | None = None, context: Context | None = None):
         self.message = message
         self.context = context
+
+
+# class TokenManager
 
 
 class BaseParser:
@@ -520,7 +537,7 @@ def recursive_check_nodes(nodes: list[Node]):
     for node in nodes:
         if node.check_children():
             raise ValueError(
-                f"{node.content.__class__} accepts {node.content.allowed_keys} - found {node.children.keys()} "
+                f"{node.content.__class__} accepts {node.content.allowed_keys} - found {node.children.keys()} - Full node dump: {node}"
             )
 
         for key, value in node.children.items():

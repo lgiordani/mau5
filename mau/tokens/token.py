@@ -45,6 +45,13 @@ class Token:
         self.context = context
         self.value = value or ""
 
+    def asdict(self):
+        return {
+            "type": self.type,
+            "value": self.value,
+            "context": self.context.asdict() if self.context else None,
+        }
+
     def __repr__(self):
         return f'Token({self.type}, "{self.value}", {self.context})'
 

@@ -11,6 +11,10 @@ def dedent(text):
     return textwrap.dedent(text).strip()
 
 
+def compare_tokens(tokens_left, tokens_right):
+    assert [i.asdict() for i in tokens_left] == [i.asdict() for i in tokens_right]
+
+
 def compare_nodes(nodes_left, nodes_right):
     assert [i.asdict() for i in nodes_left] == [i.asdict() for i in nodes_right]
 
@@ -46,7 +50,9 @@ def lexer_runner_factory(lexer_class, *args, **kwds):
 
         environment = environment or Environment()
 
-        text_buffer = TextBuffer(textwrap.dedent(text), Context())
+        text_buffer = TextBuffer(
+            textwrap.dedent(text), Context(source=TEST_CONTEXT_SOURCE)
+        )
 
         lexer = init_lexer(text_buffer, environment, *args, **kwds)
         lexer.process()
@@ -91,6 +97,7 @@ def parser_runner_factory(lexer_class, parser_class, *args, **kwds):
 
         parser = init_parser(textwrap.dedent(source), environment, *args, **kwds)
         parser.parse()
+        parser.finalise()
 
         return parser
 

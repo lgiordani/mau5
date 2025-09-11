@@ -1,14 +1,14 @@
 from mau.lexers.document_lexer import DocumentLexer
-from mau.parsers.document_parser import DocumentParser
-from mau.nodes.node import Node, NodeInfo
-from mau.nodes.inline import TextNodeContent, SentenceNodeContent
+from mau.nodes.inline import SentenceNodeContent, TextNodeContent
 from mau.nodes.macros import MacroLinkNodeContent
+from mau.nodes.node import Node, NodeInfo
 from mau.nodes.paragraph import ParagraphNodeContent
+from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
+    compare_nodes,
+    generate_context,
     init_parser_factory,
     parser_runner_factory,
-    generate_context,
-    compare_nodes,
 )
 
 init_parser = init_parser_factory(DocumentLexer, DocumentParser)

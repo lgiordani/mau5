@@ -542,7 +542,7 @@ class TextParser(BaseParser):
         node = Node(
             parent=self.parent_node,
             children={"text": nodes},
-            content=MacroHeaderNodeContent(_id=header_id.content.value),
+            content=MacroHeaderNodeContent(header_id.content.value),
             info=NodeInfo(position=self.parent_position, context=context),
         )
 

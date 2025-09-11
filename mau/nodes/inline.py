@@ -41,11 +41,11 @@ class SentenceNodeContent(NodeContent):
     """
 
     type = "sentence"
-    allowed_keys = ["content"]
+    allowed_keys = {"content": "The text nodes contained into this node."}
 
 
 class StyleNodeContent(ValueNodeContent):
     """Describes the style applied to a node."""
 
     type = "style"
-    allowed_keys = ["content"]
+    allowed_keys = {"content": "The text nodes contained into this node."}

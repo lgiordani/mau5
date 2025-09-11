@@ -33,7 +33,7 @@ class MacroClassNodeContent(NodeContent):
     """Text with one or more classes."""
 
     type = "macro.class"
-    allowed_keys = ["text"]
+    allowed_keys = {"text": "The text that is marked with the given classes."}
 
     def __init__(self, classes: list[str]):
         self.classes = classes
@@ -54,7 +54,7 @@ class MacroLinkNodeContent(ValueNodeContent):
 
     type = "macro.link"
     value_key = "target"
-    allowed_keys = ["text"]
+    allowed_keys = {"text": "The text linked to the target."}
 
 
 class MacroImageNodeContent(NodeContent):
@@ -88,23 +88,12 @@ class MacroImageNodeContent(NodeContent):
         return base
 
 
-class MacroHeaderNodeContent(NodeContent):
+class MacroHeaderNodeContent(ValueNodeContent):
     """This node contains a link to a header node."""
 
     type = "macro.header"
-    allowed_keys = ["text"]
-
-    def __init__(self, _id: str, text: str | None = None):
-        self.id = _id
-        self.text = text
-
-    def asdict(self):
-        base = super().asdict()
-        base.update(
-            {
-                "id": self.id,
-                "text": self.text,
-            }
-        )
-
-        return base
+    value_key = "id"
+    allowed_keys = {
+        "text": "The text linked to the header.",
+        "header": "The anchor of the linked header.",
+    }
