@@ -1,4 +1,4 @@
-from mau.lexers.text_lexer import TextLexer
+from mau.lexers.text_lexer.lexer import TextLexer
 from mau.test_helpers import (
     compare_tokens,
     generate_context,

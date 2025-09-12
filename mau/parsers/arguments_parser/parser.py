@@ -1,9 +1,9 @@
 from dataclasses import asdict, dataclass, field
 
 from mau.environment.environment import Environment
-from mau.lexers.arguments_lexer import ArgumentsLexer
+from mau.lexers.arguments_lexer.lexer import ArgumentsLexer
 from mau.nodes.node import Node, NodeInfo, ValueNodeContent
-from mau.parsers.base_parser import BaseParser
+from mau.parsers.base_parser.parser import BaseParser
 from mau.tokens.token import Token, TokenType
 
 
@@ -56,7 +56,7 @@ class ArgumentsParser(BaseParser):
     def _process_eol(self):
         # This simply ignores the end of line.
 
-        self._get_token(TokenType.EOL)
+        self.tm.get_token(TokenType.EOL)
 
         return True
 
@@ -67,7 +67,7 @@ class ArgumentsParser(BaseParser):
         # key="value"
 
         # Get the token with the key.
-        key_token = self._get_token(TokenType.TEXT)
+        key_token = self.tm.get_token(TokenType.TEXT)
 
         # The context of the argument is the
         # context of the key.
@@ -75,31 +75,31 @@ class ArgumentsParser(BaseParser):
 
         # After a key there should be an equal.
         # If not, this function fails.
-        self._get_token(TokenType.LITERAL, "=")
+        self.tm.get_token(TokenType.LITERAL, "=")
 
         # Values can be surrounded by quotes.
         # If there are quotes we skip them.
-        if self._peek_token_is(TokenType.LITERAL, '"'):
+        if self.tm.peek_token_is(TokenType.LITERAL, '"'):
             # Read and discard the opening quotes
-            self._get_token(TokenType.LITERAL, '"')
+            self.tm.get_token(TokenType.LITERAL, '"')
 
             # Get everything before the next double quotes.
-            value = self._collect_join([Token(TokenType.LITERAL, '"')])
+            value = self.tm.collect_join([Token(TokenType.LITERAL, '"')])
 
             # Read and discard the closing quotes
-            self._get_token(TokenType.LITERAL, '"')
+            self.tm.get_token(TokenType.LITERAL, '"')
         else:
             # Get everything before the comma or EOF.
-            value = self._collect_join([Token(TokenType.LITERAL, ",")])
+            value = self.tm.collect_join([Token(TokenType.LITERAL, ",")])
 
         # The comma is not there after the last argument,
         # so this is in a context manager as it might fail.
-        with self:
-            self._get_token(TokenType.LITERAL, ",")
+        with self.tm:
+            self.tm.get_token(TokenType.LITERAL, ",")
 
         # Ignore whitespace after the comma.
-        with self:
-            self._get_token(TokenType.WHITESPACE)
+        with self.tm:
+            self.tm.get_token(TokenType.WHITESPACE)
 
         # Save the node.
         node = Node(
@@ -128,35 +128,35 @@ class ArgumentsParser(BaseParser):
 
         # Values can be surrounded by quotes
         # If there are quotes we skip them.
-        if self._peek_token_is(TokenType.LITERAL, '"'):
+        if self.tm.peek_token_is(TokenType.LITERAL, '"'):
             # Read and discard the opening quotes
-            self._get_token(TokenType.LITERAL, '"')
+            self.tm.get_token(TokenType.LITERAL, '"')
 
             # The context of the argument is the
             # context of the first token.
-            context = self._peek_token().context
+            context = self.tm.peek_token().context
 
             # Get everything before the next double quotes.
-            value = self._collect_join([Token(TokenType.LITERAL, '"')])
+            value = self.tm.collect_join([Token(TokenType.LITERAL, '"')])
 
             # Read and discard the closing quotes
-            self._get_token(TokenType.LITERAL, '"')
+            self.tm.get_token(TokenType.LITERAL, '"')
         else:
             # The context of the argument is the
             # context of the first token.
-            context = self._peek_token().context
+            context = self.tm.peek_token().context
 
             # Get everything before the comma or EOF.
-            value = self._collect_join([Token(TokenType.LITERAL, ",")])
+            value = self.tm.collect_join([Token(TokenType.LITERAL, ",")])
 
         # The comma is not there after the last argument,
         # so this is in a context manager as it might fail.
-        with self:
-            self._get_token(TokenType.LITERAL, ",")
+        with self.tm:
+            self.tm.get_token(TokenType.LITERAL, ",")
 
         # Ignore whitespace after the comma.
-        with self:
-            self._get_token(TokenType.WHITESPACE)
+        with self.tm:
+            self.tm.get_token(TokenType.WHITESPACE)
 
         # Save the node.
         node = Node(

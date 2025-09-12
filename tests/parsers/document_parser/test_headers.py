@@ -1,9 +1,9 @@
 from mau.environment.environment import Environment
-from mau.lexers.document_lexer import DocumentLexer
+from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.headers import HeaderNodeContent
 from mau.nodes.inline import SentenceNodeContent, TextNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.parsers.document_parser import DocumentParser
+from mau.parsers.document_parser.parser import DocumentParser
 from mau.test_helpers import (
     compare_nodes,
     generate_context,

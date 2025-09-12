@@ -1,7 +1,7 @@
-# from mau.lexers.document_lexer import DocumentLexer
+# from mau.lexers.document_lexer.lexer import DocumentLexer
 # from mau.nodes.block import BlockNode
 # from mau.nodes.inline import RawNode
-# from mau.parsers.document_parser import DocumentParser
+# from mau.parsers.document_parser.parser import DocumentParser
 
 # from mau.test_helpers import init_parser_factory, parser_runner_factory
 

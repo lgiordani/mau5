@@ -1,8 +1,9 @@
-import pytest
 from unittest.mock import mock_open, patch
 
-from mau.lexers.base_lexer import TokenType, MauLexerException
-from mau.lexers.document_lexer import DocumentLexer
+import pytest
+
+from mau.lexers.base_lexer.lexer import MauLexerException, TokenType
+from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.test_helpers import (
     TEST_CONTEXT_SOURCE,
     compare_tokens,
@@ -571,7 +572,7 @@ def test_header_markers_in_text():
     )
 
 
-@patch("mau.lexers.document_lexer.DocumentLexer._run_directive")
+@patch("mau.lexers.document_lexer.lexer.DocumentLexer._run_directive")
 def test_directive(mock_run_directive):
     runner("::#name:/path/to/file")
 

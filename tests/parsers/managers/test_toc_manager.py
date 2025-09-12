@@ -1,9 +1,12 @@
-from mau.lexers.document_lexer import DocumentLexer
+from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.headers import HeaderNodeContent
 from mau.nodes.node import Node
 from mau.nodes.toc import TocNodeContent
-from mau.parsers.document_parser import DocumentParser
-from mau.parsers.managers.toc_manager import TocManager, add_nodes_under_level
+from mau.parsers.document_parser.managers.toc_manager import (
+    TocManager,
+    add_nodes_under_level,
+)
+from mau.parsers.document_parser.parser import DocumentParser
 from mau.test_helpers import (
     init_parser_factory,
     parser_runner_factory,

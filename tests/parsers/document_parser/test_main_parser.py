@@ -1,5 +1,5 @@
-from mau.lexers.document_lexer import DocumentLexer
-from mau.parsers.document_parser import DocumentParser
+from mau.lexers.document_lexer.lexer import DocumentLexer
+from mau.parsers.document_parser.parser import DocumentParser
 from mau.test_helpers import (
     init_parser_factory,
     parser_runner_factory,

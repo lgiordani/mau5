@@ -2,12 +2,12 @@
 
 # import pytest
 # from mau.errors import MauErrorException
-# from mau.lexers.document_lexer import DocumentLexer
+# from mau.lexers.document_lexer.lexer import DocumentLexer
 # from mau.nodes.block import BlockNode
 # from mau.nodes.header import HeaderNode
 # from mau.nodes.inline import SentenceNode, TextNode
 # from mau.nodes.toc import TocEntryNode, TocNode
-# from mau.parsers.document_parser import DocumentParser
+# from mau.parsers.document_parser.parser import DocumentParser
 
 # from mau.test_helpers import init_parser_factory, parser_runner_factory
 

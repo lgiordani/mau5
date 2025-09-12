@@ -3,7 +3,7 @@ from __future__ import annotations
 from mau.nodes.headers import HeaderNodeContent
 from mau.nodes.macros import MacroHeaderNodeContent
 from mau.nodes.node import Node
-from mau.parsers.base_parser import MauParserException
+from mau.parsers.base_parser.parser import MauParserException
 
 
 class HeaderLinksManager:

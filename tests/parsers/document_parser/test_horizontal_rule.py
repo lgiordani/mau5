@@ -1,7 +1,7 @@
-from mau.lexers.document_lexer import DocumentLexer
+from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.document import HorizontalRuleNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.parsers.document_parser import DocumentParser
+from mau.parsers.document_parser.parser import DocumentParser
 from mau.test_helpers import (
     generate_context,
     init_parser_factory,

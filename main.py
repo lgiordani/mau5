@@ -8,8 +8,16 @@ from rich.traceback import install
 
 from mau import Mau
 from mau.environment.environment import Environment
-from mau.lexers.base_lexer import MauLexerException, format_lexer_error, format_token
-from mau.parsers.base_parser import MauParserException, format_node, format_parser_error
+from mau.lexers.base_lexer.lexer import (
+    MauLexerException,
+    format_lexer_error,
+    format_token,
+)
+from mau.parsers.base_parser.parser import (
+    MauParserException,
+    format_node,
+    format_parser_error,
+)
 
 install(show_locals=True)
 

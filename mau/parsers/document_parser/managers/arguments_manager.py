@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-from mau.parsers.arguments_parser import Arguments, ArgumentsParser
-from mau.nodes.headers import HeaderNodeContent
-from mau.nodes.node import Node
-from mau.nodes.toc import TocNodeContent
+from mau.parsers.arguments_parser.parser import Arguments
 
 
 class ArgumentsManager:

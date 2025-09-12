@@ -1,4 +1,4 @@
-from mau.lexers.base_lexer import BaseLexer, TokenType
+from mau.lexers.base_lexer.lexer import BaseLexer, TokenType
 
 
 class PreprocessVariablesLexer(BaseLexer):

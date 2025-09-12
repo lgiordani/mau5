@@ -1,8 +1,8 @@
-from mau.lexers.text_lexer import TextLexer
+from mau.lexers.text_lexer.lexer import TextLexer
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.macros import MacroNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.parsers.text_parser import TextParser
+from mau.parsers.text_parser.parser import TextParser
 from mau.test_helpers import (
     generate_context,
     init_parser_factory,

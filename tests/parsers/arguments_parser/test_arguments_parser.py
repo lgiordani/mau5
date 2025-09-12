@@ -1,9 +1,9 @@
 import pytest
 
-from mau.lexers.arguments_lexer import ArgumentsLexer
+from mau.lexers.arguments_lexer.lexer import ArgumentsLexer
 from mau.nodes.node import Node, NodeInfo, ValueNodeContent
-from mau.parsers.arguments_parser import Arguments, ArgumentsParser
-from mau.parsers.base_parser import MauParserException
+from mau.parsers.arguments_parser.parser import Arguments, ArgumentsParser
+from mau.parsers.base_parser.parser import MauParserException
 from mau.test_helpers import generate_context, parser_runner_factory
 
 runner = parser_runner_factory(ArgumentsLexer, ArgumentsParser)

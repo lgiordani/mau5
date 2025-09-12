@@ -1,9 +1,9 @@
 import logging
 
 from mau.helpers import rematch
-from mau.lexers.base_lexer import BaseLexer, MauLexerException
+from mau.lexers.base_lexer.lexer import BaseLexer, MauLexerException
 from mau.text_buffer.context import Context
-from mau.tokens.token import TokenType, Token
+from mau.tokens.token import Token, TokenType
 
 logger = logging.getLogger(__name__)
 

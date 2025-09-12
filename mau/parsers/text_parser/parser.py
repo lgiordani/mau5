@@ -4,7 +4,7 @@ import itertools
 import logging
 
 from mau.environment.environment import Environment
-from mau.lexers.text_lexer import TextLexer
+from mau.lexers.text_lexer.lexer import TextLexer
 from mau.nodes.footnotes import FootnoteNodeContent
 from mau.nodes.inline import (
     SentenceNodeContent,
@@ -21,8 +21,9 @@ from mau.nodes.macros import (
     MacroNodeContent,
 )
 from mau.nodes.node import Node, NodeInfo
-from mau.parsers.arguments_parser import ArgumentsParser
-from mau.parsers.base_parser import BaseParser, TokenError
+from mau.parsers.arguments_parser.parser import ArgumentsParser
+from mau.parsers.base_parser.managers.tokens_manager import TokenError
+from mau.parsers.base_parser.parser import BaseParser
 from mau.text_buffer.context import Context
 from mau.tokens.token import Token, TokenType
 
@@ -71,19 +72,19 @@ class TextParser(BaseParser):
 
         # Continue until you find a closing round bracket or EOL.
         while not (
-            self._peek_token_is(TokenType.LITERAL, ")")
-            or self._peek_token_is(TokenType.EOL)
+            self.tm.peek_token_is(TokenType.LITERAL, ")")
+            or self.tm.peek_token_is(TokenType.EOL)
         ):
             # If we find double quotes we need to blindly
             # collect everything until we meet the closing
             # double quotes or EOL.
-            if self._peek_token_is(TokenType.LITERAL, '"'):
+            if self.tm.peek_token_is(TokenType.LITERAL, '"'):
                 # Consume the double quotes.
-                self._get_token(TokenType.LITERAL, '"')
+                self.tm.get_token(TokenType.LITERAL, '"')
 
                 # Collect and join everything.
                 # Stop at quotes or EOL.
-                value = self._collect_join(
+                value = self.tm.collect_join(
                     stop_tokens=[
                         Token(TokenType.LITERAL, '"'),
                         Token(TokenType.EOL),
@@ -93,14 +94,14 @@ class TextParser(BaseParser):
                 # As we stopped, the next token should be
                 # double quotes. If not, we hit EOL and
                 # macro arguments are not closed correctly.
-                self._get_token(TokenType.LITERAL, '"')
+                self.tm.get_token(TokenType.LITERAL, '"')
 
                 arguments = f'"{value}"'
             else:
                 # No double quotes, we can proceed,
                 # until we find the closing round bracket
                 # or a comma, which is the arguments separator.
-                arguments = self._collect_join(
+                arguments = self.tm.collect_join(
                     stop_tokens=[
                         Token(TokenType.LITERAL, ","),
                         Token(TokenType.LITERAL, ")"),
@@ -116,7 +117,7 @@ class TextParser(BaseParser):
         # closing brackets or EOL. If we can't find
         # the closing bracket the next token is EOL
         # and macro arguments are not closed correctly.
-        self._get_token(TokenType.LITERAL, ")")
+        self.tm.get_token(TokenType.LITERAL, ")")
 
         # Arguments will be processed by the arguments
         # parser, for now just merge all of them into
@@ -133,7 +134,7 @@ class TextParser(BaseParser):
     def _process_eol(self) -> bool:
         # This simply ignores the end of line.
 
-        self._get_token(TokenType.EOL)
+        self.tm.get_token(TokenType.EOL)
 
         return True
 
@@ -229,22 +230,22 @@ class TextParser(BaseParser):
 
         stop_tokens = stop_tokens or set()
 
-        if self._peek_token() in stop_tokens:
+        if self.tm.peek_token() in stop_tokens:
             return None
 
-        with self:
+        with self.tm:
             return self._parse_backslash_escaped()
 
-        with self:
+        with self.tm:
             return self._parse_macro()
 
-        with self:
+        with self.tm:
             return self._parse_verbatim()
 
-        with self:
+        with self.tm:
             return self._parse_escaped()
 
-        with self:
+        with self.tm:
             return self._parse_style()
 
         return self._parse_word()
@@ -256,13 +257,13 @@ class TextParser(BaseParser):
         # E.g "\_" or "\[text\]"
 
         # Drop the backslash.
-        backslash = self._get_token(TokenType.LITERAL, "\\")
+        backslash = self.tm.get_token(TokenType.LITERAL, "\\")
 
         # Create a word node with the next token.
         node = Node(
             parent=self.parent_node,
             content=WordNodeContent(
-                self._get_token().value,
+                self.tm.get_token().value,
             ),
             info=NodeInfo(
                 context=backslash.context,
@@ -281,18 +282,18 @@ class TextParser(BaseParser):
         # If the processing succeds, we need the
         # opening bracket to store the context
         # in the resulting node.
-        opening_bracket = self._get_token(TokenType.LITERAL, "[")
-        macro_name = self._get_token(TokenType.TEXT).value
-        self._get_token(TokenType.LITERAL, "]")
+        opening_bracket = self.tm.get_token(TokenType.LITERAL, "[")
+        macro_name = self.tm.get_token(TokenType.TEXT).value
+        self.tm.get_token(TokenType.LITERAL, "]")
 
         # If this is a macro, there should be an
         # opening round bracket that contains arguments.
-        self._get_token(TokenType.LITERAL, "(")
+        self.tm.get_token(TokenType.LITERAL, "(")
 
         # We need to parse the macro arguments.
         # The context of the parsing is that of the
         # first token after the opening bracket.
-        current_context = self._peek_token().context
+        current_context = self.tm.peek_token().context
 
         # Get the macro arguments between round brackets.
         # The function might fail because the text might
@@ -369,16 +370,16 @@ class TextParser(BaseParser):
         # E.g. `text`.
 
         # Get the verbatim marker.
-        marker = self._get_token(TokenType.LITERAL, "`")
+        marker = self.tm.get_token(TokenType.LITERAL, "`")
 
         # Get all tokens from here to the next
         # verbatim marker or EOL.
-        content = self._collect_join(
+        content = self.tm.collect_join(
             [Token(TokenType.LITERAL, "`"), Token(TokenType.EOL)],
         )
 
         # Remove the closing marker.
-        self._get_token(TokenType.LITERAL, "`")
+        self.tm.get_token(TokenType.LITERAL, "`")
 
         node = Node(
             parent=self.parent_node,
@@ -396,18 +397,18 @@ class TextParser(BaseParser):
         # E.g. $escaped$ or %escaped%.
 
         # Get the escaped marker.
-        marker = self._get_token(
+        marker = self.tm.get_token(
             TokenType.LITERAL, value_check_function=lambda x: x in "$%"
         )
 
         # Get the content tokens before the
         # next escaped marker or EOL.
-        content = self._collect_join(
+        content = self.tm.collect_join(
             [Token(TokenType.LITERAL, marker.value), Token(TokenType.EOL)],
         )
 
         # Remove the closing marker
-        self._get_token(TokenType.LITERAL, marker.value)
+        self.tm.get_token(TokenType.LITERAL, marker.value)
 
         node = Node(
             parent=self.parent_node,
@@ -421,7 +422,7 @@ class TextParser(BaseParser):
         # Parse text surrounded by style markers.
 
         # Get the style marker
-        marker = self._get_token(
+        marker = self.tm.get_token(
             TokenType.LITERAL,
             value_check_function=lambda x: x in MAP_STYLES,
         )
@@ -432,7 +433,7 @@ class TextParser(BaseParser):
         )
 
         # Get the closing marker
-        self._get_token(TokenType.LITERAL, marker.value)
+        self.tm.get_token(TokenType.LITERAL, marker.value)
 
         children = {}
         if content:
@@ -450,7 +451,7 @@ class TextParser(BaseParser):
     def _parse_word(self) -> Node:
         # Parse a single word.
 
-        token = self._get_token()
+        token = self.tm.get_token()
 
         node = Node(
             parent=self.parent_node,

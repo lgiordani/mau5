@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from mau.environment.environment import Environment
-from mau.lexers.base_lexer import (
+from mau.lexers.base_lexer.lexer import (
     BaseLexer,
     MauLexerException,
     format_lexer_error,

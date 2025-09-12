@@ -1,11 +1,11 @@
 import pytest
 
-from mau.lexers.document_lexer import DocumentLexer
+from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.inline import StyleNodeContent, TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.paragraph import ParagraphNodeContent
-from mau.parsers.base_parser import MauParserException
-from mau.parsers.document_parser import DocumentParser
+from mau.parsers.base_parser.parser import MauParserException
+from mau.parsers.document_parser.parser import DocumentParser
 from mau.test_helpers import (
     generate_context,
     init_parser_factory,

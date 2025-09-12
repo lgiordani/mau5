@@ -1,30 +1,32 @@
 import pytest
 
-from mau.environment.environment import Environment
-from mau.lexers.document_lexer import DocumentLexer
+from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.include import IncludeNodeContent
 from mau.nodes.inline import SentenceNodeContent, TextNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.parsers.base_parser import MauParserException
-from mau.parsers.document_parser import DocumentParser
+from mau.parsers.base_parser.managers.tokens_manager import TokensManager
+from mau.parsers.base_parser.parser import MauParserException
+from mau.parsers.document_parser.parser import DocumentParser
+from mau.parsers.document_parser.processors.include import include_processor
 from mau.test_helpers import (
     compare_nodes,
     generate_context,
     init_parser_factory,
+    init_tokens_manager_factory,
     parser_runner_factory,
 )
 
 init_parser = init_parser_factory(DocumentLexer, DocumentParser)
+init_tm = init_tokens_manager_factory(DocumentLexer, TokensManager)
 
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
 def test_include_content_inline_arguments():
-    source = """
-    << ctype1:/path/to/it, /another/path, #tag1, *subtype1, key1=value1
-    """
+    source = "<< ctype1:/path/to/it, /another/path, #tag1, *subtype1, key1=value1"
 
-    parser = runner(source)
+    parser = init_parser(source)
+    include_processor(parser)
 
     compare_nodes(
         parser.nodes,
@@ -32,7 +34,7 @@ def test_include_content_inline_arguments():
             Node(
                 content=IncludeNodeContent("ctype1", ["/path/to/it", "/another/path"]),
                 info=NodeInfo(
-                    context=generate_context(1, 0),
+                    context=generate_context(0, 0),
                     unnamed_args=[],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
@@ -209,3 +211,27 @@ def test_include_content_with_title():
 #             subtype="subtype1",
 #         ),
 #     ]
+
+
+def test_include_full_parse_TODO():
+    source = """
+    << ctype1:/path/to/it, /another/path, #tag1, *subtype1, key1=value1
+    """
+
+    parser = runner(source)
+
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=IncludeNodeContent("ctype1", ["/path/to/it", "/another/path"]),
+                info=NodeInfo(
+                    context=generate_context(1, 0),
+                    unnamed_args=[],
+                    named_args={"key1": "value1"},
+                    tags=["tag1"],
+                    subtype="subtype1",
+                ),
+            ),
+        ],
+    )

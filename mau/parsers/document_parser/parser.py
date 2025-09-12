@@ -5,13 +5,14 @@ from __future__ import annotations
 import hashlib
 import re
 from functools import partial
+
 from mau.environment.environment import Environment
 
-# from mau.lexers.base_lexer import TokenTypes as TokenType
-from mau.lexers.document_lexer import DocumentLexer
+# from mau.lexers.base_lexer.lexer import TokenTypes as TokenType
+from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.document import HorizontalRuleNodeContent
 
-# from mau.lexers.document_lexer import TokenTypes as TokenType
+# from mau.lexers.document_lexer.lexer import TokenTypes as TokenType
 # from mau.nodes.block import BlockGroupNode, BlockNode
 # from mau.nodes.content import ContentImageNode, ContentNode
 from mau.nodes.headers import HeaderNodeContent
@@ -24,20 +25,22 @@ from mau.nodes.paragraph import ParagraphNodeContent
 # from mau.nodes.page import ContainerNode
 # from mau.nodes.paragraph import ParagraphNode
 # from mau.nodes.source import MarkerNode, CalloutsEntryNode, SourceNode, SourceLineNode
-from mau.parsers.arguments_parser import Arguments, ArgumentsParser
-from mau.parsers.base_parser import BaseParser, MauParserException
+from mau.parsers.arguments_parser.parser import Arguments, ArgumentsParser
+from mau.parsers.base_parser.managers.tokens_manager import TokenError
+from mau.parsers.base_parser.parser import BaseParser, MauParserException
 
 # from mau.parsers.footnotes import FootnotesManager
-from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
-from mau.parsers.text_parser import TextParser
+from mau.parsers.preprocess_variables_parser.parser import PreprocessVariablesParser
+from mau.parsers.text_parser.parser import TextParser
 from mau.tokens.token import Token, TokenType
 
+from .managers.arguments_manager import ArgumentsManager
 from .managers.header_links_manager import HeaderLinksManager
 from .managers.toc_manager import TocManager
-from .managers.arguments_manager import ArgumentsManager
+from .processors.include import include_processor
 
 # TODO check if we really want to use the current context
-# TODO self._peek_token(with arguments) is basically self._peek_token_is()
+# TODO self.tm.peek_token(with arguments) is basically self.tm.peek_token_is()
 
 
 def header_anchor(text, level):  # pragma: no cover
@@ -144,7 +147,7 @@ class DocumentParser(BaseParser):
             self._process_arguments,
             self._process_header,
             #         self._process_block,
-            self._process_include,
+            partial(include_processor, self),
             self._process_list,
             self._process_paragraph,
         ]
@@ -235,15 +238,15 @@ class DocumentParser(BaseParser):
     #     # Collects all adjacent text tokens
     #     # into a single string
 
-    #     if not self._peek_token_is(TokenType.TEXT):  # pragma: no cover
+    #     if not self.tm.peek_token_is(TokenType.TEXT):  # pragma: no cover
     #         return None
 
     #     values = []
 
     #     # Get all tokens
-    #     while self._peek_token_is(TokenType.TEXT):
-    #         values.append(self._get_token().value)
-    #         self._get_token(TokenType.EOL)
+    #     while self.tm.peek_token_is(TokenType.TEXT):
+    #         values.append(self.tm.get_token().value)
+    #         self.tm.get_token(TokenType.EOL)
 
     #     return " ".join(values)
 
@@ -292,7 +295,7 @@ class DocumentParser(BaseParser):
     def _process_eol(self) -> bool:
         # This simply ignores the end of line.
 
-        self._get_token(TokenType.EOL)
+        self.tm.get_token(TokenType.EOL)
 
         return True
 
@@ -300,7 +303,7 @@ class DocumentParser(BaseParser):
         # The horizontal rule ---
 
         # Get the horizontal rule token.
-        rule = self._get_token(TokenType.HORIZONTAL_RULE)
+        rule = self.tm.get_token(TokenType.HORIZONTAL_RULE)
 
         # Get the stored arguments.
         # Horizontal rules can receive arguments
@@ -325,10 +328,10 @@ class DocumentParser(BaseParser):
         # // A comment
 
         # Get the double slash token.
-        self._get_token(TokenType.COMMENT)
+        self.tm.get_token(TokenType.COMMENT)
 
         # Get the end of line.
-        self._get_token(TokenType.EOL)
+        self.tm.get_token(TokenType.EOL)
 
         return True
 
@@ -341,14 +344,19 @@ class DocumentParser(BaseParser):
         # ////
 
         # Get the opening four slashes token.
-        self._get_token(TokenType.MULTILINE_COMMENT)
+        opening = self.tm.get_token(TokenType.MULTILINE_COMMENT)
 
         # Collect everything before the next
         # four slashes.
-        self._collect([Token(TokenType.MULTILINE_COMMENT, "////")])
+        self.tm.collect([Token(TokenType.MULTILINE_COMMENT, "////")])
 
         # Get the closing four slashes token.
-        self._force_token(TokenType.MULTILINE_COMMENT, "////")
+        try:
+            self.tm.get_token(TokenType.MULTILINE_COMMENT, "////")
+        except TokenError as exc:
+            raise MauParserException(
+                "Unclosed multi-line comment", opening.context
+            ) from exc
 
         return True
 
@@ -363,13 +371,13 @@ class DocumentParser(BaseParser):
         # :namespace.name:value
 
         # Get the opening colon.
-        opening_colon = self._get_token(TokenType.VARIABLE, ":")
+        opening_colon = self.tm.get_token(TokenType.VARIABLE, ":")
 
         # Get the mandatory variable name token.
-        variable_token = self._get_token(TokenType.TEXT)
+        variable_token = self.tm.get_token(TokenType.TEXT)
 
         # Get the closing colon.
-        self._get_token(TokenType.LITERAL, ":")
+        self.tm.get_token(TokenType.LITERAL, ":")
 
         # Get the name of the variable.
         variable_name = variable_token.value
@@ -379,10 +387,10 @@ class DocumentParser(BaseParser):
         # get the context from EOL, but at the same
         # time there won't be any need to use the context
         # as the value is empty.
-        context = self._peek_token().context
+        context = self.tm.peek_token().context
 
         # Get the optional variable value.
-        value = self._collect_join([Token(TokenType.EOL)])
+        value = self.tm.collect_join([Token(TokenType.EOL)])
 
         # Process the variable according to its nature.
         if variable_name.startswith("+"):
@@ -424,13 +432,13 @@ class DocumentParser(BaseParser):
     #     # Parse a command in the form ::command:arguments
 
     #     # Get the opening double colon.
-    #     prefix = self._get_token(TokenType.COMMAND, "::")
+    #     prefix = self.tm.get_token(TokenType.COMMAND, "::")
 
     #     # Get the name of the command.
-    #     name = self._get_token(TokenType.TEXT).value
+    #     name = self.tm.get_token(TokenType.TEXT).value
 
     #     # Get the separator colon.
-    #     self._get_token(TokenType.LITERAL, ":")
+    #     self.tm.get_token(TokenType.LITERAL, ":")
 
     #     # Get the stored arguments.
     #     arguments = self.arguments_manager.pop()
@@ -438,8 +446,8 @@ class DocumentParser(BaseParser):
     #     # Build the node info.
     #     info = NodeInfo(context=prefix.context, **arguments.asdict())
 
-    #     with self:
-    #         arguments = self._get_token(TokenType.TEXT)
+    #     with self.tm:
+    #         arguments = self.tm.get_token(TokenType.TEXT)
 
     #         arguments_parser = ArgumentsParser.analyse(
     #             arguments.value, arguments.context, self.environment
@@ -515,11 +523,11 @@ class DocumentParser(BaseParser):
         # .This is a title
 
         # Parse the mandatory dot
-        dot = self._get_token(TokenType.TITLE, ".")
+        dot = self.tm.get_token(TokenType.TITLE, ".")
 
         # Get the text of the title
-        text = self._get_token(TokenType.TEXT).value
-        self._get_token(TokenType.EOL)
+        text = self.tm.get_token(TokenType.TEXT).value
+        self.tm.get_token(TokenType.EOL)
 
         self._push_title(text, dot.context)
 
@@ -531,18 +539,18 @@ class DocumentParser(BaseParser):
     #     # @operator:control_statement
 
     #     # Parse the mandatory @
-    #     at = self._get_token(TokenType.CONTROL, "@")
+    #     at = self.tm.get_token(TokenType.CONTROL, "@")
 
     #     # Get the operator
-    #     operator = self._get_token(TokenType.TEXT).value
+    #     operator = self.tm.get_token(TokenType.TEXT).value
 
     #     # Discard the :
-    #     self._get_token(TokenType.LITERAL, ":")
+    #     self.tm.get_token(TokenType.LITERAL, ":")
 
     #     # Get the statement
-    #     statement = self._get_token(TokenType.TEXT).value
+    #     statement = self.tm.get_token(TokenType.TEXT).value
 
-    #     self._get_token(TokenType.EOL)
+    #     self.tm.get_token(TokenType.EOL)
 
     #     self._push_control(operator, statement, at.context)
 
@@ -553,13 +561,13 @@ class DocumentParser(BaseParser):
         # [unnamed1, unnamed2, ..., named1=value1, named2=value2, ...]
 
         # Check that the token is the opening square bracket.
-        self._get_token(TokenType.ARGUMENTS, "[")
+        self.tm.get_token(TokenType.ARGUMENTS, "[")
 
         # Get the text token between brackets.
-        text_token = self._get_token(TokenType.TEXT)
+        text_token = self.tm.get_token(TokenType.TEXT)
 
         # Check that the token is the closing square bracket.
-        self._get_token(TokenType.LITERAL, "]")
+        self.tm.get_token(TokenType.LITERAL, "]")
 
         # Replace variables in the text.
         preprocess_parser = PreprocessVariablesParser.lex_and_parse(
@@ -599,10 +607,10 @@ class DocumentParser(BaseParser):
         # created using the provided function self.header_anchor
 
         # Get all the equal signs.
-        header = self._get_token(TokenType.HEADER)
+        header = self.tm.get_token(TokenType.HEADER)
 
         # Get the text of the header.
-        text_token = self._get_token(TokenType.TEXT)
+        text_token = self.tm.get_token(TokenType.TEXT)
 
         # Calculate the level of the header.
         level = len(header.value)
@@ -680,9 +688,9 @@ class DocumentParser(BaseParser):
     #     # are clearly surrounded by delimiters.
     #     lines = []
 
-    #     while self._peek_token() not in stop_tokens:
-    #         lines.append(self._collect_join([Token(TokenType.EOL)]))
-    #         self._get_token(TokenType.EOL)
+    #     while self.tm.peek_token() not in stop_tokens:
+    #         lines.append(self.tm.collect_join([Token(TokenType.EOL)]))
+    #         self.tm.get_token(TokenType.EOL)
 
     #     return lines
 
@@ -700,20 +708,20 @@ class DocumentParser(BaseParser):
     #     # Blocks are delimited by 4 consecutive identical characters.
 
     #     # Get the delimiter and check the length
-    #     delimiter = self._get_token(TokenType.BLOCK).value
+    #     delimiter = self.tm.get_token(TokenType.BLOCK).value
 
-    #     self._get_token(TokenType.EOL)
+    #     self.tm.get_token(TokenType.EOL)
 
     #     # Collect everything before the next delimiter
-    #     content = self._collect_lines(
+    #     content = self.tm.collect_lines(
     #         [Token(TokenType.BLOCK, delimiter), Token(TokenType.EOF)]
     #     )
 
     #     self._force_token(TokenType.BLOCK, delimiter)
-    #     self._get_token(TokenType.EOL)
+    #     self.tm.get_token(TokenType.EOL)
 
     #     # Get the optional secondary content
-    #     secondary_content = self._collect_lines(
+    #     secondary_content = self.tm.collect_lines(
     #         [Token(TokenType.EOL), Token(TokenType.EOF)]
     #     )
 
@@ -1037,82 +1045,6 @@ class DocumentParser(BaseParser):
 
     #     self._save(node)
 
-    def _process_include(self):
-        # Parse content in the form
-        #
-        # << content_type:URI
-
-        # Get the mandatory prefix.
-        prefix = self._get_token(TokenType.INCLUDE)
-
-        # Get the content type.
-        content_type = self._get_token(TokenType.TEXT).value
-
-        arguments: Arguments | None = self.arguments_manager.pop()
-
-        if self._peek_token_is(TokenType.LITERAL, ":"):
-            # In this case arguments are inline
-
-            # Check if boxed arguments have been defined.
-            # In that case we need to stop with an error.
-            if arguments:
-                raise MauParserException(
-                    "Syntax error. You cannot specify both boxed and inline arguments.",
-                    prefix.context,
-                    IncludeNodeContent.long_help,
-                )
-
-            # Get the colon.
-            self._get_token(TokenType.LITERAL, ":")
-
-            # Get the inline arguments.
-            arguments_token = self._get_token(TokenType.TEXT)
-
-            # Parse the arguments.
-            with self:
-                arguments_parser = ArgumentsParser.lex_and_parse(
-                    arguments_token.value, arguments_token.context, self.environment
-                )
-
-            arguments = arguments_parser.arguments
-
-        if not arguments:
-            raise MauParserException(
-                "Syntax error. You need to specify a list of URIs.",
-                prefix.context,
-                IncludeNodeContent.long_help,
-            )
-
-        # Get the URIs list and empty the unnamed arguments
-        uris = arguments.unnamed_args[:]
-        arguments.unnamed_args = []
-
-        if not uris:
-            raise MauParserException(
-                "Syntax error. You need to specify a list of URIs.",
-                prefix.context,
-                IncludeNodeContent.long_help,
-            )
-
-        # Build the node info.
-        info = NodeInfo(context=prefix.context, **arguments.asdict())
-
-        # # Check the control
-        # if self._pop_control() is False:
-        #     return True
-
-        # if content_type == "image":
-        #     return self._parse_content_image(uris, subtype, args, kwargs, tags)
-
-        node = Node(content=IncludeNodeContent(content_type, uris), info=info)
-
-        if title := self._pop_title():
-            node.add_children({"title": [title]})
-
-        self._save(node)
-
-        return True
-
     # def _parse_content_image(self, uris, subtype, args, kwargs, tags):
     #     # Parse a content image in the form
     #     #
@@ -1200,7 +1132,7 @@ class DocumentParser(BaseParser):
         #
 
         # Get the header and decide if it's a numbered or unnumbered list
-        header = self._peek_token(TokenType.LIST)
+        header = self.tm.peek_token(TokenType.LIST)
         ordered = header.value[0] == "#"
 
         # Parse all the following items
@@ -1233,13 +1165,13 @@ class DocumentParser(BaseParser):
         # This parses all items of a list
 
         # Parse the header.
-        header = self._get_token(TokenType.LIST)
+        header = self.tm.get_token(TokenType.LIST)
 
         # Get the text of the item.
-        text = self._get_token(TokenType.TEXT)
+        text = self.tm.get_token(TokenType.TEXT)
 
         # Get the EOL.
-        self._get_token(TokenType.EOL)
+        self.tm.get_token(TokenType.EOL)
 
         # Parse the text of the item.
         content = self._parse_text(
@@ -1259,21 +1191,21 @@ class DocumentParser(BaseParser):
             )
         )
 
-        while self._peek_token() not in [
+        while self.tm.peek_token() not in [
             Token(TokenType.EOF),
             Token(TokenType.EOL),
         ]:
-            if len(self._peek_token().value) == level:
+            if len(self.tm.peek_token().value) == level:
                 # The new item is on the same level
 
                 # Get the header
-                header = self._get_token()
+                header = self.tm.get_token()
 
                 # Get the text of the item.
-                text = self._get_token(TokenType.TEXT)
+                text = self.tm.get_token(TokenType.TEXT)
 
                 # Get the EOL.
-                self._get_token(TokenType.EOL)
+                self.tm.get_token(TokenType.EOL)
 
                 # Parse the text of the item.
                 content = self._parse_text(
@@ -1292,11 +1224,11 @@ class DocumentParser(BaseParser):
                     )
                 )
 
-            elif len(self._peek_token().value) > level:
+            elif len(self.tm.peek_token().value) > level:
                 # The new item is on a deeper level
 
                 # Peek the header
-                header = self._peek_token(TokenType.LIST)
+                header = self.tm.peek_token(TokenType.LIST)
                 ordered = header.value[0] == "#"
 
                 # Parse all the items at this level or higher.
@@ -1320,7 +1252,7 @@ class DocumentParser(BaseParser):
         # end with an empty line.
 
         # Get the context of the first token we are going to process
-        context = self._peek_token().context
+        context = self.tm.peek_token().context
 
         # Each line ends with EOL. This collects everything
         # before the EOL, then removes it. If the next token
@@ -1328,13 +1260,13 @@ class DocumentParser(BaseParser):
         # we continue to collect. If the token is EOF we
         # reached the end and we have to stop anyway.
         lines = []
-        while self._peek_token() not in [
+        while self.tm.peek_token() not in [
             Token(TokenType.EOL),
             Token(TokenType.EOF),
         ]:
             # Get everything before the EOL.
             lines.append(
-                self._collect_join(
+                self.tm.collect_join(
                     [
                         Token(TokenType.EOL),
                     ]
@@ -1342,7 +1274,7 @@ class DocumentParser(BaseParser):
             )
 
             # Get the EOL.
-            self._get_token(TokenType.EOL)
+            self.tm.get_token(TokenType.EOL)
 
         # TODO
         # Check the control

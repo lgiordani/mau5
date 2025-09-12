@@ -15,6 +15,10 @@ def compare_tokens(tokens_left, tokens_right):
     assert [i.asdict() for i in tokens_left] == [i.asdict() for i in tokens_right]
 
 
+def compare_node(node_left, node_right):
+    assert node_left.asdict() == node_right.asdict()
+
+
 def compare_nodes(nodes_left, nodes_right):
     assert [i.asdict() for i in nodes_left] == [i.asdict() for i in nodes_right]
 
@@ -62,6 +66,20 @@ def lexer_runner_factory(lexer_class, *args, **kwds):
     return _run
 
 
+def init_tokens_manager_factory(lexer_class, tokens_manager_class):
+    def _init_tokens_manager(text: str, environment):
+        text_buffer = TextBuffer(text, Context(source=TEST_CONTEXT_SOURCE))
+
+        lex = lexer_class(text_buffer, environment)
+        lex.process()
+
+        tm = tokens_manager_class(lex.tokens)
+
+        return tm
+
+    return _init_tokens_manager
+
+
 def init_parser_factory(lexer_class, parser_class):
     """
     A factory that returns a parser initialiser.
@@ -69,8 +87,11 @@ def init_parser_factory(lexer_class, parser_class):
     initialises the parser and returns it.
     """
 
-    def _init_parser(text: str, environment, *args, **kwargs):
-        text_buffer = TextBuffer(text, Context(source=TEST_CONTEXT_SOURCE))
+    def _init_parser(source: str, environment=None, *args, **kwargs):
+        text_buffer = TextBuffer(
+            textwrap.dedent(source),
+            Context(source=TEST_CONTEXT_SOURCE),
+        )
 
         lex = lexer_class(text_buffer, environment)
         lex.process()
@@ -95,7 +116,7 @@ def parser_runner_factory(lexer_class, parser_class, *args, **kwds):
 
         environment = environment or Environment()
 
-        parser = init_parser(textwrap.dedent(source), environment, *args, **kwds)
+        parser = init_parser(source, environment, *args, **kwds)
         parser.parse()
         parser.finalise()
 

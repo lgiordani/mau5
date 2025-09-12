@@ -1,7 +1,7 @@
-from mau.lexers.preprocess_variables_lexer import PreprocessVariablesLexer
+from mau.lexers.preprocess_variables_lexer.lexer import PreprocessVariablesLexer
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.parsers.base_parser import BaseParser
+from mau.parsers.base_parser.parser import BaseParser
 from mau.tokens.token import Token, TokenType
 
 
@@ -21,10 +21,10 @@ class PreprocessVariablesParser(BaseParser):
         # process to take place.
 
         # Check is the token is an escape backslash.
-        self._get_token(TokenType.LITERAL, "\\")
+        self.tm.get_token(TokenType.LITERAL, "\\")
 
         # Get the following character.
-        char = self._get_token()
+        char = self.tm.get_token()
 
         # If the character is not a curly brace
         # restore the escape backslash.
@@ -49,16 +49,16 @@ class PreprocessVariablesParser(BaseParser):
         # widespread in coding.
 
         # Check if the token is the opening backtick.
-        opening_tick = self._get_token(TokenType.LITERAL, "`")
+        opening_tick = self.tm.get_token(TokenType.LITERAL, "`")
 
         # Get everything before the closing backtick.
-        text = self._collect_join(
+        text = self.tm.collect_join(
             [Token(TokenType.LITERAL, "`")],
             preserve_escaped_stop_tokens=True,
         )
 
         # Check if the token is the closing backtick.
-        self._get_token(TokenType.LITERAL, "`")
+        self.tm.get_token(TokenType.LITERAL, "`")
 
         # Restore the original form of the text
         # with the surrounding backticks.
@@ -80,13 +80,15 @@ class PreprocessVariablesParser(BaseParser):
         # and replaces it.
 
         # Check if the token is the opening curly brace.
-        opening_bracket = self._get_token(TokenType.LITERAL, "{")
+        opening_bracket = self.tm.get_token(TokenType.LITERAL, "{")
 
         # Get everything beforethe closing brace.
-        variable_name = self._collect_join(stop_tokens=[Token(TokenType.LITERAL, "}")])
+        variable_name = self.tm.collect_join(
+            stop_tokens=[Token(TokenType.LITERAL, "}")]
+        )
 
         # Check if the token is the closing curly brace.
-        self._get_token(TokenType.LITERAL, "}")
+        self.tm.get_token(TokenType.LITERAL, "}")
 
         try:
             # Extract from the environment the variable
@@ -116,7 +118,7 @@ class PreprocessVariablesParser(BaseParser):
         # None of the previous functions succeeded,
         # so we are in front of a pure text token.
         # Just store it and move on.
-        text_token = self._get_token()
+        text_token = self.tm.get_token()
 
         self._save(
             Node(

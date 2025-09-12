@@ -1,12 +1,12 @@
 # pylint: disable=unused-import
 
 from mau.environment.environment import Environment
-from mau.lexers.document_lexer import DocumentLexer
-from mau.lexers.text_lexer import TextLexer
+from mau.lexers.document_lexer.lexer import DocumentLexer
+from mau.lexers.text_lexer.lexer import TextLexer
+from mau.parsers.document_parser.parser import DocumentParser
 
-# from mau.parsers.document_parser import DocumentParser
-from mau.parsers.text_parser import TextParser
-from mau.parsers.document_parser import DocumentParser
+# from mau.parsers.document_parser.parser import DocumentParser
+from mau.parsers.text_parser.parser import TextParser
 from mau.text_buffer.context import Context
 from mau.text_buffer.text_buffer import TextBuffer
 from mau.tokens.token import Token
