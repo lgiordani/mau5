@@ -21,7 +21,6 @@ def title_processor(parser: DocumentParser):
 
     # Get the text of the title
     text = parser.tm.get_token(TokenType.TEXT).value
-    parser.tm.get_token(TokenType.EOL)
 
     parser.title_manager.push(text, dot.context, parser.environment)
 

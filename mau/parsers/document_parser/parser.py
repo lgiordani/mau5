@@ -33,10 +33,6 @@ from .managers.toc_manager import TocManager
 from .processors.arguments import arguments_processor
 from .processors.block import block_processor
 from .processors.command import command_processor
-from .processors.comments import (
-    multi_line_comment_processor,
-    single_line_comment_processor,
-)
 from .processors.header import header_processor
 from .processors.horizontal_rule import horizontal_rule_processor
 from .processors.include import include_processor
@@ -142,8 +138,6 @@ class DocumentParser(BaseParser):
         return [
             self._process_eol,
             partial(horizontal_rule_processor, self),
-            partial(single_line_comment_processor, self),
-            partial(multi_line_comment_processor, self),
             partial(variable_definition_processor, self),
             partial(command_processor, self),
             partial(title_processor, self),

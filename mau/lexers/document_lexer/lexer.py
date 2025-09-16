@@ -34,19 +34,30 @@ class DocumentLexer(BaseLexer):
         if self._current_line != "////":
             return None
 
-        tokens = [
-            self._create_token_and_skip(
-                TokenType.MULTILINE_COMMENT, self._current_line
-            ),
-            self._create_token_and_skip(TokenType.EOL),
-        ]
+        context = self._context
+
+        logger.debug("Found MULTILINE_COMMENT at %s", context)
 
         self._nextline()
 
-        logger.debug("Found MULTILINE_COMMENT at %s", self._context)
-        logger.debug(tokens)
+        while True:
+            # Check if we reached the EOF.
+            if self.text_buffer.eof:
+                raise MauLexerException("Unclosed multiline comment.", context)
 
-        return tokens
+            if self._current_line != "////":
+                # Move to the next line.
+                self._nextline()
+
+                continue
+
+            break
+
+        logger.debug("Closed MULTILINE_COMMENT at %s", self._context)
+
+        self._nextline()
+
+        return []
 
     def _process_comment(self):
         # Detect a single line comment that
@@ -57,17 +68,11 @@ class DocumentLexer(BaseLexer):
         if not match:
             return None
 
-        tokens = [
-            self._create_token_and_skip(TokenType.COMMENT, self._current_line),
-            self._create_token_and_skip(TokenType.EOL),
-        ]
+        logger.debug("Found COMMENT at %s", self._context)
 
         self._nextline()
 
-        logger.debug("Found COMMENT at %s", self._context)
-        logger.debug(tokens)
-
-        return tokens
+        return []
 
     def _process_horizontal_rule(self):
         # Detect a horizontal rule represented by
@@ -78,11 +83,14 @@ class DocumentLexer(BaseLexer):
         if match is None:
             return None
 
+        logger.debug("Found HORIZONTAL_RULE at %s", self._context)
+
         tokens = [
             self._create_token_and_skip(TokenType.HORIZONTAL_RULE, self._current_line)
         ]
 
-        logger.debug("Found HORIZONTAL_RULE at %s", self._context)
+        self._nextline()
+
         logger.debug(tokens)
 
         return tokens
@@ -100,14 +108,48 @@ class DocumentLexer(BaseLexer):
         if match is None:
             return None
 
+        logger.debug("Found BLOCK opening at %s", self._context)
+
+        delimiter = self._create_token_and_skip(TokenType.BLOCK, self._current_line)
+
         tokens = [
-            self._create_token_and_skip(TokenType.BLOCK, self._current_line),
-            self._create_token_and_skip(TokenType.EOL),
+            delimiter,
         ]
 
         self._nextline()
 
-        logger.debug("Found BLOCK at %s", self._context)
+        # Get the context of the next piece of text.
+        context = self._context
+
+        # We need to collect all text lines
+        # contained between two delimiters.
+        text_lines = []
+
+        while True:
+            # Check if we reached the EOF.
+            if self.text_buffer.eof:
+                raise MauLexerException("Unclosed block.", delimiter.context)
+
+            # Try to match the closing block delimiter.
+            if self._current_line != delimiter.value:
+                text_lines.append(self._current_line)
+
+                # Move to the next line.
+                self._nextline()
+
+                continue
+
+            break
+
+        logger.debug("Found BLOCK closing at %s", self._context)
+
+        if text_lines:
+            content = "\n".join(text_lines)
+            tokens.append(Token(TokenType.TEXT, content, context))
+
+        tokens.append(Token(TokenType.BLOCK, self._current_line, self._context))
+        self._nextline()
+
         logger.debug(tokens)
 
         return tokens
@@ -174,6 +216,8 @@ class DocumentLexer(BaseLexer):
         if not match:
             return None
 
+        logger.debug("Found COMMAND at %s", self._context)
+
         prefix = match.groupdict().get("prefix")
         whitespace = match.groupdict().get("whitespace")
         command = match.groupdict().get("command")
@@ -210,11 +254,8 @@ class DocumentLexer(BaseLexer):
         if arguments:
             tokens.append(arguments_token)
 
-        tokens.append(self._create_token_and_skip(TokenType.EOL))
-
         self._nextline()
 
-        logger.debug("Found COMMAND at %s", self._context)
         logger.debug(tokens)
 
         return tokens
@@ -236,6 +277,8 @@ class DocumentLexer(BaseLexer):
         if not match:
             return None
 
+        logger.debug("Found CONTROL at %s", self._context)
+
         prefix = match.groupdict().get("prefix")
         whitespace = match.groupdict().get("whitespace")
         operator = match.groupdict().get("operator")
@@ -256,11 +299,8 @@ class DocumentLexer(BaseLexer):
         if logic:
             tokens.append(self._create_token_and_skip(TokenType.TEXT, logic))
 
-        tokens.append(self._create_token_and_skip(TokenType.EOL))
-
         self._nextline()
 
-        logger.debug("Found CONTROL at %s", self._context)
         logger.debug(tokens)
 
         return tokens
@@ -282,6 +322,8 @@ class DocumentLexer(BaseLexer):
 
         if not match:
             return None
+
+        logger.debug("Found INCLUDE at %s", self._context)
 
         prefix = match.groupdict().get("prefix")
         whitespace = match.groupdict().get("whitespace")
@@ -306,11 +348,8 @@ class DocumentLexer(BaseLexer):
         if arguments:
             tokens.append(self._create_token_and_skip(TokenType.TEXT, arguments))
 
-        tokens.append(self._create_token_and_skip(TokenType.EOL))
-
         self._nextline()
 
-        logger.debug("Found INCLUDE at %s", self._context)
         logger.debug(tokens)
 
         return tokens
@@ -331,6 +370,8 @@ class DocumentLexer(BaseLexer):
         if not match:  # pragma: no cover
             return None
 
+        logger.debug("Found VARIABLE at %s", self._context)
+
         prefix = match.groupdict().get("prefix")
         name = match.groupdict().get("name")
         separator = match.groupdict().get("separator")
@@ -347,11 +388,8 @@ class DocumentLexer(BaseLexer):
         if value:
             tokens.append(self._create_token_and_skip(TokenType.TEXT, value))
 
-        tokens.append(self._create_token_and_skip(TokenType.EOL))
-
         self._nextline()
 
-        logger.debug("Found VARIABLE at %s", self._context)
         logger.debug(tokens)
 
         return tokens
@@ -368,6 +406,8 @@ class DocumentLexer(BaseLexer):
         if not match:  # pragma: no cover
             return None
 
+        logger.debug("Found ARGUMENTS at %s", self._context)
+
         prefix = match.groupdict().get("prefix")
         arguments = match.groupdict().get("arguments")
         suffix = match.groupdict().get("suffix")
@@ -376,12 +416,10 @@ class DocumentLexer(BaseLexer):
             self._create_token_and_skip(TokenType.ARGUMENTS, prefix),
             self._create_token_and_skip(TokenType.TEXT, arguments),
             self._create_token_and_skip(TokenType.LITERAL, suffix),
-            self._create_token_and_skip(TokenType.EOL),
         ]
 
         self._nextline()
 
-        logger.debug("Found ARGUMENTS at %s", self._context)
         logger.debug(tokens)
 
         return tokens
@@ -400,6 +438,8 @@ class DocumentLexer(BaseLexer):
         if not match:
             return None
 
+        logger.debug("Found TITLE at %s", self._context)
+
         prefix = match.groupdict().get("prefix")
         whitespace = match.groupdict().get("whitespace")
         title = match.groupdict().get("title")
@@ -410,16 +450,10 @@ class DocumentLexer(BaseLexer):
 
         self._skip(whitespace)
 
-        tokens.extend(
-            [
-                self._create_token_and_skip(TokenType.TEXT, title),
-                self._create_token_and_skip(TokenType.EOL),
-            ]
-        )
+        tokens.append(self._create_token_and_skip(TokenType.TEXT, title))
 
         self._nextline()
 
-        logger.debug("Found TITLE at %s", self._context)
         logger.debug(tokens)
 
         return tokens
@@ -444,6 +478,8 @@ class DocumentLexer(BaseLexer):
         if not match:
             return None
 
+        logger.debug("Found LIST at %s", self._context)
+
         whitespace1 = match.groupdict().get("whitespace1")
         prefix = match.groupdict().get("prefix")
         whitespace2 = match.groupdict().get("whitespace2")
@@ -457,16 +493,10 @@ class DocumentLexer(BaseLexer):
 
         self._skip(whitespace2)
 
-        tokens.extend(
-            [
-                self._create_token_and_skip(TokenType.TEXT, item),
-                self._create_token_and_skip(TokenType.EOL),
-            ]
-        )
+        tokens.append(self._create_token_and_skip(TokenType.TEXT, item))
 
         self._nextline()
 
-        logger.debug("Found LIST at %s", self._context)
         logger.debug(tokens)
 
         return tokens
@@ -486,6 +516,8 @@ class DocumentLexer(BaseLexer):
         if not match:
             return None
 
+        logger.debug("Found HEADER at %s", self._context)
+
         prefix = match.groupdict().get("prefix")
         whitespace = match.groupdict().get("whitespace")
         header = match.groupdict().get("header")
@@ -499,16 +531,10 @@ class DocumentLexer(BaseLexer):
 
         self._skip(whitespace)
 
-        tokens.extend(
-            [
-                self._create_token_and_skip(TokenType.TEXT, header),
-                self._create_token_and_skip(TokenType.EOL),
-            ]
-        )
+        tokens.append(self._create_token_and_skip(TokenType.TEXT, header))
 
         self._nextline()
 
-        logger.debug("Found HEADER at %s", self._context)
         logger.debug(tokens)
 
         return tokens

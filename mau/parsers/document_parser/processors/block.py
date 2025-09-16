@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .parser import DocumentParser
 
+from mau.tokens.token import Token
 from mau.nodes.block import BlockNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser.managers.tokens_manager import TokenError
@@ -16,12 +17,16 @@ from mau.tokens.token import Token, TokenType
 def _parse_block_content_update(
     parser: DocumentParser,
     node: Node[BlockNodeContent],
-    content: list[str],
-    context: Context,
+    content: Token | None,
 ):
+    node.children["content"] = []
+
+    if not content:
+        return
+
     content_parser = parser.lex_and_parse(
-        "\n".join(content),
-        context,
+        content.value,
+        content.context,
         parser.environment,
     )
 
@@ -52,10 +57,9 @@ def _parse_block_content_update(
 def _parse_default_engine(
     parser: DocumentParser,
     node: Node[BlockNodeContent],
-    content: list[str],
-    context: Context,
+    content: Token | None,
 ):
-    _parse_block_content_update(parser, node, content, context)
+    _parse_block_content_update(parser, node, content)
     parser._save(node)
 
 
@@ -73,22 +77,13 @@ def block_processor(parser: DocumentParser):
     # Get the opening delimiter.
     delimiter = parser.tm.get_token(TokenType.BLOCK)
 
-    # Get the EOL.
-    parser.tm.get_token(TokenType.EOL)
+    content: Token | None = None
+    if parser.tm.peek_token().type == TokenType.TEXT:
+        # Get the content of the block.
+        content = parser.tm.get_token(TokenType.TEXT)
 
-    # Get the context of the content.
-    context = parser.tm.peek_token().context
-
-    # Collect everything before the closing delimiter
-    content = parser._collect_lines([delimiter, Token(TokenType.EOF)])
-
-    try:
-        parser.tm.get_token(TokenType.BLOCK, delimiter.value)
-    except TokenError as exc:
-        raise MauParserException("Unclosed block.", delimiter.context) from exc
-
-    # Get the EOL.
-    parser.tm.get_token(TokenType.EOL)
+    # Get the closing delimiter.
+    parser.tm.get_token(TokenType.BLOCK)
 
     # # Get the optional secondary content
     # secondary_content = parser.tm.collect_lines(
@@ -172,7 +167,7 @@ def block_processor(parser: DocumentParser):
 
     match engine:
         case None:
-            _parse_default_engine(parser, node, content, context)
+            _parse_default_engine(parser, node, content)
         case _:
             raise parser._error(
                 f"Engine {engine} is not available", context=delimiter.context

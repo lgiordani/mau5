@@ -43,17 +43,6 @@ def test_block_with_empty_body():
     )
 
 
-def test_block_unclosed():
-    source = """
-    ----
-    """
-
-    with pytest.raises(MauParserException) as exc:
-        runner(source)
-
-    assert exc.value.context == generate_context(1, 0)
-
-
 def test_block_content():
     source = """
     ----

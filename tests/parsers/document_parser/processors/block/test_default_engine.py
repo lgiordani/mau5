@@ -21,82 +21,83 @@ init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-# @patch("mau.parsers.document_parser.parser.header_anchor")
-# def test_block_default_engine_adds_headers_to_global_toc(mock_header_anchor):
-#     mock_header_anchor.return_value = "XXYY"
+@patch("mau.parsers.document_parser.parser.header_anchor")
+def test_block_default_engine_adds_headers_to_global_toc(mock_header_anchor):
+    mock_header_anchor.return_value = "XXYY"
 
-#     source = """
-#     = Global header
+    source = """
+    = Global header
 
-#     [*subtype1]
-#     ----
-#     = Block header
-#     ----
-#     """
+    [*subtype1]
+    ----
+    = Block header
+    ----
+    """
 
-#     parser = runner(source)
+    parser = runner(source)
 
-#     compare_nodes(
-#         parser.nodes,
-#         [
-#             Node(
-#                 content=HeaderNodeContent(1, "XXYY"),
-#                 info=NodeInfo(context=generate_context(1, 0)),
-#                 children={
-#                     "text": [
-#                         Node(
-#                             content=SentenceNodeContent(),
-#                             info=NodeInfo(context=generate_context(1, 2)),
-#                             children={
-#                                 "content": [
-#                                     Node(
-#                                         content=TextNodeContent("Global header"),
-#                                         info=NodeInfo(context=generate_context(1, 2)),
-#                                     )
-#                                 ]
-#                             },
-#                         )
-#                     ],
-#                 },
-#             ),
-#             Node(
-#                 content=BlockNodeContent(
-#                     classes=[],
-#                     engine=None,
-#                     preprocessor=None,
-#                 ),
-#                 info=NodeInfo(context=generate_context(4, 0), subtype="subtype1"),
-#                 children={
-#                     "content": [
-#                         Node(
-#                             content=HeaderNodeContent(1, "XXYY"),
-#                             info=NodeInfo(context=generate_context(5, 0)),
-#                             children={
-#                                 "text": [
-#                                     Node(
-#                                         content=SentenceNodeContent(),
-#                                         info=NodeInfo(context=generate_context(5, 2)),
-#                                         children={
-#                                             "content": [
-#                                                 Node(
-#                                                     content=TextNodeContent(
-#                                                         "Block header"
-#                                                     ),
-#                                                     info=NodeInfo(
-#                                                         context=generate_context(5, 2)
-#                                                     ),
-#                                                 )
-#                                             ]
-#                                         },
-#                                     )
-#                                 ],
-#                             },
-#                         ),
-#                     ]
-#                 },
-#             ),
-#         ],
-#     )
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=HeaderNodeContent(1, "XXYY"),
+                info=NodeInfo(context=generate_context(1, 0)),
+                children={
+                    "text": [
+                        Node(
+                            content=SentenceNodeContent(),
+                            info=NodeInfo(context=generate_context(1, 2)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent("Global header"),
+                                        info=NodeInfo(context=generate_context(1, 2)),
+                                    )
+                                ]
+                            },
+                        )
+                    ],
+                },
+            ),
+            Node(
+                content=BlockNodeContent(
+                    classes=[],
+                    engine=None,
+                    preprocessor=None,
+                ),
+                info=NodeInfo(context=generate_context(4, 0), subtype="subtype1"),
+                children={
+                    "content": [
+                        Node(
+                            content=HeaderNodeContent(1, "XXYY"),
+                            info=NodeInfo(context=generate_context(5, 0)),
+                            children={
+                                "text": [
+                                    Node(
+                                        content=SentenceNodeContent(),
+                                        info=NodeInfo(context=generate_context(5, 2)),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=TextNodeContent(
+                                                        "Block header"
+                                                    ),
+                                                    info=NodeInfo(
+                                                        context=generate_context(5, 2)
+                                                    ),
+                                                )
+                                            ]
+                                        },
+                                    )
+                                ],
+                            },
+                        ),
+                    ]
+                },
+            ),
+        ],
+    )
+
 
 # assert par.nodes == [
 #     HeaderNode(

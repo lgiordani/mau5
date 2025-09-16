@@ -131,7 +131,11 @@ class BaseLexer:
         # A lexer function must return None
         # when characters do not match the rule.
 
-        process_functions = [self._process_eof, self._process_eol]
+        process_functions = [
+            self._process_eof,
+            self._process_newline,
+            self._process_eol,
+        ]
         process_functions.extend(self._process_functions())
         process_functions.append(self._process_error)
 
@@ -188,24 +192,38 @@ class BaseLexer:
 
         return tokens
 
-    def _process_eol(self):
-        # This cannot use TextBuffer.eol as we want to eat any spaces
-        # that are present in the line.
-        match = rematch(r"\ *$", self._tail)
+    def _process_newline(self):
+        # This detects an fully empty line,
+        # that we want to preserve.
+
+        match = rematch(r"^\ *$", self._current_line)
 
         if not match:
             return None
 
-        tokens = [self._create_token_and_skip(TokenType.EOL, self._tail)]
+        tokens = [self._create_token_and_skip(TokenType.EOL, self._current_line)]
 
         self._nextline()
 
         return tokens
 
+    def _process_eol(self):
+        # This detects and skips any trailing spaces,
+        # reaches the end of line and proceeds to the next line.
+        match = rematch(r"\ *$", self._tail)
+
+        if not match:
+            return None
+
+        self._skip(self._tail)
+
+        self._nextline()
+
+        return []
+
     def _process_text_line(self):
         tokens = [
             self._create_token_and_skip(TokenType.TEXT, self._tail),
-            self._create_token_and_skip(TokenType.EOL),
         ]
 
         self._nextline()

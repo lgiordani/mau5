@@ -41,7 +41,9 @@ def variable_definition_processor(parser: DocumentParser):
     context = parser.tm.peek_token().context
 
     # Get the optional variable value.
-    value = parser.tm.collect_join([Token(TokenType.EOL)])
+    value = ""
+    if parser.tm.peek_token().type == TokenType.TEXT:
+        value = parser.tm.get_token().value
 
     # Process the variable according to its nature.
     if variable_name.startswith("+"):

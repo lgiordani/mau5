@@ -25,21 +25,8 @@ def paragraph_processor(parser: DocumentParser):
     # we continue to collect. If the token is EOF we
     # reached the end and we have to stop anyway.
     lines = []
-    while parser.tm.peek_token() not in [
-        Token(TokenType.EOL),
-        Token(TokenType.EOF),
-    ]:
-        # Get everything before the EOL.
-        lines.append(
-            parser.tm.collect_join(
-                [
-                    Token(TokenType.EOL),
-                ]
-            )
-        )
-
-        # Get the EOL.
-        parser.tm.get_token(TokenType.EOL)
+    while parser.tm.peek_token().type == TokenType.TEXT:
+        lines.append(parser.tm.get_token(TokenType.TEXT).value)
 
     # TODO
     # Check the control

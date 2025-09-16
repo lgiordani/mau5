@@ -70,10 +70,10 @@ class TextParser(BaseParser):
 
         all_args = []
 
-        # Continue until you find a closing round bracket or EOL.
+        # Continue until you find a closing round bracket or EOF.
         while not (
             self.tm.peek_token_is(TokenType.LITERAL, ")")
-            or self.tm.peek_token_is(TokenType.EOL)
+            or self.tm.peek_token_is(TokenType.EOF)
         ):
             # If we find double quotes we need to blindly
             # collect everything until we meet the closing
@@ -87,7 +87,7 @@ class TextParser(BaseParser):
                 value = self.tm.collect_join(
                     stop_tokens=[
                         Token(TokenType.LITERAL, '"'),
-                        Token(TokenType.EOL),
+                        Token(TokenType.EOF),
                     ],
                 )
 
@@ -105,7 +105,7 @@ class TextParser(BaseParser):
                     stop_tokens=[
                         Token(TokenType.LITERAL, ","),
                         Token(TokenType.LITERAL, ")"),
-                        Token(TokenType.EOL),
+                        Token(TokenType.EOF),
                     ],
                 )
 

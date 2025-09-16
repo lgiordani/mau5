@@ -18,7 +18,7 @@ init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-def test_parse_block_title_and_attributes():
+def test_parse_block_title_and_arguments():
     source = """
     .Just a title
     [arg1, *subtype1, #tag1, key1=value1]

@@ -82,6 +82,18 @@ def test_variable_definition_with_value_is_loaded():
     assert parser.environment.asdict() == {"attr": "42"}
 
 
+def test_variable_definition_multiple():
+    source = """
+    :attr1:42
+    :attr2:43
+    """
+
+    parser: DocumentParser = runner(source)
+
+    assert parser.nodes == []
+    assert parser.environment.asdict() == {"attr1": "42", "attr2": "43"}
+
+
 def test_variable_definition_value_can_be_any_text():
     source = ":attr:[footnote](http://some.domain/path)"
 

@@ -141,7 +141,6 @@ def test_text():
         lex.tokens,
         [
             Token(TokenType.TEXT, "Just simple text", generate_context(0, 0)),
-            Token(TokenType.EOL, "", generate_context(0, 16)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -162,12 +161,9 @@ def test_multiple_lines():
         lex.tokens,
         [
             Token(TokenType.TEXT, "This is text", generate_context(0, 0)),
-            Token(TokenType.EOL, "", generate_context(0, 12)),
             Token(TokenType.TEXT, "split into multiple lines", generate_context(1, 0)),
-            Token(TokenType.EOL, "", generate_context(1, 25)),
             Token(TokenType.EOL, "", generate_context(2, 0)),
             Token(TokenType.TEXT, "with an empty line", generate_context(3, 0)),
-            Token(TokenType.EOL, "", generate_context(3, 18)),
             Token(TokenType.EOF, "", generate_context(4, 0)),
         ],
     )

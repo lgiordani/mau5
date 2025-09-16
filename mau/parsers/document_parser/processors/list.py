@@ -20,9 +20,6 @@ def _process_list_nodes(parser: DocumentParser):
     # Get the text of the item.
     text = parser.tm.get_token(TokenType.TEXT)
 
-    # Get the EOL.
-    parser.tm.get_token(TokenType.EOL)
-
     # Parse the text of the item.
     content = parser._parse_text(
         text.value,
@@ -53,9 +50,6 @@ def _process_list_nodes(parser: DocumentParser):
 
             # Get the text of the item.
             text = parser.tm.get_token(TokenType.TEXT)
-
-            # Get the EOL.
-            parser.tm.get_token(TokenType.EOL)
 
             # Parse the text of the item.
             content = parser._parse_text(

@@ -28,7 +28,6 @@ def test_normal_text():
             Token(TokenType.TEXT, "e", generate_context(0, 6)),
             Token(TokenType.TEXT, "x", generate_context(0, 7)),
             Token(TokenType.TEXT, "t", generate_context(0, 8)),
-            Token(TokenType.EOL, "", generate_context(0, 9)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -76,7 +75,6 @@ def test_match_only_backticks_and_curly_braces():
             Token(TokenType.TEXT, "x", generate_context(0, 33)),
             Token(TokenType.TEXT, "t", generate_context(0, 34)),
             Token(TokenType.TEXT, "*", generate_context(0, 35)),
-            Token(TokenType.EOL, "", generate_context(0, 36)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -124,7 +122,6 @@ def test_escape_curly_braces():
             Token(TokenType.TEXT, "x", generate_context(0, 33)),
             Token(TokenType.TEXT, "t", generate_context(0, 34)),
             Token(TokenType.TEXT, "*", generate_context(0, 35)),
-            Token(TokenType.EOL, "", generate_context(0, 36)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -158,7 +155,6 @@ def test_preserve_escapes():
             Token(TokenType.TEXT, "r", generate_context(0, 19)),
             Token(TokenType.LITERAL, "\\", generate_context(0, 20)),
             Token(TokenType.TEXT, "_", generate_context(0, 21)),
-            Token(TokenType.EOL, "", generate_context(0, 22)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )

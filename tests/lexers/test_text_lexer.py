@@ -21,7 +21,6 @@ def test_normal_text():
             Token(TokenType.TEXT, "Normal", generate_context(0, 0)),
             Token(TokenType.TEXT, " ", generate_context(0, 6)),
             Token(TokenType.TEXT, "text", generate_context(0, 7)),
-            Token(TokenType.EOL, "", generate_context(0, 11)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -36,7 +35,6 @@ def test_underscore():
             Token(TokenType.LITERAL, "_", generate_context(0, 0)),
             Token(TokenType.TEXT, "underscore", generate_context(0, 1)),
             Token(TokenType.LITERAL, "_", generate_context(0, 11)),
-            Token(TokenType.EOL, "", generate_context(0, 12)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -51,7 +49,6 @@ def test_star():
             Token(TokenType.LITERAL, "*", generate_context(0, 0)),
             Token(TokenType.TEXT, "star", generate_context(0, 1)),
             Token(TokenType.LITERAL, "*", generate_context(0, 5)),
-            Token(TokenType.EOL, "", generate_context(0, 6)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -66,7 +63,6 @@ def test_caret():
             Token(TokenType.LITERAL, "^", generate_context(0, 0)),
             Token(TokenType.TEXT, "caret", generate_context(0, 1)),
             Token(TokenType.LITERAL, "^", generate_context(0, 6)),
-            Token(TokenType.EOL, "", generate_context(0, 7)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -81,7 +77,6 @@ def test_tilde():
             Token(TokenType.LITERAL, "~", generate_context(0, 0)),
             Token(TokenType.TEXT, "tilde", generate_context(0, 1)),
             Token(TokenType.LITERAL, "~", generate_context(0, 6)),
-            Token(TokenType.EOL, "", generate_context(0, 7)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -96,7 +91,6 @@ def test_backtick():
             Token(TokenType.LITERAL, "`", generate_context(0, 0)),
             Token(TokenType.TEXT, "backtick", generate_context(0, 1)),
             Token(TokenType.LITERAL, "`", generate_context(0, 9)),
-            Token(TokenType.EOL, "", generate_context(0, 10)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -111,7 +105,6 @@ def test_dollar():
             Token(TokenType.LITERAL, "$", generate_context(0, 0)),
             Token(TokenType.TEXT, "dollar", generate_context(0, 1)),
             Token(TokenType.LITERAL, "$", generate_context(0, 7)),
-            Token(TokenType.EOL, "", generate_context(0, 8)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -126,7 +119,6 @@ def test_percent():
             Token(TokenType.LITERAL, "%", generate_context(0, 0)),
             Token(TokenType.TEXT, "percent", generate_context(0, 1)),
             Token(TokenType.LITERAL, "%", generate_context(0, 8)),
-            Token(TokenType.EOL, "", generate_context(0, 9)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -141,7 +133,6 @@ def test_curly_braces():
             Token(TokenType.LITERAL, "{", generate_context(0, 0)),
             Token(TokenType.TEXT, "curly", generate_context(0, 1)),
             Token(TokenType.LITERAL, "}", generate_context(0, 6)),
-            Token(TokenType.EOL, "", generate_context(0, 7)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -156,7 +147,6 @@ def test_round_brackets():
             Token(TokenType.LITERAL, "(", generate_context(0, 0)),
             Token(TokenType.TEXT, "round", generate_context(0, 1)),
             Token(TokenType.LITERAL, ")", generate_context(0, 6)),
-            Token(TokenType.EOL, "", generate_context(0, 7)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -171,7 +161,6 @@ def test_square_brackets():
             Token(TokenType.LITERAL, "[", generate_context(0, 0)),
             Token(TokenType.TEXT, "square", generate_context(0, 1)),
             Token(TokenType.LITERAL, "]", generate_context(0, 7)),
-            Token(TokenType.EOL, "", generate_context(0, 8)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -189,7 +178,6 @@ def test_macro():
             Token(TokenType.LITERAL, "(", generate_context(0, 7)),
             Token(TokenType.TEXT, "value1,value2", generate_context(0, 8)),
             Token(TokenType.LITERAL, ")", generate_context(0, 21)),
-            Token(TokenType.EOL, "", generate_context(0, 22)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -207,7 +195,6 @@ def test_macro_named_arguments():
             Token(TokenType.LITERAL, "(", generate_context(0, 7)),
             Token(TokenType.TEXT, "attr1=value1,attr2=value2", generate_context(0, 8)),
             Token(TokenType.LITERAL, ")", generate_context(0, 33)),
-            Token(TokenType.EOL, "", generate_context(0, 34)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -224,7 +211,6 @@ def test_escaped_underscore():
             Token(TokenType.TEXT, "underscore", generate_context(0, 2)),
             Token(TokenType.LITERAL, "\\", generate_context(0, 12)),
             Token(TokenType.LITERAL, "_", generate_context(0, 13)),
-            Token(TokenType.EOL, "", generate_context(0, 14)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -241,7 +227,6 @@ def test_escaped_square_brackets():
             Token(TokenType.TEXT, "square", generate_context(0, 2)),
             Token(TokenType.LITERAL, "\\", generate_context(0, 8)),
             Token(TokenType.LITERAL, "]", generate_context(0, 9)),
-            Token(TokenType.EOL, "", generate_context(0, 10)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -258,7 +243,6 @@ def test_escaped_round_brackets():
             Token(TokenType.TEXT, "round", generate_context(0, 2)),
             Token(TokenType.LITERAL, "\\", generate_context(0, 7)),
             Token(TokenType.LITERAL, ")", generate_context(0, 8)),
-            Token(TokenType.EOL, "", generate_context(0, 9)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -275,7 +259,6 @@ def test_escaped_curly_braces():
             Token(TokenType.TEXT, "curly", generate_context(0, 2)),
             Token(TokenType.LITERAL, "\\", generate_context(0, 7)),
             Token(TokenType.LITERAL, "}", generate_context(0, 8)),
-            Token(TokenType.EOL, "", generate_context(0, 9)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -292,7 +275,6 @@ def test_escaped_quotes():
             Token(TokenType.TEXT, "quotes", generate_context(0, 2)),
             Token(TokenType.LITERAL, "\\", generate_context(0, 8)),
             Token(TokenType.LITERAL, '"', generate_context(0, 9)),
-            Token(TokenType.EOL, "", generate_context(0, 10)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -309,7 +291,6 @@ def test_escaped_backticks():
             Token(TokenType.TEXT, "backticks", generate_context(0, 2)),
             Token(TokenType.LITERAL, "\\", generate_context(0, 11)),
             Token(TokenType.LITERAL, "`", generate_context(0, 12)),
-            Token(TokenType.EOL, "", generate_context(0, 13)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -326,7 +307,6 @@ def test_escaped_dollar():
             Token(TokenType.TEXT, "dollar", generate_context(0, 2)),
             Token(TokenType.LITERAL, "\\", generate_context(0, 8)),
             Token(TokenType.LITERAL, "$", generate_context(0, 9)),
-            Token(TokenType.EOL, "", generate_context(0, 10)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -343,7 +323,6 @@ def test_escaped_percent():
             Token(TokenType.TEXT, "percent", generate_context(0, 2)),
             Token(TokenType.LITERAL, "\\", generate_context(0, 9)),
             Token(TokenType.LITERAL, "%", generate_context(0, 10)),
-            Token(TokenType.EOL, "", generate_context(0, 11)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )

@@ -161,9 +161,6 @@ def test_peek_token():
     assert tm.index == -1
 
     tm.get_token()
-    assert tm.peek_token() == Token(TokenType.EOL)
-
-    tm.get_token()
     assert tm.peek_token() == Token(TokenType.EOF)
 
 
@@ -233,9 +230,7 @@ def test_context_manager_does_not_restore_status_if_no_error():
 
     with tm:
         assert tm.get_token(TokenType.TEXT, "Some text")
-        assert tm.get_token(TokenType.EOL)
         assert tm.get_token(TokenType.TEXT, "Some other text")
-        assert tm.get_token(TokenType.EOL)
 
     assert tm.get_token(TokenType.EOF)
 
@@ -277,10 +272,8 @@ def test_context_manager_nested_success():
 
     with tm:
         tm.get_token(TokenType.TEXT, "Some text")
-        tm.get_token(TokenType.EOL)
         with tm:
             tm.get_token(TokenType.TEXT, "Some other text")
-            tm.get_token(TokenType.EOL)
 
         tm.get_token(TokenType.EOF)
 
@@ -292,12 +285,10 @@ def test_context_manager_nested_failure():
 
     with tm:
         tm.get_token(TokenType.TEXT, "Some text")
-        tm.get_token(TokenType.EOL)
         with tm:
             tm.get_token(TokenType.TEXT, "Some text")
 
         tm.get_token(TokenType.TEXT, "Some other text")
-        tm.get_token(TokenType.EOL)
 
     assert tm.get_token(TokenType.EOF)
 
@@ -346,9 +337,7 @@ def test_collect():
 
     assert tokens == [
         Token(TokenType.TEXT, "Some text"),
-        Token(TokenType.EOL),
         Token(TokenType.TEXT, "Some other text"),
-        Token(TokenType.EOL),
     ]
 
     tokens = tm.collect([Token(TokenType.EOF)])
