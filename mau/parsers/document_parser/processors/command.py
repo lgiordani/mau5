@@ -1,0 +1,130 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .parser import DocumentParser
+
+
+
+
+# from mau.lexers.base_lexer.lexer import TokenTypes as TokenType
+from mau.nodes.include import IncludeNodeContent
+
+# from mau.lexers.document_lexer.lexer import TokenTypes as TokenType
+# from mau.nodes.block import BlockGroupNode, BlockNode
+# from mau.nodes.content import ContentImageNode, ContentNode
+from mau.nodes.node import Node, NodeInfo
+from mau.nodes.toc import TocNodeContent
+from mau.parsers.arguments_parser.parser import Arguments, ArgumentsParser
+
+# from mau.nodes.page import ContainerNode
+# from mau.nodes.paragraph import ParagraphNode
+# from mau.nodes.source import MarkerNode, CalloutsEntryNode, SourceNode, SourceLineNode
+from mau.parsers.base_parser.parser import MauParserException
+
+# from mau.parsers.footnotes import FootnotesManager
+from mau.tokens.token import TokenType
+
+
+def command_processor(parser: DocumentParser):
+    # Parse a command in the form ::command:arguments
+
+    # Get the opening double colon.
+    prefix = parser.tm.get_token(TokenType.COMMAND, "::")
+
+    # Get the name of the command.
+    name = parser.tm.get_token(TokenType.TEXT).value
+
+    arguments: Arguments | None = parser.arguments_manager.pop()
+
+    if parser.tm.peek_token_is(TokenType.LITERAL, ":"):
+        # In this case arguments are inline
+
+        # Check if boxed arguments have been defined.
+        # In that case we need to stop with an error.
+        if arguments:
+            raise MauParserException(
+                "Syntax error. You cannot specify both boxed and inline arguments.",
+                prefix.context,
+                IncludeNodeContent.long_help,
+            )
+
+        # Get the colon.
+        parser.tm.get_token(TokenType.LITERAL, ":")
+
+        # Get the inline arguments.
+        arguments_token = parser.tm.get_token(TokenType.TEXT)
+
+        # Parse the arguments.
+        with parser.tm:
+            arguments_parser = ArgumentsParser.lex_and_parse(
+                arguments_token.value, arguments_token.context, parser.environment
+            )
+
+        arguments = arguments_parser.arguments
+
+    arguments = arguments or Arguments()
+
+    # Build the node info.
+    info = NodeInfo(context=prefix.context, **arguments.asdict())
+
+    if name == "defblock":
+        # if len(command_args) < 1:
+        #     parser._error("Block definitions require at least the alias")
+
+        # alias = command_args.pop(0)
+
+        # parser.block_aliases[alias] = {
+        #     "subtype": command_subtype,
+        #     "mandatory_args": command_args,
+        #     "defaults": command_kwargs,
+        # }
+        pass
+    elif name == "toc":
+        node: Node[TocNodeContent] = Node(content=TocNodeContent(), info=info)
+
+        parser._save(node)
+
+        parser.toc_manager.add_toc_node(node)
+
+    elif name == "footnotes":
+        # Create a footnotes node
+        # parser.footnotes_manager.create_node(subtype, args, kwargs, tags)
+        pass
+    elif name == "blockgroup":
+        # command_args, command_kwargs = parser._set_names_and_defaults(
+        #     command_args,
+        #     command_kwargs,
+        #     ["group"],
+        # )
+
+        # group_name = command_kwargs.pop("group")
+
+        # try:
+        #     group = parser.grouped_blocks.pop(group_name)
+        # except KeyError:
+        #     parser._error(
+        #         (
+        #             f"The group of blocks {group_name} doesn't exist. "
+        #             "No blocks belong to that group."
+        #         )
+        #     )
+
+        # node = BlockGroupNode(
+        #     group_name=group_name,
+        #     group=group,
+        #     subtype=subtype,
+        #     args=args,
+        #     kwargs=kwargs,
+        #     tags=tags,
+        # )
+
+        # for position, block in group.items():
+        #     block.parent = node
+        #     block.parent_position = position
+
+        # parser.save(node)
+        pass
+
+    return True

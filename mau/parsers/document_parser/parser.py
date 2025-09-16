@@ -10,24 +10,16 @@ from mau.environment.environment import Environment
 
 # from mau.lexers.base_lexer.lexer import TokenTypes as TokenType
 from mau.lexers.document_lexer.lexer import DocumentLexer
-from mau.nodes.document import HorizontalRuleNodeContent
 
 # from mau.lexers.document_lexer.lexer import TokenTypes as TokenType
 # from mau.nodes.block import BlockGroupNode, BlockNode
 # from mau.nodes.content import ContentImageNode, ContentNode
-from mau.nodes.headers import HeaderNodeContent
-from mau.nodes.include import IncludeNodeContent
-from mau.nodes.inline import SentenceNodeContent
-from mau.nodes.lists import ListItemNodeContent, ListNodeContent
-from mau.nodes.node import Node, NodeContent, NodeInfo
-from mau.nodes.paragraph import ParagraphNodeContent
+from mau.nodes.node import Node, NodeContent
 
 # from mau.nodes.page import ContainerNode
 # from mau.nodes.paragraph import ParagraphNode
 # from mau.nodes.source import MarkerNode, CalloutsEntryNode, SourceNode, SourceLineNode
-from mau.parsers.arguments_parser.parser import Arguments, ArgumentsParser
-from mau.parsers.base_parser.managers.tokens_manager import TokenError
-from mau.parsers.base_parser.parser import BaseParser, MauParserException
+from mau.parsers.base_parser.parser import BaseParser
 
 # from mau.parsers.footnotes import FootnotesManager
 from mau.parsers.preprocess_variables_parser.parser import PreprocessVariablesParser
@@ -36,8 +28,22 @@ from mau.tokens.token import Token, TokenType
 
 from .managers.arguments_manager import ArgumentsManager
 from .managers.header_links_manager import HeaderLinksManager
+from .managers.title_manager import TitleManager
 from .managers.toc_manager import TocManager
+from .processors.arguments import arguments_processor
+from .processors.block import block_processor
+from .processors.command import command_processor
+from .processors.comments import (
+    multi_line_comment_processor,
+    single_line_comment_processor,
+)
+from .processors.header import header_processor
+from .processors.horizontal_rule import horizontal_rule_processor
 from .processors.include import include_processor
+from .processors.list import list_processor
+from .processors.paragraph import paragraph_processor
+from .processors.title import title_processor
+from .processors.variable_definition import variable_definition_processor
 
 # TODO check if we really want to use the current context
 # TODO self.tm.peek_token(with arguments) is basically self.tm.peek_token_is()
@@ -82,6 +88,7 @@ class DocumentParser(BaseParser):
         #     self.footnotes_manager = FootnotesManager(self)
         self.toc_manager: TocManager = TocManager()
         self.arguments_manager: ArgumentsManager = ArgumentsManager()
+        self.title_manager: TitleManager = TitleManager()
 
         #     # These are the default block aliases
         #     # If subtype is not set it will be the alias itself.
@@ -107,9 +114,6 @@ class DocumentParser(BaseParser):
         #             "mau.parser.block_definitions", Environment()
         #         ).asdict()
         #     )
-
-        # This is a buffer for a block title
-        self.title = None
 
         #     # This is a buffer for a control
         #     self.control = (None, None, None)
@@ -137,51 +141,20 @@ class DocumentParser(BaseParser):
 
         return [
             self._process_eol,
-            self._process_horizontal_rule,
-            self._process_single_line_comment,
-            self._process_multi_line_comment,
-            self._parse_variable_definition,
-            # self._process_command,
-            self._process_title,
+            partial(horizontal_rule_processor, self),
+            partial(single_line_comment_processor, self),
+            partial(multi_line_comment_processor, self),
+            partial(variable_definition_processor, self),
+            partial(command_processor, self),
+            partial(title_processor, self),
             #         self._process_control,
-            self._process_arguments,
-            self._process_header,
-            #         self._process_block,
+            partial(arguments_processor, self),
+            partial(header_processor, self),
+            partial(block_processor, self),
             partial(include_processor, self),
-            self._process_list,
-            self._process_paragraph,
+            partial(list_processor, self),
+            partial(paragraph_processor, self),
         ]
-
-    def _push_title(self, text, context):
-        # When we parse a title we can store it here
-        # so that it is available to the next block
-        # that will use it.
-
-        text_parser = TextParser.lex_and_parse(
-            text,
-            context,
-            self.environment,
-        )
-
-        if not text_parser.nodes:
-            return
-
-        node = Node(
-            content=SentenceNodeContent(),
-            children={"content": text_parser.nodes},
-            info=NodeInfo(context=context),
-        )
-
-        self.title = node
-
-    def _pop_title(self):
-        # This return the title and resets the
-        # cached one, so no other block will
-        # use it.
-        node = self.title
-        self.title = None
-
-        return node
 
     # def _push_control(self, operator, statement, context):
     #     self.control = (operator, statement, context)
@@ -258,7 +231,7 @@ class DocumentParser(BaseParser):
         # returns the nodes.
 
         # Find the context of the parsing.
-        current_context = context or self._current_token.context
+        current_context = context or self.tm.current_token.context
 
         # Replace variables
         preprocess_parser = PreprocessVariablesParser.lex_and_parse(
@@ -299,240 +272,6 @@ class DocumentParser(BaseParser):
 
         return True
 
-    def _process_horizontal_rule(self):
-        # The horizontal rule ---
-
-        # Get the horizontal rule token.
-        rule = self.tm.get_token(TokenType.HORIZONTAL_RULE)
-
-        # Get the stored arguments.
-        # Horizontal rules can receive arguments
-        # only through the arguments manager.
-        arguments = self.arguments_manager.pop_or_default()
-
-        # Build the node info.
-        info = NodeInfo(context=rule.context, **arguments.asdict())
-
-        self._save(
-            Node(
-                content=HorizontalRuleNodeContent(),
-                info=info,
-            )
-        )
-
-        return True
-
-    def _process_single_line_comment(self):
-        # Process a comment on a single line
-        # in the form
-        # // A comment
-
-        # Get the double slash token.
-        self.tm.get_token(TokenType.COMMENT)
-
-        # Get the end of line.
-        self.tm.get_token(TokenType.EOL)
-
-        return True
-
-    def _process_multi_line_comment(self):
-        # Process a multi-line comment
-        # in the form
-        # ////
-        # A comment
-        # on multiple lines
-        # ////
-
-        # Get the opening four slashes token.
-        opening = self.tm.get_token(TokenType.MULTILINE_COMMENT)
-
-        # Collect everything before the next
-        # four slashes.
-        self.tm.collect([Token(TokenType.MULTILINE_COMMENT, "////")])
-
-        # Get the closing four slashes token.
-        try:
-            self.tm.get_token(TokenType.MULTILINE_COMMENT, "////")
-        except TokenError as exc:
-            raise MauParserException(
-                "Unclosed multi-line comment", opening.context
-            ) from exc
-
-        return True
-
-    def _parse_variable_definition(self):
-        # This parses the definition of a variable
-        #
-        # Simple variables are defined as :name:value
-        # as True booleans as just :name:
-        # and as False booleas as :!name:
-        #
-        # Variable names can use a namespace with
-        # :namespace.name:value
-
-        # Get the opening colon.
-        opening_colon = self.tm.get_token(TokenType.VARIABLE, ":")
-
-        # Get the mandatory variable name token.
-        variable_token = self.tm.get_token(TokenType.TEXT)
-
-        # Get the closing colon.
-        self.tm.get_token(TokenType.LITERAL, ":")
-
-        # Get the name of the variable.
-        variable_name = variable_token.value
-
-        # Get the context from the first value token.
-        # If the value is not present, this will
-        # get the context from EOL, but at the same
-        # time there won't be any need to use the context
-        # as the value is empty.
-        context = self.tm.peek_token().context
-
-        # Get the optional variable value.
-        value = self.tm.collect_join([Token(TokenType.EOL)])
-
-        # Process the variable according to its nature.
-        if variable_name.startswith("+"):
-            # If the name starts with "+" it's a true flag.
-            variable_name = variable_name[1:]
-            value = True
-        elif variable_name.startswith("-"):
-            # If the name starts with "-" it's a false flag.
-            variable_name = variable_name[1:]
-            value = False
-        elif value:
-            # The variable value might contain
-            # other variables, so we need to
-            # replace them.
-            preprocess_parser = PreprocessVariablesParser.lex_and_parse(
-                value,
-                context,
-                self.environment,
-            )
-
-            # The preprocess parser returns always
-            # a single node.
-            value = preprocess_parser.nodes[0].content.value
-
-        if value == "":
-            raise MauParserException(
-                f"Error in variable definition. Variable '{variable_name}' has no value.",
-                opening_colon.context,
-            )
-
-        # Now that we have name and value,
-        # create or update the variable in
-        # the environment.
-        self.environment.setvar(variable_name, value)
-
-        return True
-
-    # def _process_command(self):
-    #     # Parse a command in the form ::command:arguments
-
-    #     # Get the opening double colon.
-    #     prefix = self.tm.get_token(TokenType.COMMAND, "::")
-
-    #     # Get the name of the command.
-    #     name = self.tm.get_token(TokenType.TEXT).value
-
-    #     # Get the separator colon.
-    #     self.tm.get_token(TokenType.LITERAL, ":")
-
-    #     # Get the stored arguments.
-    #     arguments = self.arguments_manager.pop()
-
-    #     # Build the node info.
-    #     info = NodeInfo(context=prefix.context, **arguments.asdict())
-
-    #     with self.tm:
-    #         arguments = self.tm.get_token(TokenType.TEXT)
-
-    #         arguments_parser = ArgumentsParser.analyse(
-    #             arguments.value, arguments.context, self.environment
-    #         )
-
-    #         (
-    #             command_args,
-    #             command_kwargs,
-    #             _,
-    #             command_subtype,
-    #         ) = arguments_parser.process_arguments()
-
-    #     if name == "defblock":
-    #         if len(command_args) < 1:
-    #             self._error("Block definitions require at least the alias")
-
-    #         alias = command_args.pop(0)
-
-    #         self.block_aliases[alias] = {
-    #             "subtype": command_subtype,
-    #             "mandatory_args": command_args,
-    #             "defaults": command_kwargs,
-    #         }
-
-    #     elif name == "toc":
-    #         self.toc_manager.create_toc_node(subtype, args, kwargs, tags)
-
-    #     elif name == "footnotes":
-    #         # Create a footnotes node
-    #         self.footnotes_manager.create_node(subtype, args, kwargs, tags)
-
-    #     elif name == "blockgroup":
-    #         command_args, command_kwargs = self._set_names_and_defaults(
-    #             command_args,
-    #             command_kwargs,
-    #             ["group"],
-    #         )
-
-    #         group_name = command_kwargs.pop("group")
-
-    #         try:
-    #             group = self.grouped_blocks.pop(group_name)
-    #         except KeyError:
-    #             self._error(
-    #                 (
-    #                     f"The group of blocks {group_name} doesn't exist. "
-    #                     "No blocks belong to that group."
-    #                 )
-    #             )
-
-    #         node = BlockGroupNode(
-    #             group_name=group_name,
-    #             group=group,
-    #             subtype=subtype,
-    #             args=args,
-    #             kwargs=kwargs,
-    #             tags=tags,
-    #         )
-
-    #         for position, block in group.items():
-    #             block.parent = node
-    #             block.parent_position = position
-
-    #         self.save(node)
-
-    #     return True
-
-    def _process_title(self):
-        # Parse a title in the form
-        #
-        # . This is a title
-        # or
-        # .This is a title
-
-        # Parse the mandatory dot
-        dot = self.tm.get_token(TokenType.TITLE, ".")
-
-        # Get the text of the title
-        text = self.tm.get_token(TokenType.TEXT).value
-        self.tm.get_token(TokenType.EOL)
-
-        self._push_title(text, dot.context)
-
-        return True
-
     # def _process_control(self):
     #     # Parse a control statement in the form
     #     #
@@ -556,143 +295,19 @@ class DocumentParser(BaseParser):
 
     #     return True
 
-    def _process_arguments(self):
-        # Parse arguments in the form
-        # [unnamed1, unnamed2, ..., named1=value1, named2=value2, ...]
+    def _collect_lines(self, stop_tokens: list[Token]) -> list[str]:
+        # This collects several lines of text in a list
+        # until it gets to a line that begins with one
+        # of the tokens listed in stop_tokens.
+        # It is useful for block or other elements that
+        # are clearly surrounded by delimiters.
+        lines = []
 
-        # Check that the token is the opening square bracket.
-        self.tm.get_token(TokenType.ARGUMENTS, "[")
+        while self.tm.peek_token() not in stop_tokens:
+            lines.append(self.tm.collect_join([Token(TokenType.EOL)]))
+            self.tm.get_token(TokenType.EOL)
 
-        # Get the text token between brackets.
-        text_token = self.tm.get_token(TokenType.TEXT)
-
-        # Check that the token is the closing square bracket.
-        self.tm.get_token(TokenType.LITERAL, "]")
-
-        # Replace variables in the text.
-        preprocess_parser = PreprocessVariablesParser.lex_and_parse(
-            text_token.value,
-            text_token.context,
-            self.environment,
-        )
-
-        # If there are no arguments there is nothing
-        # to save in the stack.
-        if not preprocess_parser.nodes:
-            return True
-
-        # The preprocess parser outputs a single node.
-        text = preprocess_parser.nodes[0]
-
-        # Parse the arguments.
-        arguments_parser = ArgumentsParser.lex_and_parse(
-            text.content.value,
-            text.info.context,
-            self.environment,
-        )
-
-        # Store the arguments.
-        self.arguments_manager.push(arguments_parser.arguments)
-
-        return True
-
-    def _process_header(self):
-        # Parse a header in the form
-        #
-        # = Header
-        #
-        # The number of equal signs is arbitrary
-        # and represents the level of the header.
-        # Headers are automatically assigned an anchor
-        # created using the provided function self.header_anchor
-
-        # Get all the equal signs.
-        header = self.tm.get_token(TokenType.HEADER)
-
-        # Get the text of the header.
-        text_token = self.tm.get_token(TokenType.TEXT)
-
-        # Calculate the level of the header.
-        level = len(header.value)
-
-        # Replace variables
-        preprocess_parser = PreprocessVariablesParser.lex_and_parse(
-            text_token.value,
-            text_token.context,
-            self.environment,
-        )
-
-        # If the preprocessor doesn't return any
-        # node we can stop here.
-        if not preprocess_parser.nodes:
-            return []
-
-        # The preprocess parser outputs a single node.
-        text_node = preprocess_parser.nodes[0]
-
-        # Get the content of the text_node
-        text = text_node.content
-
-        # # Check the control
-        # if self._pop_control() is False:
-        #     return True
-
-        # Get the stored arguments.
-        # Headers can receive arguments
-        # only through the arguments manager.
-        arguments = self.arguments_manager.pop_or_default()
-
-        # Create the anchor.
-        # This uses the actual text contained in
-        # the TextNodeContent object.
-        anchor = arguments.named_args.pop(  # TODO get
-            "anchor", self.header_anchor(text.value, level)
-        )
-
-        # Extract the header id if specified.
-        header_id = arguments.named_args.get("id", None)
-
-        # Build the node info.
-        info = NodeInfo(context=header.context, **arguments.asdict())
-
-        node = Node(
-            content=HeaderNodeContent(level, anchor),
-            info=info,
-            children={
-                "text": [
-                    Node(
-                        content=SentenceNodeContent(),
-                        children={"content": [text_node]},
-                        info=NodeInfo(context=text_token.context),
-                    )
-                ]
-            },
-        )
-
-        # If there is an id store the header node
-        # to be matched with potential header links.
-        if header_id:
-            self.internal_links_manager.add_header(header_id, node)
-
-        self.toc_manager.add_header(node)
-
-        self._save(node)
-
-        return True
-
-    # def _collect_lines(self, stop_tokens):
-    #     # This collects several lines of text in a list
-    #     # until it gets to a line that begins with one
-    #     # of the tokens listed in stop_tokens.
-    #     # It is useful for block or other elements that
-    #     # are clearly surrounded by delimiters.
-    #     lines = []
-
-    #     while self.tm.peek_token() not in stop_tokens:
-    #         lines.append(self.tm.collect_join([Token(TokenType.EOL)]))
-    #         self.tm.get_token(TokenType.EOL)
-
-    #     return lines
+        return lines
 
     # def _process_block(
     #     self,
@@ -1099,221 +714,6 @@ class DocumentParser(BaseParser):
     #     self._save(node)
 
     #     return True
-
-    def _process_list(self):
-        # Parse a list.
-        # Lists can be ordered (using numbers)
-        #
-        # * One item
-        # * Another item
-        #
-        # or unordered (using bullets)
-        #
-        # # Item 1
-        # # Item 2
-        #
-        # The number of headers increases
-        # the depth of each item
-        #
-        # # Item 1
-        # ## Sub-Item 1.1
-        #
-        # Spaces before and after the header are ignored.
-        # So the previous list can be also written
-        #
-        # # Item 1
-        #   ## Sub-Item 1.1
-        #
-        # Ordered and unordered lists can be mixed.
-        #
-        # * One item
-        # ## Sub Item 1
-        # ## Sub Item 2
-        #
-
-        # Get the header and decide if it's a numbered or unnumbered list
-        header = self.tm.peek_token(TokenType.LIST)
-        ordered = header.value[0] == "#"
-
-        # Parse all the following items
-        nodes = self._process_list_nodes()
-
-        # Get the stored arguments.
-        # Lists can receive arguments
-        # only through the arguments manager.
-        arguments = self.arguments_manager.pop_or_default()
-
-        # Check if the list has a forced start.
-        if (start := arguments.named_args.pop("start", 1)) == "auto":  # TODO:get
-            start = self.latest_ordered_list_index
-            self.latest_ordered_list_index += len(nodes)
-        else:
-            start = int(start)
-            self.latest_ordered_list_index = len(nodes) + start
-
-        node = Node(
-            content=ListNodeContent(ordered=ordered, main_node=True, start=start),
-            info=NodeInfo(context=header.context, **arguments.asdict()),
-            children={"nodes": nodes},
-        )
-
-        self._save(node)
-
-        return True
-
-    def _process_list_nodes(self):
-        # This parses all items of a list
-
-        # Parse the header.
-        header = self.tm.get_token(TokenType.LIST)
-
-        # Get the text of the item.
-        text = self.tm.get_token(TokenType.TEXT)
-
-        # Get the EOL.
-        self.tm.get_token(TokenType.EOL)
-
-        # Parse the text of the item.
-        content = self._parse_text(
-            text.value,
-            context=text.context,
-        )
-
-        # Compute the level of the item
-        level = len(header.value)
-
-        nodes = []
-        nodes.append(
-            Node(
-                content=ListItemNodeContent(str(level)),
-                info=NodeInfo(context=header.context),
-                children={"text": content},
-            )
-        )
-
-        while self.tm.peek_token() not in [
-            Token(TokenType.EOF),
-            Token(TokenType.EOL),
-        ]:
-            if len(self.tm.peek_token().value) == level:
-                # The new item is on the same level
-
-                # Get the header
-                header = self.tm.get_token()
-
-                # Get the text of the item.
-                text = self.tm.get_token(TokenType.TEXT)
-
-                # Get the EOL.
-                self.tm.get_token(TokenType.EOL)
-
-                # Parse the text of the item.
-                content = self._parse_text(
-                    text.value,
-                    context=text.context,
-                )
-
-                # Compute the level of the item
-                level = len(header.value)
-
-                nodes.append(
-                    Node(
-                        content=ListItemNodeContent(str(level)),
-                        info=NodeInfo(context=header.context),
-                        children={"text": content},
-                    )
-                )
-
-            elif len(self.tm.peek_token().value) > level:
-                # The new item is on a deeper level
-
-                # Peek the header
-                header = self.tm.peek_token(TokenType.LIST)
-                ordered = header.value[0] == "#"
-
-                # Parse all the items at this level or higher.
-                subnodes = self._process_list_nodes()
-
-                nodes.append(
-                    Node(
-                        content=ListNodeContent(ordered=ordered),
-                        info=NodeInfo(context=header.context),
-                        children={"nodes": subnodes},
-                    )
-                )
-            else:
-                break
-
-        return nodes
-
-    def _process_paragraph(self):
-        # This parses a paragraph.
-        # Paragraphs can be written on multiple lines and
-        # end with an empty line.
-
-        # Get the context of the first token we are going to process
-        context = self.tm.peek_token().context
-
-        # Each line ends with EOL. This collects everything
-        # before the EOL, then removes it. If the next token
-        # is EOL we know that the paragraph is ended, otherwise
-        # we continue to collect. If the token is EOF we
-        # reached the end and we have to stop anyway.
-        lines = []
-        while self.tm.peek_token() not in [
-            Token(TokenType.EOL),
-            Token(TokenType.EOF),
-        ]:
-            # Get everything before the EOL.
-            lines.append(
-                self.tm.collect_join(
-                    [
-                        Token(TokenType.EOL),
-                    ]
-                )
-            )
-
-            # Get the EOL.
-            self.tm.get_token(TokenType.EOL)
-
-        # TODO
-        # Check the control
-        # if self._pop_control() is False:
-        #     return True
-
-        # Multiple lines separated by a single
-        # EOL form the same paragraph.
-        # Join them with a space.
-        text = " ".join(lines)
-
-        # Get the stored arguments.
-        # Paragraphs can receive arguments
-        # only through the arguments manager.
-        arguments = self.arguments_manager.pop_or_default()
-
-        # Build the node info.
-        info = NodeInfo(
-            context=context, position=self.parent_position, **arguments.asdict()
-        )
-
-        # Process the text of the paragraph.
-        text_nodes = self._parse_text(text, context=context)
-
-        node = Node(
-            children={
-                "content": text_nodes,
-            },
-            content=ParagraphNodeContent(),
-            parent=self.parent_node,
-            info=info,
-        )
-
-        if title := self._pop_title():
-            node.add_children({"title": [title]})
-
-        self._save(node)
-
-        return True
 
     def finalise(self):
         super().finalise()

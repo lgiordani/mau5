@@ -2,14 +2,25 @@ from __future__ import annotations
 
 from mau.nodes.headers import HeaderNodeContent
 from mau.nodes.node import Node
-from mau.nodes.toc import TocNodeContent
+from mau.nodes.toc import TocItemNodeContent, TocNodeContent
+
+
+def header_to_toc_item(header: Node[HeaderNodeContent]) -> Node[TocItemNodeContent]:
+    return Node(
+        content=TocItemNodeContent(
+            level=header.content.level,  # type: ignore[attr-defined]
+            anchor=header.content.anchor,  # type: ignore[attr-defined]
+        ),
+        info=header.info,
+        children={"text": header.children["text"], "entries": []},
+    )
 
 
 def add_nodes_under_level(
     level: int,
     nodes: list[Node[HeaderNodeContent]],
     index: int,
-    output: list[Node[HeaderNodeContent]],
+    output: list[Node[TocItemNodeContent]],
 ) -> int:
     while index < len(nodes):
         # If the first node is at a higher or
@@ -19,7 +30,8 @@ def add_nodes_under_level(
             return index
 
         # Add the first node.
-        output.append(nodes[index])
+        node = header_to_toc_item(nodes[index])
+        output.append(node)
 
         # Now perform the recursion on the
         # remaining nodes, adding the
@@ -29,7 +41,7 @@ def add_nodes_under_level(
             level=nodes[index].content.level,  # type: ignore[attr-defined]
             nodes=nodes,
             index=index + 1,
-            output=nodes[index].children["entries"],  # type: ignore[arg-type]
+            output=node.children["entries"],  # type: ignore[arg-type]
         )
 
     # There are no more nodes to process.
@@ -59,7 +71,7 @@ class TocManager:
         self._toc_nodes.extend(other._toc_nodes)
 
     def process(self):
-        nested_headers: list[Node[HeaderNodeContent]] = []
+        nested_headers: list[Node[TocItemNodeContent]] = []
         add_nodes_under_level(0, self._headers, 0, nested_headers)
 
         for toc_node in self._toc_nodes:

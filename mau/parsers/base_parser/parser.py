@@ -162,7 +162,14 @@ class BaseParser:
         recursive_check_nodes(self.nodes)
 
     @classmethod
-    def lex_and_parse(cls, text, context, environment, *args, **kwargs):
+    def lex_and_parse(
+        cls,
+        text: str,
+        context: Context | None,
+        environment: Environment | None,
+        *args,
+        **kwargs,
+    ):
         text_buffer = cls.text_buffer_class(text, context)
 
         lexer = cls.lexer_class(text_buffer, environment)

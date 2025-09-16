@@ -245,7 +245,7 @@ class TokensManager:
         stop_tokens: list[Token],
         join_with: str = "",
         preserve_escaped_stop_tokens: bool = False,
-    ):
+    ) -> str:
         """
         Collect tokens and join them.
 

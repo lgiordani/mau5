@@ -659,6 +659,43 @@ def test_block():
     )
 
 
+def test_block_with_header():
+    lex = runner(
+        dedent(
+            """
+            = Global header
+
+            [*subtype1]
+            ----
+            = Block header
+            ----
+            """
+        )
+    )
+
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.HEADER, "=", generate_context(0, 0)),
+            Token(TokenType.TEXT, "Global header", generate_context(0, 2)),
+            Token(TokenType.EOL, "", generate_context(0, 15)),
+            Token(TokenType.EOL, "", generate_context(1, 0)),
+            Token(TokenType.ARGUMENTS, "[", generate_context(2, 0)),
+            Token(TokenType.TEXT, "*subtype1", generate_context(2, 1)),
+            Token(TokenType.LITERAL, "]", generate_context(2, 10)),
+            Token(TokenType.EOL, "", generate_context(2, 11)),
+            Token(TokenType.BLOCK, "----", generate_context(3, 0)),
+            Token(TokenType.EOL, "", generate_context(3, 4)),
+            Token(TokenType.HEADER, "=", generate_context(4, 0)),
+            Token(TokenType.TEXT, "Block header", generate_context(4, 2)),
+            Token(TokenType.EOL, "", generate_context(4, 14)),
+            Token(TokenType.BLOCK, "----", generate_context(5, 0)),
+            Token(TokenType.EOL, "", generate_context(5, 4)),
+            Token(TokenType.EOF, "", generate_context(6, 0)),
+        ],
+    )
+
+
 def test_block_four_characters():
     lex = runner(
         dedent(

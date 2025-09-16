@@ -1,8 +1,10 @@
+from unittest.mock import patch
+
 import pytest
 
 from mau.lexers.arguments_lexer.lexer import ArgumentsLexer
 from mau.nodes.node import Node, NodeInfo, ValueNodeContent
-from mau.parsers.arguments_parser.parser import Arguments, ArgumentsParser
+from mau.parsers.arguments_parser.parser import Arguments, ArgumentsParser, set_names
 from mau.parsers.base_parser.parser import MauParserException
 from mau.test_helpers import generate_context, parser_runner_factory
 
@@ -622,91 +624,6 @@ def test_process_arguments_multiple_subtypes():
         runner(source)
 
 
-def test_set_names_use_positional_names():
-    source = "value1, value2"
-
-    expected_unnamed_nodes = []
-
-    expected_named_nodes = {
-        "attr1": Node(
-            content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
-        ),
-        "attr2": Node(
-            content=ValueNodeContent("value2"),
-            info=NodeInfo(context=generate_context(0, 8)),
-        ),
-    }
-
-    parser = runner(source)
-    parser.set_names(["attr1", "attr2"])
-
-    assert parser.unnamed_argument_nodes == expected_unnamed_nodes
-    assert parser.named_argument_nodes == expected_named_nodes
-
-
-def test_set_names_named_wins_over_positional():
-    # Named and unnamed arguments clash.
-    # Here, attr1 is given as a named argument,
-    # which wins over the positional arguments. So,
-    # the only remaining positional name is attr2
-    # which receives the first positional value (value1),
-    # leaving value2 as a flag.
-
-    source = "value1, value2, value3, attr1=value4"
-
-    expected_unnamed_nodes = [
-        Node(
-            content=ValueNodeContent("value3"),
-            info=NodeInfo(context=generate_context(0, 16)),
-        ),
-    ]
-
-    expected_named_nodes = {
-        "attr1": Node(
-            content=ValueNodeContent("value4"),
-            info=NodeInfo(context=generate_context(0, 24)),
-        ),
-        "attr2": Node(
-            content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
-        ),
-        "attr3": Node(
-            content=ValueNodeContent("value2"),
-            info=NodeInfo(context=generate_context(0, 8)),
-        ),
-    }
-
-    parser = runner(source)
-    parser.set_names(["attr1", "attr2", "attr3"])
-
-    assert parser.unnamed_argument_nodes == expected_unnamed_nodes
-    assert parser.named_argument_nodes == expected_named_nodes
-
-
-def test_set_names_not_enough_positional_values():
-    # Here, we give two positional names,
-    # but there is only one value, so the
-    # second name cannot be assigned.
-
-    source = "value1"
-
-    expected_unnamed_nodes = []
-
-    expected_named_nodes = {
-        "attr1": Node(
-            content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
-        )
-    }
-
-    parser = runner(source)
-    parser.set_names(["attr1", "attr2"])
-
-    assert parser.unnamed_argument_nodes == expected_unnamed_nodes
-    assert parser.named_argument_nodes == expected_named_nodes
-
-
 def test_arguments():
     source = "value1, #tag1, *subtype1, name=value2"
 
@@ -723,3 +640,128 @@ def test_arguments_empty():
     parser = runner(source)
 
     assert parser.arguments == Arguments([], {}, [], None)
+
+
+# TODO
+# TODO
+# TODO
+# TODO
+# TODO
+# Test set_nodes, then test that Arguments.set_nodes and parser.set_nodes call it.
+# TODO
+# TODO
+# TODO
+# TODO
+
+
+def test_set_names_use_positional_names():
+    source_unnamed_args = ["value1", "value2"]
+    source_named_args: dict[str, str] = {}
+    positional_names = ["attr1", "attr2"]
+
+    expected_unnamed_args: list[str] = []
+    expected_named_args = {"attr1": "value1", "attr2": "value2"}
+
+    result_unnamed_args, result_named_args = set_names(
+        source_unnamed_args, source_named_args, positional_names
+    )
+
+    assert result_unnamed_args == expected_unnamed_args
+    assert result_named_args == expected_named_args
+
+
+def test_set_names_named_wins_over_positional():
+    # Named and unnamed arguments clash.
+    # Here, attr1 is given as a named argument,
+    # which wins over the positional arguments. So,
+    # the only remaining positional name is attr2
+    # which receives the first positional value (value1),
+    # leaving value2 as a flag.
+
+    source_unnamed_args = ["value1", "value2", "value3"]
+    source_named_args: dict[str, str] = {"attr1": "value4"}
+    positional_names = ["attr1", "attr2", "attr3"]
+
+    expected_unnamed_args = ["value3"]
+    expected_named_args = {
+        "attr1": "value4",
+        "attr2": "value1",
+        "attr3": "value2",
+    }
+
+    result_unnamed_args, result_named_args = set_names(
+        source_unnamed_args, source_named_args, positional_names
+    )
+
+    assert result_unnamed_args == expected_unnamed_args
+    assert result_named_args == expected_named_args
+
+
+def test_set_names_not_enough_positional_values():
+    # Here, we give two positional names,
+    # but there is only one value, so the
+    # second name cannot be assigned.
+
+    source_unnamed_args = ["value1"]
+    source_named_args: dict[str, str] = {}
+    positional_names = ["attr1", "attr2"]
+
+    expected_unnamed_args: list[str] = []
+    expected_named_args = {"attr1": "value1"}
+
+    result_unnamed_args, result_named_args = set_names(
+        source_unnamed_args, source_named_args, positional_names
+    )
+
+    assert result_unnamed_args == expected_unnamed_args
+    assert result_named_args == expected_named_args
+
+
+@patch("mau.parsers.arguments_parser.parser.set_names")
+def test_arguments_set_names(mock_set_names):
+    source = "value1, value2, key3=value3"
+
+    # This is not important as long
+    # as the function returns some values
+    # with the correct format.
+    mock_set_names.return_value = ([], {})
+
+    parser = runner(source)
+    parser.arguments.set_names(["attr1", "attr2"])
+
+    mock_set_names.assert_called_with(
+        ["value1", "value2"], {"key3": "value3"}, ["attr1", "attr2"]
+    )
+
+
+@patch("mau.parsers.arguments_parser.parser.set_names")
+def test_parser_set_names(mock_set_names):
+    source = "value1, value2, key3=value3"
+
+    # This is not important as long
+    # as the function returns some values
+    # with the correct format.
+    mock_set_names.return_value = ([], {})
+
+    parser = runner(source)
+    parser.set_names(["attr1", "attr2"])
+
+    mock_set_names.assert_called_with(
+        [
+            Node(
+                content=ValueNodeContent("value1"),
+                info=NodeInfo(context=generate_context(0, 0)),
+            ),
+            Node(
+                content=ValueNodeContent("value2"),
+                info=NodeInfo(context=generate_context(0, 8)),
+            ),
+        ],
+        {
+            "key3": Node(
+                content=ValueNodeContent("value3"),
+                info=NodeInfo(context=generate_context(0, 16)),
+            ),
+        },
+        ["attr1", "attr2"],
+    )

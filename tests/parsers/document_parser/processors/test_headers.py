@@ -3,7 +3,9 @@ from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.headers import HeaderNodeContent
 from mau.nodes.inline import SentenceNodeContent, TextNodeContent
 from mau.nodes.node import Node, NodeInfo
+from mau.parsers.arguments_parser.parser import Arguments
 from mau.parsers.document_parser.parser import DocumentParser
+from mau.parsers.document_parser.processors.header import header_processor
 from mau.test_helpers import (
     compare_nodes,
     generate_context,
@@ -64,29 +66,27 @@ def test_header_level_1():
         "mau.parser.header_anchor_function", lambda text, level: "XXXXXY"
     )
 
-    source = """
-    = Title of the section
-    """
+    source = "= Title of the section"
 
-    parser = runner(source, environment)
+    parser: DocumentParser = init_parser(source, environment)
+    header_processor(parser)
 
     compare_nodes(
         parser.nodes,
         [
             Node(
                 content=HeaderNodeContent(1, "XXXXXY"),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(0, 0)),
                 children={
-                    "entries": [],
                     "text": [
                         Node(
                             content=SentenceNodeContent(),
-                            info=NodeInfo(context=generate_context(1, 2)),
+                            info=NodeInfo(context=generate_context(0, 2)),
                             children={
                                 "content": [
                                     Node(
                                         content=TextNodeContent("Title of the section"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
+                                        info=NodeInfo(context=generate_context(0, 2)),
                                     )
                                 ]
                             },
@@ -104,31 +104,29 @@ def test_header_level_3():
         "mau.parser.header_anchor_function", lambda text, level: "XXXXXY"
     )
 
-    source = """
-    === Title of a subsection
-    """
+    source = "=== Title of a subsection"
 
-    parser = runner(source, environment)
+    parser: DocumentParser = init_parser(source, environment)
+    header_processor(parser)
 
     compare_nodes(
         parser.nodes,
         [
             Node(
                 content=HeaderNodeContent(3, "XXXXXY"),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(0, 0)),
                 children={
-                    "entries": [],
                     "text": [
                         Node(
                             content=SentenceNodeContent(),
-                            info=NodeInfo(context=generate_context(1, 4)),
+                            info=NodeInfo(context=generate_context(0, 4)),
                             children={
                                 "content": [
                                     Node(
                                         content=TextNodeContent(
                                             "Title of a subsection"
                                         ),
-                                        info=NodeInfo(context=generate_context(1, 4)),
+                                        info=NodeInfo(context=generate_context(0, 4)),
                                     )
                                 ]
                             },
@@ -230,12 +228,19 @@ def test_header_attributes():
         "mau.parser.header_anchor_function", lambda text, level: "XXXXXY"
     )
 
-    source = """
-    [arg1, *subtype1, #tag1, key1=value1]
-    = Title of the section
-    """
+    source = "= Title of the section"
 
-    parser = runner(source, environment)
+    parser: DocumentParser = init_parser(source, environment)
+    parser.arguments_manager.push(
+        Arguments(
+            unnamed_args=["arg1"],
+            named_args={"key1": "value1"},
+            tags=["tag1"],
+            subtype="subtype1",
+        )
+    )
+
+    header_processor(parser)
 
     compare_nodes(
         parser.nodes,
@@ -243,23 +248,22 @@ def test_header_attributes():
             Node(
                 content=HeaderNodeContent(1, "XXXXXY"),
                 info=NodeInfo(
-                    context=generate_context(2, 0),
+                    context=generate_context(0, 0),
                     unnamed_args=["arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
                 ),
                 children={
-                    "entries": [],
                     "text": [
                         Node(
                             content=SentenceNodeContent(),
-                            info=NodeInfo(context=generate_context(2, 2)),
+                            info=NodeInfo(context=generate_context(0, 2)),
                             children={
                                 "content": [
                                     Node(
                                         content=TextNodeContent("Title of the section"),
-                                        info=NodeInfo(context=generate_context(2, 2)),
+                                        info=NodeInfo(context=generate_context(0, 2)),
                                     )
                                 ]
                             },
@@ -272,12 +276,19 @@ def test_header_attributes():
 
 
 def test_header_attributes_can_overwrite_anchor():
-    source = """
-    [arg1, anchor=someheader, key1=value1]
-    = Header
-    """
+    source = "= Header"
 
-    parser = runner(source)
+    parser: DocumentParser = init_parser(source)
+    parser.arguments_manager.push(
+        Arguments(
+            unnamed_args=["arg1"],
+            named_args={"anchor": "someheader"},
+            tags=["tag1"],
+            subtype="subtype1",
+        )
+    )
+
+    header_processor(parser)
 
     compare_nodes(
         parser.nodes,
@@ -285,23 +296,22 @@ def test_header_attributes_can_overwrite_anchor():
             Node(
                 content=HeaderNodeContent(1, "someheader"),
                 info=NodeInfo(
-                    context=generate_context(2, 0),
+                    context=generate_context(0, 0),
                     unnamed_args=["arg1"],
-                    named_args={"key1": "value1"},
-                    tags=[],
-                    subtype=None,
+                    named_args={},
+                    tags=["tag1"],
+                    subtype="subtype1",
                 ),
                 children={
-                    "entries": [],
                     "text": [
                         Node(
                             content=SentenceNodeContent(),
-                            info=NodeInfo(context=generate_context(2, 2)),
+                            info=NodeInfo(context=generate_context(0, 2)),
                             children={
                                 "content": [
                                     Node(
                                         content=TextNodeContent("Header"),
-                                        info=NodeInfo(context=generate_context(2, 2)),
+                                        info=NodeInfo(context=generate_context(0, 2)),
                                     )
                                 ]
                             },
@@ -313,45 +323,45 @@ def test_header_attributes_can_overwrite_anchor():
     )
 
 
-def test_header_ignore_title():
-    environment = Environment()
-    environment.setvar(
-        "mau.parser.header_anchor_function", lambda text, level: "XXXXXY"
-    )
+# def test_header_ignore_title():
+#     environment = Environment()
+#     environment.setvar(
+#         "mau.parser.header_anchor_function", lambda text, level: "XXXXXY"
+#     )
 
-    source = """
-    . A title
-    = Title of the section
-    """
+#     source = """
+#     . A title
+#     = Title of the section
+#     """
 
-    parser = runner(source, environment)
+#     parser = runner(source, environment)
 
-    compare_nodes(
-        parser.nodes,
-        [
-            Node(
-                content=HeaderNodeContent(1, "XXXXXY"),
-                info=NodeInfo(context=generate_context(2, 0)),
-                children={
-                    "entries": [],
-                    "text": [
-                        Node(
-                            content=SentenceNodeContent(),
-                            info=NodeInfo(context=generate_context(2, 2)),
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent("Title of the section"),
-                                        info=NodeInfo(context=generate_context(2, 2)),
-                                    )
-                                ]
-                            },
-                        )
-                    ],
-                },
-            )
-        ],
-    )
+#     compare_nodes(
+#         parser.nodes,
+#         [
+#             Node(
+#                 content=HeaderNodeContent(1, "XXXXXY"),
+#                 info=NodeInfo(context=generate_context(2, 0)),
+#                 children={
+#                     "entries": [],
+#                     "text": [
+#                         Node(
+#                             content=SentenceNodeContent(),
+#                             info=NodeInfo(context=generate_context(2, 2)),
+#                             children={
+#                                 "content": [
+#                                     Node(
+#                                         content=TextNodeContent("Title of the section"),
+#                                         info=NodeInfo(context=generate_context(2, 2)),
+#                                     )
+#                                 ]
+#                             },
+#                         )
+#                     ],
+#                 },
+#             )
+#         ],
+#     )
 
 
 # def test_header_with_id_is_stored():

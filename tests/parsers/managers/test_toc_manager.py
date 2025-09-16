@@ -1,13 +1,17 @@
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.headers import HeaderNodeContent
-from mau.nodes.node import Node
-from mau.nodes.toc import TocNodeContent
+from mau.nodes.inline import SentenceNodeContent, TextNodeContent
+from mau.nodes.node import Node, NodeInfo
+from mau.nodes.toc import TocItemNodeContent
 from mau.parsers.document_parser.managers.toc_manager import (
-    TocManager,
     add_nodes_under_level,
+    header_to_toc_item,
 )
 from mau.parsers.document_parser.parser import DocumentParser
 from mau.test_helpers import (
+    compare_node,
+    compare_nodes,
+    generate_context,
     init_parser_factory,
     parser_runner_factory,
 )
@@ -17,90 +21,280 @@ init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-def test_add_nodes_under_level():
-    node_a = Node(content=HeaderNodeContent(1, "A"))
-    node_b = Node(content=HeaderNodeContent(2, "B"))
-    node_c = Node(content=HeaderNodeContent(3, "C"))
-    node_d = Node(content=HeaderNodeContent(2, "D"))
-    node_e = Node(content=HeaderNodeContent(2, "E"))
-    node_f = Node(content=HeaderNodeContent(1, "F"))
-    node_g = Node(content=HeaderNodeContent(3, "G"))
+def test_header_to_toc_item():
+    header = Node(
+        content=HeaderNodeContent(1, "A"),
+        children={
+            "text": [
+                Node(
+                    content=SentenceNodeContent(),
+                    info=NodeInfo(context=generate_context(3, 2)),
+                    children={
+                        "content": [
+                            Node(
+                                content=TextNodeContent("Header A"),
+                                info=NodeInfo(context=generate_context(3, 2)),
+                            )
+                        ]
+                    },
+                )
+            ]
+        },
+    )
+
+    expected_toc_item = Node(
+        content=TocItemNodeContent(1, "A"),
+        children={
+            "entries": [],
+            "text": [
+                Node(
+                    content=SentenceNodeContent(),
+                    info=NodeInfo(context=generate_context(3, 2)),
+                    children={
+                        "content": [
+                            Node(
+                                content=TextNodeContent("Header A"),
+                                info=NodeInfo(context=generate_context(3, 2)),
+                            )
+                        ]
+                    },
+                )
+            ],
+        },
+    )
+
+    compare_node(header_to_toc_item(header), expected_toc_item)
+
+
+def test_add_nodes_without_nesting():
+    node_header_a = Node(content=HeaderNodeContent(1, "A"))
+    node_header_b = Node(content=HeaderNodeContent(1, "B"))
+    node_header_c = Node(content=HeaderNodeContent(1, "C"))
+
+    node_toc_item_a = Node(
+        content=TocItemNodeContent(1, "A"),
+        children={
+            "text": [],
+            "entries": [],
+        },
+    )
+    node_toc_item_b = Node(
+        content=TocItemNodeContent(1, "B"),
+        children={
+            "text": [],
+            "entries": [],
+        },
+    )
+    node_toc_item_c = Node(
+        content=TocItemNodeContent(1, "C"),
+        children={
+            "text": [],
+            "entries": [],
+        },
+    )
 
     nodes = [
-        node_a,
-        node_b,
-        node_c,
-        node_d,
-        node_e,
-        node_f,
-        node_g,
+        node_header_a,
+        node_header_b,
+        node_header_c,
     ]
 
-    children: list[Node[HeaderNodeContent]] = []
+    children: list[Node[TocItemNodeContent]] = []
 
     idx = add_nodes_under_level(0, nodes, 0, children)
 
     assert idx == len(nodes)
 
-    assert children == [node_a, node_f]
-    assert node_a.children["entries"] == [node_b, node_d, node_e]
-    assert node_b.children["entries"] == [node_c]
-    assert node_f.children["entries"] == [node_g]
+    compare_nodes(children, [node_toc_item_a, node_toc_item_b, node_toc_item_c])
+
+    assert node_header_a.children == {"text": []}
+    assert node_header_b.children == {"text": []}
+    assert node_header_c.children == {"text": []}
 
 
-def test_add_nodes_under_level_starts_with_any():
-    node_a = Node(content=HeaderNodeContent(3, "A"))
-    node_b = Node(content=HeaderNodeContent(2, "B"))
-    node_c = Node(content=HeaderNodeContent(3, "C"))
+def test_add_nodes_with_nesting():
+    node_header_a = Node(content=HeaderNodeContent(1, "A"))
+    node_header_b = Node(content=HeaderNodeContent(2, "B"))
+    node_header_c = Node(content=HeaderNodeContent(3, "C"))
+    node_header_d = Node(content=HeaderNodeContent(2, "D"))
+    node_header_e = Node(content=HeaderNodeContent(2, "E"))
+    node_header_f = Node(content=HeaderNodeContent(1, "F"))
+    node_header_g = Node(content=HeaderNodeContent(3, "G"))
+
+    node_toc_item_c = Node(
+        content=TocItemNodeContent(3, "C"),
+        children={
+            "text": [],
+            "entries": [],
+        },
+    )
+
+    node_toc_item_b = Node(
+        content=TocItemNodeContent(2, "B"),
+        children={
+            "text": [],
+            "entries": [node_toc_item_c],
+        },
+    )
+
+    node_toc_item_d = Node(
+        content=TocItemNodeContent(2, "D"),
+        children={
+            "text": [],
+            "entries": [],
+        },
+    )
+
+    node_toc_item_e = Node(
+        content=TocItemNodeContent(2, "E"),
+        children={
+            "text": [],
+            "entries": [],
+        },
+    )
+
+    node_toc_item_a = Node(
+        content=TocItemNodeContent(1, "A"),
+        children={
+            "text": [],
+            "entries": [node_toc_item_b, node_toc_item_d, node_toc_item_e],
+        },
+    )
+
+    node_toc_item_g = Node(
+        content=TocItemNodeContent(3, "G"),
+        children={
+            "text": [],
+            "entries": [],
+        },
+    )
+
+    node_toc_item_f = Node(
+        content=TocItemNodeContent(1, "F"),
+        children={
+            "text": [],
+            "entries": [node_toc_item_g],
+        },
+    )
 
     nodes = [
-        node_a,
-        node_b,
-        node_c,
+        node_header_a,
+        node_header_b,
+        node_header_c,
+        node_header_d,
+        node_header_e,
+        node_header_f,
+        node_header_g,
     ]
 
-    children: list[Node[HeaderNodeContent]] = []
+    children: list[Node[TocItemNodeContent]] = []
 
-    add_nodes_under_level(0, nodes, 0, children)
+    idx = add_nodes_under_level(0, nodes, 0, children)
 
-    assert children == [node_a, node_b]
-    assert node_a.children["entries"] == []
-    assert node_b.children["entries"] == [node_c]
+    assert idx == len(nodes)
+
+    compare_nodes(children, [node_toc_item_a, node_toc_item_f])
+
+    assert node_header_a.children == {"text": []}
+    assert node_header_b.children == {"text": []}
+    assert node_header_c.children == {"text": []}
+    assert node_header_d.children == {"text": []}
+    assert node_header_e.children == {"text": []}
+    assert node_header_f.children == {"text": []}
+    assert node_header_g.children == {"text": []}
+
+
+def test_add_nodes_under_level_starts_with_any_level():
+    node_header_a = Node(content=HeaderNodeContent(3, "A"))
+    node_header_b = Node(content=HeaderNodeContent(2, "B"))
+    node_header_c = Node(content=HeaderNodeContent(3, "C"))
+
+    node_toc_item_c = Node(
+        content=TocItemNodeContent(3, "C"),
+        children={
+            "text": [],
+            "entries": [],
+        },
+    )
+
+    node_toc_item_b = Node(
+        content=TocItemNodeContent(2, "B"),
+        children={
+            "text": [],
+            "entries": [node_toc_item_c],
+        },
+    )
+
+    node_toc_item_a = Node(
+        content=TocItemNodeContent(3, "A"),
+        children={
+            "text": [],
+            "entries": [],
+        },
+    )
+
+    nodes = [
+        node_header_a,
+        node_header_b,
+        node_header_c,
+    ]
+
+    children: list[Node[TocItemNodeContent]] = []
+
+    idx = add_nodes_under_level(0, nodes, 0, children)
+
+    assert idx == len(nodes)
+
+    compare_nodes(children, [node_toc_item_a, node_toc_item_b])
+
+    assert node_header_a.children == {"text": []}
+    assert node_header_b.children == {"text": []}
+    assert node_header_c.children == {"text": []}
 
 
 def test_add_nodes_under_level_can_terminate_with_single_node():
-    node_a = Node(content=HeaderNodeContent(3, "A"))
-    node_b = Node(content=HeaderNodeContent(2, "B"))
-    node_c = Node(content=HeaderNodeContent(1, "C"))
+    node_header_a = Node(content=HeaderNodeContent(3, "A"))
+    node_header_b = Node(content=HeaderNodeContent(2, "B"))
+    node_header_c = Node(content=HeaderNodeContent(1, "C"))
+
+    node_toc_item_a = Node(
+        content=TocItemNodeContent(3, "A"),
+        children={
+            "text": [],
+            "entries": [],
+        },
+    )
+
+    node_toc_item_b = Node(
+        content=TocItemNodeContent(2, "B"),
+        children={
+            "text": [],
+            "entries": [],
+        },
+    )
+
+    node_toc_item_c = Node(
+        content=TocItemNodeContent(1, "C"),
+        children={
+            "text": [],
+            "entries": [],
+        },
+    )
 
     nodes = [
-        node_a,
-        node_b,
-        node_c,
+        node_header_a,
+        node_header_b,
+        node_header_c,
     ]
 
-    children: list[Node[HeaderNodeContent]] = []
+    children: list[Node[TocItemNodeContent]] = []
 
-    add_nodes_under_level(0, nodes, 0, children)
+    idx = add_nodes_under_level(0, nodes, 0, children)
 
-    assert children == [node_a, node_b, node_c]
-    assert node_a.children["entries"] == []
-    assert node_b.children["entries"] == []
-    assert node_c.children["entries"] == []
+    assert idx == len(nodes)
 
+    compare_nodes(children, [node_toc_item_a, node_toc_item_b, node_toc_item_c])
 
-def test_toc_manager():
-    tm = TocManager()
-    node_a = Node(content=HeaderNodeContent(1, "A"))
-    node_b = Node(content=HeaderNodeContent(2, "B"))
-    toc_a = Node(content=TocNodeContent())
-
-    tm.add_header(node_a)
-    tm.add_header(node_b)
-    tm.add_toc_node(toc_a)
-
-    tm.process()
-
-    assert toc_a.children["nested_entries"] == [node_a]
-    assert toc_a.children["plain_entries"] == [node_a, node_b]
-    assert node_a.children["entries"] == [node_b]
+    assert node_header_a.children == {"text": []}
+    assert node_header_b.children == {"text": []}
+    assert node_header_c.children == {"text": []}

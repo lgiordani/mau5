@@ -1,158 +1,142 @@
-# from unittest.mock import patch
+import pytest
 
-# import pytest
-# from mau.environment.environment import Environment
-# from mau.errors import MauErrorException
-# from mau.lexers.document_lexer.lexer import DocumentLexer
-# from mau.nodes.block import BlockNode
-# from mau.nodes.header import HeaderNode
-# from mau.nodes.inline import SentenceNode, TextNode
-# from mau.parsers.document_parser.parser import DocumentParser
+from mau.lexers.document_lexer.lexer import DocumentLexer
+from mau.nodes.block import BlockNodeContent
+from mau.nodes.inline import SentenceNodeContent, TextNodeContent
+from mau.nodes.node import Node, NodeInfo
+from mau.parsers.base_parser.parser import MauParserException
+from mau.parsers.document_parser.parser import DocumentParser
+from mau.test_helpers import (
+    compare_nodes,
+    generate_context,
+    init_parser_factory,
+    parser_runner_factory,
+)
 
-# from mau.test_helpers import init_parser_factory, parser_runner_factory
+init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 
-# init_parser = init_parser_factory(DocumentLexer, DocumentParser)
-
-# runner = parser_runner_factory(DocumentLexer, DocumentParser)
-
-
-# WITH TAGS!
-# def test_parse_block_title_and_attributes():
-#     source = """
-#     .Just a title
-#     [*subtype, name1=value1, name2=value2]
-#     ----
-#     ----
-#     """
-
-#     parser = runner(source)
-
-#     assert parser.nodes == [
-#         BlockNode(
-#             subtype="subtype",
-#             classes=[],
-#             title=SentenceNode(
-#                 children=[
-#                     TextNode("Just a title"),
-#                 ]
-#             ),
-#             engine=None,
-#             preprocessor="none",
-#             args=[],
-#             kwargs={"name1": "value1", "name2": "value2"},
-#         )
-#     ]
-
-#     block_node = parser.nodes[0]
-#     text_node = block_node.title.children[0]
-
-#     assert text_node.parent == block_node
-#     assert text_node.parent_position == "title"
+runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-# def test_block_classes_single_class():
-#     source = """
-#     [*subtype,classes=cls1]
-#     ----
-#     ----
-#     """
+def test_parse_block_title_and_attributes():
+    source = """
+    .Just a title
+    [arg1, *subtype1, #tag1, key1=value1]
+    ----
+    ----
+    """
 
-#     assert runner(source).nodes == [
-#         BlockNode(
-#             subtype="subtype",
-#             classes=["cls1"],
-#             title=None,
-#             engine=None,
-#             preprocessor="none",
-#             args=[],
-#             kwargs={},
-#         ),
-#     ]
+    parser: DocumentParser = runner(source)
 
-
-# def test_block_classes_multiple_classes():
-#     source = """
-#     [*subtype,classes="cls1,cls2"]
-#     ----
-#     ----
-#     """
-
-#     assert runner(source).nodes == [
-#         BlockNode(
-#             subtype="subtype",
-#             classes=["cls1", "cls2"],
-#             title=None,
-#             engine=None,
-#             preprocessor="none",
-#             args=[],
-#             kwargs={},
-#         ),
-#     ]
-
-
-# def test_block_engine():
-#     source = """
-#     [*subtype,engine=someengine]
-#     ----
-#     ----
-#     """
-
-#     with pytest.raises(MauErrorException):
-#         runner(source)
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=BlockNodeContent(
+                    classes=[],
+                    engine=None,
+                    preprocessor=None,
+                ),
+                info=NodeInfo(
+                    context=generate_context(3, 0),
+                    unnamed_args=["arg1"],
+                    named_args={"key1": "value1"},
+                    tags=["tag1"],
+                    subtype="subtype1",
+                ),
+                children={
+                    "content": [],
+                    "title": [
+                        Node(
+                            content=SentenceNodeContent(),
+                            info=NodeInfo(context=generate_context(1, 0)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent("Just a title"),
+                                        info=NodeInfo(context=generate_context(1, 0)),
+                                    )
+                                ]
+                            },
+                        )
+                    ],
+                },
+            ),
+        ],
+    )
 
 
-# @patch("mau.parsers.document_parser.header_anchor")
-# def test_block_default_engine_adds_headers_to_global_toc(mock_header_anchor):
-#     mock_header_anchor.return_value = "XXYY"
+def test_block_classes_single_class():
+    source = """
+    [*subtype1,classes=cls1]
+    ----
+    ----
+    """
 
-#     source = """
-#     = Global header
+    parser: DocumentParser = runner(source)
 
-#     [*someblock]
-#     ----
-#     = Block header
-#     ----
-#     """
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=BlockNodeContent(
+                    classes=["cls1"],
+                    engine=None,
+                    preprocessor=None,
+                ),
+                info=NodeInfo(
+                    context=generate_context(2, 0),
+                    subtype="subtype1",
+                ),
+                children={
+                    "content": [],
+                },
+            )
+        ],
+    )
 
-#     par = runner(source)
 
-#     assert par.nodes == [
-#         HeaderNode(
-#             value=SentenceNode(children=[TextNode("Global header")]),
-#             level="1",
-#             anchor="XXYY",
-#         ),
-#         BlockNode(
-#             subtype="someblock",
-#             children=[
-#                 HeaderNode(
-#                     value=SentenceNode(children=[TextNode("Block header")]),
-#                     level="1",
-#                     anchor="XXYY",
-#                 ),
-#             ],
-#             secondary_children=[],
-#             classes=[],
-#             title=None,
-#             engine=None,
-#             preprocessor="none",
-#             args=[],
-#             kwargs={},
-#         ),
-#     ]
+def test_block_classes_multiple_classes():
+    source = """
+    [*subtype1,classes="cls1,cls2"]
+    ----
+    ----
+    """
 
-#     assert par.toc_manager.headers == [
-#         HeaderNode(
-#             value=SentenceNode(children=[TextNode("Global header")]),
-#             level="1",
-#             anchor="XXYY",
-#         ),
-#         HeaderNode(
-#             value=SentenceNode(children=[TextNode("Block header")]),
-#             level="1",
-#             anchor="XXYY",
-#         ),
-#     ]
+    parser: DocumentParser = runner(source)
+
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=BlockNodeContent(
+                    classes=["cls1", "cls2"],
+                    engine=None,
+                    preprocessor=None,
+                ),
+                info=NodeInfo(
+                    context=generate_context(2, 0),
+                    subtype="subtype1",
+                ),
+                children={
+                    "content": [],
+                },
+            )
+        ],
+    )
+
+
+def test_block_engine():
+    source = """
+    [*subtype,engine=someengine]
+    ----
+    ----
+    """
+
+    with pytest.raises(MauParserException) as exc:
+        runner(source)
+
+    assert exc.value.context == generate_context(2, 0)
 
 
 # def test_command_defblock():

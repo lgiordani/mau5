@@ -1,5 +1,3 @@
-# pylint: disable=too-many-lines
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -8,21 +6,10 @@ if TYPE_CHECKING:
     from .parser import DocumentParser
 
 
-# from mau.lexers.base_lexer.lexer import TokenTypes as TokenType
-
-# from mau.lexers.document_lexer.lexer import TokenTypes as TokenType
-# from mau.nodes.block import BlockGroupNode, BlockNode
-# from mau.nodes.content import ContentImageNode, ContentNode
 from mau.nodes.include import IncludeNodeContent
 from mau.nodes.node import Node, NodeInfo
-
-# from mau.nodes.page import ContainerNode
-# from mau.nodes.paragraph import ParagraphNode
-# from mau.nodes.source import MarkerNode, CalloutsEntryNode, SourceNode, SourceLineNode
 from mau.parsers.arguments_parser.parser import Arguments, ArgumentsParser
 from mau.parsers.base_parser.parser import MauParserException
-
-# from mau.parsers.footnotes import FootnotesManager
 from mau.tokens.token import TokenType
 
 
@@ -95,7 +82,7 @@ def include_processor(parser: DocumentParser):
 
     node = Node(content=IncludeNodeContent(content_type, uris), info=info)
 
-    if title := parser._pop_title():
+    if title := parser.title_manager.pop():
         node.add_children({"title": [title]})
 
     parser._save(node)
