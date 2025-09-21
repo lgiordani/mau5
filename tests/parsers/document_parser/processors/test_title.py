@@ -22,7 +22,7 @@ def test_title():
     title_processor(parser)
 
     compare_node(
-        parser.title_manager.pop(),
+        parser.title_buffer.pop(),
         Node(
             content=SentenceNodeContent(),
             info=NodeInfo(context=generate_context(0, 0)),
@@ -45,7 +45,7 @@ def test_title_with_spaces():
     title_processor(parser)
 
     compare_node(
-        parser.title_manager.pop(),
+        parser.title_buffer.pop(),
         Node(
             content=SentenceNodeContent(),
             info=NodeInfo(context=generate_context(0, 0)),

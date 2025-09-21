@@ -134,7 +134,7 @@ class BaseLexer:
         process_functions = [
             self._process_eof,
             self._process_newline,
-            self._process_eol,
+            self._process_trailing_spaces,
         ]
         process_functions.extend(self._process_functions())
         process_functions.append(self._process_error)
@@ -205,9 +205,12 @@ class BaseLexer:
 
         self._nextline()
 
+        # if self.text_buffer.eof:
+        #     tokens.append(self._create_token_and_skip(TokenType.EOF))
+
         return tokens
 
-    def _process_eol(self):
+    def _process_trailing_spaces(self):
         # This detects and skips any trailing spaces,
         # reaches the end of line and proceeds to the next line.
         match = rematch(r"\ *$", self._tail)
@@ -227,5 +230,8 @@ class BaseLexer:
         ]
 
         self._nextline()
+
+        # if self.text_buffer.eof:
+        #     return self._create_token_and_skip(TokenType.EOF)
 
         return tokens

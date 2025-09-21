@@ -19,5 +19,8 @@ class Context:
             "source": self.source,
         }
 
+    def clone(self):
+        return self.__class__(**self.asdict())
+
     def __repr__(self):
         return str(self.asdict())

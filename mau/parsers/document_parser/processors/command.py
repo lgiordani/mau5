@@ -6,8 +6,6 @@ if TYPE_CHECKING:
     from .parser import DocumentParser
 
 
-
-
 # from mau.lexers.base_lexer.lexer import TokenTypes as TokenType
 from mau.nodes.include import IncludeNodeContent
 
@@ -47,11 +45,18 @@ def command_processor(parser: DocumentParser):
             raise MauParserException(
                 "Syntax error. You cannot specify both boxed and inline arguments.",
                 prefix.context,
-                IncludeNodeContent.long_help,
+                IncludeNodeContent.long_help,  # TODO This is not IncludeNodeContent, it should be a generic CommandNodeContent
             )
 
         # Get the colon.
         parser.tm.get_token(TokenType.LITERAL, ":")
+
+        if parser.tm.peek_token().type != TokenType.TEXT:
+            raise MauParserException(
+                f"Syntax error. If you use the colon after {name} you need to specify arguments.",
+                prefix.context,
+                IncludeNodeContent.long_help,
+            )
 
         # Get the inline arguments.
         arguments_token = parser.tm.get_token(TokenType.TEXT)

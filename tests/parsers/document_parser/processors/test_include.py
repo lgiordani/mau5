@@ -122,7 +122,7 @@ def test_include_content_with_title():
     source = "<< ctype1:/path/to/it,/another/path"
 
     parser: DocumentParser = init_parser(source)
-    parser.title_manager.push("A title", generate_context(1, 2), Environment())
+    parser.title_buffer.push("A title", generate_context(1, 2), Environment())
 
     include_processor(parser)
 

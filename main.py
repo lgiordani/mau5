@@ -15,7 +15,7 @@ from mau.lexers.base_lexer.lexer import (
 )
 from mau.parsers.base_parser.parser import (
     MauParserException,
-    format_node,
+    # format_node,
     format_parser_error,
 )
 
@@ -227,10 +227,10 @@ def main():  # pylint: disable=too-many-statements
         print(formatted_error)
         sys.exit(1)
 
-    if args.parser_show_nodes:
-        for node in nodes:
-            print(format_node(node))
-            print()
+    # if args.parser_show_nodes:
+    #     for node in nodes:
+    #         print(format_node(node))
+    #         print()
 
     if args.parser_only:
         sys.exit(1)

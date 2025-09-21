@@ -115,8 +115,7 @@ def test_empty_lines():
         lex.tokens,
         [
             Token(TokenType.EOL, "", generate_context(0, 0)),
-            Token(TokenType.EOL, "", generate_context(1, 0)),
-            Token(TokenType.EOF, "", generate_context(2, 0)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
 
@@ -128,8 +127,7 @@ def test_lines_with_only_spaces():
         lex.tokens,
         [
             Token(TokenType.EOL, "", generate_context(0, 0)),
-            Token(TokenType.EOL, "", generate_context(1, 0)),
-            Token(TokenType.EOF, "", generate_context(2, 0)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
 

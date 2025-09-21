@@ -6,6 +6,7 @@ from mau.nodes.inline import SentenceNodeContent, TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser.parser import MauParserException
 from mau.parsers.document_parser.parser import DocumentParser
+from mau.parsers.document_parser.processors.block import EngineType
 from mau.test_helpers import (
     compare_nodes,
     generate_context,
@@ -34,7 +35,7 @@ def test_parse_block_title_and_arguments():
             Node(
                 content=BlockNodeContent(
                     classes=[],
-                    engine=None,
+                    engine=EngineType.DEFAULT.value,
                     preprocessor=None,
                 ),
                 info=NodeInfo(
@@ -81,7 +82,7 @@ def test_block_classes_single_class():
             Node(
                 content=BlockNodeContent(
                     classes=["cls1"],
-                    engine=None,
+                    engine=EngineType.DEFAULT.value,
                     preprocessor=None,
                 ),
                 info=NodeInfo(
@@ -111,7 +112,7 @@ def test_block_classes_multiple_classes():
             Node(
                 content=BlockNodeContent(
                     classes=["cls1", "cls2"],
-                    engine=None,
+                    engine=EngineType.DEFAULT.value,
                     preprocessor=None,
                 ),
                 info=NodeInfo(
@@ -244,7 +245,7 @@ def test_block_engine():
 #             secondary_children=[],
 #             classes=[],
 #             title=None,
-#             engine=None,
+#             engine=EngineType.DEFAULT.value,
 #             preprocessor="none",
 #             args=[],
 #             kwargs={"name1": "value1", "name2": "value2"},
@@ -268,7 +269,7 @@ def test_block_engine():
 #             secondary_children=[],
 #             classes=[],
 #             title=None,
-#             engine=None,
+#             engine=EngineType.DEFAULT.value,
 #             preprocessor="none",
 #             args=[],
 #             kwargs={"name1": "value99", "name2": "value2"},
@@ -296,7 +297,7 @@ def test_block_engine():
 #             secondary_children=[],
 #             classes=[],
 #             title=None,
-#             engine=None,
+#             engine=EngineType.DEFAULT.value,
 #             preprocessor="none",
 #             args=["attr1"],
 #             kwargs={"name1": "value99", "name2": "value2"},
@@ -324,7 +325,7 @@ def test_block_engine():
 #             secondary_children=[],
 #             classes=[],
 #             title=None,
-#             engine=None,
+#             engine=EngineType.DEFAULT.value,
 #             preprocessor="none",
 #             args=[],
 #             kwargs={"attr1": "value1", "attr2": "value2"},
@@ -352,7 +353,7 @@ def test_block_engine():
 #             secondary_children=[],
 #             classes=[],
 #             title=None,
-#             engine=None,
+#             engine=EngineType.DEFAULT.value,
 #             preprocessor="none",
 #             args=[],
 #             kwargs={"attr1": "value1", "attr2": "value2", "attr3": "value3"},
@@ -397,7 +398,7 @@ def test_block_engine():
 #             secondary_children=[],
 #             classes=[],
 #             title=None,
-#             engine=None,
+#             engine=EngineType.DEFAULT.value,
 #             preprocessor="none",
 #             args=["value1", "value2"],
 #             kwargs={"attr3": "value3"},
@@ -425,7 +426,7 @@ def test_block_engine():
 #             secondary_children=[],
 #             classes=[],
 #             title=None,
-#             engine=None,
+#             engine=EngineType.DEFAULT.value,
 #             preprocessor="none",
 #             args=["value2"],
 #             kwargs={"arg1": "value1", "key1": "value1"},

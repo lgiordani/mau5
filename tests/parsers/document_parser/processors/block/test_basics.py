@@ -1,12 +1,11 @@
-import pytest
 
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.block import BlockNodeContent
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.paragraph import ParagraphNodeContent
-from mau.parsers.base_parser.parser import MauParserException
 from mau.parsers.document_parser.parser import DocumentParser
+from mau.parsers.document_parser.processors.block import EngineType
 from mau.test_helpers import (
     compare_nodes,
     generate_context,
@@ -33,7 +32,7 @@ def test_block_with_empty_body():
             Node(
                 content=BlockNodeContent(
                     classes=[],
-                    engine=None,
+                    engine=EngineType.DEFAULT.value,
                     preprocessor=None,
                 ),
                 info=NodeInfo(context=generate_context(1, 0)),
@@ -58,7 +57,7 @@ def test_block_content():
             Node(
                 content=BlockNodeContent(
                     classes=[],
-                    engine=None,
+                    engine=EngineType.DEFAULT.value,
                     preprocessor=None,
                 ),
                 info=NodeInfo(context=generate_context(1, 0)),
@@ -99,7 +98,7 @@ def test_block_content_variables():
             Node(
                 content=BlockNodeContent(
                     classes=[],
-                    engine=None,
+                    engine=EngineType.DEFAULT.value,
                     preprocessor=None,
                 ),
                 info=NodeInfo(context=generate_context(1, 0)),
@@ -140,7 +139,7 @@ def test_block_content_external_variables():
             Node(
                 content=BlockNodeContent(
                     classes=[],
-                    engine=None,
+                    engine=EngineType.DEFAULT.value,
                     preprocessor=None,
                 ),
                 info=NodeInfo(context=generate_context(2, 0)),
@@ -181,7 +180,7 @@ def test_block_inside_block():
             Node(
                 content=BlockNodeContent(
                     classes=[],
-                    engine=None,
+                    engine=EngineType.DEFAULT.value,
                     preprocessor=None,
                 ),
                 info=NodeInfo(context=generate_context(1, 0)),
@@ -190,7 +189,7 @@ def test_block_inside_block():
                         Node(
                             content=BlockNodeContent(
                                 classes=[],
-                                engine=None,
+                                engine=EngineType.DEFAULT.value,
                                 preprocessor=None,
                             ),
                             info=NodeInfo(context=generate_context(2, 0)),

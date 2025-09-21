@@ -69,6 +69,21 @@ class TextBuffer:
         """
         True if the position is beyond EOF.
         """
+
+        # If there are no lines in the buffer
+        # we are at the end of file for sure.
+        if not self.lines:
+            return True
+
+        # There might be empty lines, and those
+        # should never be mistaken for the EOF.
+        # If we are at the last line, and beyond
+        # its length we are at the EOF.
+        if self.line == len(self.lines) - 1 and self.column >= len(self.current_line):
+            return True
+
+        # If we are past the last line
+        # we are at the EOF.
         return self.line >= len(self.lines)
 
     @property

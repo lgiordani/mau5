@@ -53,27 +53,27 @@ class TocManager:
     def __init__(self):
         # This list contains the headers
         # found parsing a document
-        self._headers: list[Node[HeaderNodeContent]] = []
+        self.headers: list[Node[HeaderNodeContent]] = []
 
         # This is the list of ::toc commands
         # that need to be updated once the ToC
         # has been processed
-        self._toc_nodes: list[Node[TocNodeContent]] = []
+        self.toc_nodes: list[Node[TocNodeContent]] = []
 
     def add_header(self, node: Node[HeaderNodeContent]):
-        self._headers.append(node)
+        self.headers.append(node)
 
     def add_toc_node(self, node: Node[TocNodeContent]):
-        self._toc_nodes.append(node)
+        self.toc_nodes.append(node)
 
     def update(self, other: TocManager):
-        self._headers.extend(other._headers)
-        self._toc_nodes.extend(other._toc_nodes)
+        self.headers.extend(other.headers)
+        self.toc_nodes.extend(other.toc_nodes)
 
     def process(self):
         nested_headers: list[Node[TocItemNodeContent]] = []
-        add_nodes_under_level(0, self._headers, 0, nested_headers)
+        add_nodes_under_level(0, self.headers, 0, nested_headers)
 
-        for toc_node in self._toc_nodes:
+        for toc_node in self.toc_nodes:
             toc_node.children["nested_entries"] = nested_headers  # type: ignore[assignment]
-            toc_node.children["plain_entries"] = self._headers  # type: ignore[assignment]
+            toc_node.children["plain_entries"] = self.headers  # type: ignore[assignment]

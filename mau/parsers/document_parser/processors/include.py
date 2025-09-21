@@ -82,7 +82,7 @@ def include_processor(parser: DocumentParser):
 
     node = Node(content=IncludeNodeContent(content_type, uris), info=info)
 
-    if title := parser.title_manager.pop():
+    if title := parser.title_buffer.pop():
         node.add_children({"title": [title]})
 
     parser._save(node)

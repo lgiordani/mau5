@@ -18,7 +18,6 @@ from mau.nodes.node import Node, NodeContent
 
 # from mau.nodes.page import ContainerNode
 # from mau.nodes.paragraph import ParagraphNode
-# from mau.nodes.source import MarkerNode, CalloutsEntryNode, SourceNode, SourceLineNode
 from mau.parsers.base_parser.parser import BaseParser
 
 # from mau.parsers.footnotes import FootnotesManager
@@ -28,7 +27,7 @@ from mau.tokens.token import Token, TokenType
 
 from .managers.arguments_manager import ArgumentsManager
 from .managers.header_links_manager import HeaderLinksManager
-from .managers.title_manager import TitleManager
+from .managers.title_buffer import TitleBuffer
 from .managers.toc_manager import TocManager
 from .processors.arguments import arguments_processor
 from .processors.block import block_processor
@@ -80,11 +79,11 @@ class DocumentParser(BaseParser):
     ):
         super().__init__(tokens, environment, parent_node, parent_position)
 
-        self.internal_links_manager: HeaderLinksManager = HeaderLinksManager()
+        self.header_links_manager: HeaderLinksManager = HeaderLinksManager()
         #     self.footnotes_manager = FootnotesManager(self)
         self.toc_manager: TocManager = TocManager()
         self.arguments_manager: ArgumentsManager = ArgumentsManager()
-        self.title_manager: TitleManager = TitleManager()
+        self.title_buffer: TitleBuffer = TitleBuffer()
 
         #     # These are the default block aliases
         #     # If subtype is not set it will be the alias itself.
@@ -255,7 +254,7 @@ class DocumentParser(BaseParser):
         # self.footnotes_manager.update_mentions(text_parser.footnotes)
 
         # Extract the header links found in this piece of text.
-        self.internal_links_manager.add_links(text_parser.header_links)
+        self.header_links_manager.add_links(text_parser.header_links)
 
         return text_parser.nodes
 
@@ -303,180 +302,6 @@ class DocumentParser(BaseParser):
 
         return lines
 
-    # def _process_block(
-    #     self,
-    # ):  # pylint: disable=too-many-statements, too-many-branches, too-many-locals
-    #     # Parse a block in the form
-    #     #
-    #     # [block_type]
-    #     # ----
-    #     # Content
-    #     # ----
-    #     # Optional secondary content
-    #     #
-    #     # Blocks are delimited by 4 consecutive identical characters.
-
-    #     # Get the delimiter and check the length
-    #     delimiter = self.tm.get_token(TokenType.BLOCK).value
-
-    #     self.tm.get_token(TokenType.EOL)
-
-    #     # Collect everything before the next delimiter
-    #     content = self.tm.collect_lines(
-    #         [Token(TokenType.BLOCK, delimiter), Token(TokenType.EOF)]
-    #     )
-
-    #     self._force_token(TokenType.BLOCK, delimiter)
-    #     self.tm.get_token(TokenType.EOL)
-
-    #     # Get the optional secondary content
-    #     secondary_content = self.tm.collect_lines(
-    #         [Token(TokenType.EOL), Token(TokenType.EOF)]
-    #     )
-
-    #     if delimiter in secondary_content:
-    #         # This probably means that the input contains an error
-    #         # and we are in a situation like
-
-    #         # ----
-    #         #
-    #         # ----
-    #         # Text
-    #         # ----
-
-    #         # Where ["Text", "----"] is considered the secondary content
-    #         # of an empty block.
-    #         self._error(
-    #             "Detected unclosed block (possibly before this line)"
-    #         )  # pragma: no cover
-
-    #     # Create the block
-    #     block = BlockNode(children=content, secondary_children=secondary_content)
-
-    #     block.title = self._pop_title(block)
-
-    #     # Consume the arguments
-    #     args, kwargs, tags, subtype = self.arguments_manager.pop()
-
-    #     # Check the control
-    #     if self._pop_control() is False:
-    #         return True
-
-    #     # If the subtype is an alias process it
-    #     alias = self.block_aliases.get(subtype, {})
-    #     block.subtype = alias.get("subtype", subtype)
-    #     block_names = alias.get("mandatory_args", [])
-    #     block_defaults = alias.get("defaults", {})
-
-    #     args, kwargs = self._set_names_and_defaults(
-    #         args,
-    #         kwargs,
-    #         block_names,
-    #         block_defaults,
-    #     )
-
-    #     # Extract classes and convert them into a list
-    #     classes = []
-    #     if "classes" in kwargs:
-    #         classes = kwargs.pop("classes")
-
-    #         if classes:
-    #             classes = classes.split(",")
-    #     block.classes = classes
-
-    #     # Extract the preprocessor
-    #     block.preprocessor = kwargs.pop("preprocessor", "none")
-
-    #     # Extract the engine
-    #     block.engine = kwargs.pop("engine", None)
-
-    #     block.args = args
-    #     block.kwargs = kwargs
-    #     block.tags = tags
-
-    #     if block.engine is None:
-    #         self._parse_default_engine(block)
-    #     elif block.engine == "mau":
-    #         self._parse_mau_engine(block)
-    #     elif block.engine == "source":
-    #         self._parse_source_engine(block)
-    #     elif block.engine == "footnote":
-    #         self._parse_footnote_engine(block)
-    #     elif block.engine == "raw":
-    #         self._parse_raw_engine(block)
-    #     elif block.engine == "group":
-    #         self._parse_group_engine(block)
-    #     else:
-    #         self._error(f"Engine {block.engine} is not available")
-
-    #     return True
-
-    # def _parse_block_content(self, block):
-    #     current_context = self._current_token.context
-
-    #     content_parser = DocumentParser.analyse(
-    #         "\n".join(block.children),
-    #         current_context,
-    #         Environment(),
-    #         parent_node=block,
-    #         parent_position="primary",
-    #     )
-    #     content_parser.finalise()
-
-    #     secondary_content_parser = DocumentParser.analyse(
-    #         "\n".join(block.secondary_children),
-    #         current_context,
-    #         Environment(),
-    #         parent_node=block,
-    #         parent_position="secondary",
-    #     )
-    #     secondary_content_parser.finalise()
-
-    #     block.children = content_parser.nodes
-    #     block.secondary_children = secondary_content_parser.nodes
-
-    # def _parse_block_content_update(self, block):
-    #     current_context = self._current_token.context
-
-    #     content_parser = DocumentParser.analyse(
-    #         "\n".join(block.children),
-    #         current_context,
-    #         self.environment,
-    #         parent_node=block,
-    #         parent_position="primary",
-    #     )
-
-    #     secondary_content_parser = DocumentParser.analyse(
-    #         "\n".join(block.secondary_children),
-    #         current_context,
-    #         self.environment,
-    #         parent_node=block,
-    #         parent_position="secondary",
-    #     )
-
-    #     block.children = content_parser.nodes
-    #     block.secondary_children = secondary_content_parser.nodes
-
-    #     # The footnote mentions and definitions
-    #     # found in this block are part of the
-    #     # main document. Import them.
-    #     self.footnotes_manager.update(content_parser.footnotes_manager)
-
-    #     # The internal links and headers
-    #     # found in this block are part of the
-    #     # main document. Import them.
-    #     self.internal_links_manager.update(content_parser.internal_links_manager)
-
-    #     self.toc_manager.update(content_parser.toc_manager)
-
-    # def _parse_mau_engine(self, block):
-    #     self._parse_block_content(block)
-    #     self._save(block)
-
-    # def _parse_default_engine(self, block):
-    #     self._parse_block_content_update(block)
-    #     self._save(block)
-
     # def _parse_group_engine(self, block):
     #     block.args, block.kwargs = self._set_names_and_defaults(
     #         block.args,
@@ -512,147 +337,6 @@ class DocumentParser(BaseParser):
     #     )
 
     #     self.footnotes_manager.add_data(name, content_parser.nodes)
-
-    # def _parse_raw_engine(self, block):
-    #     # Engine "raw" doesn't process the content,
-    #     # so we just pass it untouched in the form of
-    #     # a RawNode per line.
-    #     block.children = [RawNode(line) for line in block.children]
-    #     block.secondary_children = [RawNode(line) for line in block.secondary_children]
-
-    #     self._save(block)
-
-    # def _parse_source_engine(self, block):  # pylint: disable=too-many-locals
-    #     # Parse a source block in the form
-    #     #
-    #     # [source, language, attributes...]
-    #     # ----
-    #     # content
-    #     # ----
-    #     #
-    #     # Source blocks support the following attributes
-    #     #
-    #     # marker_delimiter=":" The separator used by marker
-    #     # highlight_prefix="@" The special character to turn on highlight
-    #     #
-    #     # [source, language, attributes...]
-    #     # ----
-    #     # content:1:
-    #     # ----
-    #     #
-    #     # [source, language, attributes...]
-    #     # ----
-    #     # content:@:
-    #     # content:@green:
-    #     # ----
-    #     #
-    #     # Callout descriptions can be added to the block
-    #     # as secondary content with the syntax
-    #     #
-    #     # [source, language, attributes...]
-    #     # ----
-    #     # content:name:
-    #     # ----
-    #     # <name>: <description>
-    #     #
-    #     # Since Mau uses Pygments, the attribute language
-    #     # is one of the languages supported by that tool.
-
-    #     # Get the delimiter for markers
-    #     marker_delimiter = block.kwargs.pop("marker_delimiter", ":")
-
-    #     # Get the highlight prefix
-    #     highlight_prefix = block.kwargs.pop("highlight_prefix", "@")
-
-    #     # Get the language
-    #     language = block.kwargs.pop("language")
-
-    #     # Source blocks preserve anything is inside
-
-    #     # A list of CalloutEntryNode objects that contain the
-    #     # text for each marker
-    #     callout_contents = []
-
-    #     # If there was secondary content it should be formatted
-    #     # with callout names followed by colon and the
-    #     # callout text.
-    #     for line in block.secondary_children:
-    #         if ":" not in line:
-    #             self._error(
-    #                 (
-    #                     "Callout description should be written "
-    #                     f"as 'name: text'. Missing ':' in '{line}'"
-    #                 )
-    #             )
-
-    #         name, text = line.split(":")
-
-    #         text = text.strip()
-
-    #         callout_contents.append(CalloutsEntryNode(name, text))
-
-    #     # Source blocks must preserve the content literally.
-    #     # However, we need to remove escape characters from directives.
-    #     # Directives are processed by the lexer, so if we want to
-    #     # prevent Mau from interpreting them we have to escape them.
-    #     # Escape characters are preserved by source blocks as anything
-    #     # else, but in this case the character should be removed.
-    #     code = []
-
-    #     for linenum, line in enumerate(block.children, start=1):
-    #         if line.startswith(r"\::#"):
-    #             line = line[1:]
-
-    #         # Extract the marker
-    #         if not line.endswith(marker_delimiter):
-    #             code.append(SourceLineNode(number=linenum, value=RawNode(line)))
-    #             continue
-
-    #         # Split without the final delimiter
-    #         splits = line[:-1].split(marker_delimiter)
-    #         if len(splits) < 2:
-    #             # It's a trap! There are no separators left.
-    #             # Just add the line as it is.
-    #             code.append(SourceLineNode(number=linenum, value=RawNode(line)))
-    #             continue
-
-    #         # Get the callout and the line
-    #         marker_name = splits[-1]
-    #         line = marker_delimiter.join(splits[:-1])
-
-    #         marker = None
-    #         highlight = False
-    #         highlight_style = None
-
-    #         if marker_name.startswith(highlight_prefix):
-    #             highlight = True
-    #             highlight_style = marker_name[1:] or None
-    #         else:
-    #             marker = MarkerNode(marker_name)
-
-    #         # Prepare the source line
-    #         code.append(
-    #             SourceLineNode(
-    #                 number=linenum,
-    #                 value=RawNode(line),
-    #                 marker=marker,
-    #                 highlight=highlight,
-    #                 highlight_style=highlight_style,
-    #             )
-    #         )
-
-    #     node = SourceNode(
-    #         code=code,
-    #         language=language,
-    #         callouts=callout_contents,
-    #         title=block.title,
-    #         subtype=block.subtype,
-    #         args=block.args,
-    #         kwargs=block.kwargs,
-    #         tags=block.tags,
-    #     )
-
-    #     self._save(node)
 
     # def _parse_content_image(self, uris, subtype, args, kwargs, tags):
     #     # Parse a content image in the form
@@ -721,7 +405,7 @@ class DocumentParser(BaseParser):
         # This processes all links stored in
         # the manager linking them to the
         # correct headers
-        self.internal_links_manager.process()
+        self.header_links_manager.process()
 
         # Process ToC nodes.
         self.toc_manager.process()

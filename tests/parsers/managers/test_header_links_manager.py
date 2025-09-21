@@ -204,8 +204,8 @@ def test_header_links_full_parser():
         },
     )
 
-    compare_nodes([parser.internal_links_manager._headers["someid"]], [header_node])
-    compare_nodes(parser.internal_links_manager._links, [link_node])
+    compare_nodes([parser.header_links_manager._headers["someid"]], [header_node])
+    compare_nodes(parser.header_links_manager._links, [link_node])
 
 
 def test_header_links_full_parser_no_header():
@@ -252,12 +252,12 @@ def test_header_links_full_parser_no_header():
 #         kwargs={"id": "someid"},
 #     )
 
-#     assert parser.internal_links_manager.links == [
+#     assert parser.header_links_manager.links == [
 #         MacroHeaderNode(
 #             header_id="someid", header=header_node, children=[TextNode("text")]
 #         )
 #     ]
-#     assert parser.internal_links_manager.headers == {"someid": header_node}
+#     assert parser.header_links_manager.headers == {"someid": header_node}
 
 
 # def test_internal_link_link_in_block():
@@ -285,12 +285,12 @@ def test_header_links_full_parser_no_header():
 #         kwargs={"id": "someid"},
 #     )
 
-#     assert parser.internal_links_manager.links == [
+#     assert parser.header_links_manager.links == [
 #         MacroHeaderNode(
 #             header_id="someid", header=header_node, children=[TextNode("text")]
 #         )
 #     ]
-#     assert parser.internal_links_manager.headers == {"someid": header_node}
+#     assert parser.header_links_manager.headers == {"someid": header_node}
 
 
 # def test_internal_link_link_and_header_in_block():

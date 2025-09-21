@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 from mau.parsers.base_parser.parser import MauParserException
 from mau.parsers.preprocess_variables_parser.parser import PreprocessVariablesParser
-from mau.tokens.token import Token, TokenType
+from mau.tokens.token import TokenType
 
 
 def variable_definition_processor(parser: DocumentParser):

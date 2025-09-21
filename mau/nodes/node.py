@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections import defaultdict
+from collections.abc import Iterable, MutableMapping
 from typing import Generic, TypeVar
 
 from mau.text_buffer.context import Context
@@ -93,7 +94,7 @@ class Node(Generic[Content_co]):
         self,
         content: Content_co | None = None,
         parent: Node[NodeContent] | None = None,
-        children: dict[str, list[Node[NodeContent]]] | None = None,
+        children: MutableMapping[str, Iterable[Node[NodeContent]]] | None = None,
         info: NodeInfo | None = None,
     ):
         # If we provided no content just
@@ -106,7 +107,9 @@ class Node(Generic[Content_co]):
         # Initialise children as an empty list,
         # then set them using the method that
         # adds the current node as parent.
-        self.children: dict[str, list[Node[NodeContent]]] = defaultdict(list)
+        self.children: MutableMapping[str, Iterable[Node[NodeContent]]] = defaultdict(
+            list
+        )
         if children:
             self.add_children(children)
 
@@ -118,7 +121,7 @@ class Node(Generic[Content_co]):
 
         return self
 
-    def add_children_at_position(self, position, children: list[Node[NodeContent]]):
+    def add_children_at_position(self, position, children: Iterable[Node[NodeContent]]):
         # Add the children nodes to the list at the given position.
         self.children[position].extend(children)
 
@@ -126,7 +129,9 @@ class Node(Generic[Content_co]):
         for child in children:
             child.set_parent(self)
 
-    def add_children(self, children: dict[str, list[Node[NodeContent]]]) -> Node:
+    def add_children(
+        self, children: MutableMapping[str, Iterable[Node[NodeContent]]]
+    ) -> Node:
         for position, elements in children.items():
             self.add_children_at_position(position, elements)
 

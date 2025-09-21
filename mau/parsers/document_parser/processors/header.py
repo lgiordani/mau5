@@ -89,7 +89,7 @@ def header_processor(parser: DocumentParser):
     # If there is an id store the header node
     # to be matched with potential header links.
     if header_id:
-        parser.internal_links_manager.add_header(header_id, node)
+        parser.header_links_manager.add_header(header_id, node)
 
     parser.toc_manager.add_header(node)
 

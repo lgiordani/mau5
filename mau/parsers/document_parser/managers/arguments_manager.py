@@ -12,13 +12,13 @@ class ArgumentsManager:
     def push(self, arguments: Arguments):
         self._arguments = arguments
 
-    def pop(self):
+    def pop(self) -> Arguments:
         arguments = self._arguments
         self._arguments = None
 
         return arguments
 
-    def pop_or_default(self):
+    def pop_or_default(self) -> Arguments:
         if self._arguments:
             return self.pop()
 

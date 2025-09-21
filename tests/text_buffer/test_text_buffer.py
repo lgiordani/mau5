@@ -36,15 +36,96 @@ def test_text_buffer_current_char_goes_beyond_eof():
 
 
 def test_text_buffer_eof():
-    text_buffer = TextBuffer("abcdef")
+    source = dedent("""
+    line 0
+
+    line 2""")
+
+    text_buffer = TextBuffer(source)
 
     text_buffer.line = 0
+    text_buffer.column = 0
     assert text_buffer.eof is False
 
-    text_buffer.line = 1
+
+def test_text_buffer_eof_character_before_end_of_last_line():
+    source = dedent("""
+    line 0
+
+    line 2""")
+
+    text_buffer = TextBuffer(source)
+
+    text_buffer.line = 2
+    text_buffer.column = 5
+    assert text_buffer.eof is False
+
+
+def test_text_buffer_eof_character_after_end_of_last_line():
+    source = dedent("""
+    line 0
+
+    line 2""")
+
+    text_buffer = TextBuffer(source)
+
+    text_buffer.line = 2
+    text_buffer.column = 6
     assert text_buffer.eof is True
 
+
+def test_text_buffer_eof_character_after_end_of_empty_line():
+    source = dedent("""
+    line 1
+
+    line 3""")
+
+    text_buffer = TextBuffer(source)
+
+    text_buffer.line = 1
+    text_buffer.column = 6
+    assert text_buffer.eof is False
+
+
+def test_text_buffer_eof_line_after_last_line():
+    source = dedent("""
+    line 1
+
+    line 3""")
+
+    text_buffer = TextBuffer(source)
+
+    text_buffer.line = 4
+    assert text_buffer.eof is True
+
+
+def test_text_buffer_eof_many_lines_after_last_line():
+    source = dedent("""
+    line 1
+
+    line 3""")
+
+    text_buffer = TextBuffer(source)
+
     text_buffer.line = 10
+    assert text_buffer.eof is True
+
+
+def test_text_buffer_eof_on_single_line():
+    source = dedent("text")
+
+    text_buffer = TextBuffer(source)
+
+    text_buffer.line = 0
+    text_buffer.column = 0
+    assert text_buffer.eof is False
+
+    text_buffer.line = 0
+    text_buffer.column = 3
+    assert text_buffer.eof is False
+
+    text_buffer.line = 0
+    text_buffer.column = 4
     assert text_buffer.eof is True
 
 

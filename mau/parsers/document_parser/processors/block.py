@@ -5,41 +5,52 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .parser import DocumentParser
 
-from mau.tokens.token import Token
-from mau.nodes.block import BlockNodeContent
-from mau.nodes.node import Node, NodeInfo
-from mau.parsers.base_parser.managers.tokens_manager import TokenError
-from mau.parsers.base_parser.parser import MauParserException
+from enum import Enum
+
 from mau.text_buffer.context import Context
+from mau.environment.environment import Environment
+from mau.nodes.block import BlockNodeContent
+from mau.nodes.inline import RawNodeContent
+from mau.nodes.node import Node, NodeInfo
+from mau.nodes.source import SourceLineNodeContent, SourceNodeContent
+from mau.parsers.arguments_parser.parser import Arguments
 from mau.tokens.token import Token, TokenType
 
 
-def _parse_block_content_update(
+class EngineType(Enum):
+    DEFAULT = "default"
+    MAU = "mau"
+    RAW = "raw"
+    SOURCE = "source"
+
+
+def parse_block_content(
     parser: DocumentParser,
     node: Node[BlockNodeContent],
-    content: Token | None,
+    content: Token,
 ):
-    node.children["content"] = []
+    content_parser = parser.lex_and_parse(
+        content.value,
+        content.context,
+        Environment(),
+    )
+    content_parser.finalise()
 
-    if not content:
-        return
+    node.children["content"] = content_parser.nodes
 
+
+def parse_block_content_update(
+    parser: DocumentParser,
+    node: Node[BlockNodeContent],
+    content: Token,
+):
     content_parser = parser.lex_and_parse(
         content.value,
         content.context,
         parser.environment,
     )
 
-    # secondary_content_parser = DocumentParser.analyse(
-    #     "\n".join(block.secondary_children),
-    #     current_context,
-    #     parser.environment,
-    #     parent_node=block,
-    #     parent_position="secondary",
-    # )
-
     node.children["content"] = content_parser.nodes
-    # block.secondary_children = secondary_content_parser.nodes
 
     # The footnote mentions and definitions
     # found in this block are part of the
@@ -49,18 +60,189 @@ def _parse_block_content_update(
     # The internal links and headers
     # found in this block are part of the
     # main document. Import them.
-    # parser.internal_links_manager.update(content_parser.internal_links_manager)
+    parser.toc_manager.update(content_parser.toc_manager)
 
     # parser.toc_manager.update(content_parser.toc_manager)
 
 
-def _parse_default_engine(
+def parse_default_engine(
     parser: DocumentParser,
     node: Node[BlockNodeContent],
-    content: Token | None,
+    content: Token,
+    arguments: Arguments,
 ):
-    _parse_block_content_update(parser, node, content)
-    parser._save(node)
+    parse_block_content_update(parser, node, content)
+
+
+def parse_mau_engine(
+    parser: DocumentParser,
+    node: Node[BlockNodeContent],
+    content: Token,
+    arguments: Arguments,
+):
+    parse_block_content(parser, node, content)
+
+
+def parse_raw_engine(
+    parser: DocumentParser,
+    node: Node[BlockNodeContent],
+    content: Token,
+    arguments: Arguments,
+):
+    # Engine "raw" doesn't process the content,
+    # so we just pass it untouched in the form of
+    # a RawNode per line.
+
+    # A list of content lines (raw).
+    content_lines = content.value.split("\n")
+
+    # A list of raw content lines.
+    raw_content: list[Node[RawNodeContent]] = []
+
+    for number, line_content in enumerate(content_lines, start=1):
+        line_context: Context | None = None
+
+        if content.context:
+            line_context = content.context.clone()
+            line_context.line += number - 1
+
+        raw_content.append(
+            Node(
+                content=RawNodeContent(line_content),
+                info=NodeInfo(context=line_context),
+            )
+        )
+
+    node.children["content"] = raw_content
+
+
+def parse_source_engine(
+    parser: DocumentParser,
+    node: Node[BlockNodeContent],
+    content: Token,
+    arguments: Arguments,
+):
+    # Parse a source block in the form
+    #
+    # [engine=source]
+    # ----
+    # content
+    # ----
+    #
+    # Source blocks support the following attributes
+    #
+    # language The language used to highlight the syntax.
+    # marker_delimiter=":" The separator used by marker.
+    # highlight_prefix="@" The special character to turn on highlight.
+    #
+    # Since Mau uses Pygments, the attribute language
+    # is one of the languages supported by that tool.
+
+    # Get the delimiter for markers
+    marker_delimiter = arguments.named_args.pop("marker_delimiter", ":")
+
+    # Get the highlight prefix
+    highlight_prefix = arguments.named_args.pop("highlight_marker", "@")
+
+    # Get the default highlight style
+    highlight_default_style = arguments.named_args.pop(
+        "highlight_default_style", "default"
+    )
+
+    # Get the language
+    arguments.set_names(["language"])
+    language = arguments.named_args.pop("language", "text")
+
+    # Source blocks must preserve the content literally.
+    # However, there might be code that looks like a Mau directive,
+    # and thus the user needs to escape it.
+    # Which means that here we need to remove escaped characters
+    # from directive-like code only.
+    # Escape characters are preserved by source blocks as anything
+    # else, but in this case the character should be removed.
+
+    # A list of content lines (raw).
+    content_lines = content.value.split("\n")
+
+    # A list of code lines (after processing).
+    code: list[Node[SourceLineNodeContent]] = []
+
+    for number, line_content in enumerate(content_lines, start=1):
+        line_number = str(number)
+
+        line_context: Context | None = None
+
+        if content.context:
+            line_context = content.context.clone()
+            line_context.line += number - 1
+
+        # A simple way to remove escapes from
+        # directive-like code.
+        if line_content.startswith(r"\::#"):
+            line_content = line_content[1:]
+
+        marker: str | None = None
+        highlight_style: str | None = None
+
+        if not line_content.endswith(marker_delimiter):
+            create_source_line(code, line_number, line_content, line_context)
+            continue
+
+        # Split without the final delimiter
+        splits = line_content[:-1].split(marker_delimiter)
+
+        if len(splits) < 2:
+            # It's a trap! There are no separators left.
+            # Just add the line as it is.
+            create_source_line(code, line_number, line_content, line_context)
+            continue
+
+        # Get the callout and the line
+        marker = splits[-1]
+        line_content = marker_delimiter.join(splits[:-1])
+
+        if marker.startswith(highlight_prefix):
+            highlight_style = marker[1:] or highlight_default_style
+            marker = None
+
+        create_source_line(
+            code,
+            line_number,
+            line_content,
+            line_context,
+            marker=marker,
+            highlight_style=highlight_style,
+        )
+
+    node.children["content"] = [
+        Node(
+            content=SourceNodeContent(language),
+            children={"code": code},
+            info=NodeInfo(context=content.context),
+        )
+    ]
+
+
+def create_source_line(
+    code: list[Node[SourceLineNodeContent]],
+    line_number: str,
+    line_content: str,
+    line_context: Context | None,
+    marker: str | None = None,
+    highlight_style: str | None = None,
+):
+    # Prepare the source line
+    source_line_node = Node(
+        content=SourceLineNodeContent(
+            line_number,
+            line_content=line_content,
+            marker=marker,
+            highlight_style=highlight_style,
+        ),
+        info=NodeInfo(context=line_context),
+    )
+
+    code.append(source_line_node)
 
 
 def block_processor(parser: DocumentParser):
@@ -85,57 +267,10 @@ def block_processor(parser: DocumentParser):
     # Get the closing delimiter.
     parser.tm.get_token(TokenType.BLOCK)
 
-    # # Get the optional secondary content
-    # secondary_content = parser.tm.collect_lines(
-    #     [Token(TokenType.EOL), Token(TokenType.EOF)]
-    # )
-
-    # if delimiter in secondary_content:
-    #     # This probably means that the input contains an error
-    #     # and we are in a situation like
-
-    #     # ----
-    #     #
-    #     # ----
-    #     # Text
-    #     # ----
-
-    #     # Where ["Text", "----"] is considered the secondary content
-    #     # of an empty block.
-    #     parser._error(
-    #         "Detected unclosed block (possibly before this line)"
-    #     )  # pragma: no cover
-
     # Get the stored arguments.
     # Paragraphs can receive arguments
     # only through the arguments manager.
     arguments = parser.arguments_manager.pop_or_default()
-
-    # arguments.set_names()
-
-    # arguments = arguments.set_names()
-
-    # block.title = parser._pop_title(block)
-
-    # # Consume the arguments
-    # args, kwargs, tags, subtype = parser.arguments_manager.pop()
-
-    # # Check the control
-    # if parser._pop_control() is False:
-    #     return True
-
-    # # If the subtype is an alias process it
-    # alias = parser.block_aliases.get(subtype, {})
-    # block.subtype = alias.get("subtype", subtype)
-    # block_names = alias.get("mandatory_args", [])
-    # block_defaults = alias.get("defaults", {})
-
-    # args, kwargs = parser._set_names_and_defaults(
-    #     args,
-    #     kwargs,
-    #     block_names,
-    #     block_defaults,
-    # )
 
     # Extract classes and convert them into a list
     if classes := arguments.named_args.pop("classes", []):
@@ -145,42 +280,48 @@ def block_processor(parser: DocumentParser):
     preprocessor = arguments.named_args.pop("preprocessor", None)
 
     # Extract the engine
-    engine = arguments.named_args.pop("engine", None)
-
-    # block.args = args
-    # block.kwargs = kwargs
-    # block.tags = tags
-
-    # Build the node info.
-    info = NodeInfo(context=delimiter.context, **arguments.asdict())
+    engine_name = arguments.named_args.pop("engine", "default")
+    try:
+        engine: EngineType = EngineType(engine_name)
+    except ValueError as exc:
+        raise parser._error(
+            f"Engine {engine_name} is not available", context=delimiter.context
+        ) from exc
 
     # Create the block
     node = Node(
         content=BlockNodeContent(
             classes=classes,
+            engine=engine.value,
         ),
-        info=info,
+        children={"content": []},
     )
 
-    if title := parser.title_manager.pop():
+    if title := parser.title_buffer.pop():
         node.add_children({"title": [title]})
 
-    match engine:
-        case None:
-            _parse_default_engine(parser, node, content)
-        case _:
-            raise parser._error(
-                f"Engine {engine} is not available", context=delimiter.context
-            )
+    if content:
+        match engine:
+            case EngineType.DEFAULT:
+                parse_default_engine(parser, node, content, arguments)
+            case EngineType.MAU:
+                parse_mau_engine(parser, node, content, arguments)
+            case EngineType.SOURCE:
+                parse_source_engine(parser, node, content, arguments)
+            case EngineType.RAW:
+                parse_raw_engine(parser, node, content, arguments)
+            case _:
+                raise parser._error(
+                    f"Engine {engine} is not available", context=delimiter.context
+                )
 
-    # elif block.engine == "mau":
-    #     parser._parse_mau_engine(block)
-    # elif block.engine == "source":
-    #     parser._parse_source_engine(block)
+    # Build the node info.
+    node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+
+    parser._save(node)
+
     # elif block.engine == "footnote":
     #     parser._parse_footnote_engine(block)
-    # elif block.engine == "raw":
-    #     parser._parse_raw_engine(block)
     # elif block.engine == "group":
     #     parser._parse_group_engine(block)
     # else:

@@ -177,6 +177,7 @@ class BaseParser:
 
         parser = cls(lexer.tokens, environment, *args, **kwargs)
         parser.parse()
+        parser.finalise()
 
         return parser
 

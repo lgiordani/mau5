@@ -7,7 +7,7 @@ from mau.parsers.text_parser.parser import TextParser
 from mau.text_buffer.context import Context
 
 
-class TitleManager:
+class TitleBuffer:
     def __init__(self):
         self.title: Node[SentenceNodeContent] | None = None
 

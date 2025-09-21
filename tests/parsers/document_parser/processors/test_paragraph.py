@@ -127,7 +127,7 @@ def test_paragraph_title():
     source = "This is text"
 
     parser: DocumentParser = init_parser(source)
-    parser.title_manager.push("A title", generate_context(1, 2), Environment())
+    parser.title_buffer.push("A title", generate_context(1, 2), Environment())
 
     paragraph_processor(parser)
 

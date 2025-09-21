@@ -2,7 +2,7 @@ from mau.environment.environment import Environment
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.inline import SentenceNodeContent, TextNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.parsers.document_parser.managers.title_manager import TitleManager
+from mau.parsers.document_parser.managers.title_buffer import TitleBuffer
 from mau.parsers.document_parser.parser import DocumentParser
 from mau.test_helpers import (
     compare_node,
@@ -17,13 +17,13 @@ runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
 def test_title_manager():
-    am = TitleManager()
+    am = TitleBuffer()
 
     assert am.pop() is None
 
 
 def test_title_manager_push_and_pop():
-    am = TitleManager()
+    am = TitleBuffer()
     test_title = "Some title"
 
     am.push(test_title, generate_context(42, 24), Environment())
@@ -48,7 +48,7 @@ def test_title_manager_push_and_pop():
 
 
 def test_title_manager_push_twice():
-    am = TitleManager()
+    am = TitleBuffer()
     test_title1 = "Some title 1"
     test_title2 = "Some title 2"
 

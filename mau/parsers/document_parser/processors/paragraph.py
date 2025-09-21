@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.paragraph import ParagraphNodeContent
-from mau.tokens.token import Token, TokenType
+from mau.tokens.token import TokenType
 
 
 def paragraph_processor(parser: DocumentParser):
@@ -60,7 +60,7 @@ def paragraph_processor(parser: DocumentParser):
         info=info,
     )
 
-    if title := parser.title_manager.pop():
+    if title := parser.title_buffer.pop():
         node.add_children({"title": [title]})
 
     parser._save(node)
