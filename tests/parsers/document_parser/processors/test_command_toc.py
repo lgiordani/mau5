@@ -134,16 +134,8 @@ def test_toc():
         children={
             "text": [
                 Node(
-                    content=SentenceNodeContent(),
+                    content=TextNodeContent("Header 1.1"),
                     info=NodeInfo(context=generate_context(2, 3)),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Header 1.1"),
-                                info=NodeInfo(context=generate_context(2, 3)),
-                            )
-                        ]
-                    },
                 )
             ],
         },
@@ -155,16 +147,8 @@ def test_toc():
         children={
             "text": [
                 Node(
-                    content=SentenceNodeContent(),
+                    content=TextNodeContent("Header 1"),
                     info=NodeInfo(context=generate_context(1, 2)),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Header 1"),
-                                info=NodeInfo(context=generate_context(1, 2)),
-                            )
-                        ]
-                    },
                 )
             ],
         },
@@ -176,16 +160,8 @@ def test_toc():
         children={
             "text": [
                 Node(
-                    content=SentenceNodeContent(),
+                    content=TextNodeContent("Header 2"),
                     info=NodeInfo(context=generate_context(3, 2)),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Header 2"),
-                                info=NodeInfo(context=generate_context(3, 2)),
-                            )
-                        ]
-                    },
                 )
             ],
         },
@@ -198,16 +174,8 @@ def test_toc():
             "entries": [],
             "text": [
                 Node(
-                    content=SentenceNodeContent(),
+                    content=TextNodeContent("Header 1.1"),
                     info=NodeInfo(context=generate_context(2, 3)),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Header 1.1"),
-                                info=NodeInfo(context=generate_context(2, 3)),
-                            )
-                        ]
-                    },
                 )
             ],
         },
@@ -220,16 +188,8 @@ def test_toc():
             "entries": [node_toc_item_1_1],
             "text": [
                 Node(
-                    content=SentenceNodeContent(),
+                    content=TextNodeContent("Header 1"),
                     info=NodeInfo(context=generate_context(1, 2)),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Header 1"),
-                                info=NodeInfo(context=generate_context(1, 2)),
-                            )
-                        ]
-                    },
                 )
             ],
         },
@@ -242,16 +202,8 @@ def test_toc():
             "entries": [],
             "text": [
                 Node(
-                    content=SentenceNodeContent(),
+                    content=TextNodeContent("Header 2"),
                     info=NodeInfo(context=generate_context(3, 2)),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Header 2"),
-                                info=NodeInfo(context=generate_context(3, 2)),
-                            )
-                        ]
-                    },
                 )
             ],
         },

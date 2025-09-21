@@ -47,16 +47,8 @@ def test_mau_engine_doesnt_add_headers_to_the_global_toc(mock_header_anchor):
                 children={
                     "text": [
                         Node(
-                            content=SentenceNodeContent(),
+                            content=TextNodeContent("Global header"),
                             info=NodeInfo(context=generate_context(1, 2)),
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent("Global header"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
-                                    )
-                                ]
-                            },
                         )
                     ],
                 },
@@ -76,20 +68,8 @@ def test_mau_engine_doesnt_add_headers_to_the_global_toc(mock_header_anchor):
                             children={
                                 "text": [
                                     Node(
-                                        content=SentenceNodeContent(),
+                                        content=TextNodeContent("Block header"),
                                         info=NodeInfo(context=generate_context(5, 2)),
-                                        children={
-                                            "content": [
-                                                Node(
-                                                    content=TextNodeContent(
-                                                        "Block header"
-                                                    ),
-                                                    info=NodeInfo(
-                                                        context=generate_context(5, 2)
-                                                    ),
-                                                )
-                                            ]
-                                        },
                                     )
                                 ],
                             },
@@ -109,18 +89,10 @@ def test_mau_engine_doesnt_add_headers_to_the_global_toc(mock_header_anchor):
                 children={
                     "text": [
                         Node(
-                            content=SentenceNodeContent(),
+                            content=TextNodeContent("Global header"),
                             info=NodeInfo(context=generate_context(1, 2)),
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent("Global header"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
-                                    )
-                                ]
-                            },
                         )
-                    ],
+                    ]
                 },
             ),
         ],
@@ -156,16 +128,8 @@ def test_engine_mau_multiple_blocks_are_independent(mock_header_anchor):
                 children={
                     "text": [
                         Node(
-                            content=SentenceNodeContent(),
+                            content=TextNodeContent("Global header"),
                             info=NodeInfo(context=generate_context(1, 2)),
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent("Global header"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
-                                    )
-                                ]
-                            },
                         )
                     ],
                 },
@@ -185,20 +149,8 @@ def test_engine_mau_multiple_blocks_are_independent(mock_header_anchor):
                             children={
                                 "text": [
                                     Node(
-                                        content=SentenceNodeContent(),
+                                        content=TextNodeContent("Block header 1"),
                                         info=NodeInfo(context=generate_context(5, 2)),
-                                        children={
-                                            "content": [
-                                                Node(
-                                                    content=TextNodeContent(
-                                                        "Block header 1"
-                                                    ),
-                                                    info=NodeInfo(
-                                                        context=generate_context(5, 2)
-                                                    ),
-                                                )
-                                            ]
-                                        },
                                     )
                                 ],
                             },
@@ -221,20 +173,8 @@ def test_engine_mau_multiple_blocks_are_independent(mock_header_anchor):
                             children={
                                 "text": [
                                     Node(
-                                        content=SentenceNodeContent(),
+                                        content=TextNodeContent("Block header 2"),
                                         info=NodeInfo(context=generate_context(10, 2)),
-                                        children={
-                                            "content": [
-                                                Node(
-                                                    content=TextNodeContent(
-                                                        "Block header 2"
-                                                    ),
-                                                    info=NodeInfo(
-                                                        context=generate_context(10, 2)
-                                                    ),
-                                                )
-                                            ]
-                                        },
                                     )
                                 ],
                             },
@@ -254,16 +194,8 @@ def test_engine_mau_multiple_blocks_are_independent(mock_header_anchor):
                 children={
                     "text": [
                         Node(
-                            content=SentenceNodeContent(),
+                            content=TextNodeContent("Global header"),
                             info=NodeInfo(context=generate_context(1, 2)),
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent("Global header"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
-                                    )
-                                ]
-                            },
                         )
                     ],
                 },
@@ -298,16 +230,8 @@ def test_engine_mau_toc(mock_header_anchor):
         children={
             "text": [
                 Node(
-                    content=SentenceNodeContent(),
+                    content=TextNodeContent("Global header"),
                     info=NodeInfo(context=generate_context(1, 2)),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Global header"),
-                                info=NodeInfo(context=generate_context(1, 2)),
-                            )
-                        ]
-                    },
                 )
             ],
         },
@@ -321,16 +245,8 @@ def test_engine_mau_toc(mock_header_anchor):
             "entries": [],
             "text": [
                 Node(
-                    content=SentenceNodeContent(),
+                    content=TextNodeContent("Global header"),
                     info=NodeInfo(context=generate_context(1, 2)),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Global header"),
-                                info=NodeInfo(context=generate_context(1, 2)),
-                            )
-                        ]
-                    },
                 )
             ],
         },
@@ -343,16 +259,8 @@ def test_engine_mau_toc(mock_header_anchor):
         children={
             "text": [
                 Node(
-                    content=SentenceNodeContent(),
+                    content=TextNodeContent("Block header"),
                     info=NodeInfo(context=generate_context(5, 2)),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Block header"),
-                                info=NodeInfo(context=generate_context(5, 2)),
-                            )
-                        ]
-                    },
                 )
             ],
         },
@@ -366,16 +274,8 @@ def test_engine_mau_toc(mock_header_anchor):
             "entries": [],
             "text": [
                 Node(
-                    content=SentenceNodeContent(),
+                    content=TextNodeContent("Block header"),
                     info=NodeInfo(context=generate_context(5, 2)),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Block header"),
-                                info=NodeInfo(context=generate_context(5, 2)),
-                            )
-                        ]
-                    },
                 )
             ],
         },

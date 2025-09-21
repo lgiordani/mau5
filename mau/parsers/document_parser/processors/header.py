@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 from mau.nodes.headers import HeaderNodeContent
-from mau.nodes.inline import SentenceNodeContent
+from mau.nodes.inline import SentenceNodeContent, TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.preprocess_variables_parser.parser import PreprocessVariablesParser
 from mau.tokens.token import TokenType
@@ -75,15 +75,7 @@ def header_processor(parser: DocumentParser):
     node = Node(
         content=HeaderNodeContent(level, anchor),
         info=info,
-        children={
-            "text": [
-                Node(
-                    content=SentenceNodeContent(),
-                    children={"content": [text_node]},
-                    info=NodeInfo(context=text_token.context),
-                )
-            ]
-        },
+        children={"text": [text_node]},
     )
 
     # If there is an id store the header node

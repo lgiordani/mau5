@@ -80,18 +80,10 @@ def test_header_level_1():
                 children={
                     "text": [
                         Node(
-                            content=SentenceNodeContent(),
+                            content=TextNodeContent("Title of the section"),
                             info=NodeInfo(context=generate_context(0, 2)),
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent("Title of the section"),
-                                        info=NodeInfo(context=generate_context(0, 2)),
-                                    )
-                                ]
-                            },
                         )
-                    ],
+                    ]
                 },
             )
         ],
@@ -118,20 +110,10 @@ def test_header_level_3():
                 children={
                     "text": [
                         Node(
-                            content=SentenceNodeContent(),
+                            content=TextNodeContent("Title of a subsection"),
                             info=NodeInfo(context=generate_context(0, 4)),
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent(
-                                            "Title of a subsection"
-                                        ),
-                                        info=NodeInfo(context=generate_context(0, 4)),
-                                    )
-                                ]
-                            },
                         )
-                    ],
+                    ]
                 },
             )
         ],
@@ -257,18 +239,10 @@ def test_header_attributes():
                 children={
                     "text": [
                         Node(
-                            content=SentenceNodeContent(),
+                            content=TextNodeContent("Title of the section"),
                             info=NodeInfo(context=generate_context(0, 2)),
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent("Title of the section"),
-                                        info=NodeInfo(context=generate_context(0, 2)),
-                                    )
-                                ]
-                            },
                         )
-                    ],
+                    ]
                 },
             )
         ],
@@ -305,18 +279,10 @@ def test_header_attributes_can_overwrite_anchor():
                 children={
                     "text": [
                         Node(
-                            content=SentenceNodeContent(),
+                            content=TextNodeContent("Header"),
                             info=NodeInfo(context=generate_context(0, 2)),
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent("Header"),
-                                        info=NodeInfo(context=generate_context(0, 2)),
-                                    )
-                                ]
-                            },
                         )
-                    ],
+                    ]
                 },
             )
         ],

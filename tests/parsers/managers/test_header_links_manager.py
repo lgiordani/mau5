@@ -30,14 +30,7 @@ def test_header_links_manager():
         children={
             "content": [
                 Node(
-                    content=SentenceNodeContent(),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Header"),
-                            )
-                        ]
-                    },
+                    content=TextNodeContent("Header"),
                 )
             ]
         },
@@ -64,14 +57,7 @@ def test_header_links_manager_no_link():
         children={
             "content": [
                 Node(
-                    content=SentenceNodeContent(),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Header"),
-                            )
-                        ]
-                    },
+                    content=TextNodeContent("Header"),
                 )
             ]
         },
@@ -128,14 +114,7 @@ def test_header_links_manager_update():
         children={
             "content": [
                 Node(
-                    content=SentenceNodeContent(),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Header"),
-                            )
-                        ]
-                    },
+                    content=TextNodeContent("Header"),
                 )
             ]
         },
@@ -175,16 +154,8 @@ def test_header_links_full_parser():
         children={
             "text": [
                 Node(
-                    content=SentenceNodeContent(),
+                    content=TextNodeContent("Header"),
                     info=NodeInfo(context=generate_context(4, 3)),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Header"),
-                                info=NodeInfo(context=generate_context(4, 3)),
-                            )
-                        ]
-                    },
                 )
             ],
         },

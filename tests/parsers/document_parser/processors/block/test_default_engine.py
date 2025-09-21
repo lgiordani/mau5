@@ -45,16 +45,8 @@ def test_default_engine_adds_headers_to_global_toc(mock_header_anchor):
                 children={
                     "text": [
                         Node(
-                            content=SentenceNodeContent(),
+                            content=TextNodeContent("Global header"),
                             info=NodeInfo(context=generate_context(1, 2)),
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent("Global header"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
-                                    )
-                                ]
-                            },
                         )
                     ],
                 },
@@ -74,20 +66,8 @@ def test_default_engine_adds_headers_to_global_toc(mock_header_anchor):
                             children={
                                 "text": [
                                     Node(
-                                        content=SentenceNodeContent(),
+                                        content=TextNodeContent("Block header"),
                                         info=NodeInfo(context=generate_context(4, 2)),
-                                        children={
-                                            "content": [
-                                                Node(
-                                                    content=TextNodeContent(
-                                                        "Block header"
-                                                    ),
-                                                    info=NodeInfo(
-                                                        context=generate_context(4, 2)
-                                                    ),
-                                                )
-                                            ]
-                                        },
                                     )
                                 ],
                             },
@@ -107,16 +87,8 @@ def test_default_engine_adds_headers_to_global_toc(mock_header_anchor):
                 children={
                     "text": [
                         Node(
-                            content=SentenceNodeContent(),
+                            content=TextNodeContent("Global header"),
                             info=NodeInfo(context=generate_context(1, 2)),
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent("Global header"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
-                                    )
-                                ]
-                            },
                         )
                     ],
                 },
@@ -127,16 +99,8 @@ def test_default_engine_adds_headers_to_global_toc(mock_header_anchor):
                 children={
                     "text": [
                         Node(
-                            content=SentenceNodeContent(),
+                            content=TextNodeContent("Block header"),
                             info=NodeInfo(context=generate_context(4, 2)),
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent("Block header"),
-                                        info=NodeInfo(context=generate_context(4, 2)),
-                                    )
-                                ]
-                            },
                         )
                     ],
                 },
