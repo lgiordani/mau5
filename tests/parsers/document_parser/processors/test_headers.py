@@ -63,13 +63,15 @@ runner = parser_runner_factory(DocumentLexer, DocumentParser)
 def test_header_level_1():
     environment = Environment()
     environment.setvar(
-        "mau.parser.header_anchor_function", lambda text, level: "XXXXXY"
+        "mau.parser.header_anchor_function",
+        lambda node: "XXXXXY",
     )
 
     source = "= Title of the section"
 
     parser: DocumentParser = init_parser(source, environment)
     header_processor(parser)
+    parser.toc_manager.process()
 
     compare_nodes(
         parser.nodes,
@@ -93,13 +95,15 @@ def test_header_level_1():
 def test_header_level_3():
     environment = Environment()
     environment.setvar(
-        "mau.parser.header_anchor_function", lambda text, level: "XXXXXY"
+        "mau.parser.header_anchor_function",
+        lambda node: "XXXXXY",
     )
 
     source = "=== Title of a subsection"
 
     parser: DocumentParser = init_parser(source, environment)
     header_processor(parser)
+    parser.toc_manager.process()
 
     compare_nodes(
         parser.nodes,
@@ -207,7 +211,8 @@ def test_header_level_3():
 def test_header_attributes():
     environment = Environment()
     environment.setvar(
-        "mau.parser.header_anchor_function", lambda text, level: "XXXXXY"
+        "mau.parser.header_anchor_function",
+        lambda node: "XXXXXY",
     )
 
     source = "= Title of the section"
@@ -223,6 +228,7 @@ def test_header_attributes():
     )
 
     header_processor(parser)
+    parser.toc_manager.process()
 
     compare_nodes(
         parser.nodes,

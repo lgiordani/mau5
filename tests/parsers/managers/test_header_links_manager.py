@@ -136,7 +136,8 @@ def test_header_links_manager_update():
 def test_header_links_full_parser():
     environment = Environment()
     environment.setvar(
-        "mau.parser.header_anchor_function", lambda text, level: "XXXXXX"
+        "mau.parser.header_anchor_function",
+        lambda node: "XXXXXX",
     )
 
     source = """

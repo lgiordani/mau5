@@ -113,10 +113,15 @@ def test_command_toc_boxed_and_inline_arguments_are_forbidden():
 
 
 def test_toc():
+    def _header_anchor(node: Node[HeaderNodeContent]) -> str:
+        # Lowercase the text of the header.
+        text_node = node.children["text"][0]
+        text = text_node.content.value
+
+        return f"{text}-XXXXXX"
+
     environment = Environment()
-    environment.setvar(
-        "mau.parser.header_anchor_function", lambda text, level: f"{text}-XXXXXX"
-    )
+    environment.setvar("mau.parser.header_anchor_function", _header_anchor)
 
     source = """
     = Header 1

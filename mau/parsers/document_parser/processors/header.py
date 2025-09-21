@@ -63,7 +63,7 @@ def header_processor(parser: DocumentParser):
     # This uses the actual text contained in
     # the TextNodeContent object.
     anchor = arguments.named_args.pop(  # TODO get
-        "anchor", parser.header_anchor(text.value, level)
+        "anchor", None
     )
 
     # Extract the header id if specified.

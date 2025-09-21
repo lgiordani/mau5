@@ -23,7 +23,7 @@ init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-@patch("mau.parsers.document_parser.parser.header_anchor")
+@patch("mau.parsers.document_parser.managers.toc_manager.default_header_anchor")
 def test_mau_engine_doesnt_add_headers_to_the_global_toc(mock_header_anchor):
     mock_header_anchor.return_value = "XXYY"
 
@@ -99,7 +99,7 @@ def test_mau_engine_doesnt_add_headers_to_the_global_toc(mock_header_anchor):
     )
 
 
-@patch("mau.parsers.document_parser.parser.header_anchor")
+@patch("mau.parsers.document_parser.managers.toc_manager.default_header_anchor")
 def test_engine_mau_multiple_blocks_are_independent(mock_header_anchor):
     mock_header_anchor.return_value = "XXYY"
 
@@ -204,7 +204,7 @@ def test_engine_mau_multiple_blocks_are_independent(mock_header_anchor):
     )
 
 
-@patch("mau.parsers.document_parser.parser.header_anchor")
+@patch("mau.parsers.document_parser.managers.toc_manager.default_header_anchor")
 def test_engine_mau_toc(mock_header_anchor):
     mock_header_anchor.return_value = "XXYY"
 

@@ -13,7 +13,7 @@ class HeaderNodeContent(NodeContent):
     def __init__(
         self,
         level: int,
-        anchor: str,
+        anchor: str | None = None,
     ):
         self.level = level
         self.anchor = anchor

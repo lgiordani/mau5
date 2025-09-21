@@ -79,9 +79,14 @@ class DocumentParser(BaseParser):
     ):
         super().__init__(tokens, environment, parent_node, parent_position)
 
+        # This is the function used to create the header anchors.
+        self.header_anchor_function = self.environment.getvar(
+            "mau.parser.header_anchor_function", None
+        )
+
         self.header_links_manager: HeaderLinksManager = HeaderLinksManager()
         #     self.footnotes_manager = FootnotesManager(self)
-        self.toc_manager: TocManager = TocManager()
+        self.toc_manager: TocManager = TocManager(self.header_anchor_function)
         self.arguments_buffer: ArgumentsBuffer = ArgumentsBuffer()
         self.title_buffer: TitleBuffer = TitleBuffer()
 
@@ -112,12 +117,6 @@ class DocumentParser(BaseParser):
 
         #     # This is a buffer for a control
         #     self.control = (None, None, None)
-
-        # This is the function used to create the header
-        # anchors.
-        self.header_anchor = self.environment.getvar(
-            "mau.parser.header_anchor_function", header_anchor
-        )
 
         # The last index in the latest ordered list,
         # used to calculate the beginning value of them

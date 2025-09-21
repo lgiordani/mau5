@@ -22,7 +22,7 @@ init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-@patch("mau.parsers.document_parser.parser.header_anchor")
+@patch("mau.parsers.document_parser.managers.toc_manager.default_header_anchor")
 def test_default_engine_adds_headers_to_global_toc(mock_header_anchor):
     mock_header_anchor.return_value = "XXYY"
 

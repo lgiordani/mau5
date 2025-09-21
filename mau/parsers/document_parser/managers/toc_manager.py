@@ -1,27 +1,27 @@
 from __future__ import annotations
 
+import hashlib
+
 from mau.nodes.headers import HeaderNodeContent
 from mau.nodes.node import Node
 from mau.nodes.toc import TocItemNodeContent, TocNodeContent
 
 
-# def header_anchor(node: Node[HeaderNodeContent]):  # pragma: no cover
-#     """
-#     Return a sanitised anchor for a header.
-#     """
+def default_header_anchor(node: Node[HeaderNodeContent]) -> str:  # pragma: no cover
+    """
+    Return a sanitised anchor for a header.
+    """
 
-#     # Everything lowercase
-#     sanitised_text = text.lower()
+    # Lowercase the text of the header.
+    text_node = node.children["text"][0]
+    text = text_node.content.value.lower()
 
-#     # Get only letters, numbers, dashes, spaces, and dots
-#     sanitised_text = "".join(re.findall("[a-z0-9-\\. ]+", sanitised_text))
+    # Find the header level
+    level = node.content.level
 
-#     # Remove multiple spaces
-#     sanitised_text = "-".join(sanitised_text.split())
+    hashed_value = hashlib.md5(f"{level} {text}".encode("utf-8")).hexdigest()[:8]
 
-#     hashed_value = hashlib.md5(f"{level} {text}".encode("utf-8")).hexdigest()[:4]
-
-#     return f"{sanitised_text}-{hashed_value}"
+    return hashed_value
 
 
 def header_to_toc_item(header: Node[HeaderNodeContent]) -> Node[TocItemNodeContent]:
@@ -69,7 +69,7 @@ def add_nodes_under_level(
 
 
 class TocManager:
-    def __init__(self):
+    def __init__(self, header_anchor_function=None):
         # This list contains the headers
         # found parsing a document
         self.headers: list[Node[HeaderNodeContent]] = []
@@ -78,6 +78,8 @@ class TocManager:
         # that need to be updated once the ToC
         # has been processed
         self.toc_nodes: list[Node[TocNodeContent]] = []
+
+        self.header_anchor_function = header_anchor_function or default_header_anchor
 
     def add_header(self, node: Node[HeaderNodeContent]):
         self.headers.append(node)
@@ -92,10 +94,13 @@ class TocManager:
     def process(self):
         nested_headers: list[Node[TocItemNodeContent]] = []
 
-        # for header in self.headers:
-        #     # Create the anchor.
-        #     anchor = self.header_anchor_function(header.content)
-        #     header.content.anchor = anchor
+        for header in self.headers:
+            if header.content.anchor is not None:
+                continue
+
+            # Create the anchor.
+            anchor = self.header_anchor_function(header)
+            header.content.anchor = anchor
 
         add_nodes_under_level(0, self.headers, 0, nested_headers)
 
