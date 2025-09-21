@@ -25,7 +25,7 @@ from mau.parsers.preprocess_variables_parser.parser import PreprocessVariablesPa
 from mau.parsers.text_parser.parser import TextParser
 from mau.tokens.token import Token, TokenType
 
-from .managers.arguments_manager import ArgumentsBuffer
+from .managers.arguments_buffer import ArgumentsBuffer
 from .managers.header_links_manager import HeaderLinksManager
 from .managers.title_buffer import TitleBuffer
 from .managers.toc_manager import TocManager

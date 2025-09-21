@@ -1,6 +1,6 @@
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.parsers.arguments_parser.parser import Arguments
-from mau.parsers.document_parser.managers.arguments_manager import ArgumentsBuffer
+from mau.parsers.document_parser.managers.arguments_buffer import ArgumentsBuffer
 from mau.parsers.document_parser.parser import DocumentParser
 from mau.test_helpers import (
     init_parser_factory,
