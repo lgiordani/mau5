@@ -132,7 +132,7 @@ def list_processor(parser: DocumentParser):
     # Get the stored arguments.
     # Lists can receive arguments
     # only through the arguments manager.
-    arguments = parser.arguments_manager.pop_or_default()
+    arguments = parser.arguments_buffer.pop_or_default()
 
     # Check if the list has a forced start.
     if (start := arguments.named_args.pop("start", 1)) == "auto":  # TODO:get

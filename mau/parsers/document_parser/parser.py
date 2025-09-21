@@ -25,7 +25,7 @@ from mau.parsers.preprocess_variables_parser.parser import PreprocessVariablesPa
 from mau.parsers.text_parser.parser import TextParser
 from mau.tokens.token import Token, TokenType
 
-from .managers.arguments_manager import ArgumentsManager
+from .managers.arguments_manager import ArgumentsBuffer
 from .managers.header_links_manager import HeaderLinksManager
 from .managers.title_buffer import TitleBuffer
 from .managers.toc_manager import TocManager
@@ -82,7 +82,7 @@ class DocumentParser(BaseParser):
         self.header_links_manager: HeaderLinksManager = HeaderLinksManager()
         #     self.footnotes_manager = FootnotesManager(self)
         self.toc_manager: TocManager = TocManager()
-        self.arguments_buffer: ArgumentsManager = ArgumentsManager()
+        self.arguments_buffer: ArgumentsBuffer = ArgumentsBuffer()
         self.title_buffer: TitleBuffer = TitleBuffer()
 
         #     # These are the default block aliases

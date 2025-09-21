@@ -270,7 +270,7 @@ def block_processor(parser: DocumentParser):
     # Get the stored arguments.
     # Paragraphs can receive arguments
     # only through the arguments manager.
-    arguments = parser.arguments_manager.pop_or_default()
+    arguments = parser.arguments_buffer.pop_or_default()
 
     # Extract classes and convert them into a list
     if classes := arguments.named_args.pop("classes", []):
