@@ -1,11 +1,12 @@
 import pytest
 
 from mau.lexers.text_lexer.lexer import TextLexer
-from mau.nodes.footnotes import FootnoteNodeContent
+from mau.nodes.macros import MacroFootnoteNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser.parser import MauParserException
 from mau.parsers.text_parser.parser import TextParser
 from mau.test_helpers import (
+    compare_nodes,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -20,13 +21,14 @@ def test_macro_footnote():
     source = "[footnote](notename)"
 
     footnote_node = Node(
-        content=FootnoteNodeContent(),
+        content=MacroFootnoteNodeContent("notename"),
         info=NodeInfo(context=generate_context(0, 0)),
     )
-    expected = [footnote_node]
 
     parser = runner(source)
-    assert parser.nodes == expected
+
+    compare_nodes(parser.nodes, [footnote_node])
+
     assert parser.footnotes == {"notename": footnote_node}
 
 

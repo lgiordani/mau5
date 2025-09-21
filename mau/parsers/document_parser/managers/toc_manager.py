@@ -5,6 +5,25 @@ from mau.nodes.node import Node
 from mau.nodes.toc import TocItemNodeContent, TocNodeContent
 
 
+# def header_anchor(node: Node[HeaderNodeContent]):  # pragma: no cover
+#     """
+#     Return a sanitised anchor for a header.
+#     """
+
+#     # Everything lowercase
+#     sanitised_text = text.lower()
+
+#     # Get only letters, numbers, dashes, spaces, and dots
+#     sanitised_text = "".join(re.findall("[a-z0-9-\\. ]+", sanitised_text))
+
+#     # Remove multiple spaces
+#     sanitised_text = "-".join(sanitised_text.split())
+
+#     hashed_value = hashlib.md5(f"{level} {text}".encode("utf-8")).hexdigest()[:4]
+
+#     return f"{sanitised_text}-{hashed_value}"
+
+
 def header_to_toc_item(header: Node[HeaderNodeContent]) -> Node[TocItemNodeContent]:
     return Node(
         content=TocItemNodeContent(
@@ -72,6 +91,12 @@ class TocManager:
 
     def process(self):
         nested_headers: list[Node[TocItemNodeContent]] = []
+
+        # for header in self.headers:
+        #     # Create the anchor.
+        #     anchor = self.header_anchor_function(header.content)
+        #     header.content.anchor = anchor
+
         add_nodes_under_level(0, self.headers, 0, nested_headers)
 
         for toc_node in self.toc_nodes:

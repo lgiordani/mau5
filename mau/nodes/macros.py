@@ -95,5 +95,38 @@ class MacroHeaderNodeContent(ValueNodeContent):
     value_key = "id"
     allowed_keys = {
         "text": "The text linked to the header.",
-        "header": "The anchor of the linked header.",
+        "header": "The header node connected with this link.",
     }
+
+
+# TODO tests for this class
+class MacroFootnoteNodeContent(NodeContent):
+    """This node contains a link to a footnote node."""
+
+    type = "macro.footnote"
+    allowed_keys = {
+        "footnote": "The footnote node connected with this link.",
+    }
+
+    def __init__(
+        self,
+        # The unique internal name of the
+        # referenced footnote content.
+        name: str,
+        # The unique id of that will be assigned
+        # to the footnote and will be rendered.
+        _id: str | None = None,
+    ):
+        self.name = name
+        self.id = _id
+
+    def asdict(self):
+        base = super().asdict()
+        base.update(
+            {
+                "name": self.name,
+                "id": self.id,
+            }
+        )
+
+        return base

@@ -1,56 +1,42 @@
 from mau.nodes.node import NodeContent
 
 
+# TODO tests for this class
 class FootnoteNodeContent(NodeContent):
+    """An entry of the list of footnotes."""
+
     type = "footnote"
+    allowed_keys = {
+        "content": "The content of the footnote.",
+    }
 
-    # def __init__(
-    #     self,
-    #     number=None,
-    #     reference_anchor=None,
-    #     content_anchor=None,
-    # ):
-    #     super().__init__()
-    #     self.number = number
-    #     self.reference_anchor = reference_anchor
-    #     self.content_anchor = content_anchor
+    def __init__(
+        self,
+        # The unique internal name of the
+        # referenced footnote content.
+        name: str,
+        # The unique id of that will be assigned
+        # to the footnote and will be rendered.
+        _id: str | None = None,
+    ):
+        self.name = name
+        self.id = _id
 
-    # def _custom_dict(self):
-    #     return {
-    #         "number": self.number,
-    #         "reference_anchor": self.reference_anchor,
-    #         "content_anchor": self.content_anchor,
-    #     }
+    def asdict(self):
+        base = super().asdict()
+        base.update(
+            {
+                "name": self.name,
+                "id": self.id,
+            }
+        )
 
-    # def to_entry(self):
-    #     return FootnotesEntryNodeContent(
-    #         number=self.number,
-    #         reference_anchor=self.reference_anchor,
-    #         content_anchor=self.content_anchor,
-    #         parent=self.parent,
-    #         parent_position=self.parent_position,
-    #         children=self.children,
-    #         subtype=self.subtype,
-    #         args=self.args,
-    #         kwargs=self.kwargs,
-    #         tags=self.tags,
-    #         context=self.context,
-    #     )
-
-
-# class MacroFootnoteNodeContent(FootnoteNodeContent):
-#     """A footnote created inside a piece of text."""
-
-#     node_type = "footnote"
-
-
-# class FootnotesEntryNodeContent(FootnoteNodeContent):
-#     """An entry of the list of footnotes."""
-
-#     node_type = "footnotes_entry"
+        return base
 
 
 # class FootnotesNodeContent(NodeContent):
-#     """This instructs Mau to insert the list of footnotes."""
-
-#     node_type = "footnotes"
+#     type = "footnotes"
+#     allowed_keys = {
+#         # TODO shall we implement a check of the types in children?
+#         "entries": "The list of all footnotes.",
+#     }

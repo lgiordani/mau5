@@ -21,6 +21,9 @@ init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
+# TODO Missing tests for the actual manager class!
+
+
 def test_header_to_toc_item():
     header = Node(
         content=HeaderNodeContent(1, "A"),

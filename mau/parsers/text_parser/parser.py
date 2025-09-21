@@ -5,7 +5,6 @@ import logging
 
 from mau.environment.environment import Environment
 from mau.lexers.text_lexer.lexer import TextLexer
-from mau.nodes.footnotes import FootnoteNodeContent
 from mau.nodes.inline import (
     SentenceNodeContent,
     StyleNodeContent,
@@ -19,6 +18,7 @@ from mau.nodes.macros import (
     MacroImageNodeContent,
     MacroLinkNodeContent,
     MacroNodeContent,
+    MacroFootnoteNodeContent,
 )
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.arguments_parser.parser import ArgumentsParser
@@ -679,19 +679,21 @@ class TextParser(BaseParser):
 
         # Extract the footnote name.
         try:
-            name = parser.named_argument_nodes["name"]
+            name_node = parser.named_argument_nodes["name"]
         except KeyError as exc:
             raise self._error(
                 message="Syntax: [footnote](NAME)", context=context
             ) from exc
 
+        name = name_node.content.value
+
         node = Node(
             parent=self.parent_node,
-            content=FootnoteNodeContent(),
+            content=MacroFootnoteNodeContent(name),
             info=NodeInfo(position=self.parent_position, context=context),
         )
 
-        self.footnotes[name.content.value] = node
+        self.footnotes[name] = node
 
         return node
 
