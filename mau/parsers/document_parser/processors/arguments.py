@@ -47,6 +47,6 @@ def arguments_processor(parser: DocumentParser):
     )
 
     # Store the arguments.
-    parser.arguments_manager.push(arguments_parser.arguments)
+    parser.arguments_buffer.push(arguments_parser.arguments)
 
     return True

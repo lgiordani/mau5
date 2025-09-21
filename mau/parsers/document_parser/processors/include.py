@@ -24,7 +24,7 @@ def include_processor(parser: DocumentParser):
     # Get the content type.
     content_type = parser.tm.get_token(TokenType.TEXT).value
 
-    arguments: Arguments | None = parser.arguments_manager.pop()
+    arguments: Arguments | None = parser.arguments_buffer.pop()
 
     if parser.tm.peek_token_is(TokenType.LITERAL, ":"):
         # In this case arguments are inline

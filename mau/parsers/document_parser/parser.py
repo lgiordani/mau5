@@ -82,7 +82,7 @@ class DocumentParser(BaseParser):
         self.header_links_manager: HeaderLinksManager = HeaderLinksManager()
         #     self.footnotes_manager = FootnotesManager(self)
         self.toc_manager: TocManager = TocManager()
-        self.arguments_manager: ArgumentsManager = ArgumentsManager()
+        self.arguments_buffer: ArgumentsManager = ArgumentsManager()
         self.title_buffer: TitleBuffer = TitleBuffer()
 
         #     # These are the default block aliases

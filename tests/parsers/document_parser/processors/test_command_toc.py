@@ -61,7 +61,7 @@ def test_command_toc_boxed_arguments():
     source = "::toc"
 
     parser: DocumentParser = init_parser(source)
-    parser.arguments_manager.push(
+    parser.arguments_buffer.push(
         Arguments(
             unnamed_args=["arg1"],
             named_args={"key1": "value1"},
@@ -93,7 +93,7 @@ def test_command_toc_boxed_and_inline_arguments_are_forbidden():
     source = "::toc:arg2"
 
     parser: DocumentParser = init_parser(source)
-    parser.arguments_manager.push(
+    parser.arguments_buffer.push(
         Arguments(
             unnamed_args=["arg1"],
             named_args={"key1": "value1"},

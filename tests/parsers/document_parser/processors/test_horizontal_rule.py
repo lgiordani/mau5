@@ -53,7 +53,7 @@ def test_horizontal_rule_with_arguments():
     ]
 
     parser: DocumentParser = init_parser(source)
-    parser.arguments_manager.push(
+    parser.arguments_buffer.push(
         Arguments(
             unnamed_args=["arg1"],
             named_args={"key1": "value1"},

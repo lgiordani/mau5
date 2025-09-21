@@ -23,7 +23,7 @@ def test_arguments():
     arguments_processor(parser)
 
     # This checks that attributes are correctly stored.
-    assert parser.arguments_manager.pop() == Arguments(
+    assert parser.arguments_buffer.pop() == Arguments(
         ["attr1", "attr2"], {"key1": "value1"}, ["tag1"], "subtype1"
     )
 
@@ -34,7 +34,7 @@ def test_arguments_empty():
     parser: DocumentParser = init_parser(source)
     arguments_processor(parser)
 
-    assert parser.arguments_manager.pop() is None
+    assert parser.arguments_buffer.pop() is None
 
 
 def test_arguments_multiple_subtypes():
@@ -51,7 +51,7 @@ def test_arguments_support_variables():
     parser: DocumentParser = init_parser(source, environment)
     arguments_processor(parser)
 
-    assert parser.arguments_manager.pop() == Arguments(
+    assert parser.arguments_buffer.pop() == Arguments(
         ["number1"],
         {"key1": "42"},
         [],

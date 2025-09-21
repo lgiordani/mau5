@@ -231,7 +231,7 @@ def test_header_attributes():
     source = "= Title of the section"
 
     parser: DocumentParser = init_parser(source, environment)
-    parser.arguments_manager.push(
+    parser.arguments_buffer.push(
         Arguments(
             unnamed_args=["arg1"],
             named_args={"key1": "value1"},
@@ -279,7 +279,7 @@ def test_header_attributes_can_overwrite_anchor():
     source = "= Header"
 
     parser: DocumentParser = init_parser(source)
-    parser.arguments_manager.push(
+    parser.arguments_buffer.push(
         Arguments(
             unnamed_args=["arg1"],
             named_args={"anchor": "someheader"},

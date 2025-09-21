@@ -87,7 +87,7 @@ def test_attributes_paragraph():
     source = "This is text"
 
     parser: DocumentParser = init_parser(source)
-    parser.arguments_manager.push(
+    parser.arguments_buffer.push(
         Arguments(
             unnamed_args=["arg1"],
             named_args={"key1": "value1"},

@@ -41,7 +41,7 @@ def paragraph_processor(parser: DocumentParser):
     # Get the stored arguments.
     # Paragraphs can receive arguments
     # only through the arguments manager.
-    arguments = parser.arguments_manager.pop_or_default()
+    arguments = parser.arguments_buffer.pop_or_default()
 
     # Build the node info.
     info = NodeInfo(

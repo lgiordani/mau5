@@ -48,7 +48,7 @@ def test_include_content_boxed_arguments():
     source = "<< ctype1"
 
     parser: DocumentParser = init_parser(source)
-    parser.arguments_manager.push(
+    parser.arguments_buffer.push(
         Arguments(
             unnamed_args=["/path/to/it", "/another/path"],
             named_args={"key1": "value1"},
@@ -80,7 +80,7 @@ def test_include_content_boxed_and_inline_arguments_are_forbidden():
     source = "<< ctype1:/another/path"
 
     parser: DocumentParser = init_parser(source)
-    parser.arguments_manager.push(
+    parser.arguments_buffer.push(
         Arguments(
             unnamed_args=["/path/to/it"],
         )
