@@ -5,7 +5,7 @@ import pytest
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.block import BlockNodeContent
 from mau.nodes.headers import HeaderNodeContent
-from mau.nodes.inline import SentenceNodeContent, TextNodeContent
+from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser.parser import MauParserException
 from mau.parsers.document_parser.parser import DocumentParser
@@ -22,9 +22,9 @@ init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-@patch("mau.parsers.document_parser.managers.toc_manager.default_header_anchor")
-def test_default_engine_adds_headers_to_global_toc(mock_header_anchor):
-    mock_header_anchor.return_value = "XXYY"
+@patch("mau.parsers.document_parser.managers.toc_manager.default_header_unique_id")
+def test_default_engine_adds_headers_to_global_toc(mock_header_unique_id):
+    mock_header_unique_id.return_value = "XXYY"
 
     source = """
     = Global header

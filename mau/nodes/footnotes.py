@@ -15,28 +15,35 @@ class FootnoteNodeContent(NodeContent):
         # The unique internal name of the
         # referenced footnote content.
         name: str,
-        # The unique id of that will be assigned
-        # to the footnote and will be rendered.
-        _id: str | None = None,
+        # The public ID assigned to this footnote
+        # (typically a progressive number).
+        public_id: str | None = None,
+        # The private unique ID assigned to this footnote
+        # that can be used as reference (e.g. for links).
+        private_id: str | None = None,
     ):
         self.name = name
-        self.id = _id
+        self.public_id = public_id
+        self.private_id = private_id
 
     def asdict(self):
         base = super().asdict()
         base.update(
             {
                 "name": self.name,
-                "id": self.id,
+                "public_id": self.public_id,
+                "private_id": self.private_id,
             }
         )
 
         return base
 
 
-# class FootnotesNodeContent(NodeContent):
-#     type = "footnotes"
-#     allowed_keys = {
-#         # TODO shall we implement a check of the types in children?
-#         "entries": "The list of all footnotes.",
-#     }
+# TODO find a decent name for this and for the ToC node.
+# They should be similar, as both contain the result of a command,
+# and ultimately a list of elements collected in the text.
+class FootnotesListNodeContent(NodeContent):
+    type = "footnotes-list"
+    allowed_keys = {
+        "entries": "All footnotes in order of appearance (mention).",
+    }

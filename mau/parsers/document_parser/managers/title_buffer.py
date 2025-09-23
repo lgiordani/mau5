@@ -23,7 +23,7 @@ class TitleBuffer:
             info=NodeInfo(context=context),
         )
 
-    def pop(self) -> Node[SentenceNodeContent]:
+    def pop(self) -> Node[SentenceNodeContent] | None:
         node = self.title
 
         self.title = None

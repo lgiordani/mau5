@@ -7,6 +7,7 @@ if TYPE_CHECKING:
 
 
 # from mau.lexers.base_lexer.lexer import TokenTypes as TokenType
+from mau.nodes.footnotes import FootnotesListNodeContent
 from mau.nodes.include import IncludeNodeContent
 
 # from mau.lexers.document_lexer.lexer import TokenTypes as TokenType
@@ -20,8 +21,6 @@ from mau.parsers.arguments_parser.parser import Arguments, ArgumentsParser
 # from mau.nodes.paragraph import ParagraphNode
 # from mau.nodes.source import MarkerNode, CalloutsEntryNode, SourceNode, SourceLineNode
 from mau.parsers.base_parser.parser import MauParserException
-
-# from mau.parsers.footnotes import FootnotesManager
 from mau.tokens.token import TokenType
 
 
@@ -87,16 +86,21 @@ def command_processor(parser: DocumentParser):
         # }
         pass
     elif name == "toc":
-        node: Node[TocNodeContent] = Node(content=TocNodeContent(), info=info)
+        toc_node: Node[TocNodeContent] = Node(content=TocNodeContent(), info=info)
 
-        parser._save(node)
+        parser._save(toc_node)
 
-        parser.toc_manager.add_toc_node(node)
+        parser.toc_manager.add_toc_node(toc_node)
 
     elif name == "footnotes":
-        # Create a footnotes node
-        # parser.footnotes_manager.create_node(subtype, args, kwargs, tags)
-        pass
+        footnotes_node: Node[FootnotesListNodeContent] = Node(
+            content=FootnotesListNodeContent(), info=info
+        )
+
+        parser._save(footnotes_node)
+
+        parser.footnotes_manager.add_footnotes_list_node(footnotes_node)
+
     elif name == "blockgroup":
         # command_args, command_kwargs = parser._set_names_and_defaults(
         #     command_args,

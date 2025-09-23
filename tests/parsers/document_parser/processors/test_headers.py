@@ -1,7 +1,7 @@
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.headers import HeaderNodeContent
-from mau.nodes.inline import SentenceNodeContent, TextNodeContent
+from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.arguments_parser.parser import Arguments
 from mau.parsers.document_parser.parser import DocumentParser
@@ -63,7 +63,7 @@ runner = parser_runner_factory(DocumentLexer, DocumentParser)
 def test_header_level_1():
     environment = Environment()
     environment.setvar(
-        "mau.parser.header_anchor_function",
+        "mau.parser.header_unique_id_function",
         lambda node: "XXXXXY",
     )
 
@@ -95,7 +95,7 @@ def test_header_level_1():
 def test_header_level_3():
     environment = Environment()
     environment.setvar(
-        "mau.parser.header_anchor_function",
+        "mau.parser.header_unique_id_function",
         lambda node: "XXXXXY",
     )
 
@@ -127,7 +127,7 @@ def test_header_level_3():
 # def test_parse_collect_headers():
 #     environment = Environment()
 #     environment.setvar(
-#         "mau.parser.header_anchor_function", lambda text, level: f"{text}-XXXXXX"
+#         "mau.parser.header_unique_id_function", lambda text, level: f"{text}-XXXXXX"
 #     )
 
 #     source = """
@@ -211,7 +211,7 @@ def test_header_level_3():
 def test_header_attributes():
     environment = Environment()
     environment.setvar(
-        "mau.parser.header_anchor_function",
+        "mau.parser.header_unique_id_function",
         lambda node: "XXXXXY",
     )
 
@@ -255,14 +255,14 @@ def test_header_attributes():
     )
 
 
-def test_header_attributes_can_overwrite_anchor():
+def test_header_attributes_can_overwrite_unique_id():
     source = "= Header"
 
     parser: DocumentParser = init_parser(source)
     parser.arguments_buffer.push(
         Arguments(
             unnamed_args=["arg1"],
-            named_args={"anchor": "someheader"},
+            named_args={"unique_id": "someheader"},
             tags=["tag1"],
             subtype="subtype1",
         )
@@ -298,7 +298,7 @@ def test_header_attributes_can_overwrite_anchor():
 # def test_header_ignore_title():
 #     environment = Environment()
 #     environment.setvar(
-#         "mau.parser.header_anchor_function", lambda text, level: "XXXXXY"
+#         "mau.parser.header_unique_id_function", lambda text, level: "XXXXXY"
 #     )
 
 #     source = """
@@ -339,7 +339,7 @@ def test_header_attributes_can_overwrite_anchor():
 # def test_header_with_id_is_stored():
 #     environment = Environment()
 #     environment.setvar(
-#         "mau.parser.header_anchor_function", lambda text, level: f"{text}-XXXXXX"
+#         "mau.parser.header_unique_id_function", lambda text, level: f"{text}-XXXXXX"
 #     )
 
 #     source = """
@@ -377,7 +377,7 @@ def test_header_attributes_can_overwrite_anchor():
 # def test_single_tag_header():
 #     environment = Environment()
 #     environment.setvar(
-#         "mau.parser.header_anchor_function", lambda text, level: f"{text}-XXXXXX"
+#         "mau.parser.header_unique_id_function", lambda text, level: f"{text}-XXXXXX"
 #     )
 
 #     source = """

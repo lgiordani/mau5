@@ -7,18 +7,20 @@ if TYPE_CHECKING:
 
 from enum import Enum
 
-from mau.text_buffer.context import Context
 from mau.environment.environment import Environment
 from mau.nodes.block import BlockNodeContent
+from mau.nodes.footnotes import FootnoteNodeContent
 from mau.nodes.inline import RawNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.source import SourceLineNodeContent, SourceNodeContent
 from mau.parsers.arguments_parser.parser import Arguments
+from mau.text_buffer.context import Context
 from mau.tokens.token import Token, TokenType
 
 
 class EngineType(Enum):
     DEFAULT = "default"
+    FOOTNOTE = "footnote"
     MAU = "mau"
     RAW = "raw"
     SOURCE = "source"
@@ -69,6 +71,7 @@ def parse_default_engine(
     parser: DocumentParser,
     node: Node[BlockNodeContent],
     content: Token,
+    block_context: Context,
     arguments: Arguments,
 ):
     parse_block_content_update(parser, node, content)
@@ -78,6 +81,7 @@ def parse_mau_engine(
     parser: DocumentParser,
     node: Node[BlockNodeContent],
     content: Token,
+    block_context: Context,
     arguments: Arguments,
 ):
     parse_block_content(parser, node, content)
@@ -87,6 +91,7 @@ def parse_raw_engine(
     parser: DocumentParser,
     node: Node[BlockNodeContent],
     content: Token,
+    block_context: Context,
     arguments: Arguments,
 ):
     # Engine "raw" doesn't process the content,
@@ -116,10 +121,39 @@ def parse_raw_engine(
     node.children["content"] = raw_content
 
 
+def parse_footnote_engine(
+    parser: DocumentParser,
+    node: Node[BlockNodeContent],
+    content: Token,
+    block_context: Context,
+    arguments: Arguments,
+):
+    # The current block contains footnote data.
+    # Extract the content and store it in
+    # the footnotes manager.
+    arguments.set_names(["name"])
+    name = arguments.named_args.pop("name")
+
+    content_parser = parser.lex_and_parse(
+        content.value,
+        content.context,
+        parser.environment,
+    )
+
+    footnote_node = Node(
+        content=FootnoteNodeContent(name),
+        info=NodeInfo(context=block_context),
+        children={"content": content_parser.nodes},
+    )
+
+    parser.footnotes_manager.add_data(footnote_node)
+
+
 def parse_source_engine(
     parser: DocumentParser,
     node: Node[BlockNodeContent],
     content: Token,
+    block_context: Context,
     arguments: Arguments,
 ):
     # Parse a source block in the form
@@ -300,28 +334,38 @@ def block_processor(parser: DocumentParser):
     if title := parser.title_buffer.pop():
         node.add_children({"title": [title]})
 
-    if content:
-        match engine:
-            case EngineType.DEFAULT:
-                parse_default_engine(parser, node, content, arguments)
-            case EngineType.MAU:
-                parse_mau_engine(parser, node, content, arguments)
-            case EngineType.SOURCE:
-                parse_source_engine(parser, node, content, arguments)
-            case EngineType.RAW:
-                parse_raw_engine(parser, node, content, arguments)
-            case _:
-                raise parser._error(
-                    f"Engine {engine} is not available", context=delimiter.context
-                )
+    if not content:
+        node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
 
-    # Build the node info.
-    node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+        parser._save(node)
 
-    parser._save(node)
+        return True
 
-    # elif block.engine == "footnote":
-    #     parser._parse_footnote_engine(block)
+    match engine:
+        case EngineType.DEFAULT:
+            parse_default_engine(parser, node, content, delimiter.context, arguments)
+            node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+            parser._save(node)
+        case EngineType.FOOTNOTE:
+            parse_footnote_engine(parser, node, content, delimiter.context, arguments)
+            node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+        case EngineType.MAU:
+            parse_mau_engine(parser, node, content, delimiter.context, arguments)
+            node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+            parser._save(node)
+        case EngineType.RAW:
+            parse_raw_engine(parser, node, content, delimiter.context, arguments)
+            node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+            parser._save(node)
+        case EngineType.SOURCE:
+            parse_source_engine(parser, node, content, delimiter.context, arguments)
+            node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+            parser._save(node)
+        case _:
+            raise parser._error(
+                f"Engine {engine} is not available", context=delimiter.context
+            )
+
     # elif block.engine == "group":
     #     parser._parse_group_engine(block)
     # else:

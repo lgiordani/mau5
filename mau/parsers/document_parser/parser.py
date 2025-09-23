@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
-import re
 from functools import partial
 
 from mau.environment.environment import Environment
@@ -19,13 +17,13 @@ from mau.nodes.node import Node, NodeContent
 # from mau.nodes.page import ContainerNode
 # from mau.nodes.paragraph import ParagraphNode
 from mau.parsers.base_parser.parser import BaseParser
-
-# from mau.parsers.footnotes import FootnotesManager
 from mau.parsers.preprocess_variables_parser.parser import PreprocessVariablesParser
 from mau.parsers.text_parser.parser import TextParser
+from mau.text_buffer.context import Context
 from mau.tokens.token import Token, TokenType
 
 from .managers.arguments_buffer import ArgumentsBuffer
+from .managers.footnotes_manager import FootnotesManager
 from .managers.header_links_manager import HeaderLinksManager
 from .managers.title_buffer import TitleBuffer
 from .managers.toc_manager import TocManager
@@ -42,25 +40,7 @@ from .processors.variable_definition import variable_definition_processor
 
 # TODO check if we really want to use the current context
 # TODO self.tm.peek_token(with arguments) is basically self.tm.peek_token_is()
-
-
-def header_anchor(text, level):  # pragma: no cover
-    """
-    Return a sanitised anchor for a header.
-    """
-
-    # Everything lowercase
-    sanitised_text = text.lower()
-
-    # Get only letters, numbers, dashes, spaces, and dots
-    sanitised_text = "".join(re.findall("[a-z0-9-\\. ]+", sanitised_text))
-
-    # Remove multiple spaces
-    sanitised_text = "-".join(sanitised_text.split())
-
-    hashed_value = hashlib.md5(f"{level} {text}".encode("utf-8")).hexdigest()[:4]
-
-    return f"{sanitised_text}-{hashed_value}"
+# TODO Check what a SentenceNodeContent is for =)
 
 
 # The DocumentParser is in charge of parsing
@@ -79,14 +59,19 @@ class DocumentParser(BaseParser):
     ):
         super().__init__(tokens, environment, parent_node, parent_position)
 
-        # This is the function used to create the header anchors.
-        self.header_anchor_function = self.environment.getvar(
-            "mau.parser.header_anchor_function", None
+        # This is the function used to create unique IDs for headers.
+        self.header_unique_id_function = self.environment.getvar(
+            "mau.parser.header_unique_id_function", None
+        )
+
+        # This is the function used to create unique IDs for footnotes.
+        self.footnote_unique_id_function = self.environment.getvar(
+            "mau.parser.footnote_unique_id_function", None
         )
 
         self.header_links_manager: HeaderLinksManager = HeaderLinksManager()
-        #     self.footnotes_manager = FootnotesManager(self)
-        self.toc_manager: TocManager = TocManager(self.header_anchor_function)
+        self.footnotes_manager = FootnotesManager(self.footnote_unique_id_function)
+        self.toc_manager: TocManager = TocManager(self.header_unique_id_function)
         self.arguments_buffer: ArgumentsBuffer = ArgumentsBuffer()
         self.title_buffer: TitleBuffer = TitleBuffer()
 
@@ -215,20 +200,17 @@ class DocumentParser(BaseParser):
 
     #     return " ".join(values)
 
-    def _parse_text(self, text, context=None) -> list[Node[NodeContent]]:
+    def _parse_text(self, text: str, context: Context) -> list[Node[NodeContent]]:
         # This parses a piece of text.
         # It runs the text through the preprocessor to
         # replace variables, then parses it storing
         # footnotes and internal links, and finally
         # returns the nodes.
 
-        # Find the context of the parsing.
-        current_context = context or self.tm.current_token.context
-
         # Replace variables
         preprocess_parser = PreprocessVariablesParser.lex_and_parse(
             text,
-            current_context,
+            context,
             self.environment,
         )
 
@@ -243,14 +225,13 @@ class DocumentParser(BaseParser):
         # Parse the text
         text_parser = TextParser.lex_and_parse(
             text,
-            current_context,
+            context,
             self.environment,
         )
 
         # Extract the footnote mentions
-        # found in this piece of text
-        # TODO
-        # self.footnotes_manager.update_mentions(text_parser.footnotes)
+        # found in this piece of text.
+        self.footnotes_manager.add_mentions(text_parser.footnotes)
 
         # Extract the header links found in this piece of text.
         self.header_links_manager.add_links(text_parser.header_links)
@@ -322,21 +303,6 @@ class DocumentParser(BaseParser):
 
     #     self._parse_block_content_update(block)
 
-    # def _parse_footnote_engine(self, block):
-    #     # The current block contains footnote data.
-    #     # Extract the content and store it in
-    #     # the footnotes manager.
-    #     name = block.kwargs.pop("name")
-
-    #     content_parser = DocumentParser.analyse(
-    #         "\n".join(block.children),
-    #         self._current_token.context,
-    #         self.environment,
-    #         parent_node=block,
-    #     )
-
-    #     self.footnotes_manager.add_data(name, content_parser.nodes)
-
     # def _parse_content_image(self, uris, subtype, args, kwargs, tags):
     #     # Parse a content image in the form
     #     #
@@ -395,15 +361,15 @@ class DocumentParser(BaseParser):
     def finalise(self):
         super().finalise()
 
-        #     # This processes all footnotes stored in
-        #     # the manager merging mentions and data
-        #     # and updating the nodes that contain
-        #     # a list of footnotes
-        #     self.footnotes_manager.process_footnotes()
+        # This processes all footnotes stored in
+        # the manager merging mentions and data
+        # and updating the nodes that contain
+        # a list of footnotes.
+        self.footnotes_manager.process()
 
         # This processes all links stored in
         # the manager linking them to the
-        # correct headers
+        # correct headers.
         self.header_links_manager.process()
 
         # Process ToC nodes.

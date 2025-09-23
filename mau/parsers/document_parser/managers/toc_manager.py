@@ -7,9 +7,9 @@ from mau.nodes.node import Node
 from mau.nodes.toc import TocItemNodeContent, TocNodeContent
 
 
-def default_header_anchor(node: Node[HeaderNodeContent]) -> str:  # pragma: no cover
+def default_header_unique_id(node: Node[HeaderNodeContent]) -> str:  # pragma: no cover
     """
-    Return a sanitised anchor for a header.
+    Return a unique ID for a header.
     """
 
     # Lowercase the text of the header.
@@ -28,7 +28,7 @@ def header_to_toc_item(header: Node[HeaderNodeContent]) -> Node[TocItemNodeConte
     return Node(
         content=TocItemNodeContent(
             level=header.content.level,  # type: ignore[attr-defined]
-            anchor=header.content.anchor,  # type: ignore[attr-defined]
+            unique_id=header.content.unique_id,  # type: ignore[attr-defined]
         ),
         info=header.info,
         children={"text": header.children["text"], "entries": []},
@@ -69,7 +69,7 @@ def add_nodes_under_level(
 
 
 class TocManager:
-    def __init__(self, header_anchor_function=None):
+    def __init__(self, header_unique_id_function=None):
         # This list contains the headers
         # found parsing a document
         self.headers: list[Node[HeaderNodeContent]] = []
@@ -79,7 +79,9 @@ class TocManager:
         # has been processed
         self.toc_nodes: list[Node[TocNodeContent]] = []
 
-        self.header_anchor_function = header_anchor_function or default_header_anchor
+        self.header_unique_id_function = (
+            header_unique_id_function or default_header_unique_id
+        )
 
     def add_header(self, node: Node[HeaderNodeContent]):
         self.headers.append(node)
@@ -95,12 +97,12 @@ class TocManager:
         nested_headers: list[Node[TocItemNodeContent]] = []
 
         for header in self.headers:
-            if header.content.anchor is not None:
+            if header.content.unique_id is not None:
                 continue
 
-            # Create the anchor.
-            anchor = self.header_anchor_function(header)
-            header.content.anchor = anchor
+            # Create the unique ID.
+            unique_id = self.header_unique_id_function(header)
+            header.content.unique_id = unique_id
 
         add_nodes_under_level(0, self.headers, 0, nested_headers)
 

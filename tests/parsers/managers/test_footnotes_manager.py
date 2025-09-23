@@ -1,16 +1,15 @@
+from unittest.mock import patch
+
 import pytest
 
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.footnotes import FootnoteNodeContent
-from mau.nodes.inline import SentenceNodeContent, TextNodeContent
-from mau.nodes.node import Node, NodeInfo
 from mau.nodes.macros import MacroFootnoteNodeContent
+from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser.parser import MauParserException
 from mau.parsers.document_parser.managers.footnotes_manager import FootnotesManager
 from mau.parsers.document_parser.parser import DocumentParser
 from mau.test_helpers import (
-    compare_node,
-    compare_nodes,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -81,7 +80,12 @@ def test_footnotes_manager_add_data_duplicate_name():
     assert exc.value.context == context2
 
 
-def test_footnotes_manager_process():
+@patch(
+    "mau.parsers.document_parser.managers.footnotes_manager.default_footnote_unique_id"
+)
+def test_footnotes_manager_process(mock_footnote_unique_id):
+    mock_footnote_unique_id.return_value = "XXYY"
+
     fnm = FootnotesManager()
 
     footnote_name1 = "footnote_name1"
@@ -105,11 +109,32 @@ def test_footnotes_manager_process():
 
     fnm.process()
 
-    assert footnote_macro_node1.content.id == "1"
-    assert footnote_node1.content.id == "1"
+    assert footnote_macro_node1.content.public_id == "1"
+    assert footnote_node1.content.public_id == "1"
+    assert footnote_macro_node1.content.private_id == "XXYY"
+    assert footnote_node1.content.private_id == "XXYY"
 
-    assert footnote_macro_node2.content.id == "2"
-    assert footnote_node2.content.id == "2"
+    assert footnote_macro_node2.content.public_id == "2"
+    assert footnote_node2.content.public_id == "2"
+    assert footnote_macro_node2.content.private_id == "XXYY"
+    assert footnote_node2.content.private_id == "XXYY"
 
     assert footnote_macro_node1.children["footnote"] == [footnote_node1]
     assert footnote_macro_node2.children["footnote"] == [footnote_node2]
+
+
+# def test_footnotes_manager_full_parse():
+#     environment = Environment()
+#     environment.setvar(
+#         "mau.parser.footnote_unique_id_function",
+#         lambda node: "XXXXYY",
+#     )
+
+#     source = """
+#     This is a paragraph with a footnote [footnote](someid).
+
+#     [id=someid]
+#     == Header
+#     """
+
+#     parser = runner(source, environment)

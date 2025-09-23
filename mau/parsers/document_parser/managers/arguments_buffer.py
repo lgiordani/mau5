@@ -19,7 +19,4 @@ class ArgumentsBuffer:
         return arguments
 
     def pop_or_default(self) -> Arguments:
-        if self._arguments:
-            return self.pop()
-
-        return Arguments()
+        return self.pop() or Arguments()

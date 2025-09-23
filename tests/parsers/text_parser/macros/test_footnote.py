@@ -29,7 +29,7 @@ def test_macro_footnote():
 
     compare_nodes(parser.nodes, [footnote_node])
 
-    assert parser.footnotes == {"notename": footnote_node}
+    assert parser.footnotes == [footnote_node]
 
 
 def test_macro_footnote_without_name():

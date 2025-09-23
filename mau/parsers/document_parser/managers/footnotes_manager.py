@@ -1,15 +1,23 @@
 from __future__ import annotations
 
-import hashlib
-
+from mau.nodes.footnotes import FootnoteNodeContent, FootnotesListNodeContent
 from mau.nodes.macros import MacroFootnoteNodeContent
 from mau.nodes.node import Node
-from mau.nodes.footnotes import FootnoteNodeContent
 from mau.parsers.base_parser.parser import MauParserException
 
 
+def default_footnote_unique_id(
+    node: Node[FootnoteNodeContent],
+) -> str:  # pragma: no cover
+    """
+    Return a unique ID for a footnote.
+    """
+
+    return node.content.name
+
+
 class FootnotesManager:
-    def __init__(self):
+    def __init__(self, footnote_unique_id_function=None):
         # This dictionary containes the footnotes created
         # through macros.
         self.mentions: list[Node[MacroFootnoteNodeContent]] = []
@@ -18,20 +26,17 @@ class FootnotesManager:
         # created through blocks.
         self.data: dict[str, Node[FootnoteNodeContent]] = {}
 
-        # This list contains all the footnote entries
-        # that will be shown by a footnotes command.
-        # self.footnotes = []
+        self.footnotes_list_nodes: list[Node[FootnotesListNodeContent]] = []
 
-        # This is the list of ::footnotes commands
-        # that need to be updated once footnotes
-        # have been processed
-        # self.command_nodes = []
-
-        # This is the parser that contains the manager
-        # self.parser = parser
+        self.footnote_unique_id_function = (
+            footnote_unique_id_function or default_footnote_unique_id
+        )
 
     def add_mention(self, node: Node[MacroFootnoteNodeContent]):
         self.mentions.append(node)
+
+    def add_mentions(self, nodes: list[Node[MacroFootnoteNodeContent]]):
+        self.mentions.extend(nodes)
 
     def add_data(self, node: Node[FootnoteNodeContent]):
         name = node.content.name
@@ -43,16 +48,21 @@ class FootnotesManager:
 
         self.data[name] = node
 
+    def add_footnotes_list_node(self, node: Node[FootnotesListNodeContent]):
+        self.footnotes_list_nodes.append(node)
+
     def process(self):
         for number, node in enumerate(self.mentions, start=1):
             name = node.content.name
             footnote_node = self.data[name]
 
-            node.content.id = str(number)
-            footnote_node.content.id = str(number)
+            node.content.public_id = str(number)
+            footnote_node.content.public_id = str(number)
+
+            node.content.private_id = self.footnote_unique_id_function(node)
+            footnote_node.content.private_id = self.footnote_unique_id_function(node)
 
             node.children["footnote"] = [footnote_node]
 
-
-# def footnote_anchor(content):
-#     return hashlib.md5(str(content).encode("utf-8")).hexdigest()[:8]
+        for footnotes_list_node in self.footnotes_list_nodes:
+            footnotes_list_node.children["entries"] = self.data.values()

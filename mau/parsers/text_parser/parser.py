@@ -14,13 +14,13 @@ from mau.nodes.inline import (
 )
 from mau.nodes.macros import (
     MacroClassNodeContent,
+    MacroFootnoteNodeContent,
     MacroHeaderNodeContent,
     MacroImageNodeContent,
     MacroLinkNodeContent,
     MacroNodeContent,
-    MacroFootnoteNodeContent,
 )
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import Node, NodeInfo, NodeContent
 from mau.parsers.arguments_parser.parser import ArgumentsParser
 from mau.parsers.base_parser.managers.tokens_manager import TokenError
 from mau.parsers.base_parser.parser import BaseParser
@@ -49,10 +49,8 @@ class TextParser(BaseParser):
     ):
         super().__init__(tokens, environment, parent_node, parent_position)
 
-        # These are the footnotes found in this text
-        # The format of this dictionary is
-        # {"name": node}.
-        self.footnotes: dict[str, Node] = {}
+        # These are the footnotes found in this piece of text.
+        self.footnotes: list[Node[MacroFootnoteNodeContent]] = []
 
         # These are the internal links found
         # in this piece of text.
@@ -435,7 +433,7 @@ class TextParser(BaseParser):
         # Get the closing marker
         self.tm.get_token(TokenType.LITERAL, marker.value)
 
-        children = {}
+        children: dict[str, Node[NodeContent]] = {}
         if content:
             children["content"] = content
 
@@ -693,7 +691,7 @@ class TextParser(BaseParser):
             info=NodeInfo(position=self.parent_position, context=context),
         )
 
-        self.footnotes[name] = node
+        self.footnotes.append(node)
 
         return node
 

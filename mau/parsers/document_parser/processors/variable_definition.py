@@ -41,7 +41,7 @@ def variable_definition_processor(parser: DocumentParser):
     context = parser.tm.peek_token().context
 
     # Get the optional variable value.
-    value = ""
+    value: str | bool = ""
     if parser.tm.peek_token().type == TokenType.TEXT:
         value = parser.tm.get_token().value
 

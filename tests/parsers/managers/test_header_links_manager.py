@@ -3,7 +3,7 @@ import pytest
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.headers import HeaderNodeContent
-from mau.nodes.inline import SentenceNodeContent, TextNodeContent
+from mau.nodes.inline import TextNodeContent
 from mau.nodes.macros import MacroHeaderNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser.parser import MauParserException
@@ -136,7 +136,7 @@ def test_header_links_manager_update():
 def test_header_links_full_parser():
     environment = Environment()
     environment.setvar(
-        "mau.parser.header_anchor_function",
+        "mau.parser.header_unique_id_function",
         lambda node: "XXXXXX",
     )
 
@@ -181,11 +181,6 @@ def test_header_links_full_parser():
 
 
 def test_header_links_full_parser_no_header():
-    environment = Environment()
-    environment.setvar(
-        "mau.parser.header_anchor_function", lambda text, level: "XXXXXX"
-    )
-
     source = """
     This is a paragraph with an internal link [header](someotherid, link text).
 
@@ -194,7 +189,7 @@ def test_header_links_full_parser_no_header():
     """
 
     with pytest.raises(MauParserException) as exc:
-        runner(source, environment)
+        runner(source)
 
     assert exc.value.context == generate_context(1, 42)
 

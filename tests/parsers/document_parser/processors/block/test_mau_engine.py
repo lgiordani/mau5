@@ -5,7 +5,7 @@ import pytest
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.block import BlockNodeContent
 from mau.nodes.headers import HeaderNodeContent
-from mau.nodes.inline import SentenceNodeContent, TextNodeContent
+from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.paragraph import ParagraphNodeContent
 from mau.nodes.toc import TocItemNodeContent, TocNodeContent
@@ -23,9 +23,9 @@ init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-@patch("mau.parsers.document_parser.managers.toc_manager.default_header_anchor")
-def test_mau_engine_doesnt_add_headers_to_the_global_toc(mock_header_anchor):
-    mock_header_anchor.return_value = "XXYY"
+@patch("mau.parsers.document_parser.managers.toc_manager.default_header_unique_id")
+def test_mau_engine_doesnt_add_headers_to_the_global_toc(mock_header_unique_id):
+    mock_header_unique_id.return_value = "XXYY"
 
     source = """
     = Global header
@@ -99,9 +99,9 @@ def test_mau_engine_doesnt_add_headers_to_the_global_toc(mock_header_anchor):
     )
 
 
-@patch("mau.parsers.document_parser.managers.toc_manager.default_header_anchor")
-def test_engine_mau_multiple_blocks_are_independent(mock_header_anchor):
-    mock_header_anchor.return_value = "XXYY"
+@patch("mau.parsers.document_parser.managers.toc_manager.default_header_unique_id")
+def test_engine_mau_multiple_blocks_are_independent(mock_header_unique_id):
+    mock_header_unique_id.return_value = "XXYY"
 
     source = """
     = Global header
@@ -204,9 +204,9 @@ def test_engine_mau_multiple_blocks_are_independent(mock_header_anchor):
     )
 
 
-@patch("mau.parsers.document_parser.managers.toc_manager.default_header_anchor")
-def test_engine_mau_toc(mock_header_anchor):
-    mock_header_anchor.return_value = "XXYY"
+@patch("mau.parsers.document_parser.managers.toc_manager.default_header_unique_id")
+def test_engine_mau_toc(mock_header_unique_id):
+    mock_header_unique_id.return_value = "XXYY"
 
     source = """
     = Global header

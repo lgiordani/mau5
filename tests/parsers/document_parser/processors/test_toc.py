@@ -3,7 +3,7 @@ import pytest
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.headers import HeaderNodeContent
-from mau.nodes.inline import SentenceNodeContent, TextNodeContent
+from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.toc import TocItemNodeContent, TocNodeContent
 from mau.parsers.arguments_parser.parser import Arguments
@@ -113,7 +113,7 @@ def test_command_toc_boxed_and_inline_arguments_are_forbidden():
 
 
 def test_toc():
-    def _header_anchor(node: Node[HeaderNodeContent]) -> str:
+    def _header_unique_id(node: Node[HeaderNodeContent]) -> str:
         # Lowercase the text of the header.
         text_node = node.children["text"][0]
         text = text_node.content.value
@@ -121,7 +121,7 @@ def test_toc():
         return f"{text}-XXXXXX"
 
     environment = Environment()
-    environment.setvar("mau.parser.header_anchor_function", _header_anchor)
+    environment.setvar("mau.parser.header_unique_id_function", _header_unique_id)
 
     source = """
     = Header 1
@@ -134,7 +134,7 @@ def test_toc():
     parser = runner(source, environment)
 
     node_header_1_1 = Node(
-        content=HeaderNodeContent(level=2, anchor="Header 1.1-XXXXXX"),
+        content=HeaderNodeContent(level=2, unique_id="Header 1.1-XXXXXX"),
         info=NodeInfo(context=generate_context(2, 0)),
         children={
             "text": [
@@ -147,7 +147,7 @@ def test_toc():
     )
 
     node_header_1 = Node(
-        content=HeaderNodeContent(level=1, anchor="Header 1-XXXXXX"),
+        content=HeaderNodeContent(level=1, unique_id="Header 1-XXXXXX"),
         info=NodeInfo(context=generate_context(1, 0)),
         children={
             "text": [
@@ -160,7 +160,7 @@ def test_toc():
     )
 
     node_header_2 = Node(
-        content=HeaderNodeContent(level=1, anchor="Header 2-XXXXXX"),
+        content=HeaderNodeContent(level=1, unique_id="Header 2-XXXXXX"),
         info=NodeInfo(context=generate_context(3, 0)),
         children={
             "text": [
@@ -173,7 +173,7 @@ def test_toc():
     )
 
     node_toc_item_1_1 = Node(
-        content=TocItemNodeContent(level=2, anchor="Header 1.1-XXXXXX"),
+        content=TocItemNodeContent(level=2, unique_id="Header 1.1-XXXXXX"),
         info=NodeInfo(context=generate_context(2, 0)),
         children={
             "entries": [],
@@ -187,7 +187,7 @@ def test_toc():
     )
 
     node_toc_item_1 = Node(
-        content=TocItemNodeContent(level=1, anchor="Header 1-XXXXXX"),
+        content=TocItemNodeContent(level=1, unique_id="Header 1-XXXXXX"),
         info=NodeInfo(context=generate_context(1, 0)),
         children={
             "entries": [node_toc_item_1_1],
@@ -201,7 +201,7 @@ def test_toc():
     )
 
     node_toc_item_2 = Node(
-        content=TocItemNodeContent(level=1, anchor="Header 2-XXXXXX"),
+        content=TocItemNodeContent(level=1, unique_id="Header 2-XXXXXX"),
         info=NodeInfo(context=generate_context(3, 0)),
         children={
             "entries": [],
@@ -267,36 +267,36 @@ def test_toc():
 #                         HeaderNode(
 #                             value=SentenceNode(children=[TextNode("Header 1")]),
 #                             level="1",
-#                             anchor="Header 1-XXXXXX",
+#                             unique_id="Header 1-XXXXXX",
 #                         ),
 #                         HeaderNode(
 #                             value=SentenceNode(children=[TextNode("Header 1.1")]),
 #                             level="2",
-#                             anchor="Header 1.1-XXXXXX",
+#                             unique_id="Header 1.1-XXXXXX",
 #                         ),
 #                         HeaderNode(
 #                             value=SentenceNode(children=[TextNode("Header 2")]),
 #                             level="1",
-#                             anchor="Header 2-XXXXXX",
+#                             unique_id="Header 2-XXXXXX",
 #                         ),
 #                         TocNode(
 #                             children=[
 #                                 TocEntryNode(
 #                                     value=SentenceNode(children=[TextNode("Header 1")]),
-#                                     anchor="Header 1-XXXXXX",
+#                                     unique_id="Header 1-XXXXXX",
 #                                     children=[
 #                                         TocEntryNode(
 #                                             value=SentenceNode(
 #                                                 children=[TextNode("Header 1.1")]
 #                                             ),
-#                                             anchor="Header 1.1-XXXXXX",
+#                                             unique_id="Header 1.1-XXXXXX",
 #                                             children=[],
 #                                         ),
 #                                     ],
 #                                 ),
 #                                 TocEntryNode(
 #                                     value=SentenceNode(children=[TextNode("Header 2")]),
-#                                     anchor="Header 2-XXXXXX",
+#                                     unique_id="Header 2-XXXXXX",
 #                                     children=[],
 #                                 ),
 #                             ]
@@ -312,20 +312,20 @@ def test_toc():
 #                     children=[
 #                         TocEntryNode(
 #                             value=SentenceNode(children=[TextNode("Header 1")]),
-#                             anchor="Header 1-XXXXXX",
+#                             unique_id="Header 1-XXXXXX",
 #                             children=[
 #                                 TocEntryNode(
 #                                     value=SentenceNode(
 #                                         children=[TextNode("Header 1.1")]
 #                                     ),
-#                                     anchor="Header 1.1-XXXXXX",
+#                                     unique_id="Header 1.1-XXXXXX",
 #                                     children=[],
 #                                 ),
 #                             ],
 #                         ),
 #                         TocEntryNode(
 #                             value=SentenceNode(children=[TextNode("Header 2")]),
-#                             anchor="Header 2-XXXXXX",
+#                             unique_id="Header 2-XXXXXX",
 #                             children=[],
 #                         ),
 #                     ]
