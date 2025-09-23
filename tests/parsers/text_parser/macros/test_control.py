@@ -2,7 +2,7 @@ import pytest
 
 from mau.environment.environment import Environment
 from mau.lexers.text_lexer.lexer import TextLexer
-from mau.nodes.inline import SentenceNodeContent, StyleNodeContent, TextNodeContent
+from mau.nodes.inline import StyleNodeContent, TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser.parser import MauParserException
 from mau.parsers.text_parser.parser import TextParser
@@ -22,20 +22,12 @@ def test_macro_control_if_true():
 
     source = '[@if](flag, &true, "TRUE", "FALSE")'
 
-    sentence_node = Node(
-        children={
-            "content": [
-                Node(
-                    content=TextNodeContent("TRUE"),
-                    info=NodeInfo(context=generate_context(0, 20)),
-                )
-            ]
-        },
-        content=SentenceNodeContent(),
-        info=NodeInfo(context=generate_context(0, 0)),
-    )
-
-    expected = [sentence_node]
+    expected = [
+        Node(
+            content=TextNodeContent("TRUE"),
+            info=NodeInfo(context=generate_context(0, 20)),
+        )
+    ]
 
     assert runner(source, environment=environment).nodes == expected
 
@@ -47,17 +39,9 @@ def test_macro_control_if_false():
 
     expected = [
         Node(
-            children={
-                "content": [
-                    Node(
-                        content=TextNodeContent("FALSE"),
-                        info=NodeInfo(context=generate_context(0, 29)),
-                    )
-                ]
-            },
-            content=SentenceNodeContent(),
-            info=NodeInfo(context=generate_context(0, 0)),
-        ),
+            content=TextNodeContent("FALSE"),
+            info=NodeInfo(context=generate_context(0, 29)),
+        )
     ]
 
     nodes = runner(source, environment=environment).nodes
@@ -72,17 +56,9 @@ def test_macro_control_if_equal():
 
     expected = [
         Node(
-            children={
-                "content": [
-                    Node(
-                        content=TextNodeContent("TRUE"),
-                        info=NodeInfo(context=generate_context(0, 20)),
-                    )
-                ]
-            },
-            content=SentenceNodeContent(),
-            info=NodeInfo(context=generate_context(0, 0)),
-        ),
+            content=TextNodeContent("TRUE"),
+            info=NodeInfo(context=generate_context(0, 20)),
+        )
     ]
 
     assert runner(source, environment=environment).nodes == expected
@@ -95,17 +71,9 @@ def test_macro_control_if_not_equal():
 
     expected = [
         Node(
-            children={
-                "content": [
-                    Node(
-                        content=TextNodeContent("FALSE"),
-                        info=NodeInfo(context=generate_context(0, 29)),
-                    )
-                ]
-            },
-            content=SentenceNodeContent(),
-            info=NodeInfo(context=generate_context(0, 0)),
-        ),
+            content=TextNodeContent("FALSE"),
+            info=NodeInfo(context=generate_context(0, 29)),
+        )
     ]
 
     assert runner(source, environment=environment).nodes == expected
@@ -170,22 +138,14 @@ def test_macro_control_ifeval_true():
             children={
                 "content": [
                     Node(
-                        children={
-                            "content": [
-                                Node(
-                                    content=TextNodeContent("sometext"),
-                                    info=NodeInfo(context=generate_context(0, 24)),
-                                ),
-                            ]
-                        },
-                        content=StyleNodeContent("underscore"),
-                        info=NodeInfo(context=generate_context(0, 23)),
-                    )
+                        content=TextNodeContent("sometext"),
+                        info=NodeInfo(context=generate_context(0, 24)),
+                    ),
                 ]
             },
-            content=SentenceNodeContent(),
-            info=NodeInfo(context=generate_context(0, 0)),
-        ),
+            content=StyleNodeContent("underscore"),
+            info=NodeInfo(context=generate_context(0, 23)),
+        )
     ]
 
     assert runner(source, environment=environment).nodes == expected
@@ -207,22 +167,14 @@ def test_macro_control_ifeval_false():
             children={
                 "content": [
                     Node(
-                        children={
-                            "content": [
-                                Node(
-                                    content=TextNodeContent("othertext"),
-                                    info=NodeInfo(context=generate_context(0, 37)),
-                                ),
-                            ]
-                        },
-                        content=StyleNodeContent("star"),
-                        info=NodeInfo(context=generate_context(0, 36)),
-                    )
+                        content=TextNodeContent("othertext"),
+                        info=NodeInfo(context=generate_context(0, 37)),
+                    ),
                 ]
             },
-            content=SentenceNodeContent(),
-            info=NodeInfo(context=generate_context(0, 0)),
-        ),
+            content=StyleNodeContent("star"),
+            info=NodeInfo(context=generate_context(0, 36)),
+        )
     ]
 
     assert runner(source, environment=environment).nodes == expected
@@ -244,22 +196,14 @@ def test_macro_control_ifeval_false_is_not_evaluated():
             children={
                 "content": [
                     Node(
-                        children={
-                            "content": [
-                                Node(
-                                    content=TextNodeContent("sometext"),
-                                    info=NodeInfo(context=generate_context(0, 24)),
-                                ),
-                            ]
-                        },
-                        content=StyleNodeContent("underscore"),
-                        info=NodeInfo(context=generate_context(0, 23)),
-                    )
+                        content=TextNodeContent("sometext"),
+                        info=NodeInfo(context=generate_context(0, 24)),
+                    ),
                 ]
             },
-            content=SentenceNodeContent(),
-            info=NodeInfo(context=generate_context(0, 0)),
-        ),
+            content=StyleNodeContent("underscore"),
+            info=NodeInfo(context=generate_context(0, 23)),
+        )
     ]
 
     assert runner(source, environment=environment).nodes == expected
@@ -281,22 +225,14 @@ def test_macro_control_ifeval_true_is_not_evaluated():
             children={
                 "content": [
                     Node(
-                        children={
-                            "content": [
-                                Node(
-                                    content=TextNodeContent("sometext"),
-                                    info=NodeInfo(context=generate_context(0, 33)),
-                                ),
-                            ]
-                        },
-                        content=StyleNodeContent("underscore"),
-                        info=NodeInfo(context=generate_context(0, 32)),
-                    )
+                        content=TextNodeContent("sometext"),
+                        info=NodeInfo(context=generate_context(0, 33)),
+                    ),
                 ]
             },
-            content=SentenceNodeContent(),
-            info=NodeInfo(context=generate_context(0, 0)),
-        ),
+            content=StyleNodeContent("underscore"),
+            info=NodeInfo(context=generate_context(0, 32)),
+        )
     ]
 
     assert runner(source, environment=environment).nodes == expected
@@ -344,17 +280,9 @@ def test_macro_control_default_false():
 
     source = '[@if](flag, &false, "TRUE")'
 
-    expected = [
-        Node(
-            children={"content": []},
-            content=SentenceNodeContent(),
-            info=NodeInfo(context=generate_context(0, 0)),
-        ),
-    ]
-
     nodes = runner(source, environment=environment).nodes
 
-    assert nodes == expected
+    assert nodes == []
 
 
 def test_macro_control_without_true_case():

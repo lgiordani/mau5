@@ -1,6 +1,5 @@
 from mau.nodes.inline import (
     RawNodeContent,
-    SentenceNodeContent,
     StyleNodeContent,
     TextNodeContent,
     VerbatimNodeContent,
@@ -47,11 +46,3 @@ def test_style_node():
     assert list(node_content.allowed_keys.keys()) == ["content"]
     assert node_content.value == "mystyle"
     assert node_content.asdict() == {"type": "style", "value": "mystyle"}
-
-
-def test_sentence_node():
-    node_content = SentenceNodeContent()
-
-    assert node_content.type == "sentence"
-    assert list(node_content.allowed_keys.keys()) == ["content"]
-    assert node_content.asdict() == {"type": "sentence"}

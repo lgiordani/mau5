@@ -22,10 +22,10 @@ from mau.parsers.text_parser.parser import TextParser
 from mau.text_buffer.context import Context
 from mau.tokens.token import Token, TokenType
 
-from .managers.arguments_buffer import ArgumentsBuffer
+from .buffers.arguments_buffer import ArgumentsBuffer
+from .buffers.title_buffer import TitleBuffer
 from .managers.footnotes_manager import FootnotesManager
 from .managers.header_links_manager import HeaderLinksManager
-from .managers.title_buffer import TitleBuffer
 from .managers.toc_manager import TocManager
 from .processors.arguments import arguments_processor
 from .processors.block import block_processor
@@ -38,9 +38,7 @@ from .processors.paragraph import paragraph_processor
 from .processors.title import title_processor
 from .processors.variable_definition import variable_definition_processor
 
-# TODO check if we really want to use the current context
 # TODO self.tm.peek_token(with arguments) is basically self.tm.peek_token_is()
-# TODO Check what a SentenceNodeContent is for =)
 
 
 # The DocumentParser is in charge of parsing

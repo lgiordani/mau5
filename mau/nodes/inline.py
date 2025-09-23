@@ -1,4 +1,4 @@
-from mau.nodes.node import NodeContent, ValueNodeContent
+from mau.nodes.node import ValueNodeContent
 
 
 class WordNodeContent(ValueNodeContent):
@@ -31,17 +31,6 @@ class VerbatimNodeContent(ValueNodeContent):
     """This node contains verbatim text."""
 
     type = "verbatim"
-
-
-class SentenceNodeContent(NodeContent):
-    """A recursive container node.
-
-    This node represents the content of a paragraph, but it is recursive,
-    while ParagraphNode is not.
-    """
-
-    type = "sentence"
-    allowed_keys = {"content": "The text nodes contained into this node."}
 
 
 class StyleNodeContent(ValueNodeContent):

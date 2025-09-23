@@ -44,8 +44,8 @@ def header_processor(parser: DocumentParser):
     if not preprocess_parser.nodes:
         return []
 
-    # The preprocess parser outputs a single node.
-    text_node = preprocess_parser.nodes[0]
+    # The output of the preprocess parser.
+    text_nodes = preprocess_parser.nodes
 
     # # Check the control
     # if parser._pop_control() is False:
@@ -70,7 +70,7 @@ def header_processor(parser: DocumentParser):
     node = Node(
         content=HeaderNodeContent(level, unique_id),
         info=info,
-        children={"text": [text_node]},
+        children={"text": text_nodes},
     )
 
     # If there is an id store the header node

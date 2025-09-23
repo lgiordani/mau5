@@ -1,6 +1,6 @@
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.headers import HeaderNodeContent
-from mau.nodes.inline import SentenceNodeContent, TextNodeContent
+from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.toc import TocItemNodeContent
 from mau.parsers.document_parser.managers.toc_manager import (
@@ -30,16 +30,8 @@ def test_header_to_toc_item():
         children={
             "text": [
                 Node(
-                    content=SentenceNodeContent(),
+                    content=TextNodeContent("Header A"),
                     info=NodeInfo(context=generate_context(3, 2)),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Header A"),
-                                info=NodeInfo(context=generate_context(3, 2)),
-                            )
-                        ]
-                    },
                 )
             ]
         },
@@ -51,16 +43,8 @@ def test_header_to_toc_item():
             "entries": [],
             "text": [
                 Node(
-                    content=SentenceNodeContent(),
+                    content=TextNodeContent("Header A"),
                     info=NodeInfo(context=generate_context(3, 2)),
-                    children={
-                        "content": [
-                            Node(
-                                content=TextNodeContent("Header A"),
-                                info=NodeInfo(context=generate_context(3, 2)),
-                            )
-                        ]
-                    },
                 )
             ],
         },

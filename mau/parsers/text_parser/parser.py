@@ -6,7 +6,6 @@ import logging
 from mau.environment.environment import Environment
 from mau.lexers.text_lexer.lexer import TextLexer
 from mau.nodes.inline import (
-    SentenceNodeContent,
     StyleNodeContent,
     TextNodeContent,
     VerbatimNodeContent,
@@ -20,7 +19,7 @@ from mau.nodes.macros import (
     MacroLinkNodeContent,
     MacroNodeContent,
 )
-from mau.nodes.node import Node, NodeInfo, NodeContent
+from mau.nodes.node import Node, NodeContent, NodeInfo
 from mau.parsers.arguments_parser.parser import ArgumentsParser
 from mau.parsers.base_parser.managers.tokens_manager import TokenError
 from mau.parsers.base_parser.parser import BaseParser
@@ -167,13 +166,13 @@ class TextParser(BaseParser):
         stop_tokens = stop_tokens.union({Token(TokenType.EOF), Token(TokenType.EOL)})
 
         # Try to parse some text.
-        result = self._parse_text(stop_tokens)
+        nodes = self._parse_text(stop_tokens)
 
         # Continue parsing text until it
         # stops returning nodes.
-        while result is not None:
-            content.append(result)
-            result = self._parse_text(stop_tokens)
+        while nodes:
+            content.extend(nodes)
+            nodes = self._parse_text(stop_tokens)
 
         # Group consecutive WordNodeContent nodes into a single TextNodeContent.
         # This scans the nodes we found and tries to collect consecutive
@@ -216,7 +215,7 @@ class TextParser(BaseParser):
 
         return nodes
 
-    def _parse_text(self, stop_tokens=None):
+    def _parse_text(self, stop_tokens=None) -> list[Node[NodeContent]]:
         # Parse multiple possible elements: escapes, classes,
         # macros, verbatim, styles, links, words.
         # This is the non-recursive part of the parser. It tries
@@ -229,7 +228,7 @@ class TextParser(BaseParser):
         stop_tokens = stop_tokens or set()
 
         if self.tm.peek_token() in stop_tokens:
-            return None
+            return []
 
         with self.tm:
             return self._parse_backslash_escaped()
@@ -248,7 +247,7 @@ class TextParser(BaseParser):
 
         return self._parse_word()
 
-    def _parse_backslash_escaped(self) -> Node:
+    def _parse_backslash_escaped(self) -> list[Node[NodeContent]]:
         # This tries to parse a backslash-escaped element.
         # Backslash escape allows Mau special characters
         # to be interpreted as simple text.
@@ -269,9 +268,9 @@ class TextParser(BaseParser):
             ),
         )
 
-        return node
+        return [node]
 
-    def _parse_macro(self) -> Node:
+    def _parse_macro(self) -> list[Node[NodeContent]]:
         # Parse a macro in the form
         # [name](arguments)
 
@@ -291,7 +290,7 @@ class TextParser(BaseParser):
         # We need to parse the macro arguments.
         # The context of the parsing is that of the
         # first token after the opening bracket.
-        current_context = self.tm.peek_token().context
+        context = self.tm.peek_token().context
 
         # Get the macro arguments between round brackets.
         # The function might fail because the text might
@@ -303,13 +302,13 @@ class TextParser(BaseParser):
         try:
             arguments = self._collect_macro_args()
         except TokenError:
-            logger.warning("Suspected incomplete macro at %s", current_context)
+            logger.warning("Suspected incomplete macro at %s", context)
             raise
 
         # Parse the arguments.
         parser = ArgumentsParser.lex_and_parse(
             arguments,
-            current_context,
+            context,
             self.environment,
         )
 
@@ -361,9 +360,9 @@ class TextParser(BaseParser):
             ),
         )
 
-        return node
+        return [node]
 
-    def _parse_verbatim(self) -> Node:
+    def _parse_verbatim(self) -> list[Node[NodeContent]]:
         # Parse verbatim text between backticks.
         # E.g. `text`.
 
@@ -385,9 +384,9 @@ class TextParser(BaseParser):
             info=NodeInfo(position=self.parent_position, context=marker.context),
         )
 
-        return node
+        return [node]
 
-    def _parse_escaped(self) -> Node:
+    def _parse_escaped(self) -> list[Node[NodeContent]]:
         # Parse text between dollar or percent signs.
         # This is useful when we need to escape multiple
         # character and we don't want to put a backslash
@@ -414,9 +413,9 @@ class TextParser(BaseParser):
             info=NodeInfo(position=self.parent_position, context=marker.context),
         )
 
-        return node
+        return [node]
 
-    def _parse_style(self) -> Node:
+    def _parse_style(self) -> list[Node[NodeContent]]:
         # Parse text surrounded by style markers.
 
         # Get the style marker
@@ -444,9 +443,9 @@ class TextParser(BaseParser):
             info=NodeInfo(position=self.parent_position, context=marker.context),
         )
 
-        return node
+        return [node]
 
-    def _parse_word(self) -> Node:
+    def _parse_word(self) -> list[Node[NodeContent]]:
         # Parse a single word.
 
         token = self.tm.get_token()
@@ -460,11 +459,11 @@ class TextParser(BaseParser):
             ),
         )
 
-        return node
+        return [node]
 
     def _parse_macro_link(
         self, parser: ArgumentsParser, context: Context | None
-    ) -> Node:
+    ) -> list[Node[NodeContent]]:
         # Parse a link macro in the form [link](target, text).
 
         # Assign names to arguments.
@@ -505,11 +504,11 @@ class TextParser(BaseParser):
             info=NodeInfo(position=self.parent_position, context=context),
         )
 
-        return node
+        return [node]
 
     def _parse_macro_header_link(
         self, parser: ArgumentsParser, context: Context | None
-    ) -> Node:
+    ) -> list[Node[NodeContent]]:
         # Parse a header link macro in the form [header](header_id, text).
         # This is similar to a macro link but the URI is an internal header ID.
 
@@ -547,11 +546,11 @@ class TextParser(BaseParser):
 
         self.header_links.append(node)
 
-        return node
+        return [node]
 
     def _parse_macro_mailto(
         self, parser: ArgumentsParser, context: Context | None
-    ) -> Node:
+    ) -> list[Node[NodeContent]]:
         # Parse a mailto macro in the form [mailto](email, text).
         # This is similar to a macro link but the URI is a `mailto:`.
 
@@ -593,11 +592,11 @@ class TextParser(BaseParser):
             info=NodeInfo(position=self.parent_position, context=context),
         )
 
-        return node
+        return [node]
 
     def _parse_macro_class(
         self, parser: ArgumentsParser, context: Context | None
-    ) -> Node:
+    ) -> list[Node[NodeContent]]:
         # Parse a class macro in the form [class](text, class1, class2, ...).
 
         # Assign names to arguments.
@@ -626,11 +625,11 @@ class TextParser(BaseParser):
             info=NodeInfo(position=self.parent_position, context=context),
         )
 
-        return node
+        return [node]
 
     def _parse_macro_image(
         self, parser: ArgumentsParser, context: Context | None
-    ) -> Node:
+    ) -> list[Node[NodeContent]]:
         # Parse an inline image macro in the form [image](uri, alt_text, width, height).
 
         # Assign names to arguments.
@@ -665,11 +664,11 @@ class TextParser(BaseParser):
             info=NodeInfo(position=self.parent_position, context=context),
         )
 
-        return node
+        return [node]
 
     def _parse_macro_footnote(
         self, parser: ArgumentsParser, context: Context | None
-    ) -> Node:
+    ) -> list[Node[NodeContent]]:
         # Parse a footnote macro in the form [footnote](name).
 
         # Assign names to arguments.
@@ -693,7 +692,7 @@ class TextParser(BaseParser):
 
         self.footnotes.append(node)
 
-        return node
+        return [node]
 
     def _process_test(self, test: str, value: str) -> bool:
         # Check if the given value passes the test.
@@ -727,7 +726,7 @@ class TextParser(BaseParser):
 
     def _parse_macro_control(
         self, macro_name: str, parser: ArgumentsParser, context: Context | None
-    ) -> Node:
+    ) -> list[Node[NodeContent]]:
         # Parse a class macro in the form [@if:variable:test](true, false).
         #
         # Example:
@@ -805,11 +804,4 @@ class TextParser(BaseParser):
             )
             nodes = parser.nodes
 
-        node = Node(
-            parent=self.parent_node,
-            children={"content": nodes},
-            content=SentenceNodeContent(),
-            info=NodeInfo(position=self.parent_position, context=context),
-        )
-
-        return node
+        return nodes

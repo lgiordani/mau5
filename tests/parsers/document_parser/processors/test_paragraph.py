@@ -1,6 +1,6 @@
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer.lexer import DocumentLexer
-from mau.nodes.inline import SentenceNodeContent, StyleNodeContent, TextNodeContent
+from mau.nodes.inline import StyleNodeContent, TextNodeContent
 from mau.nodes.macros import MacroLinkNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.paragraph import ParagraphNodeContent
@@ -144,15 +144,7 @@ def test_paragraph_title():
                     ],
                     "title": [
                         Node(
-                            content=SentenceNodeContent(),
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent("A title"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
-                                    )
-                                ]
-                            },
+                            content=TextNodeContent("A title"),
                             info=NodeInfo(context=generate_context(1, 2)),
                         )
                     ],

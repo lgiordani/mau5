@@ -2,7 +2,7 @@ import pytest
 
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.block import BlockNodeContent
-from mau.nodes.inline import SentenceNodeContent, TextNodeContent
+from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser.parser import MauParserException
 from mau.parsers.document_parser.parser import DocumentParser
@@ -49,16 +49,8 @@ def test_parse_block_title_and_arguments():
                     "content": [],
                     "title": [
                         Node(
-                            content=SentenceNodeContent(),
+                            content=TextNodeContent("Just a title"),
                             info=NodeInfo(context=generate_context(1, 0)),
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent("Just a title"),
-                                        info=NodeInfo(context=generate_context(1, 0)),
-                                    )
-                                ]
-                            },
                         )
                     ],
                 },

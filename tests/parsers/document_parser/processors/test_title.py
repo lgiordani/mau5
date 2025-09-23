@@ -1,10 +1,10 @@
 from mau.lexers.document_lexer.lexer import DocumentLexer
-from mau.nodes.inline import SentenceNodeContent, TextNodeContent
+from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.document_parser.parser import DocumentParser
 from mau.parsers.document_parser.processors.title import title_processor
 from mau.test_helpers import (
-    compare_node,
+    compare_nodes,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -21,20 +21,14 @@ def test_title():
     parser: DocumentParser = init_parser(source)
     title_processor(parser)
 
-    compare_node(
+    compare_nodes(
         parser.title_buffer.pop(),
-        Node(
-            content=SentenceNodeContent(),
-            info=NodeInfo(context=generate_context(0, 0)),
-            children={
-                "content": [
-                    Node(
-                        content=TextNodeContent("Some title"),
-                        info=NodeInfo(context=generate_context(0, 0)),
-                    )
-                ]
-            },
-        ),
+        [
+            Node(
+                content=TextNodeContent("Some title"),
+                info=NodeInfo(context=generate_context(0, 0)),
+            )
+        ],
     )
 
 
@@ -44,18 +38,12 @@ def test_title_with_spaces():
     parser: DocumentParser = init_parser(source)
     title_processor(parser)
 
-    compare_node(
+    compare_nodes(
         parser.title_buffer.pop(),
-        Node(
-            content=SentenceNodeContent(),
-            info=NodeInfo(context=generate_context(0, 0)),
-            children={
-                "content": [
-                    Node(
-                        content=TextNodeContent("Some title"),
-                        info=NodeInfo(context=generate_context(0, 0)),
-                    )
-                ]
-            },
-        ),
+        [
+            Node(
+                content=TextNodeContent("Some title"),
+                info=NodeInfo(context=generate_context(0, 0)),
+            )
+        ],
     )
