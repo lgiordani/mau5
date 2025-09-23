@@ -5,17 +5,8 @@ from __future__ import annotations
 from functools import partial
 
 from mau.environment.environment import Environment
-
-# from mau.lexers.base_lexer.lexer import TokenTypes as TokenType
 from mau.lexers.document_lexer.lexer import DocumentLexer
-
-# from mau.lexers.document_lexer.lexer import TokenTypes as TokenType
-# from mau.nodes.block import BlockGroupNode, BlockNode
-# from mau.nodes.content import ContentImageNode, ContentNode
 from mau.nodes.node import Node, NodeContent
-
-# from mau.nodes.page import ContainerNode
-# from mau.nodes.paragraph import ParagraphNode
 from mau.parsers.base_parser.parser import BaseParser
 from mau.parsers.preprocess_variables_parser.parser import PreprocessVariablesParser
 from mau.parsers.text_parser.parser import TextParser
