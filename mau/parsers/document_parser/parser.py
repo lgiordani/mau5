@@ -15,6 +15,7 @@ from mau.tokens.token import Token, TokenType
 
 from .buffers.arguments_buffer import ArgumentsBuffer
 from .buffers.title_buffer import TitleBuffer
+from .buffers.control_buffer import ControlBuffer
 from .managers.footnotes_manager import FootnotesManager
 from .managers.header_links_manager import HeaderLinksManager
 from .managers.toc_manager import TocManager
@@ -30,6 +31,7 @@ from .processors.title import title_processor
 from .processors.variable_definition import variable_definition_processor
 
 # TODO self.tm.peek_token(with arguments) is basically self.tm.peek_token_is()
+# TODO complete the control tests in blocks and similar.
 
 
 # The DocumentParser is in charge of parsing
@@ -61,8 +63,10 @@ class DocumentParser(BaseParser):
         self.header_links_manager: HeaderLinksManager = HeaderLinksManager()
         self.footnotes_manager = FootnotesManager(self.footnote_unique_id_function)
         self.toc_manager: TocManager = TocManager(self.header_unique_id_function)
+
         self.arguments_buffer: ArgumentsBuffer = ArgumentsBuffer()
         self.title_buffer: TitleBuffer = TitleBuffer()
+        self.control_buffer: ControlBuffer = ControlBuffer()
 
         #     # These are the default block aliases
         #     # If subtype is not set it will be the alias itself.
@@ -121,57 +125,6 @@ class DocumentParser(BaseParser):
             partial(list_processor, self),
             partial(paragraph_processor, self),
         ]
-
-    # def _push_control(self, operator, statement, context):
-    #     self.control = (operator, statement, context)
-
-    # def _pop_control(self):
-    #     # This return the title and resets the
-    #     # cached one, so no other block will
-    #     # use it.
-    #     operator, statement, context = self.control
-    #     self._reset_control()
-
-    #     if operator is None:
-    #         return True
-
-    #     if operator != "if":
-    #         self._error(f"Control operator '{operator}' is not supported")
-
-    #     try:
-    #         variable, test = statement.split(":", 1)
-    #     except ValueError:
-    #         self._error(f"Statement '{statement}' is not in the form variable:test")
-
-    #     variable_value = self.environment.getvar(variable, None)
-
-    #     if variable_value is None:
-    #         self._error(f"Variable '{variable}' has not been defined")
-
-    #     if test.startswith("="):
-    #         value = test[1:]
-    #         return variable_value == value
-
-    #     if test.startswith("!="):
-    #         value = test[2:]
-
-    #         return variable_value != value
-
-    #     if test.startswith("&"):
-    #         value = test[1:]
-
-    #         if value not in ["true", "false"]:
-    #             self._error(f"Boolean value '{value}' is invalid")
-
-    #         # pylint: disable=simplifiable-if-expression
-    #         value = True if value == "true" else False
-
-    #         return variable_value and value
-
-    #     self._error(f"Test '{test}' is not supported")
-
-    # def _reset_control(self):
-    #     self.control = (None, None, None)
 
     # def _collect_text_content(self):
     #     # Collects all adjacent text tokens
@@ -233,29 +186,6 @@ class DocumentParser(BaseParser):
         self.tm.get_token(TokenType.EOL)
 
         return True
-
-    # def _process_control(self):
-    #     # Parse a control statement in the form
-    #     #
-    #     # @operator:control_statement
-
-    #     # Parse the mandatory @
-    #     at = self.tm.get_token(TokenType.CONTROL, "@")
-
-    #     # Get the operator
-    #     operator = self.tm.get_token(TokenType.TEXT).value
-
-    #     # Discard the :
-    #     self.tm.get_token(TokenType.LITERAL, ":")
-
-    #     # Get the statement
-    #     statement = self.tm.get_token(TokenType.TEXT).value
-
-    #     self.tm.get_token(TokenType.EOL)
-
-    #     self._push_control(operator, statement, at.context)
-
-    #     return True
 
     def _collect_lines(self, stop_tokens: list[Token]) -> list[str]:
         # This collects several lines of text in a list

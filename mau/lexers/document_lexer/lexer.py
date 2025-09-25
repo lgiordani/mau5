@@ -270,7 +270,11 @@ class DocumentLexer(BaseLexer):
         # custom syntax depends on the specific control.
 
         match = rematch(
-            r"^(?P<prefix>@)(?P<whitespace> *)(?P<operator>[^:]+)(?P<separator>:)?(?P<logic>.*)?",
+            (
+                r"^(?P<prefix>@)(?P<operator>[a-z]+)(?P<whitespace1> *)"
+                r"(?P<variable>[a-zA-Z0-9_\.\+\-]+)(?P<whitespace2> *)"
+                r"(?P<comparison>(==|!=))(?P<whitespace3> *)(?P<value>.*)$"
+            ),
             self._current_line,
         )
 
@@ -280,24 +284,30 @@ class DocumentLexer(BaseLexer):
         logger.debug("Found CONTROL at %s", self._context)
 
         prefix = match.groupdict().get("prefix")
-        whitespace = match.groupdict().get("whitespace")
         operator = match.groupdict().get("operator")
-        separator = match.groupdict().get("separator")
-        logic = match.groupdict().get("logic")
+        whitespace1 = match.groupdict().get("whitespace1")
+        variable = match.groupdict().get("variable")
+        whitespace2 = match.groupdict().get("whitespace2")
+        comparison = match.groupdict().get("comparison")
+        whitespace3 = match.groupdict().get("whitespace3")
+        value = match.groupdict().get("value")
+
+        prefix_token = self._create_token_and_skip(TokenType.CONTROL, prefix)
+        operator_token = self._create_token_and_skip(TokenType.TEXT, operator)
+        self._skip(whitespace1)
+        variable_token = self._create_token_and_skip(TokenType.TEXT, variable)
+        self._skip(whitespace2)
+        comparison_token = self._create_token_and_skip(TokenType.TEXT, comparison)
+        self._skip(whitespace3)
+        value_token = self._create_token_and_skip(TokenType.TEXT, value)
 
         tokens = [
-            self._create_token_and_skip(TokenType.CONTROL, prefix),
+            prefix_token,
+            operator_token,
+            variable_token,
+            comparison_token,
+            value_token,
         ]
-
-        self._skip(whitespace)
-
-        tokens.append(self._create_token_and_skip(TokenType.TEXT, operator))
-
-        if separator:
-            tokens.append(self._create_token_and_skip(TokenType.LITERAL, separator))
-
-        if logic:
-            tokens.append(self._create_token_and_skip(TokenType.TEXT, logic))
 
         self._nextline()
 

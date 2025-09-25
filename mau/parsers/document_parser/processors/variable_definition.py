@@ -41,7 +41,7 @@ def variable_definition_processor(parser: DocumentParser):
     context = parser.tm.peek_token().context
 
     # Get the optional variable value.
-    value: str | bool = ""
+    value: str = ""
     if parser.tm.peek_token().type == TokenType.TEXT:
         value = parser.tm.get_token().value
 
@@ -49,11 +49,11 @@ def variable_definition_processor(parser: DocumentParser):
     if variable_name.startswith("+"):
         # If the name starts with "+" it's a true flag.
         variable_name = variable_name[1:]
-        value = True
+        value = "true"
     elif variable_name.startswith("-"):
         # If the name starts with "-" it's a false flag.
         variable_name = variable_name[1:]
-        value = False
+        value = "false"
     elif value:
         # The variable value might contain
         # other variables, so we need to

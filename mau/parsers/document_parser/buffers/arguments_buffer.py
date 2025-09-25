@@ -5,7 +5,7 @@ from mau.parsers.arguments_parser.parser import Arguments
 
 class ArgumentsBuffer:
     def __init__(self):
-        # This is there the manager keeps the
+        # This is where the manager keeps the
         # stored arguments.
         self._arguments: Arguments | None = None
 

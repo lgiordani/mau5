@@ -739,43 +739,32 @@ def test_block_has_to_begin_with_four_identical_characters():
 
 
 def test_control():
-    lex = runner("@if:somevar:=value")
+    lex = runner("@if somevar==value")
 
     compare_tokens(
         lex.tokens,
         [
             Token(TokenType.CONTROL, "@", generate_context(0, 0)),
             Token(TokenType.TEXT, "if", generate_context(0, 1)),
-            Token(TokenType.LITERAL, ":", generate_context(0, 3)),
-            Token(TokenType.TEXT, "somevar:=value", generate_context(0, 4)),
+            Token(TokenType.TEXT, "somevar", generate_context(0, 4)),
+            Token(TokenType.TEXT, "==", generate_context(0, 11)),
+            Token(TokenType.TEXT, "value", generate_context(0, 13)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
 
 
 def test_control_with_space():
-    lex = runner("@  if:somevar:=value")
-
-    compare_tokens(
-        lex.tokens,
-        [
-            Token(TokenType.CONTROL, "@", generate_context(0, 0)),
-            Token(TokenType.TEXT, "if", generate_context(0, 3)),
-            Token(TokenType.LITERAL, ":", generate_context(0, 5)),
-            Token(TokenType.TEXT, "somevar:=value", generate_context(0, 6)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
-        ],
-    )
-
-
-def test_control_without_arguments():
-    lex = runner("@if")
+    lex = runner("@if   somevar  !=   value")
 
     compare_tokens(
         lex.tokens,
         [
             Token(TokenType.CONTROL, "@", generate_context(0, 0)),
             Token(TokenType.TEXT, "if", generate_context(0, 1)),
+            Token(TokenType.TEXT, "somevar", generate_context(0, 6)),
+            Token(TokenType.TEXT, "!=", generate_context(0, 15)),
+            Token(TokenType.TEXT, "value", generate_context(0, 20)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )

@@ -39,7 +39,7 @@ def test_variable_definition_with_plus_is_true():
     variable_definition_processor(parser)
 
     assert parser.nodes == []
-    assert parser.environment.asdict() == {"attr": True}
+    assert parser.environment.asdict() == {"attr": "true"}
 
 
 def test_variable_definition_with_minus_is_false():
@@ -49,7 +49,7 @@ def test_variable_definition_with_minus_is_false():
     variable_definition_processor(parser)
 
     assert parser.nodes == []
-    assert parser.environment.asdict() == {"attr": False}
+    assert parser.environment.asdict() == {"attr": "false"}
 
 
 def test_variable_definition_flag_plus_ignores_value():
@@ -59,7 +59,7 @@ def test_variable_definition_flag_plus_ignores_value():
     variable_definition_processor(parser)
 
     assert parser.nodes == []
-    assert parser.environment.asdict() == {"attr": True}
+    assert parser.environment.asdict() == {"attr": "true"}
 
 
 def test_variable_definition_flag_minus_ignores_value():
@@ -69,7 +69,7 @@ def test_variable_definition_flag_minus_ignores_value():
     variable_definition_processor(parser)
 
     assert parser.nodes == []
-    assert parser.environment.asdict() == {"attr": False}
+    assert parser.environment.asdict() == {"attr": "false"}
 
 
 def test_variable_definition_with_value_is_loaded():
