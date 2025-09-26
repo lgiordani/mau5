@@ -47,9 +47,7 @@ def paragraph_processor(parser: DocumentParser):
     arguments = parser.arguments_buffer.pop_or_default()
 
     # Build the node info.
-    info = NodeInfo(
-        context=context, position=parser.parent_position, **arguments.asdict()
-    )
+    info = NodeInfo(context=context, **arguments.asdict())
 
     # Process the text of the paragraph.
     text_nodes = parser._parse_text(text, context=context)

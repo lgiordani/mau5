@@ -18,47 +18,25 @@ class NodeInfo:
     def __init__(
         self,
         context: Context | None = None,
-        position: str | None = None,
         unnamed_args: list | None = None,
         named_args: dict | None = None,
         tags: list | None = None,
         subtype: str | None = None,
     ):
         self.context = context
-        self.position = position
         self.unnamed_args = unnamed_args or []
         self.named_args = named_args or {}
         self.tags = tags or []
         self.subtype = subtype
-
-    def set_position(self, position: str) -> NodeInfo:
-        self.position = position
-
-        return self
 
     def set_context(self, context: Context) -> NodeInfo:
         self.context = context
 
         return self
 
-    # def set_attributes(
-    #     self,
-    #     unnamed_args: list | None = None,
-    #     named_args: dict | None = None,
-    #     tags: list | None = None,
-    #     subtype: str | None = None,
-    # ) -> NodeInfo:
-    #     self.unnamed_args = unnamed_args or []
-    #     self.named_args = named_args or {}
-    #     self.tags = tags or []
-    #     self.subtype = subtype
-
-    #     return self
-
     def asdict(self):
         return {
             "context": self.context,
-            "position": self.position,
             "unnamed_args": self.unnamed_args,
             "named_args": self.named_args,
             "tags": self.tags,

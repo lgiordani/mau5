@@ -7,7 +7,6 @@ from mau.test_helpers import generate_context
 def test_info():
     info = NodeInfo(
         context=generate_context(0, 0),
-        position="title",
         unnamed_args=["arg1"],
         named_args={"key1": "value1"},
         tags=["tag1"],
@@ -16,19 +15,11 @@ def test_info():
 
     assert info.asdict() == {
         "context": generate_context(0, 0),
-        "position": "title",
         "unnamed_args": ["arg1"],
         "named_args": {"key1": "value1"},
         "tags": ["tag1"],
         "subtype": "subtype1",
     }
-
-
-def test_info_set_position():
-    info = NodeInfo()
-    info.set_position("top")
-
-    assert info.position == "top"
 
 
 def test_info_set_context():
@@ -43,7 +34,6 @@ def test_node():
 
     assert node.parent is None
     assert node.children == {}
-    assert node.info.position is None
 
     assert node.content.asdict() == {"type": "none"}
 
@@ -52,7 +42,6 @@ def test_node():
         "content": {"type": "none"},
         "info": {
             "context": None,
-            "position": None,
             "unnamed_args": [],
             "named_args": {},
             "tags": [],
@@ -69,7 +58,6 @@ def test_node_children():
 
     assert node.parent is None
     assert node.children == {"title": [mock_node]}
-    assert node.info.position is None
 
     assert node.content.asdict() == {"type": "none"}
 
@@ -78,7 +66,6 @@ def test_node_children():
         "content": {"type": "none"},
         "info": {
             "context": None,
-            "position": None,
             "unnamed_args": [],
             "named_args": {},
             "tags": [],

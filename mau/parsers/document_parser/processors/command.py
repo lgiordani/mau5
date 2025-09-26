@@ -131,7 +131,6 @@ def command_processor(parser: DocumentParser):
 
         # for position, block in group.items():
         #     block.parent = node
-        #     block.parent_position = position
 
         # parser.save(node)
         pass

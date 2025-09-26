@@ -76,9 +76,8 @@ class ArgumentsParser(BaseParser):
         tokens: list[Token],
         environment: Environment | None = None,
         parent_node=None,
-        parent_position=None,
     ):
-        super().__init__(tokens, environment, parent_node, parent_position)
+        super().__init__(tokens, environment, parent_node)
 
         # This flag is turned on as soon as
         # a named argument is parsed

@@ -44,9 +44,8 @@ class TextParser(BaseParser):
         tokens: list[Token],
         environment: Environment | None = None,
         parent_node=None,
-        parent_position=None,
     ):
-        super().__init__(tokens, environment, parent_node, parent_position)
+        super().__init__(tokens, environment, parent_node)
 
         # These are the footnotes found in this piece of text.
         self.footnotes: list[Node[MacroFootnoteNodeContent]] = []
@@ -204,7 +203,6 @@ class TextParser(BaseParser):
                     content=TextNodeContent(text),
                     info=NodeInfo(
                         context=first_node.info.context,
-                        position=self.parent_position,
                     ),
                 )
                 nodes.append(node)
@@ -264,7 +262,6 @@ class TextParser(BaseParser):
             ),
             info=NodeInfo(
                 context=backslash.context,
-                position=self.parent_position,
             ),
         )
 
@@ -356,7 +353,6 @@ class TextParser(BaseParser):
             ),
             info=NodeInfo(
                 context=opening_bracket.context,
-                position=self.parent_position,
             ),
         )
 
@@ -381,7 +377,7 @@ class TextParser(BaseParser):
         node = Node(
             parent=self.parent_node,
             content=VerbatimNodeContent(content),
-            info=NodeInfo(position=self.parent_position, context=marker.context),
+            info=NodeInfo(context=marker.context),
         )
 
         return [node]
@@ -410,7 +406,7 @@ class TextParser(BaseParser):
         node = Node(
             parent=self.parent_node,
             content=TextNodeContent(content),
-            info=NodeInfo(position=self.parent_position, context=marker.context),
+            info=NodeInfo(context=marker.context),
         )
 
         return [node]
@@ -440,7 +436,7 @@ class TextParser(BaseParser):
             parent=self.parent_node,
             children=children,
             content=StyleNodeContent(MAP_STYLES[marker.value]),
-            info=NodeInfo(position=self.parent_position, context=marker.context),
+            info=NodeInfo(context=marker.context),
         )
 
         return [node]
@@ -455,7 +451,6 @@ class TextParser(BaseParser):
             content=WordNodeContent(token.value),
             info=NodeInfo(
                 context=token.context,
-                position=self.parent_position,
             ),
         )
 
@@ -501,7 +496,7 @@ class TextParser(BaseParser):
             parent=self.parent_node,
             children={"text": nodes},
             content=MacroLinkNodeContent(target.content.value),
-            info=NodeInfo(position=self.parent_position, context=context),
+            info=NodeInfo(context=context),
         )
 
         return [node]
@@ -541,7 +536,7 @@ class TextParser(BaseParser):
             parent=self.parent_node,
             children={"text": nodes},
             content=MacroHeaderNodeContent(header_id.content.value),
-            info=NodeInfo(position=self.parent_position, context=context),
+            info=NodeInfo(context=context),
         )
 
         self.header_links.append(node)
@@ -589,7 +584,7 @@ class TextParser(BaseParser):
             parent=self.parent_node,
             children={"text": nodes},
             content=MacroLinkNodeContent(f"mailto:{target.content.value}"),
-            info=NodeInfo(position=self.parent_position, context=context),
+            info=NodeInfo(context=context),
         )
 
         return [node]
@@ -622,7 +617,7 @@ class TextParser(BaseParser):
             parent=self.parent_node,
             children={"text": parser.nodes},
             content=MacroClassNodeContent(classes),
-            info=NodeInfo(position=self.parent_position, context=context),
+            info=NodeInfo(context=context),
         )
 
         return [node]
@@ -661,7 +656,7 @@ class TextParser(BaseParser):
                 width=width,
                 height=height,
             ),
-            info=NodeInfo(position=self.parent_position, context=context),
+            info=NodeInfo(context=context),
         )
 
         return [node]
@@ -687,7 +682,7 @@ class TextParser(BaseParser):
         node = Node(
             parent=self.parent_node,
             content=MacroFootnoteNodeContent(name),
-            info=NodeInfo(position=self.parent_position, context=context),
+            info=NodeInfo(context=context),
         )
 
         self.footnotes.append(node)

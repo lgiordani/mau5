@@ -46,9 +46,8 @@ class DocumentParser(BaseParser):
         tokens: list[Token],
         environment: Environment | None = None,
         parent_node=None,
-        parent_position=None,
     ):
-        super().__init__(tokens, environment, parent_node, parent_position)
+        super().__init__(tokens, environment, parent_node)
 
         # This is the function used to create unique IDs for headers.
         self.header_unique_id_function = self.environment.getvar(

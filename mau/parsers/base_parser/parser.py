@@ -65,7 +65,6 @@ class BaseParser:
         tokens: list[Token],
         environment: Environment | None = None,
         parent_node=None,
-        parent_position=None,
     ):
         self.tm = TokensManager(tokens)
 
@@ -81,10 +80,6 @@ class BaseParser:
         # This is the parent node of all the nodes
         # created by this parser
         self.parent_node = parent_node
-
-        # This is the position of all the nodes
-        # in the parent
-        self.parent_position = parent_position
 
     def _save(self, node):
         # Store the node.
