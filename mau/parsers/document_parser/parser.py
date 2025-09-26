@@ -14,14 +14,15 @@ from mau.text_buffer.context import Context
 from mau.tokens.token import Token, TokenType
 
 from .buffers.arguments_buffer import ArgumentsBuffer
-from .buffers.title_buffer import TitleBuffer
 from .buffers.control_buffer import ControlBuffer
+from .buffers.title_buffer import TitleBuffer
 from .managers.footnotes_manager import FootnotesManager
 from .managers.header_links_manager import HeaderLinksManager
 from .managers.toc_manager import TocManager
 from .processors.arguments import arguments_processor
 from .processors.block import block_processor
 from .processors.command import command_processor
+from .processors.control import control_processor
 from .processors.header import header_processor
 from .processors.horizontal_rule import horizontal_rule_processor
 from .processors.include import include_processor
@@ -31,7 +32,6 @@ from .processors.title import title_processor
 from .processors.variable_definition import variable_definition_processor
 
 # TODO self.tm.peek_token(with arguments) is basically self.tm.peek_token_is()
-# TODO complete the control tests in blocks and similar.
 
 
 # The DocumentParser is in charge of parsing
@@ -93,9 +93,6 @@ class DocumentParser(BaseParser):
         #         ).asdict()
         #     )
 
-        #     # This is a buffer for a control
-        #     self.control = (None, None, None)
-
         # The last index in the latest ordered list,
         # used to calculate the beginning value of them
         # next one when start=auto
@@ -117,7 +114,7 @@ class DocumentParser(BaseParser):
             partial(variable_definition_processor, self),
             partial(command_processor, self),
             partial(title_processor, self),
-            #         self._process_control,
+            partial(control_processor, self),
             partial(arguments_processor, self),
             partial(header_processor, self),
             partial(block_processor, self),
@@ -125,22 +122,6 @@ class DocumentParser(BaseParser):
             partial(list_processor, self),
             partial(paragraph_processor, self),
         ]
-
-    # def _collect_text_content(self):
-    #     # Collects all adjacent text tokens
-    #     # into a single string
-
-    #     if not self.tm.peek_token_is(TokenType.TEXT):  # pragma: no cover
-    #         return None
-
-    #     values = []
-
-    #     # Get all tokens
-    #     while self.tm.peek_token_is(TokenType.TEXT):
-    #         values.append(self.tm.get_token().value)
-    #         self.tm.get_token(TokenType.EOL)
-
-    #     return " ".join(values)
 
     def _parse_text(self, text: str, context: Context) -> list[Node[NodeContent]]:
         # This parses a piece of text.

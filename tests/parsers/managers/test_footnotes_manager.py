@@ -121,20 +121,3 @@ def test_footnotes_manager_process(mock_footnote_unique_id):
 
     assert footnote_macro_node1.children["footnote"] == [footnote_node1]
     assert footnote_macro_node2.children["footnote"] == [footnote_node2]
-
-
-# def test_footnotes_manager_full_parse():
-#     environment = Environment()
-#     environment.setvar(
-#         "mau.parser.footnote_unique_id_function",
-#         lambda node: "XXXXYY",
-#     )
-
-#     source = """
-#     This is a paragraph with a footnote [footnote](someid).
-
-#     [id=someid]
-#     == Header
-#     """
-
-#     parser = runner(source, environment)

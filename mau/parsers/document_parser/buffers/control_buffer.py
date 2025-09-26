@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
+
 from mau.environment.environment import Environment
 from mau.parsers.base_parser.parser import MauParserException
 from mau.text_buffer.context import Context

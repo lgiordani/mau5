@@ -73,9 +73,13 @@ def include_processor(parser: DocumentParser):
     # Build the node info.
     info = NodeInfo(context=prefix.context, **arguments.asdict())
 
-    # # Check the control
-    # if self._pop_control() is False:
-    #     return True
+    # Check the stored control
+    if control := parser.control_buffer.pop():
+        # If control is False, we need to stop
+        # processing here and return without
+        # saving any node.
+        if not control.process(parser.environment):
+            return True
 
     # if content_type == "image":
     #     return self._parse_content_image(uris, subtype, args, kwargs, tags)

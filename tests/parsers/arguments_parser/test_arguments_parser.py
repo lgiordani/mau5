@@ -642,18 +642,6 @@ def test_arguments_empty():
     assert parser.arguments == Arguments([], {}, [], None)
 
 
-# TODO
-# TODO
-# TODO
-# TODO
-# TODO
-# Test set_nodes, then test that Arguments.set_nodes and parser.set_nodes call it.
-# TODO
-# TODO
-# TODO
-# TODO
-
-
 def test_set_names_use_positional_names():
     source_unnamed_args = ["value1", "value2"]
     source_named_args: dict[str, str] = {}

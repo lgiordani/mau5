@@ -21,6 +21,7 @@ from mau.tokens.token import Token, TokenType
 class EngineType(Enum):
     DEFAULT = "default"
     FOOTNOTE = "footnote"
+    GROUP = "group"
     MAU = "mau"
     RAW = "raw"
     SOURCE = "source"
@@ -147,6 +148,44 @@ def parse_footnote_engine(
     )
 
     parser.footnotes_manager.add_data(footnote_node)
+
+
+# def parse_group_engine(
+#     parser: DocumentParser,
+#     node: Node[BlockNodeContent],
+#     content: Token,
+#     block_context: Context,
+#     arguments: Arguments,
+# ):
+#     arguments.set_names(["group", "position"])
+
+#     group_name = arguments.named_args.pop("group")
+#     position = arguments.named_args.pop("position")
+# content_parser = parser.lex_and_parse(
+#     content.value,
+#     content.context,
+#     parser.environment,
+# )
+
+# footnote_node = Node(
+#     content=FootnoteNodeContent(name),
+#     info=NodeInfo(context=block_context),
+#     children={"content": content_parser.nodes},
+# )
+
+# parser.footnotes_manager.add_data(footnote_node)
+
+
+# group = self.grouped_blocks.setdefault(group_name, {})
+
+# if position in group:
+#     self._error(
+#         f"Block with position {position} already defined in group {group_name}"
+#     )
+
+# group[position] = block
+
+# self._parse_block_content_update(block)
 
 
 def parse_source_engine(
@@ -300,6 +339,14 @@ def block_processor(parser: DocumentParser):
 
     # Get the closing delimiter.
     parser.tm.get_token(TokenType.BLOCK)
+
+    # Check the stored control
+    if control := parser.control_buffer.pop():
+        # If control is False, we need to stop
+        # processing here and return without
+        # saving any node.
+        if not control.process(parser.environment):
+            return True
 
     # Get the stored arguments.
     # Paragraphs can receive arguments

@@ -169,6 +169,51 @@ def test_include_full_parse():
     )
 
 
+def test_header_uses_control_positive():
+    environment = Environment()
+    environment.setvar("answer", "42")
+
+    source = """
+    @if answer==42
+    << ctype1:/path/to/it
+    """
+
+    parser: DocumentParser = runner(source, environment)
+
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=IncludeNodeContent("ctype1", ["/path/to/it"]),
+                info=NodeInfo(
+                    context=generate_context(2, 0),
+                    unnamed_args=[],
+                    named_args={},
+                    tags=[],
+                    subtype=None,
+                ),
+            ),
+        ],
+    )
+
+    assert parser.control_buffer.pop() is None
+
+
+def test_header_uses_control_negative():
+    environment = Environment()
+
+    source = """
+    @if answer==42
+    << ctype1:/path/to/it
+    """
+
+    parser: DocumentParser = runner(source, environment)
+
+    compare_nodes(parser.nodes, [])
+
+    assert parser.control_buffer.pop() is None
+
+
 # def test_include_image_with_only_path():
 #     source = """
 #     << image:/path/to/it.jpg

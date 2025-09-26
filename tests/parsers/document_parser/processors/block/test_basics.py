@@ -1,4 +1,4 @@
-
+from mau.environment.environment import Environment
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.block import BlockNodeContent
 from mau.nodes.inline import TextNodeContent
@@ -200,3 +200,49 @@ def test_block_inside_block():
             )
         ],
     )
+
+
+def test_block_uses_control_positive():
+    environment = Environment()
+    environment.setvar("answer", "42")
+
+    source = """
+    @if answer==42
+    ----
+    ----
+    """
+
+    parser = runner(source, environment)
+
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=BlockNodeContent(
+                    classes=[],
+                    engine=EngineType.DEFAULT.value,
+                    preprocessor=None,
+                ),
+                info=NodeInfo(context=generate_context(2, 0)),
+                children={"content": []},
+            )
+        ],
+    )
+
+    assert parser.control_buffer.pop() is None
+
+
+def test_header_uses_control_negative():
+    environment = Environment()
+
+    source = """
+    @if answer==42
+    ----
+    ----
+    """
+
+    parser = runner(source, environment)
+
+    compare_nodes(parser.nodes, [])
+
+    assert parser.control_buffer.pop() is None

@@ -47,9 +47,13 @@ def header_processor(parser: DocumentParser):
     # The output of the preprocess parser.
     text_nodes = preprocess_parser.nodes
 
-    # # Check the control
-    # if parser._pop_control() is False:
-    #     return True
+    # Check the stored control
+    if control := parser.control_buffer.pop():
+        # If control is False, we need to stop
+        # processing here and return without
+        # saving any node.
+        if not control.process(parser.environment):
+            return True
 
     # Get the stored arguments.
     # Headers can receive arguments

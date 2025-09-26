@@ -58,6 +58,3 @@ def test_footnote_engine_records_footnote_blocks(mock_footnote_unique_id):
             },
         ),
     )
-
-
-# TODO test that footnotes are read from paragraph, lists, etc.

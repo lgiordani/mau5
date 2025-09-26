@@ -3,7 +3,7 @@ import pytest
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.parsers.base_parser.parser import MauParserException
-from mau.parsers.document_parser.buffers.control_buffer import ControlBuffer, Control
+from mau.parsers.document_parser.buffers.control_buffer import Control, ControlBuffer
 from mau.parsers.document_parser.parser import DocumentParser
 from mau.test_helpers import (
     generate_context,

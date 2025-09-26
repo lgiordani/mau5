@@ -43,16 +43,6 @@ def test_advance_past_end():
     assert tm.index == 1
 
 
-# def test_put_token():
-#     tm = init_tokens_manager("", Environment())
-
-#     tm._put_token(Token(TokenType.LITERAL, "*"))
-#     assert tm.tokens == [
-#         Token(TokenType.LITERAL, "*"),
-#         Token(TokenType.EOF),
-#     ]
-
-
 def test_get_token():
     mock_check_token = Mock()
     tm = init_tokens_manager("", Environment())
@@ -130,26 +120,6 @@ def test_check_token_accepts_check_function():
             TokenType.TEXT,
             value_check_function=lambda x: x == "foobar",
         )
-
-
-# def test_check_current_token():
-#     tm = init_tokens_manager("Some text", Environment())
-#     tm._check_token = Mock()
-
-#     tm.get_token()
-#     tm._check_current_token(TokenType.TEXT)
-
-#     tm._check_token.assert_called_with(
-#         Token(TokenType.TEXT, "Some text"), TokenType.TEXT, None, None
-#     )
-
-
-# def test_check_current_token_if_no_tokens():
-#     tm = init_tokens_manager("Some text", Environment())
-#     tm.tokens = []
-
-#     with pytest.raises(TokenError):
-#         tm._check_current_token(TokenType.TEXT)
 
 
 def test_peek_token():
@@ -298,35 +268,6 @@ def test_peek_token_is():
 
     assert tm.peek_token_is(TokenType.EOL) is False
     assert tm.peek_token_is(TokenType.TEXT) is True
-
-
-# def test_force_token():
-#     tm = init_tokens_manager("Some text\nSome other text", Environment())
-
-#     # Force the token type only
-#     assert tm._force_token(TokenType.TEXT) == Token(TokenType.TEXT, "Some text")
-
-#     # Get the EOL
-#     tm.get_token()
-
-#     # Force the token type and value
-#     assert tm._force_token(TokenType.TEXT, "Some other text") == Token(
-#         TokenType.TEXT, "Some other text"
-#     )
-
-#     # At this point the current token is EOL.
-
-#     # Force the token type only - wrong type
-#     with pytest.raises(MauParserException) as exc:
-#         tm._force_token(TokenType.TEXT)
-
-#     # Force the token type and value - wrong value
-#     with pytest.raises(MauParserException) as exc:
-#         tm._force_token(TokenType.EOL, "Wrong value")
-
-#     # This is the position of the expected token,
-#     # EOL in this case.
-#     assert exc.value.context == generate_context(1, 15)
 
 
 def test_collect():

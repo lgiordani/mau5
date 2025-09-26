@@ -46,6 +46,49 @@ def test_paragraph():
     )
 
 
+def test_paragraph_full_parse():
+    source = """
+    This is a paragraph.
+    This is part of the same paragraph.
+
+    This is another paragraph.
+    """
+
+    parser = runner(source)
+
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                children={
+                    "content": [
+                        Node(
+                            content=TextNodeContent(
+                                "This is a paragraph. This is part of the same paragraph."
+                            ),
+                            info=NodeInfo(context=generate_context(1, 0)),
+                        )
+                    ]
+                },
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(1, 0)),
+            ),
+            Node(
+                children={
+                    "content": [
+                        Node(
+                            content=TextNodeContent("This is another paragraph."),
+                            info=NodeInfo(context=generate_context(4, 0)),
+                        )
+                    ]
+                },
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(4, 0)),
+            ),
+        ],
+    )
+
+
 def test_paragraph_starting_with_a_macro():
     source = "[link](http://some.where,This) is the link I want"
 
@@ -380,3 +423,82 @@ def test_paragraph_with_nested_variables():
             )
         ],
     )
+
+
+def test_paragraph_uses_control_positive():
+    environment = Environment()
+    environment.setvar("answer", "42")
+
+    source = """
+    @if answer==42
+    This is a paragraph.
+
+    This is another paragraph.
+    """
+
+    parser = runner(source, environment)
+
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                children={
+                    "content": [
+                        Node(
+                            content=TextNodeContent("This is a paragraph."),
+                            info=NodeInfo(context=generate_context(2, 0)),
+                        )
+                    ]
+                },
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(2, 0)),
+            ),
+            Node(
+                children={
+                    "content": [
+                        Node(
+                            content=TextNodeContent("This is another paragraph."),
+                            info=NodeInfo(context=generate_context(4, 0)),
+                        )
+                    ]
+                },
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(4, 0)),
+            ),
+        ],
+    )
+
+    assert parser.control_buffer.pop() is None
+
+
+def test_paragraph_uses_control_negative():
+    environment = Environment()
+
+    source = """
+    @if answer==42
+    This is a paragraph.
+
+    This is another paragraph.
+    """
+
+    parser: DocumentParser = runner(source, environment)
+
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                children={
+                    "content": [
+                        Node(
+                            content=TextNodeContent("This is another paragraph."),
+                            info=NodeInfo(context=generate_context(4, 0)),
+                        )
+                    ]
+                },
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(4, 0)),
+            ),
+        ],
+    )
+
+    assert parser.control_buffer.pop() is None
