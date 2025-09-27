@@ -3,8 +3,9 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import NewType
 
+from mau.text_buffer.context import Context
 from mau.nodes.block import BlockNodeContent, BlockGroupNodeContent
-from mau.nodes.node import Node
+from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser.parser import MauParserException
 
 BlockGroup = NewType("BlockGroup", dict[str, Node[BlockNodeContent]])
@@ -26,3 +27,20 @@ class BlockGroupManager:
             )
 
         block_group[position] = node
+
+    def create_group_node(self, group: str, context: Context):
+        if group not in self.groups:
+            raise MauParserException(
+                message=f"The group named {group} does not exist.",
+                context=context,
+            )
+
+        node = Node(
+            content=BlockGroupNodeContent(group),
+            info=NodeInfo(context=context),
+        )
+
+        for position, child_node in self.groups[group].items():
+            node.add_children_at_position_and_allow(position, [child_node])
+
+        return node

@@ -102,37 +102,12 @@ def command_processor(parser: DocumentParser):
         parser.footnotes_manager.add_footnotes_list_node(footnotes_node)
 
     elif name == "blockgroup":
-        # command_args, command_kwargs = parser._set_names_and_defaults(
-        #     command_args,
-        #     command_kwargs,
-        #     ["group"],
-        # )
+        arguments.set_names(["group"])
+        group_name = arguments.named_args.pop("group")
 
-        # group_name = command_kwargs.pop("group")
-
-        # try:
-        #     group = parser.grouped_blocks.pop(group_name)
-        # except KeyError:
-        #     parser._error(
-        #         (
-        #             f"The group of blocks {group_name} doesn't exist. "
-        #             "No blocks belong to that group."
-        #         )
-        #     )
-
-        # node = BlockGroupNode(
-        #     group_name=group_name,
-        #     group=group,
-        #     subtype=subtype,
-        #     args=args,
-        #     kwargs=kwargs,
-        #     tags=tags,
-        # )
-
-        # for position, block in group.items():
-        #     block.parent = node
-
-        # parser.save(node)
-        pass
+        group_node = parser.block_group_manager.create_group_node(
+            group_name, prefix.context
+        )
+        parser._save(group_node)
 
     return True
