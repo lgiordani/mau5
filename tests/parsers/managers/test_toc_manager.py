@@ -2,10 +2,11 @@ from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.headers import HeaderNodeContent
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.toc import TocItemNodeContent
+from mau.nodes.toc import TocItemNodeContent, TocNodeContent
 from mau.parsers.document_parser.managers.toc_manager import (
     add_nodes_under_level,
     header_to_toc_item,
+    TocManager,
 )
 from mau.parsers.document_parser.parser import DocumentParser
 from mau.test_helpers import (
@@ -21,7 +22,29 @@ init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-# TODO Missing tests for the actual manager class!
+def test_toc_manager_init():
+    tm = TocManager()
+
+    assert tm.headers == []
+    assert tm.toc_nodes == []
+
+
+def test_toc_manager_add_header():
+    tm = TocManager()
+    test_node = Node(content=HeaderNodeContent(1))
+
+    tm.add_header(test_node)
+
+    assert tm.headers == [test_node]
+
+
+def test_toc_manager_add_toc_node():
+    tm = TocManager()
+    test_node = Node(content=TocNodeContent())
+
+    tm.add_toc_node(test_node)
+
+    assert tm.toc_nodes == [test_node]
 
 
 def test_header_to_toc_item():

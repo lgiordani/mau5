@@ -35,20 +35,6 @@ def test_init_with_flat_hierarchical_content():
     assert environment.asdict() == {"var1": {"var3": "value3"}, "var2": "value2"}
 
 
-# def test_equality():
-#     assert Environment.from_dict(
-#         {
-#             "var1": "value1",
-#             "var2": "value2",
-#         }
-#     ) == Environment.from_dict(
-#         {
-#             "var1": "value1",
-#             "var2": "value2",
-#         }
-#     )
-
-
 def test_update():
     environment = Environment()
 
@@ -102,25 +88,6 @@ def test_update_deep():
             },
         },
     }
-
-
-# def test_clone():
-#     source_dict = {"var1": "value1", "var2": "value2"}
-#     environment = Environment.from_dict(source_dict)
-
-#     clone = environment.clone()
-
-#     assert clone.asdict() == {"var1": "value1", "var2": "value2"}
-
-
-# def test_clone_is_independent():
-#     source_dict = {"var1": "value1", "var2": "value2"}
-#     environment = Environment.from_dict(source_dict)
-
-#     clone = environment.clone()
-#     source_dict.pop("var1")
-
-#     assert clone.asdict() == {"var1": "value1", "var2": "value2"}
 
 
 def test_set_variable_flat():

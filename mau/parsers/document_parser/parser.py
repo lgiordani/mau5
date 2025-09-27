@@ -32,8 +32,6 @@ from .processors.paragraph import paragraph_processor
 from .processors.title import title_processor
 from .processors.variable_definition import variable_definition_processor
 
-# TODO self.tm.peek_token(with arguments) is basically self.tm.peek_token_is()
-
 
 # The DocumentParser is in charge of parsing
 # the whole input, calling other parsers
