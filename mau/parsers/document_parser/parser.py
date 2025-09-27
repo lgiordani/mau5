@@ -99,10 +99,6 @@ class DocumentParser(BaseParser):
         # next one when start=auto
         self.latest_ordered_list_index = 0
 
-    #     # This is the dictionary of block groups
-    #     # defineed in the document
-    #     self.grouped_blocks = {}
-
     #     # This is the final output of the parser
     #     self.output = {}
 
@@ -182,65 +178,6 @@ class DocumentParser(BaseParser):
             self.tm.get_token(TokenType.EOL)
 
         return lines
-
-    # def _parse_group_engine(self, block):
-    #     block.args, block.kwargs = self._set_names_and_defaults(
-    #         block.args,
-    #         block.kwargs,
-    #         ["group", "position"],
-    #     )
-
-    #     group_name = block.kwargs.pop("group")
-    #     position = block.kwargs.pop("position")
-
-    #     group = self.grouped_blocks.setdefault(group_name, {})
-
-    #     if position in group:
-    #         self._error(
-    #             f"Block with position {position} already defined in group {group_name}"
-    #         )
-
-    #     group[position] = block
-
-    #     self._parse_block_content_update(block)
-
-    # def _parse_content_image(self, uris, subtype, args, kwargs, tags):
-    #     # Parse a content image in the form
-    #     #
-    #     # << image:uri,alt_text,classes
-    #     #
-    #     # alt_text is the alternate text to use is the image is not reachable
-    #     # and classes is a comma-separated list of classes
-
-    #     # Consume the arguments
-    #     args, kwargs = self._set_names_and_defaults(
-    #         args,
-    #         kwargs,
-    #         ["alt_text", "classes"],
-    #         {"alt_text": None, "classes": None},
-    #     )
-
-    #     uri = uris[0]
-    #     alt_text = kwargs.pop("alt_text")
-    #     classes = kwargs.pop("classes")
-
-    #     if classes:
-    #         classes = classes.split(",")
-
-    #     node = ContentImageNode(
-    #         uri=uri,
-    #         alt_text=alt_text,
-    #         classes=classes,
-    #         subtype=subtype,
-    #         args=args,
-    #         kwargs=kwargs,
-    #         tags=tags,
-    #     )
-
-    #     node.title = self._pop_title(node)
-    #     self._save(node)
-
-    #     return True
 
     # def _parse_standard_content(self, content_type, uris, subtype, args, kwargs, tags):
     #     # This is the fallback for an unknown content type

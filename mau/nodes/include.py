@@ -1,9 +1,15 @@
 from mau.nodes.node import NodeContent
 
-LONG_HELP = """
+INCLUDE_HELP = """
 Syntax: << TYPE URI1, [URI2, ...]
 
 The include operator `<<` includes content of type TYPE using the provided URIs.
+"""
+
+INCLUDE_IMAGE_HELP = """
+Syntax: << image URI, [ALT_TEXT, CLASSES]
+
+The include operator `<< image` includes an image using the provided URI.
 """
 
 
@@ -15,7 +21,7 @@ class IncludeNodeContent(NodeContent):
 
     type = "include"
     allowed_keys = {"title": "The title of the included content."}
-    long_help = LONG_HELP
+    long_help = INCLUDE_HELP
 
     def __init__(
         self,
@@ -37,45 +43,34 @@ class IncludeNodeContent(NodeContent):
         return base
 
 
-# class ContentImageNode(Node):
-#     """An image included in the page."""
+class IncludeImageNodeContent(NodeContent):
+    """Content included in the page.
 
-#     node_type = "content_image"
+    This represents generic content included in the page.
+    """
 
-#     def __init__(
-#         self,
-#         uri,
-#         alt_text=None,
-#         classes=None,
-#         title=None,
-#         parent=None,
-#         parent_position=None,
-#         children=None,
-#         subtype=None,
-#         args=None,
-#         kwargs=None,
-#         tags=None,
-#         context=None,
-#     ):
-#         super().__init__(
-#             parent=parent,
-#             parent_position=parent_position,
-#             children=children,
-#             subtype=subtype,
-#             args=args,
-#             kwargs=kwargs,
-#             tags=tags,
-#             context=context,
-#         )
-#         self.uri = uri
-#         self.title = title
-#         self.alt_text = alt_text
-#         self.classes = classes
+    type = "include-image"
+    allowed_keys = {"title": "The title of the included image."}
+    long_help = INCLUDE_IMAGE_HELP
 
-#     def _custom_dict(self):
-#         return {
-#             "uri": self.uri,
-#             "title": self.title,
-#             "alt_text": self.alt_text,
-#             "classes": self.classes,
-#         }
+    def __init__(
+        self,
+        uri: str,
+        alt_text: str | None = None,
+        classes: list[str] | None = None,
+    ):
+        self.uri = uri
+        self.alt_text = alt_text
+        self.classes = classes or []
+
+    def asdict(self):
+        base = super().asdict()
+        base.update(
+            {
+                "uri": self.uri,
+                "alt_text": self.alt_text,
+                "classes": self.classes,
+            }
+        )
+
+        return base

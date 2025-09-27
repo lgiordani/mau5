@@ -6,8 +6,9 @@ if TYPE_CHECKING:
     from .parser import DocumentParser
 
 
-from mau.nodes.include import IncludeNodeContent
-from mau.nodes.node import Node, NodeInfo
+from mau.text_buffer.context import Context
+from mau.nodes.include import IncludeNodeContent, IncludeImageNodeContent
+from mau.nodes.node import Node, NodeInfo, NodeContent
 from mau.parsers.arguments_parser.parser import Arguments, ArgumentsParser
 from mau.parsers.base_parser.parser import MauParserException
 from mau.tokens.token import TokenType
@@ -59,20 +60,6 @@ def include_processor(parser: DocumentParser):
             IncludeNodeContent.long_help,
         )
 
-    # Get the URIs list and empty the unnamed arguments
-    uris = arguments.unnamed_args[:]
-    arguments.unnamed_args = []
-
-    if not uris:
-        raise MauParserException(
-            "Syntax error. You need to specify a list of URIs.",
-            prefix.context,
-            IncludeNodeContent.long_help,
-        )
-
-    # Build the node info.
-    info = NodeInfo(context=prefix.context, **arguments.asdict())
-
     # Check the stored control
     if control := parser.control_buffer.pop():
         # If control is False, we need to stop
@@ -81,10 +68,15 @@ def include_processor(parser: DocumentParser):
         if not control.process(parser.environment):
             return True
 
-    # if content_type == "image":
-    #     return self._parse_content_image(uris, subtype, args, kwargs, tags)
+    if content_type == "image":
+        content = _parse_image(arguments, prefix.context)
+    else:
+        content = _parse_generic(content_type, arguments, prefix.context)
 
-    node = Node(content=IncludeNodeContent(content_type, uris), info=info)
+    # Build the node info.
+    info = NodeInfo(context=prefix.context, **arguments.asdict())
+
+    node = Node(content=content, info=info)
 
     if nodes := parser.title_buffer.pop():
         node.add_children({"title": nodes})
@@ -92,3 +84,48 @@ def include_processor(parser: DocumentParser):
     parser._save(node)
 
     return True
+
+
+def _parse_generic(
+    content_type: str, arguments: Arguments, context: Context
+) -> NodeContent:
+    # Get the URIs list and empty the unnamed arguments
+    uris = arguments.unnamed_args[:]
+    arguments.unnamed_args = []
+
+    if not uris:
+        raise MauParserException(
+            "Syntax error. You need to specify a list of URIs.",
+            context,
+            IncludeNodeContent.long_help,
+        )
+
+    return IncludeNodeContent(content_type, uris)
+
+
+def _parse_image(arguments: Arguments, context: Context) -> NodeContent:
+    arguments.set_names(["uri", "alt_text", "classes"])
+
+    uri = arguments.named_args.pop("uri")
+
+    if not uri:
+        raise MauParserException(
+            "Syntax error. You need to specify the URIs.",
+            context,
+            IncludeImageNodeContent.long_help,
+        )
+
+    alt_text = arguments.named_args.pop("alt_text", None)
+    classes_arg = arguments.named_args.pop("classes", None)
+
+    classes = []
+    if classes_arg:
+        classes.extend(classes_arg.split(","))
+
+    content = IncludeImageNodeContent(
+        uri,
+        alt_text,
+        classes,
+    )
+
+    return content

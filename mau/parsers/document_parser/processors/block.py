@@ -65,8 +65,6 @@ def parse_block_content_update(
     # main document. Import them.
     parser.toc_manager.update(content_parser.toc_manager)
 
-    # parser.toc_manager.update(content_parser.toc_manager)
-
 
 def parse_default_engine(
     parser: DocumentParser,
@@ -404,9 +402,5 @@ def block_processor(parser: DocumentParser):
             raise parser._error(
                 f"Engine {engine} is not available", context=delimiter.context
             )
-
-    # elif block.engine == "group":
-    #     parser._parse_group_engine(block)
-    # else:
 
     return True

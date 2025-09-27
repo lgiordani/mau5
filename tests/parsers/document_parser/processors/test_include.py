@@ -2,7 +2,7 @@ import pytest
 
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer.lexer import DocumentLexer
-from mau.nodes.include import IncludeNodeContent
+from mau.nodes.include import IncludeNodeContent, IncludeImageNodeContent
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.arguments_parser.parser import Arguments
@@ -214,69 +214,62 @@ def test_header_uses_control_negative():
     assert parser.control_buffer.pop() is None
 
 
-# def test_include_image_with_only_path():
-#     source = """
-#     << image:/path/to/it.jpg
-#     """
+def test_include_image_with_only_path():
+    source = """
+    << image:/path/to/it.jpg
+    """
 
-#     assert runner(source).nodes == [ContentImageNode("/path/to/it.jpg")]
+    parser = runner(source)
 
-
-# def test_include_image_with_http():
-#     source = """
-#     << image:https:///some.domain/path/to/it.jpg
-#     """
-
-#     assert runner(source).nodes == [
-#         ContentImageNode("https:///some.domain/path/to/it.jpg")
-#     ]
-
-
-# def test_include_image_with_arguments():
-#     source = """
-#     ["alt text", #tag1, key1=value1, key2=value2, classes="class1,class2"]
-#     << image:/path/to/it.jpg,
-#     """
-
-#     assert runner(source).nodes == [
-#         ContentImageNode(
-#             "/path/to/it.jpg",
-#             args=[],
-#             tags=["tag1"],
-#             kwargs={"key1": "value1", "key2": "value2"},
-#             alt_text="alt text",
-#             classes=["class1", "class2"],
-#         )
-#     ]
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=IncludeImageNodeContent("/path/to/it.jpg"),
+                info=NodeInfo(
+                    context=generate_context(1, 0),
+                    unnamed_args=[],
+                    named_args={},
+                    tags=[],
+                    subtype=None,
+                ),
+            ),
+        ],
+    )
 
 
-# def test_include_image_with_title():
-#     source = """
-#     . A nice caption
-#     << image:/path/to/it.jpg
-#     """
+def test_include_image_with_alt_text_and_classes():
+    source = """
+    << image:/path/to/it.jpg, "Alt text", "class1,class2"
+    """
 
-#     assert runner(source).nodes == [
-#         ContentImageNode(
-#             "/path/to/it.jpg",
-#             title=SentenceNode(
-#                 children=[
-#                     TextNode("A nice caption"),
-#                 ]
-#             ),
-#         )
-#     ]
+    parser = runner(source)
+
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=IncludeImageNodeContent(
+                    "/path/to/it.jpg", "Alt text", ["class1", "class2"]
+                ),
+                info=NodeInfo(
+                    context=generate_context(1, 0),
+                    unnamed_args=[],
+                    named_args={},
+                    tags=[],
+                    subtype=None,
+                ),
+            ),
+        ],
+    )
 
 
-# def test_include_image_with_subtype():
-#     source = """
-#     [*subtype1]
-#     << image:/path/to/it.jpg
-#     """
+def test_include_image_without_uri():
+    source = """
+    << image:"
+    """
 
-#     assert runner(source).nodes == [
-#         ContentImageNode(
-#             "/path/to/it.jpg",
-#             subtype="subtype1",
-#         ),
-#     ]
+    with pytest.raises(MauParserException) as exc:
+        runner(source)
+
+    assert exc.value.context == generate_context(1, 9)
