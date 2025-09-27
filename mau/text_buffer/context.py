@@ -23,4 +23,8 @@ class Context:
         return self.__class__(**self.asdict())
 
     def __repr__(self):
-        return str(self.asdict())
+        source_prefix = ""
+        if self.source:
+            source_prefix = f"{self.source}:"
+
+        return f"{source_prefix}{self.line},{self.column}"

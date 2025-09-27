@@ -41,42 +41,21 @@ class BlockNodeContent(NodeContent):
         return base
 
 
-# class BlockGroupNodeContent(NodeContent):
-#     """This instructs Mau to insert a group of nodes."""
+class BlockGroupNodeContent(NodeContent):
+    type = "block-group"
 
-#     node_type = "block_group"
+    def __init__(
+        self,
+        name: str,
+    ):
+        self.name = name
 
-#     def __init__(
-#         self,
-#         group_name,
-#         group,
-#         title=None,
-#         parent=None,
-#         parent_position=None,
-#         children=None,
-#         subtype=None,
-#         args=None,
-#         kwargs=None,
-#         tags=None,
-#         context=None,
-#     ):
-#         super().__init__(
-#             parent=parent,
-#             parent_position=parent_position,
-#             children=children,
-#             subtype=subtype,
-#             args=args,
-#             kwargs=kwargs,
-#             tags=tags,
-#             context=context,
-#         )
-#         self.title = title
-#         self.group_name = group_name
-#         self.group = group
+    def asdict(self):
+        base = super().asdict()
+        base.update(
+            {
+                "name": self.name,
+            }
+        )
 
-#     def _custom_dict(self):
-#         return {
-#             "title": self.title,
-#             "group_name": self.group_name,
-#             "group": self.group,
-#         }
+        return base

@@ -17,6 +17,7 @@ from .buffers.arguments_buffer import ArgumentsBuffer
 from .buffers.control_buffer import ControlBuffer
 from .buffers.title_buffer import TitleBuffer
 from .managers.footnotes_manager import FootnotesManager
+from .managers.block_group_manager import BlockGroupManager
 from .managers.header_links_manager import HeaderLinksManager
 from .managers.toc_manager import TocManager
 from .processors.arguments import arguments_processor
@@ -60,6 +61,7 @@ class DocumentParser(BaseParser):
         )
 
         self.header_links_manager: HeaderLinksManager = HeaderLinksManager()
+        self.block_group_manager = BlockGroupManager()
         self.footnotes_manager = FootnotesManager(self.footnote_unique_id_function)
         self.toc_manager: TocManager = TocManager(self.header_unique_id_function)
 

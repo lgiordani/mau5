@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import NewType
 
-from mau.nodes.block import BlockNodeContent
+from mau.nodes.block import BlockNodeContent, BlockGroupNodeContent
 from mau.nodes.node import Node
 from mau.parsers.base_parser.parser import MauParserException
 
@@ -21,7 +21,7 @@ class BlockGroupManager:
 
         if other_block := block_group.get(position):
             raise MauParserException(
-                f"Position {position} is already taken in group {block_group} by the block at {other_block.info.context}",  # type: ignore[attr-defined]
+                f"Position {position} is already taken in group {group} by the block at {other_block.info.context}",  # type: ignore[attr-defined]
                 context=node.info.context,
             )
 

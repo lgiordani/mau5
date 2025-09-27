@@ -150,42 +150,31 @@ def parse_footnote_engine(
     parser.footnotes_manager.add_data(footnote_node)
 
 
-# def parse_group_engine(
-#     parser: DocumentParser,
-#     node: Node[BlockNodeContent],
-#     content: Token,
-#     block_context: Context,
-#     arguments: Arguments,
-# ):
-#     arguments.set_names(["group", "position"])
+def parse_group_engine(
+    parser: DocumentParser,
+    node: Node[BlockNodeContent],
+    content: Token,
+    block_context: Context,
+    arguments: Arguments,
+):
+    arguments.set_names(["group", "position"])
 
-#     group_name = arguments.named_args.pop("group")
-#     position = arguments.named_args.pop("position")
-# content_parser = parser.lex_and_parse(
-#     content.value,
-#     content.context,
-#     parser.environment,
-# )
+    group_name = arguments.named_args.pop("group")
+    position = arguments.named_args.pop("position")
 
-# footnote_node = Node(
-#     content=FootnoteNodeContent(name),
-#     info=NodeInfo(context=block_context),
-#     children={"content": content_parser.nodes},
-# )
+    content_parser = parser.lex_and_parse(
+        content.value,
+        content.context,
+        parser.environment,
+    )
 
-# parser.footnotes_manager.add_data(footnote_node)
+    node = Node(
+        content=BlockNodeContent(engine="group"),
+        info=NodeInfo(context=block_context),
+        children={"content": content_parser.nodes},
+    )
 
-
-# group = self.grouped_blocks.setdefault(group_name, {})
-
-# if position in group:
-#     self._error(
-#         f"Block with position {position} already defined in group {group_name}"
-#     )
-
-# group[position] = block
-
-# self._parse_block_content_update(block)
+    parser.block_group_manager.add_block(group_name, position, node)
 
 
 def parse_source_engine(
@@ -395,6 +384,9 @@ def block_processor(parser: DocumentParser):
             parser._save(node)
         case EngineType.FOOTNOTE:
             parse_footnote_engine(parser, node, content, delimiter.context, arguments)
+            node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+        case EngineType.GROUP:
+            parse_group_engine(parser, node, content, delimiter.context, arguments)
             node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
         case EngineType.MAU:
             parse_mau_engine(parser, node, content, delimiter.context, arguments)

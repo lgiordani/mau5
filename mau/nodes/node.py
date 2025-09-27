@@ -93,6 +93,13 @@ class Node(Generic[Content_co]):
 
         self.info: NodeInfo = info or NodeInfo()
 
+        # Get a copy of the class allowed_keys
+        # in case we need to modify it for this
+        # node only (dynamic children, e.g.
+        # block groups).
+        self.allowed_keys = {}
+        self.allowed_keys.update(self.content.allowed_keys)
+
     def set_parent(self, parent: Node) -> Node:
         # Set the parent of this node.
         self.parent = parent
@@ -115,9 +122,22 @@ class Node(Generic[Content_co]):
 
         return self
 
+    def add_children_at_position_and_allow(
+        self, position, children: Iterable[Node[NodeContent]]
+    ):
+        # Add the children nodes to the list at the given position.
+        self.children[position].extend(children)
+
+        # Allow this specific position.
+        self.allowed_keys[position] = "Dynamic children"
+
+        # Add this node as parent of each element.
+        for child in children:
+            child.set_parent(self)
+
     def check_children(self) -> set[str]:
         children_keys = set(self.children.keys())
-        allowed_keys = set(self.content.allowed_keys.keys())
+        allowed_keys = set(self.allowed_keys.keys())
 
         if not children_keys.issubset(allowed_keys):
             return children_keys - allowed_keys
