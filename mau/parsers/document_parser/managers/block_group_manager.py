@@ -41,6 +41,6 @@ class BlockGroupManager:
         )
 
         for position, child_node in self.groups[group].items():
-            node.add_children_at_position_and_allow(position, [child_node])
+            node.add_children_at_position(position, [child_node], allow_all=True)
 
         return node

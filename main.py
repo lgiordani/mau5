@@ -11,13 +11,13 @@ from mau.environment.environment import Environment
 from mau.lexers.base_lexer.lexer import (
     MauLexerException,
     format_lexer_error,
-    format_token,
 )
 from mau.parsers.base_parser.parser import (
     MauParserException,
-    # format_node,
     format_parser_error,
 )
+from mau.tokens.token import format_token
+from mau.nodes.node import format_node
 
 install(show_locals=True)
 
@@ -227,10 +227,11 @@ def main():  # pylint: disable=too-many-statements
         print(formatted_error)
         sys.exit(1)
 
-    # if args.parser_show_nodes:
-    #     for node in nodes:
-    #         print(format_node(node))
-    #         print()
+    if args.parser_show_nodes:
+        for node in nodes:
+            print(format_node(node))
+            print()
+        # print(yaml.dump(nodes, Dumper=yaml.Dumper))
 
     if args.parser_only:
         sys.exit(1)

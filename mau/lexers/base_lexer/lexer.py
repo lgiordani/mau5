@@ -35,17 +35,6 @@ def format_lexer_error(exception: MauLexerException) -> str:
     return "\n".join(output)
 
 
-def format_token(token: Token) -> str:  # pragma: no cover
-    output = str(token.type)
-
-    if token.context:
-        output = f"{output} {token.context.line},{token.context.column}"
-
-    output = f'{output} "{token.value}"'
-
-    return output
-
-
 class BaseLexer:
     """
     The base class for lexers.

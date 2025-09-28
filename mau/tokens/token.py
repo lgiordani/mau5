@@ -75,3 +75,14 @@ class Token:
 
     def __bool__(self):
         return True
+
+
+def format_token(token: Token) -> str:  # pragma: no cover
+    output = str(token.type)
+
+    if token.context:
+        output = f"{output} {token.context.line},{token.context.column}"
+
+    output = f'{output} "{token.value}"'
+
+    return output

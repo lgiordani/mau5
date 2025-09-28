@@ -106,34 +106,29 @@ class Node(Generic[Content_co]):
 
         return self
 
-    def add_children_at_position(self, position, children: Iterable[Node[NodeContent]]):
+    def add_children_at_position(
+        self, position, children: Iterable[Node[NodeContent]], allow_all: bool = False
+    ):
         # Add the children nodes to the list at the given position.
         self.children[position].extend(children)
+
+        if allow_all:
+            # Allow this specific position.
+            self.allowed_keys[position] = "Dynamically added children"
 
         # Add this node as parent of each element.
         for child in children:
             child.set_parent(self)
 
     def add_children(
-        self, children: MutableMapping[str, Iterable[Node[NodeContent]]]
+        self,
+        children: MutableMapping[str, Iterable[Node[NodeContent]]],
+        allow_all: bool = False,
     ) -> Node:
         for position, elements in children.items():
-            self.add_children_at_position(position, elements)
+            self.add_children_at_position(position, elements, allow_all)
 
         return self
-
-    def add_children_at_position_and_allow(
-        self, position, children: Iterable[Node[NodeContent]]
-    ):
-        # Add the children nodes to the list at the given position.
-        self.children[position].extend(children)
-
-        # Allow this specific position.
-        self.allowed_keys[position] = "Dynamic children"
-
-        # Add this node as parent of each element.
-        for child in children:
-            child.set_parent(self)
 
     def check_children(self) -> set[str]:
         children_keys = set(self.children.keys())
@@ -195,3 +190,33 @@ class ValueNodeContent(NodeContent):
         base.update({self.value_key: self.value})
 
         return base
+
+
+def format_node(node: Node, indent: int = 0) -> str:  # pragma: no cover
+    # Everything shuld be indented at
+    # least at this level.
+    prefix = " " * indent
+
+    output_lines = []
+
+    node_type = node.content.type.upper()
+    output_lines.append(node_type)
+
+    node_info = f"  INFO: {node.info.context}"
+    output_lines.append(node_info)
+
+    node_content = f"  CONTENT: {node.content.asdict()}"
+    output_lines.append(node_content)
+
+    node_children = "  CHILDREN:"
+    output_lines.append(node_children)
+
+    for key, children in node.children.items():
+        output_lines.append(f"    [{key}]")
+
+        for child in children:
+            child_output = format_node(child, indent=indent + 6)
+            output_lines.append(child_output)
+
+    output_lines = [prefix + line for line in output_lines]
+    return "\n".join(output_lines)

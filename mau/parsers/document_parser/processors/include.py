@@ -79,7 +79,7 @@ def include_processor(parser: DocumentParser):
     node = Node(content=content, info=info)
 
     if children := parser.children_buffer.pop():
-        node.add_children(children)
+        node.add_children(children, allow_all=True)
 
     parser._save(node)
 

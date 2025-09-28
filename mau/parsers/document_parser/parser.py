@@ -32,6 +32,8 @@ from .processors.paragraph import paragraph_processor
 from .processors.child import child_processor
 from .processors.variable_definition import variable_definition_processor
 
+# Is it possible to add beginning and end to the context?
+
 
 # The DocumentParser is in charge of parsing
 # the whole input, calling other parsers
