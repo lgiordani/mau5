@@ -2,6 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
+from mau.environment.environment import Environment
 from mau.lexers.arguments_lexer.lexer import ArgumentsLexer
 from mau.nodes.node import Node, NodeInfo, ValueNodeContent
 from mau.parsers.arguments_parser.parser import Arguments, ArgumentsParser, set_names
@@ -632,6 +633,86 @@ def test_arguments():
     assert parser.arguments == Arguments(
         ["value1"], {"name": "value2"}, ["tag1"], "subtype1"
     )
+
+
+def test_process_arguments_subtype_replacement():
+    environment = Environment()
+    environment.setvar(
+        "mau.parser.subtype_replacements",
+        {"subtype1": {"key1": "value1", "key2": "value2"}},
+    )
+
+    source = "arg1, *subtype1"
+
+    expected_unnamed_nodes = [
+        Node(
+            content=ValueNodeContent("arg1"),
+            info=NodeInfo(context=generate_context(0, 0)),
+        ),
+    ]
+
+    expected_named_nodes = {
+        "key1": Node(
+            content=ValueNodeContent("value1"),
+            info=NodeInfo(context=generate_context(0, 6)),
+        ),
+        "key2": Node(
+            content=ValueNodeContent("value2"),
+            info=NodeInfo(context=generate_context(0, 6)),
+        ),
+    }
+
+    expected_subtype = Node(
+        content=ValueNodeContent("subtype1"),
+        info=NodeInfo(context=generate_context(0, 6)),
+    )
+
+    parser = runner(source, environment)
+
+    assert parser.unnamed_argument_nodes == expected_unnamed_nodes
+    assert parser.named_argument_nodes == expected_named_nodes
+    assert parser.tag_nodes == []
+    assert parser.subtype == expected_subtype
+
+
+def test_process_arguments_subtype_does_not_overwrite_arguments():
+    environment = Environment()
+    environment.setvar(
+        "mau.parser.subtype_replacements",
+        {"subtype1": {"key1": "value1", "key2": "value2"}},
+    )
+
+    source = "arg1, *subtype1, key1=originalvalue1"
+
+    expected_unnamed_nodes = [
+        Node(
+            content=ValueNodeContent("arg1"),
+            info=NodeInfo(context=generate_context(0, 0)),
+        ),
+    ]
+
+    expected_named_nodes = {
+        "key1": Node(
+            content=ValueNodeContent("originalvalue1"),
+            info=NodeInfo(context=generate_context(0, 17)),
+        ),
+        "key2": Node(
+            content=ValueNodeContent("value2"),
+            info=NodeInfo(context=generate_context(0, 6)),
+        ),
+    }
+
+    expected_subtype = Node(
+        content=ValueNodeContent("subtype1"),
+        info=NodeInfo(context=generate_context(0, 6)),
+    )
+
+    parser = runner(source, environment)
+
+    assert parser.unnamed_argument_nodes == expected_unnamed_nodes
+    assert parser.named_argument_nodes == expected_named_nodes
+    assert parser.tag_nodes == []
+    assert parser.subtype == expected_subtype
 
 
 def test_arguments_empty():

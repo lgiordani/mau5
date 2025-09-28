@@ -254,6 +254,37 @@ class ArgumentsParser(BaseParser):
             # Get the only subtype and remove the leading "*"
             self.subtype = subtypes[0]
 
+        if self.subtype:
+            # Check if the subtype contains
+            # additional named_arguments.
+            subtype_replacements = self.environment.getvar(
+                "mau.parser.subtype_replacements", Environment()
+            ).asdict()
+            subtype_named_arguments = subtype_replacements.get(
+                self.subtype.content.value, {}
+            )
+
+            # We need to add those arguments as nodes
+            # with the same context as the subtype.
+            # However, if the arguments are already there
+            # we must not overwrite them.
+
+            # These are the keys added by the subtype
+            # that are not already in the processed arguments.
+            missing_keys = set(subtype_named_arguments.keys()) - set(
+                self.named_argument_nodes.keys()
+            )
+
+            for key in missing_keys:
+                context = self.subtype.info.context
+                value = subtype_named_arguments[key]
+
+                self.named_argument_nodes[key] = Node(
+                    info=NodeInfo(context=context),
+                    content=ValueNodeContent(value),
+                    parent=self.parent_node,
+                )
+
         # Remove tags and subtype from unnamed arguments.
         self.unnamed_argument_nodes = [
             i for i in self.unnamed_argument_nodes if i not in self.tag_nodes + subtypes
