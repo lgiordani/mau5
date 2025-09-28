@@ -15,7 +15,7 @@ from mau.tokens.token import Token, TokenType
 
 from .buffers.arguments_buffer import ArgumentsBuffer
 from .buffers.control_buffer import ControlBuffer
-from .buffers.title_buffer import TitleBuffer
+from .buffers.children_buffer import ChildrenBuffer
 from .managers.footnotes_manager import FootnotesManager
 from .managers.block_group_manager import BlockGroupManager
 from .managers.header_links_manager import HeaderLinksManager
@@ -29,7 +29,7 @@ from .processors.horizontal_rule import horizontal_rule_processor
 from .processors.include import include_processor
 from .processors.list import list_processor
 from .processors.paragraph import paragraph_processor
-from .processors.title import title_processor
+from .processors.child import child_processor
 from .processors.variable_definition import variable_definition_processor
 
 
@@ -64,7 +64,7 @@ class DocumentParser(BaseParser):
         self.toc_manager: TocManager = TocManager(self.header_unique_id_function)
 
         self.arguments_buffer: ArgumentsBuffer = ArgumentsBuffer()
-        self.title_buffer: TitleBuffer = TitleBuffer()
+        self.children_buffer: ChildrenBuffer = ChildrenBuffer()
         self.control_buffer: ControlBuffer = ControlBuffer()
 
         #     # These are the default block aliases
@@ -108,7 +108,7 @@ class DocumentParser(BaseParser):
             partial(horizontal_rule_processor, self),
             partial(variable_definition_processor, self),
             partial(command_processor, self),
-            partial(title_processor, self),
+            partial(child_processor, self),
             partial(control_processor, self),
             partial(arguments_processor, self),
             partial(header_processor, self),

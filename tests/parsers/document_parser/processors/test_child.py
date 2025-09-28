@@ -2,7 +2,7 @@ from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.document_parser.parser import DocumentParser
-from mau.parsers.document_parser.processors.title import title_processor
+from mau.parsers.document_parser.processors.child import child_processor
 from mau.test_helpers import (
     compare_nodes,
     generate_context,
@@ -15,14 +15,14 @@ init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-def test_title():
-    source = ".Some title"
+def test_child():
+    source = ". Some title"
 
     parser: DocumentParser = init_parser(source)
-    title_processor(parser)
+    child_processor(parser)
 
     compare_nodes(
-        parser.title_buffer.pop(),
+        parser.children_buffer.pop()["title"],
         [
             Node(
                 content=TextNodeContent("Some title"),
@@ -32,14 +32,14 @@ def test_title():
     )
 
 
-def test_title_with_spaces():
+def test_child_with_spaces():
     source = ".   Some title"
 
     parser: DocumentParser = init_parser(source)
-    title_processor(parser)
+    child_processor(parser)
 
     compare_nodes(
-        parser.title_buffer.pop(),
+        parser.children_buffer.pop()["title"],
         [
             Node(
                 content=TextNodeContent("Some title"),

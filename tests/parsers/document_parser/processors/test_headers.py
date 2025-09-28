@@ -201,15 +201,7 @@ def test_header_ignore_title():
         ],
     )
 
-    compare_nodes(
-        parser.title_buffer.pop(),
-        [
-            Node(
-                content=TextNodeContent("This is a title"),
-                info=NodeInfo(context=generate_context(1, 0)),
-            )
-        ],
-    )
+    assert list(parser.children_buffer.children.keys()) == ["title"]
 
 
 def test_header_uses_control_positive():

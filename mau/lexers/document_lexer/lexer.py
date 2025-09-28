@@ -436,12 +436,12 @@ class DocumentLexer(BaseLexer):
 
     def _process_title(self):
         # Detect a title in the form
-        # .TITLE
-        # or
         # . TITLE
+        # or
+        # .role TITLE
 
         match = rematch(
-            r"^(?P<prefix>\.)(?P<whitespace> *)(?P<title>.*)",
+            r"^(?P<prefix>\.[a-z0-9-_]*)(?P<whitespace> *)(?P<title>.*)",
             self._current_line,
         )
 

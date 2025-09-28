@@ -365,8 +365,8 @@ def block_processor(parser: DocumentParser):
         children={"content": []},
     )
 
-    if nodes := parser.title_buffer.pop():
-        node.add_children({"title": nodes})
+    if children := parser.children_buffer.pop():
+        node.add_children(children)
 
     if not content:
         node.info = NodeInfo(context=delimiter.context, **arguments.asdict())

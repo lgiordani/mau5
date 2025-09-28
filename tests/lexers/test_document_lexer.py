@@ -224,13 +224,13 @@ def test_multiple_lines():
 
 
 def test_title():
-    lex = runner(".A title")
+    lex = runner(". A title")
 
     compare_tokens(
         lex.tokens,
         [
             Token(TokenType.TITLE, ".", generate_context(0, 0)),
-            Token(TokenType.TEXT, "A title", generate_context(0, 1)),
+            Token(TokenType.TEXT, "A title", generate_context(0, 2)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
@@ -244,6 +244,19 @@ def test_title_with_space():
         [
             Token(TokenType.TITLE, ".", generate_context(0, 0)),
             Token(TokenType.TEXT, "A title", generate_context(0, 3)),
+            Token(TokenType.EOF, "", generate_context(1, 0)),
+        ],
+    )
+
+
+def test_title_with_role():
+    lex = runner(".some-role A title")
+
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TITLE, ".some-role", generate_context(0, 0)),
+            Token(TokenType.TEXT, "A title", generate_context(0, 11)),
             Token(TokenType.EOF, "", generate_context(1, 0)),
         ],
     )
