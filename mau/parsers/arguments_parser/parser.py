@@ -118,10 +118,6 @@ class ArgumentsParser(BaseParser):
         # Get the token with the key.
         key_token = self.tm.get_token(TokenType.TEXT)
 
-        # The context of the argument is the
-        # context of the key.
-        context = key_token.context
-
         # After a key there should be an equal.
         # If not, this function fails.
         self.tm.get_token(TokenType.LITERAL, "=")
@@ -133,13 +129,13 @@ class ArgumentsParser(BaseParser):
             self.tm.get_token(TokenType.LITERAL, '"')
 
             # Get everything before the next double quotes.
-            value = self.tm.collect_join([Token(TokenType.LITERAL, '"')])
+            token = self.tm.collect_join([Token(TokenType.LITERAL, '"')])
 
             # Read and discard the closing quotes
             self.tm.get_token(TokenType.LITERAL, '"')
         else:
             # Get everything before the comma or EOF.
-            value = self.tm.collect_join([Token(TokenType.LITERAL, ",")])
+            token = self.tm.collect_join([Token(TokenType.LITERAL, ",")])
 
         # The comma is not there after the last argument,
         # so this is in a context manager as it might fail.
@@ -152,9 +148,9 @@ class ArgumentsParser(BaseParser):
 
         # Save the node.
         node = Node(
-            info=NodeInfo(context=context),
+            info=NodeInfo(context=token.context),
             # Remove leading and trailing spaces from the value.
-            content=ValueNodeContent(value.strip()),
+            content=ValueNodeContent(token.value.strip()),
             parent=self.parent_node,
         )
 
@@ -181,22 +177,14 @@ class ArgumentsParser(BaseParser):
             # Read and discard the opening quotes
             self.tm.get_token(TokenType.LITERAL, '"')
 
-            # The context of the argument is the
-            # context of the first token.
-            context = self.tm.peek_token().context
-
             # Get everything before the next double quotes.
-            value = self.tm.collect_join([Token(TokenType.LITERAL, '"')])
+            token = self.tm.collect_join([Token(TokenType.LITERAL, '"')])
 
             # Read and discard the closing quotes
             self.tm.get_token(TokenType.LITERAL, '"')
         else:
-            # The context of the argument is the
-            # context of the first token.
-            context = self.tm.peek_token().context
-
             # Get everything before the comma or EOF.
-            value = self.tm.collect_join([Token(TokenType.LITERAL, ",")])
+            token = self.tm.collect_join([Token(TokenType.LITERAL, ",")])
 
         # The comma is not there after the last argument,
         # so this is in a context manager as it might fail.
@@ -209,8 +197,8 @@ class ArgumentsParser(BaseParser):
 
         # Save the node.
         node = Node(
-            info=NodeInfo(context=context),
-            content=ValueNodeContent(value),
+            info=NodeInfo(context=token.context),
+            content=ValueNodeContent(token.value),
             parent=self.parent_node,
         )
 

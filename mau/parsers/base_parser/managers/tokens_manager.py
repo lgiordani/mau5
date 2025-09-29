@@ -1,6 +1,7 @@
 import logging
 from collections.abc import Callable
 
+from mau.text_buffer.context import Context
 from mau.tokens.token import Token, TokenType
 
 logger = logging.getLogger(__name__)
@@ -245,7 +246,7 @@ class TokensManager:
         stop_tokens: list[Token],
         join_with: str = "",
         preserve_escaped_stop_tokens: bool = False,
-    ) -> str:
+    ) -> Token:
         """
         Collect tokens and join them.
 
@@ -255,11 +256,14 @@ class TokensManager:
         a string of tokens joined with the given characters.
         """
 
-        # Some tokens have value None, so this removes them
-        token_values = [
-            t.value
-            for t in self.collect(stop_tokens, preserve_escaped_stop_tokens)
-            if t.value != ""
-        ]
+        tokens = self.collect(stop_tokens, preserve_escaped_stop_tokens)
 
-        return join_with.join(token_values)
+        # Some tokens have value None, so this removes them
+        token_values = [t.value for t in tokens if t.value != ""]
+        value = join_with.join(token_values)
+
+        start_context = tokens[0].context
+        end_context = tokens[-1].context
+        context = Context.merge_contexts(start_context, end_context)
+
+        return Token(TokenType.TEXT, value, context)

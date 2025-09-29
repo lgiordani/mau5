@@ -18,10 +18,10 @@ def test_normal_text():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TEXT, "Normal", generate_context(0, 0)),
-            Token(TokenType.TEXT, " ", generate_context(0, 6)),
-            Token(TokenType.TEXT, "text", generate_context(0, 7)),
-            Token(TokenType.EOF, "", generate_context(0, 11)),
+            Token(TokenType.TEXT, "Normal", generate_context(0, 0, 0, 6)),
+            Token(TokenType.TEXT, " ", generate_context(0, 6, 0, 7)),
+            Token(TokenType.TEXT, "text", generate_context(0, 7, 0, 11)),
+            Token(TokenType.EOF, "", generate_context(0, 11, 0, 11)),
         ],
     )
 
@@ -32,10 +32,10 @@ def test_underscore():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "_", generate_context(0, 0)),
-            Token(TokenType.TEXT, "underscore", generate_context(0, 1)),
-            Token(TokenType.LITERAL, "_", generate_context(0, 11)),
-            Token(TokenType.EOF, "", generate_context(0, 12)),
+            Token(TokenType.LITERAL, "_", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "underscore", generate_context(0, 1, 0, 11)),
+            Token(TokenType.LITERAL, "_", generate_context(0, 11, 0, 12)),
+            Token(TokenType.EOF, "", generate_context(0, 12, 0, 12)),
         ],
     )
 
@@ -46,10 +46,10 @@ def test_star():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "*", generate_context(0, 0)),
-            Token(TokenType.TEXT, "star", generate_context(0, 1)),
-            Token(TokenType.LITERAL, "*", generate_context(0, 5)),
-            Token(TokenType.EOF, "", generate_context(0, 6)),
+            Token(TokenType.LITERAL, "*", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "star", generate_context(0, 1, 0, 5)),
+            Token(TokenType.LITERAL, "*", generate_context(0, 5, 0, 6)),
+            Token(TokenType.EOF, "", generate_context(0, 6, 0, 6)),
         ],
     )
 
@@ -60,10 +60,10 @@ def test_caret():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "^", generate_context(0, 0)),
-            Token(TokenType.TEXT, "caret", generate_context(0, 1)),
-            Token(TokenType.LITERAL, "^", generate_context(0, 6)),
-            Token(TokenType.EOF, "", generate_context(0, 7)),
+            Token(TokenType.LITERAL, "^", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "caret", generate_context(0, 1, 0, 6)),
+            Token(TokenType.LITERAL, "^", generate_context(0, 6, 0, 7)),
+            Token(TokenType.EOF, "", generate_context(0, 7, 0, 7)),
         ],
     )
 
@@ -74,10 +74,10 @@ def test_tilde():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "~", generate_context(0, 0)),
-            Token(TokenType.TEXT, "tilde", generate_context(0, 1)),
-            Token(TokenType.LITERAL, "~", generate_context(0, 6)),
-            Token(TokenType.EOF, "", generate_context(0, 7)),
+            Token(TokenType.LITERAL, "~", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "tilde", generate_context(0, 1, 0, 6)),
+            Token(TokenType.LITERAL, "~", generate_context(0, 6, 0, 7)),
+            Token(TokenType.EOF, "", generate_context(0, 7, 0, 7)),
         ],
     )
 
@@ -88,10 +88,10 @@ def test_backtick():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "`", generate_context(0, 0)),
-            Token(TokenType.TEXT, "backtick", generate_context(0, 1)),
-            Token(TokenType.LITERAL, "`", generate_context(0, 9)),
-            Token(TokenType.EOF, "", generate_context(0, 10)),
+            Token(TokenType.LITERAL, "`", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "backtick", generate_context(0, 1, 0, 9)),
+            Token(TokenType.LITERAL, "`", generate_context(0, 9, 0, 10)),
+            Token(TokenType.EOF, "", generate_context(0, 10, 0, 10)),
         ],
     )
 
@@ -102,10 +102,10 @@ def test_dollar():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "$", generate_context(0, 0)),
-            Token(TokenType.TEXT, "dollar", generate_context(0, 1)),
-            Token(TokenType.LITERAL, "$", generate_context(0, 7)),
-            Token(TokenType.EOF, "", generate_context(0, 8)),
+            Token(TokenType.LITERAL, "$", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "dollar", generate_context(0, 1, 0, 7)),
+            Token(TokenType.LITERAL, "$", generate_context(0, 7, 0, 8)),
+            Token(TokenType.EOF, "", generate_context(0, 8, 0, 8)),
         ],
     )
 
@@ -116,10 +116,10 @@ def test_percent():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "%", generate_context(0, 0)),
-            Token(TokenType.TEXT, "percent", generate_context(0, 1)),
-            Token(TokenType.LITERAL, "%", generate_context(0, 8)),
-            Token(TokenType.EOF, "", generate_context(0, 9)),
+            Token(TokenType.LITERAL, "%", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "percent", generate_context(0, 1, 0, 8)),
+            Token(TokenType.LITERAL, "%", generate_context(0, 8, 0, 9)),
+            Token(TokenType.EOF, "", generate_context(0, 9, 0, 9)),
         ],
     )
 
@@ -130,10 +130,10 @@ def test_curly_braces():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "{", generate_context(0, 0)),
-            Token(TokenType.TEXT, "curly", generate_context(0, 1)),
-            Token(TokenType.LITERAL, "}", generate_context(0, 6)),
-            Token(TokenType.EOF, "", generate_context(0, 7)),
+            Token(TokenType.LITERAL, "{", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "curly", generate_context(0, 1, 0, 6)),
+            Token(TokenType.LITERAL, "}", generate_context(0, 6, 0, 7)),
+            Token(TokenType.EOF, "", generate_context(0, 7, 0, 7)),
         ],
     )
 
@@ -144,10 +144,10 @@ def test_round_brackets():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "(", generate_context(0, 0)),
-            Token(TokenType.TEXT, "round", generate_context(0, 1)),
-            Token(TokenType.LITERAL, ")", generate_context(0, 6)),
-            Token(TokenType.EOF, "", generate_context(0, 7)),
+            Token(TokenType.LITERAL, "(", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "round", generate_context(0, 1, 0, 6)),
+            Token(TokenType.LITERAL, ")", generate_context(0, 6, 0, 7)),
+            Token(TokenType.EOF, "", generate_context(0, 7, 0, 7)),
         ],
     )
 
@@ -158,10 +158,10 @@ def test_square_brackets():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "[", generate_context(0, 0)),
-            Token(TokenType.TEXT, "square", generate_context(0, 1)),
-            Token(TokenType.LITERAL, "]", generate_context(0, 7)),
-            Token(TokenType.EOF, "", generate_context(0, 8)),
+            Token(TokenType.LITERAL, "[", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "square", generate_context(0, 1, 0, 7)),
+            Token(TokenType.LITERAL, "]", generate_context(0, 7, 0, 8)),
+            Token(TokenType.EOF, "", generate_context(0, 8, 0, 8)),
         ],
     )
 
@@ -172,13 +172,13 @@ def test_macro():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "[", generate_context(0, 0)),
-            Token(TokenType.TEXT, "macro", generate_context(0, 1)),
-            Token(TokenType.LITERAL, "]", generate_context(0, 6)),
-            Token(TokenType.LITERAL, "(", generate_context(0, 7)),
-            Token(TokenType.TEXT, "value1,value2", generate_context(0, 8)),
-            Token(TokenType.LITERAL, ")", generate_context(0, 21)),
-            Token(TokenType.EOF, "", generate_context(0, 22)),
+            Token(TokenType.LITERAL, "[", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "macro", generate_context(0, 1, 0, 6)),
+            Token(TokenType.LITERAL, "]", generate_context(0, 6, 0, 7)),
+            Token(TokenType.LITERAL, "(", generate_context(0, 7, 0, 8)),
+            Token(TokenType.TEXT, "value1,value2", generate_context(0, 8, 0, 21)),
+            Token(TokenType.LITERAL, ")", generate_context(0, 21, 0, 22)),
+            Token(TokenType.EOF, "", generate_context(0, 22, 0, 22)),
         ],
     )
 
@@ -189,13 +189,17 @@ def test_macro_named_arguments():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "[", generate_context(0, 0)),
-            Token(TokenType.TEXT, "macro", generate_context(0, 1)),
-            Token(TokenType.LITERAL, "]", generate_context(0, 6)),
-            Token(TokenType.LITERAL, "(", generate_context(0, 7)),
-            Token(TokenType.TEXT, "attr1=value1,attr2=value2", generate_context(0, 8)),
-            Token(TokenType.LITERAL, ")", generate_context(0, 33)),
-            Token(TokenType.EOF, "", generate_context(0, 34)),
+            Token(TokenType.LITERAL, "[", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "macro", generate_context(0, 1, 0, 6)),
+            Token(TokenType.LITERAL, "]", generate_context(0, 6, 0, 7)),
+            Token(TokenType.LITERAL, "(", generate_context(0, 7, 0, 8)),
+            Token(
+                TokenType.TEXT,
+                "attr1=value1,attr2=value2",
+                generate_context(0, 8, 0, 33),
+            ),
+            Token(TokenType.LITERAL, ")", generate_context(0, 33, 0, 34)),
+            Token(TokenType.EOF, "", generate_context(0, 34, 0, 34)),
         ],
     )
 
@@ -206,12 +210,12 @@ def test_escaped_underscore():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "\\", generate_context(0, 0)),
-            Token(TokenType.LITERAL, "_", generate_context(0, 1)),
-            Token(TokenType.TEXT, "underscore", generate_context(0, 2)),
-            Token(TokenType.LITERAL, "\\", generate_context(0, 12)),
-            Token(TokenType.LITERAL, "_", generate_context(0, 13)),
-            Token(TokenType.EOF, "", generate_context(0, 14)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
+            Token(TokenType.LITERAL, "_", generate_context(0, 1, 0, 2)),
+            Token(TokenType.TEXT, "underscore", generate_context(0, 2, 0, 12)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 12, 0, 13)),
+            Token(TokenType.LITERAL, "_", generate_context(0, 13, 0, 14)),
+            Token(TokenType.EOF, "", generate_context(0, 14, 0, 14)),
         ],
     )
 
@@ -222,12 +226,12 @@ def test_escaped_square_brackets():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "\\", generate_context(0, 0)),
-            Token(TokenType.LITERAL, "[", generate_context(0, 1)),
-            Token(TokenType.TEXT, "square", generate_context(0, 2)),
-            Token(TokenType.LITERAL, "\\", generate_context(0, 8)),
-            Token(TokenType.LITERAL, "]", generate_context(0, 9)),
-            Token(TokenType.EOF, "", generate_context(0, 10)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
+            Token(TokenType.LITERAL, "[", generate_context(0, 1, 0, 2)),
+            Token(TokenType.TEXT, "square", generate_context(0, 2, 0, 8)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 8, 0, 9)),
+            Token(TokenType.LITERAL, "]", generate_context(0, 9, 0, 10)),
+            Token(TokenType.EOF, "", generate_context(0, 10, 0, 10)),
         ],
     )
 
@@ -238,12 +242,12 @@ def test_escaped_round_brackets():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "\\", generate_context(0, 0)),
-            Token(TokenType.LITERAL, "(", generate_context(0, 1)),
-            Token(TokenType.TEXT, "round", generate_context(0, 2)),
-            Token(TokenType.LITERAL, "\\", generate_context(0, 7)),
-            Token(TokenType.LITERAL, ")", generate_context(0, 8)),
-            Token(TokenType.EOF, "", generate_context(0, 9)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
+            Token(TokenType.LITERAL, "(", generate_context(0, 1, 0, 2)),
+            Token(TokenType.TEXT, "round", generate_context(0, 2, 0, 7)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 7, 0, 8)),
+            Token(TokenType.LITERAL, ")", generate_context(0, 8, 0, 9)),
+            Token(TokenType.EOF, "", generate_context(0, 9, 0, 9)),
         ],
     )
 
@@ -254,12 +258,12 @@ def test_escaped_curly_braces():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "\\", generate_context(0, 0)),
-            Token(TokenType.LITERAL, "{", generate_context(0, 1)),
-            Token(TokenType.TEXT, "curly", generate_context(0, 2)),
-            Token(TokenType.LITERAL, "\\", generate_context(0, 7)),
-            Token(TokenType.LITERAL, "}", generate_context(0, 8)),
-            Token(TokenType.EOF, "", generate_context(0, 9)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
+            Token(TokenType.LITERAL, "{", generate_context(0, 1, 0, 2)),
+            Token(TokenType.TEXT, "curly", generate_context(0, 2, 0, 7)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 7, 0, 8)),
+            Token(TokenType.LITERAL, "}", generate_context(0, 8, 0, 9)),
+            Token(TokenType.EOF, "", generate_context(0, 9, 0, 9)),
         ],
     )
 
@@ -270,12 +274,12 @@ def test_escaped_quotes():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "\\", generate_context(0, 0)),
-            Token(TokenType.LITERAL, '"', generate_context(0, 1)),
-            Token(TokenType.TEXT, "quotes", generate_context(0, 2)),
-            Token(TokenType.LITERAL, "\\", generate_context(0, 8)),
-            Token(TokenType.LITERAL, '"', generate_context(0, 9)),
-            Token(TokenType.EOF, "", generate_context(0, 10)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
+            Token(TokenType.LITERAL, '"', generate_context(0, 1, 0, 2)),
+            Token(TokenType.TEXT, "quotes", generate_context(0, 2, 0, 8)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 8, 0, 9)),
+            Token(TokenType.LITERAL, '"', generate_context(0, 9, 0, 10)),
+            Token(TokenType.EOF, "", generate_context(0, 10, 0, 10)),
         ],
     )
 
@@ -286,12 +290,12 @@ def test_escaped_backticks():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "\\", generate_context(0, 0)),
-            Token(TokenType.LITERAL, "`", generate_context(0, 1)),
-            Token(TokenType.TEXT, "backticks", generate_context(0, 2)),
-            Token(TokenType.LITERAL, "\\", generate_context(0, 11)),
-            Token(TokenType.LITERAL, "`", generate_context(0, 12)),
-            Token(TokenType.EOF, "", generate_context(0, 13)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
+            Token(TokenType.LITERAL, "`", generate_context(0, 1, 0, 2)),
+            Token(TokenType.TEXT, "backticks", generate_context(0, 2, 0, 11)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 11, 0, 12)),
+            Token(TokenType.LITERAL, "`", generate_context(0, 12, 0, 13)),
+            Token(TokenType.EOF, "", generate_context(0, 13, 0, 13)),
         ],
     )
 
@@ -302,12 +306,12 @@ def test_escaped_dollar():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "\\", generate_context(0, 0)),
-            Token(TokenType.LITERAL, "$", generate_context(0, 1)),
-            Token(TokenType.TEXT, "dollar", generate_context(0, 2)),
-            Token(TokenType.LITERAL, "\\", generate_context(0, 8)),
-            Token(TokenType.LITERAL, "$", generate_context(0, 9)),
-            Token(TokenType.EOF, "", generate_context(0, 10)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
+            Token(TokenType.LITERAL, "$", generate_context(0, 1, 0, 2)),
+            Token(TokenType.TEXT, "dollar", generate_context(0, 2, 0, 8)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 8, 0, 9)),
+            Token(TokenType.LITERAL, "$", generate_context(0, 9, 0, 10)),
+            Token(TokenType.EOF, "", generate_context(0, 10, 0, 10)),
         ],
     )
 
@@ -318,11 +322,11 @@ def test_escaped_percent():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LITERAL, "\\", generate_context(0, 0)),
-            Token(TokenType.LITERAL, "%", generate_context(0, 1)),
-            Token(TokenType.TEXT, "percent", generate_context(0, 2)),
-            Token(TokenType.LITERAL, "\\", generate_context(0, 9)),
-            Token(TokenType.LITERAL, "%", generate_context(0, 10)),
-            Token(TokenType.EOF, "", generate_context(0, 11)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
+            Token(TokenType.LITERAL, "%", generate_context(0, 1, 0, 2)),
+            Token(TokenType.TEXT, "percent", generate_context(0, 2, 0, 9)),
+            Token(TokenType.LITERAL, "\\", generate_context(0, 9, 0, 10)),
+            Token(TokenType.LITERAL, "%", generate_context(0, 10, 0, 11)),
+            Token(TokenType.EOF, "", generate_context(0, 11, 0, 11)),
         ],
     )

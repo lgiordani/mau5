@@ -18,7 +18,9 @@ def test_single_unnamed_argument_no_spaces():
     expected_nodes = [
         Node(
             content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(
+                context=generate_context(0, 0, 0, 6),
+            ),
         )
     ]
 
@@ -36,7 +38,7 @@ def test_single_unnamed_argument_with_spaces():
     expected_nodes = [
         Node(
             content=ValueNodeContent("value with spaces"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 17)),
         )
     ]
 
@@ -54,11 +56,11 @@ def test_multiple_unnamed_arguments_no_spaces():
     expected_nodes = [
         Node(
             content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 6)),
         ),
         Node(
             content=ValueNodeContent("value2"),
-            info=NodeInfo(context=generate_context(0, 7)),
+            info=NodeInfo(context=generate_context(0, 7, 0, 13)),
         ),
     ]
 
@@ -76,11 +78,11 @@ def test_multiple_unnamed_arguments_with_spaces():
     expected_nodes = [
         Node(
             content=ValueNodeContent("value1 with spaces"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 18)),
         ),
         Node(
             content=ValueNodeContent("value2 with more spaces"),
-            info=NodeInfo(context=generate_context(0, 19)),
+            info=NodeInfo(context=generate_context(0, 19, 0, 42)),
         ),
     ]
 
@@ -98,11 +100,11 @@ def test_multiple_unnamed_arguments_space_after_comma_is_removed():
     expected_nodes = [
         Node(
             content=ValueNodeContent("value1 with spaces"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 18)),
         ),
         Node(
             content=ValueNodeContent("value2 with more spaces"),
-            info=NodeInfo(context=generate_context(0, 20)),
+            info=NodeInfo(context=generate_context(0, 20, 0, 43)),
         ),
     ]
 
@@ -120,11 +122,11 @@ def test_multiple_unnamed_arguments_multiple_spaces_after_comma_is_removed():
     expected_nodes = [
         Node(
             content=ValueNodeContent("value1 with spaces"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 18)),
         ),
         Node(
             content=ValueNodeContent("value2 with more spaces"),
-            info=NodeInfo(context=generate_context(0, 23)),
+            info=NodeInfo(context=generate_context(0, 23, 0, 46)),
         ),
     ]
 
@@ -142,7 +144,7 @@ def test_single_unnamed_argument_with_quotes_no_spaces():
     expected_nodes = [
         Node(
             content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 1)),
+            info=NodeInfo(context=generate_context(0, 1, 0, 7)),
         )
     ]
 
@@ -160,7 +162,7 @@ def test_single_unnamed_argument_with_quotes_with_spaces():
     expected_nodes = [
         Node(
             content=ValueNodeContent("value with spaces"),
-            info=NodeInfo(context=generate_context(0, 1)),
+            info=NodeInfo(context=generate_context(0, 1, 0, 18)),
         )
     ]
 
@@ -178,7 +180,7 @@ def test_single_unnamed_argument_comma_is_ignored_between_quotes():
     expected_nodes = [
         Node(
             content=ValueNodeContent("value1,value2"),
-            info=NodeInfo(context=generate_context(0, 1)),
+            info=NodeInfo(context=generate_context(0, 1, 0, 14)),
         )
     ]
 
@@ -196,11 +198,11 @@ def test_multiple_unnamed_arguments_with_quotes_no_spaces():
     expected_nodes = [
         Node(
             content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 1)),
+            info=NodeInfo(context=generate_context(0, 1, 0, 7)),
         ),
         Node(
             content=ValueNodeContent("value2"),
-            info=NodeInfo(context=generate_context(0, 10)),
+            info=NodeInfo(context=generate_context(0, 10, 0, 16)),
         ),
     ]
 
@@ -218,11 +220,11 @@ def test_multiple_unnamed_arguments_with_quotes_with_spaces():
     expected_nodes = [
         Node(
             content=ValueNodeContent("value1 with spaces"),
-            info=NodeInfo(context=generate_context(0, 1)),
+            info=NodeInfo(context=generate_context(0, 1, 0, 19)),
         ),
         Node(
             content=ValueNodeContent("value2 with more spaces"),
-            info=NodeInfo(context=generate_context(0, 22)),
+            info=NodeInfo(context=generate_context(0, 22, 0, 45)),
         ),
     ]
 
@@ -242,7 +244,7 @@ def test_single_unnamed_argument_with_non_delimiting_quotes():
             content=ValueNodeContent(
                 'value "with quotes"',
             ),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 19)),
         )
     ]
 
@@ -262,7 +264,7 @@ def test_single_unnamed_argument_with_escaped_quotes():
             content=ValueNodeContent(
                 'value "with escaped quotes"',
             ),
-            info=NodeInfo(context=generate_context(0, 1)),
+            info=NodeInfo(context=generate_context(0, 1, 0, 30)),
         )
     ]
 
@@ -280,7 +282,7 @@ def test_single_named_argument():
     expected_nodes = {
         "name": Node(
             content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 5, 0, 11)),
         ),
     }
 
@@ -298,7 +300,7 @@ def test_single_named_argument_with_spaces():
     expected_nodes = {
         "name": Node(
             content=ValueNodeContent("value with spaces"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 5, 0, 22)),
         ),
     }
 
@@ -316,11 +318,11 @@ def test_multiple_named_arguments():
     expected_nodes = {
         "name1": Node(
             content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 6, 0, 12)),
         ),
         "name2": Node(
             content=ValueNodeContent("value2"),
-            info=NodeInfo(context=generate_context(0, 13)),
+            info=NodeInfo(context=generate_context(0, 19, 0, 25)),
         ),
     }
 
@@ -338,11 +340,11 @@ def test_multiple_named_arguments_with_spaces():
     expected_nodes = {
         "name1": Node(
             content=ValueNodeContent("value1 with spaces"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 6, 0, 24)),
         ),
         "name2": Node(
             content=ValueNodeContent("value2 with spaces"),
-            info=NodeInfo(context=generate_context(0, 25)),
+            info=NodeInfo(context=generate_context(0, 31, 0, 49)),
         ),
     }
 
@@ -360,11 +362,11 @@ def test_multiple_named_arguments_space_after_comma_is_removed():
     expected_nodes = {
         "name1": Node(
             content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 6, 0, 12)),
         ),
         "name2": Node(
             content=ValueNodeContent("value2"),
-            info=NodeInfo(context=generate_context(0, 14)),
+            info=NodeInfo(context=generate_context(0, 20, 0, 26)),
         ),
     }
 
@@ -382,11 +384,11 @@ def test_multiple_named_arguments_multiple_spaces_after_comma_is_removed():
     expected_nodes = {
         "name1": Node(
             content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 6, 0, 12)),
         ),
         "name2": Node(
             content=ValueNodeContent("value2"),
-            info=NodeInfo(context=generate_context(0, 17)),
+            info=NodeInfo(context=generate_context(0, 23, 0, 29)),
         ),
     }
 
@@ -404,7 +406,7 @@ def test_single_named_argument_with_quotes_no_spaces():
     expected_nodes = {
         "name": Node(
             content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 6, 0, 12)),
         )
     }
 
@@ -422,7 +424,7 @@ def test_single_named_argument_with_quotes_with_spaces():
     expected_nodes = {
         "name": Node(
             content=ValueNodeContent("value with spaces"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 6, 0, 23)),
         )
     }
 
@@ -440,7 +442,7 @@ def test_single_named_argument_comma_is_ignored_between_quotes():
     expected_nodes = {
         "name": Node(
             content=ValueNodeContent("value1,value2"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 6, 0, 19)),
         )
     }
 
@@ -458,11 +460,11 @@ def test_multiple_named_arguments_with_quotes_no_spaces():
     expected_nodes = {
         "name1": Node(
             content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 7, 0, 13)),
         ),
         "name2": Node(
             content=ValueNodeContent("value2"),
-            info=NodeInfo(context=generate_context(0, 15)),
+            info=NodeInfo(context=generate_context(0, 22, 0, 28)),
         ),
     }
 
@@ -480,11 +482,11 @@ def test_multiple_named_arguments_with_quotes_with_spaces():
     expected_nodes = {
         "name1": Node(
             content=ValueNodeContent("value1 with spaces"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 7, 0, 25)),
         ),
         "name2": Node(
             content=ValueNodeContent("value2 with more spaces"),
-            info=NodeInfo(context=generate_context(0, 27)),
+            info=NodeInfo(context=generate_context(0, 34, 0, 57)),
         ),
     }
 
@@ -501,7 +503,7 @@ def test_single_named_argument_with_non_delimiting_quotes():
     expected_nodes = {
         "name": Node(
             content=ValueNodeContent('value "with quotes"'),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 5, 0, 24)),
         )
     }
 
@@ -519,7 +521,7 @@ def test_single_named_argument_with_escaped_quotes():
     expected_nodes = {
         "name": Node(
             content=ValueNodeContent('value "with escaped quotes"'),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 6, 0, 35)),
         )
     }
 
@@ -537,14 +539,14 @@ def test_unnamed_and_named_arguments():
     expected_unnamed_nodes = [
         Node(
             content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 6)),
         )
     ]
 
     expected_named_nodes = {
         "name": Node(
             content=ValueNodeContent("value2"),
-            info=NodeInfo(context=generate_context(0, 8)),
+            info=NodeInfo(context=generate_context(0, 13, 0, 19)),
         ),
     }
 
@@ -569,13 +571,13 @@ def test_process_arguments_subtype():
     expected_unnamed_nodes = [
         Node(
             content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 6)),
         ),
     ]
 
     expected_subtype = Node(
         content=ValueNodeContent("value2"),
-        info=NodeInfo(context=generate_context(0, 8)),
+        info=NodeInfo(context=generate_context(0, 8, 0, 15)),
     )
 
     parser = runner(source)
@@ -592,21 +594,21 @@ def test_process_arguments_tags():
     expected_unnamed_nodes = [
         Node(
             content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 6)),
         ),
         Node(
             content=ValueNodeContent("value2"),
-            info=NodeInfo(context=generate_context(0, 15)),
+            info=NodeInfo(context=generate_context(0, 15, 0, 21)),
         ),
     ]
     expected_tag_nodes = [
         Node(
             content=ValueNodeContent("tag1"),
-            info=NodeInfo(context=generate_context(0, 8)),
+            info=NodeInfo(context=generate_context(0, 8, 0, 13)),
         ),
         Node(
             content=ValueNodeContent("tag2"),
-            info=NodeInfo(context=generate_context(0, 23)),
+            info=NodeInfo(context=generate_context(0, 23, 0, 28)),
         ),
     ]
 
@@ -647,24 +649,24 @@ def test_process_arguments_subtype_replacement():
     expected_unnamed_nodes = [
         Node(
             content=ValueNodeContent("arg1"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 4)),
         ),
     ]
 
     expected_named_nodes = {
         "key1": Node(
             content=ValueNodeContent("value1"),
-            info=NodeInfo(context=generate_context(0, 6)),
+            info=NodeInfo(context=generate_context(0, 6, 0, 15)),
         ),
         "key2": Node(
             content=ValueNodeContent("value2"),
-            info=NodeInfo(context=generate_context(0, 6)),
+            info=NodeInfo(context=generate_context(0, 6, 0, 15)),
         ),
     }
 
     expected_subtype = Node(
         content=ValueNodeContent("subtype1"),
-        info=NodeInfo(context=generate_context(0, 6)),
+        info=NodeInfo(context=generate_context(0, 6, 0, 15)),
     )
 
     parser = runner(source, environment)
@@ -687,24 +689,24 @@ def test_process_arguments_subtype_does_not_overwrite_arguments():
     expected_unnamed_nodes = [
         Node(
             content=ValueNodeContent("arg1"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 4)),
         ),
     ]
 
     expected_named_nodes = {
         "key1": Node(
             content=ValueNodeContent("originalvalue1"),
-            info=NodeInfo(context=generate_context(0, 17)),
+            info=NodeInfo(context=generate_context(0, 22, 0, 36)),
         ),
         "key2": Node(
             content=ValueNodeContent("value2"),
-            info=NodeInfo(context=generate_context(0, 6)),
+            info=NodeInfo(context=generate_context(0, 6, 0, 15)),
         ),
     }
 
     expected_subtype = Node(
         content=ValueNodeContent("subtype1"),
-        info=NodeInfo(context=generate_context(0, 6)),
+        info=NodeInfo(context=generate_context(0, 6, 0, 15)),
     )
 
     parser = runner(source, environment)
@@ -819,17 +821,17 @@ def test_parser_set_names(mock_set_names):
         [
             Node(
                 content=ValueNodeContent("value1"),
-                info=NodeInfo(context=generate_context(0, 0)),
+                info=NodeInfo(context=generate_context(0, 0, 0, 6)),
             ),
             Node(
                 content=ValueNodeContent("value2"),
-                info=NodeInfo(context=generate_context(0, 8)),
+                info=NodeInfo(context=generate_context(0, 8, 0, 14)),
             ),
         ],
         {
             "key3": Node(
                 content=ValueNodeContent("value3"),
-                info=NodeInfo(context=generate_context(0, 16)),
+                info=NodeInfo(context=generate_context(0, 21, 0, 27)),
             ),
         },
         ["attr1", "attr2"],

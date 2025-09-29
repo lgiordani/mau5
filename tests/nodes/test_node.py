@@ -6,7 +6,7 @@ from mau.test_helpers import generate_context
 
 def test_info():
     info = NodeInfo(
-        context=generate_context(0, 0),
+        context=generate_context(0, 0, 0, 0),
         unnamed_args=["arg1"],
         named_args={"key1": "value1"},
         tags=["tag1"],
@@ -14,19 +14,12 @@ def test_info():
     )
 
     assert info.asdict() == {
-        "context": generate_context(0, 0),
+        "context": generate_context(0, 0, 0, 0),
         "unnamed_args": ["arg1"],
         "named_args": {"key1": "value1"},
         "tags": ["tag1"],
         "subtype": "subtype1",
     }
-
-
-def test_info_set_context():
-    info = NodeInfo()
-    info.set_context(generate_context(0, 0))
-
-    assert info.context == generate_context(0, 0)
 
 
 def test_node():

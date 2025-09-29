@@ -119,7 +119,7 @@ class DocumentLexer(BaseLexer):
         self._nextline()
 
         # Get the context of the next piece of text.
-        context = self._context
+        context = self._context.clone()
 
         # We need to collect all text lines
         # contained between two delimiters.
@@ -144,10 +144,20 @@ class DocumentLexer(BaseLexer):
         logger.debug("Found BLOCK closing at %s", self._context)
 
         if text_lines:
+            # End of the block context.
+            context.end_line += len(text_lines) - 1
+            context.end_column += len(text_lines[-1])
+
             content = "\n".join(text_lines)
             tokens.append(Token(TokenType.TEXT, content, context))
 
-        tokens.append(Token(TokenType.BLOCK, self._current_line, self._context))
+        closing_delimiter = self._create_token_and_skip(
+            TokenType.BLOCK, self._current_line
+        )
+
+        tokens.append(
+            Token(TokenType.BLOCK, self._current_line, closing_delimiter.context)
+        )
         self._nextline()
 
         logger.debug(tokens)

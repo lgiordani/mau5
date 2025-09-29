@@ -23,8 +23,10 @@ def compare_nodes(nodes_left, nodes_right):
     assert [i.asdict() for i in nodes_left] == [i.asdict() for i in nodes_right]
 
 
-def generate_context(line: int, column: int):
-    return Context(line, column, TEST_CONTEXT_SOURCE)
+def generate_context(
+    line: int, column: int, end_line: int = 0, end_column: int = 0
+):  # TODO remove the default values
+    return Context(line, column, end_line, end_column, TEST_CONTEXT_SOURCE)
 
 
 def init_lexer_factory(lexer_class):

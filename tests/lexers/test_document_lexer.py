@@ -26,8 +26,8 @@ def test_horizontal_rule():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.HORIZONTAL_RULE, "---", generate_context(0, 0)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.HORIZONTAL_RULE, "---", generate_context(0, 0, 0, 3)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -38,8 +38,8 @@ def test_escape_line():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TEXT, r"\[name]", generate_context(0, 0)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.TEXT, r"\[name]", generate_context(0, 0, 0, 7)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -50,8 +50,8 @@ def test_escape_line_beginning_with_backslash():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TEXT, r"\\[name]", generate_context(0, 0)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.TEXT, r"\\[name]", generate_context(0, 0, 0, 8)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -62,10 +62,10 @@ def test_arguments():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.ARGUMENTS, "[", generate_context(0, 0)),
-            Token(TokenType.TEXT, "name", generate_context(0, 1)),
-            Token(TokenType.LITERAL, "]", generate_context(0, 5)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.ARGUMENTS, "[", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "name", generate_context(0, 1, 0, 5)),
+            Token(TokenType.LITERAL, "]", generate_context(0, 5, 0, 6)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -76,8 +76,8 @@ def test_arguments_no_closing_bracket():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TEXT, "[name", generate_context(0, 0)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.TEXT, "[name", generate_context(0, 0, 0, 5)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -88,8 +88,8 @@ def test_square_brackets_in_text():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TEXT, "Not [arguments]", generate_context(0, 0)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.TEXT, "Not [arguments]", generate_context(0, 0, 0, 15)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -100,8 +100,8 @@ def test_square_brackets_at_the_beginning():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TEXT, "[not] arguments", generate_context(0, 0)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.TEXT, "[not] arguments", generate_context(0, 0, 0, 15)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -112,11 +112,11 @@ def test_variable_definition():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.VARIABLE, ":", generate_context(0, 0)),
-            Token(TokenType.TEXT, "variable", generate_context(0, 1)),
-            Token(TokenType.LITERAL, ":", generate_context(0, 9)),
-            Token(TokenType.TEXT, "value123", generate_context(0, 10)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.VARIABLE, ":", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "variable", generate_context(0, 1, 0, 9)),
+            Token(TokenType.LITERAL, ":", generate_context(0, 9, 0, 10)),
+            Token(TokenType.TEXT, "value123", generate_context(0, 10, 0, 18)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -127,9 +127,9 @@ def test_variable_definition_without_arguments():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.VARIABLE, ":", generate_context(0, 0)),
-            Token(TokenType.TEXT, "variable", generate_context(0, 1)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.VARIABLE, ":", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "variable", generate_context(0, 1, 0, 9)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -140,9 +140,9 @@ def test_variable_flag_true():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.VARIABLE, ":", generate_context(0, 0)),
-            Token(TokenType.TEXT, "+variable", generate_context(0, 1)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.VARIABLE, ":", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "+variable", generate_context(0, 1, 0, 10)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -153,9 +153,9 @@ def test_variable_flag_false():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.VARIABLE, ":", generate_context(0, 0)),
-            Token(TokenType.TEXT, "-variable", generate_context(0, 1)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.VARIABLE, ":", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "-variable", generate_context(0, 1, 0, 10)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -166,8 +166,8 @@ def test_variable_marker_in_text():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TEXT, "Not a :variable:", generate_context(0, 0)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.TEXT, "Not a :variable:", generate_context(0, 0, 0, 16)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -178,8 +178,8 @@ def test_variable_marker_with_space():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TEXT, ": not a variable:", generate_context(0, 0)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.TEXT, ": not a variable:", generate_context(0, 0, 0, 17)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -190,11 +190,11 @@ def test_variable_definition_accepted_characters():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.VARIABLE, ":", generate_context(0, 0)),
-            Token(TokenType.TEXT, "abcAB.C0123-_", generate_context(0, 1)),
-            Token(TokenType.LITERAL, ":", generate_context(0, 14)),
-            Token(TokenType.TEXT, "value123", generate_context(0, 15)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.VARIABLE, ":", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "abcAB.C0123-_", generate_context(0, 1, 0, 14)),
+            Token(TokenType.LITERAL, ":", generate_context(0, 14, 0, 15)),
+            Token(TokenType.TEXT, "value123", generate_context(0, 15, 0, 23)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -214,11 +214,15 @@ def test_multiple_lines():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TEXT, "This is text", generate_context(0, 0)),
-            Token(TokenType.TEXT, "split into multiple lines", generate_context(1, 0)),
-            Token(TokenType.EOL, "", generate_context(2, 0)),
-            Token(TokenType.TEXT, "with an empty line", generate_context(3, 0)),
-            Token(TokenType.EOF, "", generate_context(4, 0)),
+            Token(TokenType.TEXT, "This is text", generate_context(0, 0, 0, 12)),
+            Token(
+                TokenType.TEXT,
+                "split into multiple lines",
+                generate_context(1, 0, 1, 25),
+            ),
+            Token(TokenType.EOL, "", generate_context(2, 0, 2, 0)),
+            Token(TokenType.TEXT, "with an empty line", generate_context(3, 0, 3, 18)),
+            Token(TokenType.EOF, "", generate_context(4, 0, 4, 0)),
         ],
     )
 
@@ -229,9 +233,9 @@ def test_title():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TITLE, ".", generate_context(0, 0)),
-            Token(TokenType.TEXT, "A title", generate_context(0, 2)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.TITLE, ".", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "A title", generate_context(0, 2, 0, 9)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -242,9 +246,9 @@ def test_title_with_space():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TITLE, ".", generate_context(0, 0)),
-            Token(TokenType.TEXT, "A title", generate_context(0, 3)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.TITLE, ".", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "A title", generate_context(0, 3, 0, 10)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -255,9 +259,9 @@ def test_title_with_role():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TITLE, ".some-role", generate_context(0, 0)),
-            Token(TokenType.TEXT, "A title", generate_context(0, 11)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.TITLE, ".some-role", generate_context(0, 0, 0, 10)),
+            Token(TokenType.TEXT, "A title", generate_context(0, 11, 0, 18)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -268,11 +272,11 @@ def test_command():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.COMMAND, "::", generate_context(0, 0)),
-            Token(TokenType.TEXT, "command", generate_context(0, 2)),
-            Token(TokenType.LITERAL, ":", generate_context(0, 9)),
-            Token(TokenType.TEXT, "arg0,arg1", generate_context(0, 10)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.COMMAND, "::", generate_context(0, 0, 0, 2)),
+            Token(TokenType.TEXT, "command", generate_context(0, 2, 0, 9)),
+            Token(TokenType.LITERAL, ":", generate_context(0, 9, 0, 10)),
+            Token(TokenType.TEXT, "arg0,arg1", generate_context(0, 10, 0, 19)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -283,9 +287,9 @@ def test_command_without_arguments():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.COMMAND, "::", generate_context(0, 0)),
-            Token(TokenType.TEXT, "command", generate_context(0, 2)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.COMMAND, "::", generate_context(0, 0, 0, 2)),
+            Token(TokenType.TEXT, "command", generate_context(0, 2, 0, 9)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -296,9 +300,9 @@ def test_command_with_space():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.COMMAND, "::", generate_context(0, 0)),
-            Token(TokenType.TEXT, "command", generate_context(0, 4)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.COMMAND, "::", generate_context(0, 0, 0, 2)),
+            Token(TokenType.TEXT, "command", generate_context(0, 4, 0, 11)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -309,7 +313,7 @@ def test_comment():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -330,7 +334,7 @@ def test_multiline_comment():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.EOF, "", generate_context(5, 0)),
+            Token(TokenType.EOF, "", generate_context(5, 0, 5, 0)),
         ],
     )
 
@@ -346,11 +350,11 @@ def test_include_content():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.INCLUDE, "<<", generate_context(0, 0)),
-            Token(TokenType.TEXT, "type", generate_context(0, 2)),
-            Token(TokenType.LITERAL, ":", generate_context(0, 6)),
-            Token(TokenType.TEXT, "/path/to/it.jpg", generate_context(0, 7)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.INCLUDE, "<<", generate_context(0, 0, 0, 2)),
+            Token(TokenType.TEXT, "type", generate_context(0, 2, 0, 6)),
+            Token(TokenType.LITERAL, ":", generate_context(0, 6, 0, 7)),
+            Token(TokenType.TEXT, "/path/to/it.jpg", generate_context(0, 7, 0, 22)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -361,9 +365,9 @@ def test_include_content_without_arguments():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.INCLUDE, "<<", generate_context(0, 0)),
-            Token(TokenType.TEXT, "type", generate_context(0, 2)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.INCLUDE, "<<", generate_context(0, 0, 0, 2)),
+            Token(TokenType.TEXT, "type", generate_context(0, 2, 0, 6)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -374,11 +378,11 @@ def test_include_content_with_space():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.INCLUDE, "<<", generate_context(0, 0)),
-            Token(TokenType.TEXT, "type", generate_context(0, 4)),
-            Token(TokenType.LITERAL, ":", generate_context(0, 8)),
-            Token(TokenType.TEXT, "/path/to/it.jpg", generate_context(0, 9)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.INCLUDE, "<<", generate_context(0, 0, 0, 2)),
+            Token(TokenType.TEXT, "type", generate_context(0, 4, 0, 8)),
+            Token(TokenType.LITERAL, ":", generate_context(0, 8, 0, 9)),
+            Token(TokenType.TEXT, "/path/to/it.jpg", generate_context(0, 9, 0, 24)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -389,9 +393,9 @@ def test_unordered_list():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LIST, "*", generate_context(0, 0)),
-            Token(TokenType.TEXT, "Item", generate_context(0, 2)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.LIST, "*", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "Item", generate_context(0, 2, 0, 6)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -405,9 +409,9 @@ def test_unordered_list_leading_space():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LIST, "*", generate_context(0, 2)),
-            Token(TokenType.TEXT, "Item", generate_context(0, 4)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.LIST, "*", generate_context(0, 2, 0, 3)),
+            Token(TokenType.TEXT, "Item", generate_context(0, 4, 0, 8)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -418,9 +422,9 @@ def test_unordered_list_trailing_space():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LIST, "*", generate_context(0, 0)),
-            Token(TokenType.TEXT, "Item", generate_context(0, 3)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.LIST, "*", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "Item", generate_context(0, 3, 0, 7)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -431,9 +435,9 @@ def test_unordered_list_multiple_stars():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LIST, "***", generate_context(0, 0)),
-            Token(TokenType.TEXT, "Item", generate_context(0, 4)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.LIST, "***", generate_context(0, 0, 0, 3)),
+            Token(TokenType.TEXT, "Item", generate_context(0, 4, 0, 8)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -444,9 +448,9 @@ def test_ordered_list():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LIST, "#", generate_context(0, 0)),
-            Token(TokenType.TEXT, "Item", generate_context(0, 2)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.LIST, "#", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "Item", generate_context(0, 2, 0, 6)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -457,9 +461,9 @@ def test_ordered_list_multiple_stars():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.LIST, "###", generate_context(0, 0)),
-            Token(TokenType.TEXT, "Item", generate_context(0, 4)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.LIST, "###", generate_context(0, 0, 0, 3)),
+            Token(TokenType.TEXT, "Item", generate_context(0, 4, 0, 8)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -470,9 +474,9 @@ def test_header():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.HEADER, "=", generate_context(0, 0)),
-            Token(TokenType.TEXT, "Header", generate_context(0, 1)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.HEADER, "=", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "Header", generate_context(0, 1, 0, 7)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -483,9 +487,9 @@ def test_header_with_space():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.HEADER, "=", generate_context(0, 0)),
-            Token(TokenType.TEXT, "Header", generate_context(0, 3)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.HEADER, "=", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "Header", generate_context(0, 3, 0, 9)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -496,8 +500,8 @@ def test_empty_header():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TEXT, "=", generate_context(0, 0)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.TEXT, "=", generate_context(0, 0, 0, 1)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -508,9 +512,9 @@ def test_multiple_header_markers():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.HEADER, "===", generate_context(0, 0)),
-            Token(TokenType.TEXT, "Header", generate_context(0, 4)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.HEADER, "===", generate_context(0, 0, 0, 3)),
+            Token(TokenType.TEXT, "Header", generate_context(0, 4, 0, 10)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -521,9 +525,9 @@ def test_header_marker_in_header_text():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.HEADER, "=", generate_context(0, 0)),
-            Token(TokenType.TEXT, "a=b", generate_context(0, 2)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.HEADER, "=", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "a=b", generate_context(0, 2, 0, 5)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -535,9 +539,11 @@ def test_header_markers_in_text():
         lex.tokens,
         [
             Token(
-                TokenType.TEXT, "Definitely not a === header", generate_context(0, 0)
+                TokenType.TEXT,
+                "Definitely not a === header",
+                generate_context(0, 0, 0, 27),
             ),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -547,9 +553,9 @@ def test_directive(mock_run_directive):
     runner("::#name:/path/to/file")
 
     mock_run_directive.assert_called_with(
-        Token(TokenType.COMMAND, "::", generate_context(0, 0)),
-        Token(TokenType.TEXT, "#name", generate_context(0, 2)),
-        Token(TokenType.TEXT, "/path/to/file", generate_context(0, 8)),
+        Token(TokenType.COMMAND, "::", generate_context(0, 0, 0, 2)),
+        Token(TokenType.TEXT, "#name", generate_context(0, 2, 0, 7)),
+        Token(TokenType.TEXT, "/path/to/file", generate_context(0, 8, 0, 21)),
     )
 
 
@@ -558,7 +564,8 @@ def test_directive_wrong_name():
         runner("::#name:/path/to/file")
 
     assert exc.value.message == "Directive 'name' is not valid."
-    assert exc.value.context == generate_context(0, 0)
+
+    assert exc.value.context == generate_context(0, 0, 0, 2)
 
 
 @patch("builtins.open", new_callable=mock_open, read_data="just some data")
@@ -569,9 +576,11 @@ def test_import_directive(mock_open):
         lex.tokens,
         [
             Token(
-                TokenType.TEXT, "just some data", Context(0, 0, source="/path/to/file")
+                TokenType.TEXT,
+                "just some data",
+                Context(0, 0, 0, 14, source="/path/to/file"),
             ),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -587,7 +596,7 @@ def test_import_directive_cannot_open(mock_open):
         exc.value.message
         == "Error with directive 'include'. Cannot read file /path/to/file."
     )
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 2)
 
 
 def test_import_directive_without_arguments():
@@ -595,7 +604,7 @@ def test_import_directive_without_arguments():
         runner("::#include")
 
     assert exc.value.message == "Directive 'include' requires a file name."
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 2)
 
 
 def test_block():
@@ -614,14 +623,14 @@ def test_block():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.BLOCK, "----", generate_context(0, 0)),
+            Token(TokenType.BLOCK, "----", generate_context(0, 0, 0, 4)),
             Token(
                 TokenType.TEXT,
                 "Some comment\n\n   another line",
-                generate_context(1, 0),
+                generate_context(1, 0, 3, 15),
             ),
-            Token(TokenType.BLOCK, "----", generate_context(4, 0)),
-            Token(TokenType.EOF, "", generate_context(5, 0)),
+            Token(TokenType.BLOCK, "----", generate_context(4, 0, 4, 4)),
+            Token(TokenType.EOF, "", generate_context(5, 0, 5, 0)),
         ],
     )
 
@@ -641,14 +650,14 @@ def test_block_inside_block():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.BLOCK, "----", generate_context(0, 0)),
+            Token(TokenType.BLOCK, "----", generate_context(0, 0, 0, 4)),
             Token(
                 TokenType.TEXT,
                 "++++\n++++",
-                generate_context(1, 0),
+                generate_context(1, 0, 2, 4),
             ),
-            Token(TokenType.BLOCK, "----", generate_context(3, 0)),
-            Token(TokenType.EOF, "", generate_context(4, 0)),
+            Token(TokenType.BLOCK, "----", generate_context(3, 0, 3, 4)),
+            Token(TokenType.EOF, "", generate_context(4, 0, 4, 0)),
         ],
     )
 
@@ -675,16 +684,16 @@ def test_block_with_header():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.HEADER, "=", generate_context(0, 0)),
-            Token(TokenType.TEXT, "Global header", generate_context(0, 2)),
-            Token(TokenType.EOL, "", generate_context(1, 0)),
-            Token(TokenType.ARGUMENTS, "[", generate_context(2, 0)),
-            Token(TokenType.TEXT, "*subtype1", generate_context(2, 1)),
-            Token(TokenType.LITERAL, "]", generate_context(2, 10)),
-            Token(TokenType.BLOCK, "----", generate_context(3, 0)),
-            Token(TokenType.TEXT, "= Block header", generate_context(4, 0)),
-            Token(TokenType.BLOCK, "----", generate_context(5, 0)),
-            Token(TokenType.EOF, "", generate_context(6, 0)),
+            Token(TokenType.HEADER, "=", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "Global header", generate_context(0, 2, 0, 15)),
+            Token(TokenType.EOL, "", generate_context(1, 0, 1, 0)),
+            Token(TokenType.ARGUMENTS, "[", generate_context(2, 0, 2, 1)),
+            Token(TokenType.TEXT, "*subtype1", generate_context(2, 1, 2, 10)),
+            Token(TokenType.LITERAL, "]", generate_context(2, 10, 2, 11)),
+            Token(TokenType.BLOCK, "----", generate_context(3, 0, 3, 4)),
+            Token(TokenType.TEXT, "= Block header", generate_context(4, 0, 4, 14)),
+            Token(TokenType.BLOCK, "----", generate_context(5, 0, 5, 4)),
+            Token(TokenType.EOF, "", generate_context(6, 0, 6, 0)),
         ],
     )
 
@@ -703,10 +712,10 @@ def test_block_four_characters():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.BLOCK, "####", generate_context(0, 0)),
-            Token(TokenType.TEXT, "Some text", generate_context(1, 0)),
-            Token(TokenType.BLOCK, "####", generate_context(2, 0)),
-            Token(TokenType.EOF, "", generate_context(3, 0)),
+            Token(TokenType.BLOCK, "####", generate_context(0, 0, 0, 4)),
+            Token(TokenType.TEXT, "Some text", generate_context(1, 0, 1, 9)),
+            Token(TokenType.BLOCK, "####", generate_context(2, 0, 2, 4)),
+            Token(TokenType.EOF, "", generate_context(3, 0, 3, 0)),
         ],
     )
 
@@ -725,10 +734,10 @@ def test_block_with_comment():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.BLOCK, "----", generate_context(0, 0)),
-            Token(TokenType.TEXT, "// Comment", generate_context(1, 0)),
-            Token(TokenType.BLOCK, "----", generate_context(2, 0)),
-            Token(TokenType.EOF, "", generate_context(3, 0)),
+            Token(TokenType.BLOCK, "----", generate_context(0, 0, 0, 4)),
+            Token(TokenType.TEXT, "// Comment", generate_context(1, 0, 1, 10)),
+            Token(TokenType.BLOCK, "----", generate_context(2, 0, 2, 4)),
+            Token(TokenType.EOF, "", generate_context(3, 0, 3, 0)),
         ],
     )
 
@@ -745,8 +754,8 @@ def test_block_has_to_begin_with_four_identical_characters():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TEXT, "abcd", generate_context(0, 0)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.TEXT, "abcd", generate_context(0, 0, 0, 4)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -757,12 +766,12 @@ def test_control():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.CONTROL, "@", generate_context(0, 0)),
-            Token(TokenType.TEXT, "if", generate_context(0, 1)),
-            Token(TokenType.TEXT, "somevar", generate_context(0, 4)),
-            Token(TokenType.TEXT, "==", generate_context(0, 11)),
-            Token(TokenType.TEXT, "value", generate_context(0, 13)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.CONTROL, "@", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "if", generate_context(0, 1, 0, 3)),
+            Token(TokenType.TEXT, "somevar", generate_context(0, 4, 0, 11)),
+            Token(TokenType.TEXT, "==", generate_context(0, 11, 0, 13)),
+            Token(TokenType.TEXT, "value", generate_context(0, 13, 0, 18)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -773,11 +782,11 @@ def test_control_with_space():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.CONTROL, "@", generate_context(0, 0)),
-            Token(TokenType.TEXT, "if", generate_context(0, 1)),
-            Token(TokenType.TEXT, "somevar", generate_context(0, 6)),
-            Token(TokenType.TEXT, "!=", generate_context(0, 15)),
-            Token(TokenType.TEXT, "value", generate_context(0, 20)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.CONTROL, "@", generate_context(0, 0, 0, 1)),
+            Token(TokenType.TEXT, "if", generate_context(0, 1, 0, 3)),
+            Token(TokenType.TEXT, "somevar", generate_context(0, 6, 0, 13)),
+            Token(TokenType.TEXT, "!=", generate_context(0, 15, 0, 17)),
+            Token(TokenType.TEXT, "value", generate_context(0, 20, 0, 25)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )

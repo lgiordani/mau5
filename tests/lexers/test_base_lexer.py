@@ -42,7 +42,7 @@ def test_format_lexer_error():
 
 def test_format_lexer_error_with_token():
     test_message = "A test message"
-    test_context = Context(42, 24, "source.py")
+    test_context = Context(42, 24, 43, 34, "source.py")
 
     exception = MauLexerException(test_message, context=test_context)
 
@@ -53,9 +53,7 @@ def test_format_lexer_error_with_token():
 
         Message: A test message
 
-        Line: 42
-        Column: 24
-        Source: source.py
+        source.py:42,24-43,34
         """
     )
 
@@ -81,11 +79,14 @@ def test_text_buffer_properties():
 
 def test_create_token_and_skip():
     mock_text_buffer = Mock()
+    mock_text_buffer.context = generate_context(1, 2, 1, 2)
+
     lex = BaseLexer(mock_text_buffer, Environment())
     lex._skip = Mock()
 
-    token = lex._create_token_and_skip("sometype", "somevalue")
-    assert token == Token("sometype", "somevalue")
+    token = lex._create_token_and_skip(TokenType.TEXT, "somevalue")
+    assert token == Token(TokenType.TEXT, "somevalue")
+    assert token.context == generate_context(1, 2, 1, 11)
     lex._skip.assert_called_with("somevalue")
 
 
@@ -103,7 +104,7 @@ def test_empty_text():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.EOF, "", generate_context(0, 0)),
+            Token(TokenType.EOF, "", generate_context(0, 0, 0, 0)),
         ],
     )
 
@@ -114,8 +115,8 @@ def test_empty_lines():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.EOL, "", generate_context(0, 0)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 0, 0, 0)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -126,8 +127,8 @@ def test_lines_with_only_spaces():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.EOL, "", generate_context(0, 0)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.EOL, "", generate_context(0, 0, 0, 0)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -138,8 +139,8 @@ def test_text():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TEXT, "Just simple text", generate_context(0, 0)),
-            Token(TokenType.EOF, "", generate_context(1, 0)),
+            Token(TokenType.TEXT, "Just simple text", generate_context(0, 0, 0, 16)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
 
@@ -158,10 +159,14 @@ def test_multiple_lines():
     compare_tokens(
         lex.tokens,
         [
-            Token(TokenType.TEXT, "This is text", generate_context(0, 0)),
-            Token(TokenType.TEXT, "split into multiple lines", generate_context(1, 0)),
-            Token(TokenType.EOL, "", generate_context(2, 0)),
-            Token(TokenType.TEXT, "with an empty line", generate_context(3, 0)),
-            Token(TokenType.EOF, "", generate_context(4, 0)),
+            Token(TokenType.TEXT, "This is text", generate_context(0, 0, 0, 12)),
+            Token(
+                TokenType.TEXT,
+                "split into multiple lines",
+                generate_context(1, 0, 1, 25),
+            ),
+            Token(TokenType.EOL, "", generate_context(2, 0, 2, 0)),
+            Token(TokenType.TEXT, "with an empty line", generate_context(3, 0, 3, 18)),
+            Token(TokenType.EOF, "", generate_context(4, 0, 4, 0)),
         ],
     )

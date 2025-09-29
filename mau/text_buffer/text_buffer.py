@@ -58,9 +58,14 @@ class TextBuffer:
 
     @property
     def context(self) -> Context:
+        line = self.line + self.initial_context.start_line
+        column = self.column + self.initial_context.start_column
+
         return Context(
-            line=self.line + self.initial_context.line,
-            column=self.column + self.initial_context.column,
+            start_line=line,
+            start_column=column,
+            end_line=line,
+            end_column=column,
             source=self.initial_context.source,
         )
 

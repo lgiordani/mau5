@@ -268,9 +268,11 @@ def test_text_buffer_default_context():
     text_buffer.position = (2, 6)
 
     assert text_buffer.context.asdict() == {
-        "source": None,
         "line": 2,
         "column": 6,
+        "end_line": None,
+        "end_column": None,
+        "source": None,
     }
 
 
@@ -291,7 +293,9 @@ def test_text_buffer_initial_context():
     assert text_buffer.line == 0
     assert text_buffer.column == 0
     assert text_buffer.context.asdict() == {
-        "source": "main",
         "line": 72,
         "column": 123,
+        "end_line": None,
+        "end_column": None,
+        "source": "main",
     }

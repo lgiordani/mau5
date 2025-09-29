@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 
@@ -8,14 +10,26 @@ class Context:
     # begin, the name of the source file (if provided), and the
     # text of the full line.
 
-    line: int = 0
-    column: int = 0
+    start_line: int = 0
+    start_column: int = 0
+    end_line: int = 0
+    end_column: int = 0
     source: str | None = None
+
+    @classmethod
+    def merge_contexts(cls, start_context: Context, end_context: Context) -> Context:
+        context = start_context.clone()
+        context.end_line = end_context.end_line
+        context.end_column = end_context.end_column
+
+        return context
 
     def asdict(self):
         return {
-            "line": self.line,
-            "column": self.column,
+            "start_line": self.start_line,
+            "start_column": self.start_column,
+            "end_line": self.end_line,
+            "end_column": self.end_column,
             "source": self.source,
         }
 
@@ -27,4 +41,4 @@ class Context:
         if self.source:
             source_prefix = f"{self.source}:"
 
-        return f"{source_prefix}{self.line},{self.column}"
+        return f"{source_prefix}{self.start_line},{self.start_column}-{self.end_line},{self.end_column}"

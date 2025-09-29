@@ -28,9 +28,7 @@ def format_lexer_error(exception: MauLexerException) -> str:
 
     if c := exception.context:
         output.append("")
-        output.append(f"Line: {c.line}")
-        output.append(f"Column: {c.column}")
-        output.append(f"Source: {c.source}")
+        output.append(str(c))
 
     return "\n".join(output)
 
@@ -166,7 +164,20 @@ class BaseLexer:
         # in the text buffer to skip the characters
         # that are part of the token.
 
-        token = Token(token_type, token_value, self._context)
+        # Clone the current context.
+        context = self._context.clone()
+
+        # Set the end line and column of the
+        # token context. The line doesn't change
+        # as all tokens are singl-line, but the
+        # column should take into account the
+        # length of the token.
+        context.end_line = context.start_line
+
+        columns = len(token_value) if token_value else 0
+        context.end_column = context.start_column + columns
+
+        token = Token(token_type, token_value, context)
 
         if token_value:
             self._skip(token_value)

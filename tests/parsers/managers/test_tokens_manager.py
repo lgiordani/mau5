@@ -2,10 +2,12 @@ from unittest.mock import Mock
 
 import pytest
 
+
 from mau.environment.environment import Environment
 from mau.lexers.base_lexer.lexer import BaseLexer
 from mau.parsers.base_parser.managers.tokens_manager import TokenError, TokensManager
 from mau.test_helpers import (
+    generate_context,
     init_tokens_manager_factory,
 )
 from mau.tokens.token import Token, TokenType
@@ -289,7 +291,11 @@ def test_collect():
 def test_collect_join():
     tm = init_tokens_manager("Some te\nxt that will be joined\n!", Environment())
 
-    expected = "Some text that will be joined!"
+    expected = Token(
+        TokenType.TEXT,
+        "Some text that will be joined!",
+        context=generate_context(0, 0, 2, 1),
+    )
 
     assert tm.collect_join([Token(TokenType.EOF)]) == expected
 
@@ -297,7 +303,11 @@ def test_collect_join():
 def test_collect_join_with_different_joiner():
     tm = init_tokens_manager("Some te\nxt that will be joined\n!", Environment())
 
-    expected = "Some te-xt that will be joined-!"
+    expected = Token(
+        TokenType.TEXT,
+        "Some te-xt that will be joined-!",
+        context=generate_context(0, 0, 2, 1),
+    )
 
     assert tm.collect_join([Token(TokenType.EOF)], "-") == expected
 
