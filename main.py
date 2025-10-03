@@ -12,12 +12,12 @@ from mau.lexers.base_lexer.lexer import (
     MauLexerException,
     format_lexer_error,
 )
+from mau.nodes.node import format_node
 from mau.parsers.base_parser.parser import (
     MauParserException,
     format_parser_error,
 )
 from mau.tokens.token import format_token
-from mau.nodes.node import format_node
 
 install(show_locals=True)
 

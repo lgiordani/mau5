@@ -317,7 +317,7 @@ def block_processor(parser: DocumentParser):
     # Blocks are delimited by 4 consecutive identical characters.
 
     # Get the opening delimiter.
-    delimiter = parser.tm.get_token(TokenType.BLOCK)
+    opening_delimiter = parser.tm.get_token(TokenType.BLOCK)
 
     content: Token | None = None
     if parser.tm.peek_token().type == TokenType.TEXT:
@@ -325,7 +325,7 @@ def block_processor(parser: DocumentParser):
         content = parser.tm.get_token(TokenType.TEXT)
 
     # Get the closing delimiter.
-    parser.tm.get_token(TokenType.BLOCK)
+    closing_delimiter = parser.tm.get_token(TokenType.BLOCK)
 
     # Check the stored control
     if control := parser.control_buffer.pop():
@@ -353,7 +353,7 @@ def block_processor(parser: DocumentParser):
         engine: EngineType = EngineType(engine_name)
     except ValueError as exc:
         raise parser._error(
-            f"Engine {engine_name} is not available", context=delimiter.context
+            f"Engine {engine_name} is not available", context=opening_delimiter.context
         ) from exc
 
     # Create the block
@@ -368,8 +368,13 @@ def block_processor(parser: DocumentParser):
     if children := parser.children_buffer.pop():
         node.add_children(children, allow_all=True)
 
+    # Find the final context.
+    context = Context.merge_contexts(
+        opening_delimiter.context, closing_delimiter.context
+    )
+
     if not content:
-        node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+        node.info = NodeInfo(context=context, **arguments.asdict())
 
         parser._save(node)
 
@@ -377,30 +382,28 @@ def block_processor(parser: DocumentParser):
 
     match engine:
         case EngineType.DEFAULT:
-            parse_default_engine(parser, node, content, delimiter.context, arguments)
-            node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+            parse_default_engine(parser, node, content, context, arguments)
+            node.info = NodeInfo(context=context, **arguments.asdict())
             parser._save(node)
         case EngineType.FOOTNOTE:
-            parse_footnote_engine(parser, node, content, delimiter.context, arguments)
-            node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+            parse_footnote_engine(parser, node, content, context, arguments)
+            node.info = NodeInfo(context=context, **arguments.asdict())
         case EngineType.GROUP:
-            parse_group_engine(parser, node, content, delimiter.context, arguments)
-            node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+            parse_group_engine(parser, node, content, context, arguments)
+            node.info = NodeInfo(context=context, **arguments.asdict())
         case EngineType.MAU:
-            parse_mau_engine(parser, node, content, delimiter.context, arguments)
-            node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+            parse_mau_engine(parser, node, content, context, arguments)
+            node.info = NodeInfo(context=context, **arguments.asdict())
             parser._save(node)
         case EngineType.RAW:
-            parse_raw_engine(parser, node, content, delimiter.context, arguments)
-            node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+            parse_raw_engine(parser, node, content, context, arguments)
+            node.info = NodeInfo(context=context, **arguments.asdict())
             parser._save(node)
         case EngineType.SOURCE:
-            parse_source_engine(parser, node, content, delimiter.context, arguments)
-            node.info = NodeInfo(context=delimiter.context, **arguments.asdict())
+            parse_source_engine(parser, node, content, context, arguments)
+            node.info = NodeInfo(context=context, **arguments.asdict())
             parser._save(node)
         case _:
-            raise parser._error(
-                f"Engine {engine} is not available", context=delimiter.context
-            )
+            raise parser._error(f"Engine {engine} is not available", context=context)
 
     return True

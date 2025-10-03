@@ -54,7 +54,7 @@ class TextParser(BaseParser):
         # in this piece of text.
         self.header_links: list[Node] = []
 
-    def _collect_macro_args(self):
+    def _collect_macro_args(self) -> Token:
         # A helper that reads macro arguments.
         # We already consumed the opening
         # round bracket.
@@ -64,7 +64,7 @@ class TextParser(BaseParser):
         # but if the argument is between double quotes
         # we ignore such brackets.
 
-        all_args = []
+        all_args: list[Token] = []
 
         # Continue until you find a closing round bracket or EOF.
         while not (
@@ -76,11 +76,11 @@ class TextParser(BaseParser):
             # double quotes or EOL.
             if self.tm.peek_token_is(TokenType.LITERAL, '"'):
                 # Consume the double quotes.
-                self.tm.get_token(TokenType.LITERAL, '"')
+                opening_quotes = self.tm.get_token(TokenType.LITERAL, '"')
 
                 # Collect and join everything.
                 # Stop at quotes or EOL.
-                value = self.tm.collect_join(
+                text_token = self.tm.collect_join(
                     stop_tokens=[
                         Token(TokenType.LITERAL, '"'),
                         Token(TokenType.EOF),
@@ -90,14 +90,20 @@ class TextParser(BaseParser):
                 # As we stopped, the next token should be
                 # double quotes. If not, we hit EOL and
                 # macro arguments are not closed correctly.
-                self.tm.get_token(TokenType.LITERAL, '"')
+                closing_quotes = self.tm.get_token(TokenType.LITERAL, '"')
 
-                arguments = f'"{value}"'
+                context = Context.merge_contexts(
+                    opening_quotes.context, closing_quotes.context
+                )
+
+                token = Token(
+                    TokenType.TEXT, value=f'"{text_token.value}"', context=context
+                )
             else:
                 # No double quotes, we can proceed,
                 # until we find the closing round bracket
                 # or a comma, which is the arguments separator.
-                arguments = self.tm.collect_join(
+                token = self.tm.collect_join(
                     stop_tokens=[
                         Token(TokenType.LITERAL, ","),
                         Token(TokenType.LITERAL, ")"),
@@ -107,18 +113,12 @@ class TextParser(BaseParser):
 
             # We can add the arguments we found to the
             # global list.
-            all_args.append(arguments)
-
-        # If we get here, we stopped because of
-        # closing brackets or EOL. If we can't find
-        # the closing bracket the next token is EOL
-        # and macro arguments are not closed correctly.
-        self.tm.get_token(TokenType.LITERAL, ")")
+            all_args.append(token)
 
         # Arguments will be processed by the arguments
         # parser, for now just merge all of them into
         # a single piece of text.
-        return "".join(all_args)
+        return Token.from_token_list(all_args)
 
     def _process_functions(self):
         # This is a recursive parser, so the list
@@ -190,26 +190,33 @@ class TextParser(BaseParser):
         # Here, key is True if the group is made of word nodes,
         # which means that we need to merge them.
         for key, group in grouped_iter:
-            if key:
-                # Get the first node to access the context
-                first_node = next(group)
+            # Read the whole group of
+            # tokens into a list.
+            group_nodes = list(group)
 
-                # A group of word nodes. Merge them.
-                text = first_node.content.value
-                text += "".join([n.content.value for n in group])
+            if key:
+                # Merge the values.
+                text = "".join([n.content.value for n in group_nodes])
+
+                # Create the merged context.
+                context = Context.merge_contexts(
+                    group_nodes[0].info.context,
+                    group_nodes[-1].info.context,
+                )
 
                 node = Node(
                     parent=self.parent_node,
                     content=TextNodeContent(text),
                     info=NodeInfo(
-                        context=first_node.info.context,
+                        context=context,
                     ),
                 )
+
                 nodes.append(node)
             else:
                 # This is a group of non-word nodes.
                 # Just add them to the list.
-                nodes.extend(list(group))
+                nodes.extend(group_nodes)
 
         return nodes
 
@@ -254,14 +261,18 @@ class TextParser(BaseParser):
         # Drop the backslash.
         backslash = self.tm.get_token(TokenType.LITERAL, "\\")
 
+        # Get the text.
+        text = self.tm.get_token()
+
+        # Merge the two contexts.
+        context = Context.merge_contexts(backslash.context, text.context)
+
         # Create a word node with the next token.
         node = Node(
             parent=self.parent_node,
-            content=WordNodeContent(
-                self.tm.get_token().value,
-            ),
+            content=WordNodeContent(text.value),
             info=NodeInfo(
-                context=backslash.context,
+                context=context,
             ),
         )
 
@@ -284,11 +295,6 @@ class TextParser(BaseParser):
         # opening round bracket that contains arguments.
         self.tm.get_token(TokenType.LITERAL, "(")
 
-        # We need to parse the macro arguments.
-        # The context of the parsing is that of the
-        # first token after the opening bracket.
-        context = self.tm.peek_token().context
-
         # Get the macro arguments between round brackets.
         # The function might fail because the text might
         # not be a macro after all, the user might
@@ -297,45 +303,55 @@ class TextParser(BaseParser):
         # to log that we are stopping the macro parsing,
         # but that we suspect the user made a mistake.
         try:
-            arguments = self._collect_macro_args()
+            arguments_token = self._collect_macro_args()
         except TokenError:
+            # The context of the parsing is that of the
+            # first token after the opening bracket.
+            context = self.tm.peek_token().context
+
             logger.warning("Suspected incomplete macro at %s", context)
             raise
 
+        # If we get here, we stopped because of
+        # closing brackets or EOL. If we can't find
+        # the closing bracket the next token is EOL
+        # and macro arguments are not closed correctly.
+        closing_bracket = self.tm.get_token(TokenType.LITERAL, ")")
+
         # Parse the arguments.
         parser = ArgumentsParser.lex_and_parse(
-            arguments,
-            context,
+            arguments_token.value,
+            arguments_token.context,
             self.environment,
+        )
+
+        context = Context.merge_contexts(
+            opening_bracket.context, closing_bracket.context
         )
 
         # Select the specific parsing function
         # according to the name of the macro.
 
         if macro_name.startswith("@"):
-            return self._parse_macro_control(
-                macro_name, parser, context=opening_bracket.context
-            )
+            return self._parse_macro_control(macro_name, parser, context=context)
 
         if macro_name == "link":
-            return self._parse_macro_link(parser, context=opening_bracket.context)
+            return self._parse_macro_link(parser, context=context)
 
         if macro_name == "header":
-            return self._parse_macro_header_link(
-                parser, context=opening_bracket.context
-            )
+            return self._parse_macro_header_link(parser, context=context)
 
         if macro_name == "mailto":
-            return self._parse_macro_mailto(parser, context=opening_bracket.context)
+            return self._parse_macro_mailto(parser, context=context)
 
         if macro_name == "image":
-            return self._parse_macro_image(parser, context=opening_bracket.context)
+            return self._parse_macro_image(parser, context=context)
 
         if macro_name == "footnote":
-            return self._parse_macro_footnote(parser, context=opening_bracket.context)
+            return self._parse_macro_footnote(parser, context=context)
 
         if macro_name == "class":
-            return self._parse_macro_class(parser, context=opening_bracket.context)
+            return self._parse_macro_class(parser, context)
 
         # This is a generic macro, there is no
         # special code for it.
@@ -352,7 +368,7 @@ class TextParser(BaseParser):
                 },
             ),
             info=NodeInfo(
-                context=opening_bracket.context,
+                context=context,
             ),
         )
 
@@ -363,7 +379,7 @@ class TextParser(BaseParser):
         # E.g. `text`.
 
         # Get the verbatim marker.
-        marker = self.tm.get_token(TokenType.LITERAL, "`")
+        opening_marker = self.tm.get_token(TokenType.LITERAL, "`")
 
         # Get all tokens from here to the next
         # verbatim marker or EOL.
@@ -372,12 +388,15 @@ class TextParser(BaseParser):
         )
 
         # Remove the closing marker.
-        self.tm.get_token(TokenType.LITERAL, "`")
+        closing_marker = self.tm.get_token(TokenType.LITERAL, "`")
+
+        # Find the final context.
+        context = Context.merge_contexts(opening_marker.context, closing_marker.context)
 
         node = Node(
             parent=self.parent_node,
-            content=VerbatimNodeContent(content),
-            info=NodeInfo(context=marker.context),
+            content=VerbatimNodeContent(content.value),
+            info=NodeInfo(context=context),
         )
 
         return [node]
@@ -390,23 +409,26 @@ class TextParser(BaseParser):
         # E.g. $escaped$ or %escaped%.
 
         # Get the escaped marker.
-        marker = self.tm.get_token(
+        opening_marker = self.tm.get_token(
             TokenType.LITERAL, value_check_function=lambda x: x in "$%"
         )
 
         # Get the content tokens before the
         # next escaped marker or EOL.
         content = self.tm.collect_join(
-            [Token(TokenType.LITERAL, marker.value), Token(TokenType.EOL)],
+            [Token(TokenType.LITERAL, opening_marker.value), Token(TokenType.EOL)],
         )
 
         # Remove the closing marker
-        self.tm.get_token(TokenType.LITERAL, marker.value)
+        closing_marker = self.tm.get_token(TokenType.LITERAL, opening_marker.value)
+
+        # Find the final context.
+        context = Context.merge_contexts(opening_marker.context, closing_marker.context)
 
         node = Node(
             parent=self.parent_node,
-            content=TextNodeContent(content),
-            info=NodeInfo(context=marker.context),
+            content=TextNodeContent(content.value),
+            info=NodeInfo(context=context),
         )
 
         return [node]
@@ -415,18 +437,21 @@ class TextParser(BaseParser):
         # Parse text surrounded by style markers.
 
         # Get the style marker
-        marker = self.tm.get_token(
+        opening_marker = self.tm.get_token(
             TokenType.LITERAL,
             value_check_function=lambda x: x in MAP_STYLES,
         )
 
         # Get everything before the next marker
         content = self._parse_sentence(
-            stop_tokens={Token(TokenType.LITERAL, marker.value)}
+            stop_tokens={Token(TokenType.LITERAL, opening_marker.value)}
         )
 
         # Get the closing marker
-        self.tm.get_token(TokenType.LITERAL, marker.value)
+        closing_marker = self.tm.get_token(TokenType.LITERAL, opening_marker.value)
+
+        # Find the final context.
+        context = Context.merge_contexts(opening_marker.context, closing_marker.context)
 
         children: dict[str, Node[NodeContent]] = {}
         if content:
@@ -435,8 +460,8 @@ class TextParser(BaseParser):
         node = Node(
             parent=self.parent_node,
             children=children,
-            content=StyleNodeContent(MAP_STYLES[marker.value]),
-            info=NodeInfo(context=marker.context),
+            content=StyleNodeContent(MAP_STYLES[opening_marker.value]),
+            info=NodeInfo(context=context),
         )
 
         return [node]
@@ -590,7 +615,9 @@ class TextParser(BaseParser):
         return [node]
 
     def _parse_macro_class(
-        self, parser: ArgumentsParser, context: Context | None
+        self,
+        parser: ArgumentsParser,
+        context: Context | None,
     ) -> list[Node[NodeContent]]:
         # Parse a class macro in the form [class](text, class1, class2, ...).
 

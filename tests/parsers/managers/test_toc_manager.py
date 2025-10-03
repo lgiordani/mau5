@@ -4,9 +4,9 @@ from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.toc import TocItemNodeContent, TocNodeContent
 from mau.parsers.document_parser.managers.toc_manager import (
+    TocManager,
     add_nodes_under_level,
     header_to_toc_item,
-    TocManager,
 )
 from mau.parsers.document_parser.parser import DocumentParser
 from mau.test_helpers import (

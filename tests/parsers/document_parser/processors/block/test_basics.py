@@ -35,7 +35,7 @@ def test_block_with_empty_body():
                     engine=EngineType.DEFAULT.value,
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 2, 4)),
                 children={"content": []},
             )
         ],
@@ -60,17 +60,19 @@ def test_block_content():
                     engine=EngineType.DEFAULT.value,
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 3, 4)),
                 children={
                     "content": [
                         Node(
                             content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(2, 0)),
+                            info=NodeInfo(context=generate_context(2, 0, 2, 20)),
                             children={
                                 "content": [
                                     Node(
                                         content=TextNodeContent("This is a paragraph."),
-                                        info=NodeInfo(context=generate_context(2, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 0, 2, 20)
+                                        ),
                                     )
                                 ]
                             },

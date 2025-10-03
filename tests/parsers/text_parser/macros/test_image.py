@@ -22,7 +22,7 @@ def test_macro_image():
     expected = [
         Node(
             content=MacroImageNodeContent("/the/path.jpg"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 22)),
         ),
     ]
 
@@ -35,7 +35,7 @@ def test_macro_image_with_alt_text():
     expected = [
         Node(
             content=MacroImageNodeContent("/the/path.jpg", alt_text="alt name"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 34)),
         ),
     ]
 
@@ -50,7 +50,7 @@ def test_macro_image_with_width_and_height():
             content=MacroImageNodeContent(
                 "/the/path.jpg", alt_text=None, width="1200", height="600"
             ),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 46)),
         ),
     ]
 
@@ -63,4 +63,4 @@ def test_macro_image_without_uri():
     with pytest.raises(MauParserException) as exc:
         runner(source)
 
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 9)

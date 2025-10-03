@@ -1,7 +1,13 @@
 from mau.environment.environment import Environment
 from mau.lexers.text_lexer.lexer import TextLexer
 from mau.parsers.text_parser.parser import TextParser
-from mau.test_helpers import init_parser_factory, parser_runner_factory
+from mau.test_helpers import (
+    compare_token,
+    generate_context,
+    init_parser_factory,
+    parser_runner_factory,
+)
+from mau.tokens.token import Token, TokenType
 
 init_parser = init_parser_factory(TextLexer, TextParser)
 
@@ -13,7 +19,10 @@ def test_collect_macro_arguments_single_argument():
 
     parser = init_parser(source, Environment())
 
-    assert parser._collect_macro_args() == "value1"
+    compare_token(
+        parser._collect_macro_args(),
+        Token(TokenType.TEXT, "value1", generate_context(0, 0, 0, 6)),
+    )
 
 
 def test_collect_macro_arguments_multiple_arguments():
@@ -21,7 +30,10 @@ def test_collect_macro_arguments_multiple_arguments():
 
     parser = init_parser(source, Environment())
 
-    assert parser._collect_macro_args() == "value1,value2"
+    compare_token(
+        parser._collect_macro_args(),
+        Token(TokenType.TEXT, "value1,value2", generate_context(0, 0, 0, 13)),
+    )
 
 
 def test_collect_macro_arguments_single_argument_with_quotes():
@@ -29,7 +41,10 @@ def test_collect_macro_arguments_single_argument_with_quotes():
 
     parser = init_parser(source, Environment())
 
-    assert parser._collect_macro_args() == '"value1"'
+    compare_token(
+        parser._collect_macro_args(),
+        Token(TokenType.TEXT, '"value1"', generate_context(0, 0, 0, 8)),
+    )
 
 
 def test_collect_macro_arguments_single_argument_with_quotes_and_parenthesis():
@@ -37,7 +52,10 @@ def test_collect_macro_arguments_single_argument_with_quotes_and_parenthesis():
 
     parser = init_parser(source, Environment())
 
-    assert parser._collect_macro_args() == '"value1()"'
+    compare_token(
+        parser._collect_macro_args(),
+        Token(TokenType.TEXT, '"value1()"', generate_context(0, 0, 0, 10)),
+    )
 
 
 def test_collect_macro_arguments_single_argument_with_parenthesis():
@@ -45,7 +63,10 @@ def test_collect_macro_arguments_single_argument_with_parenthesis():
 
     parser = init_parser(source, Environment())
 
-    assert parser._collect_macro_args() == "value1("
+    compare_token(
+        parser._collect_macro_args(),
+        Token(TokenType.TEXT, "value1(", generate_context(0, 0, 0, 7)),
+    )
 
 
 def test_collect_macro_arguments_multiple_argument_with_quotes_and_parenthesis():
@@ -53,7 +74,12 @@ def test_collect_macro_arguments_multiple_argument_with_quotes_and_parenthesis()
 
     parser = init_parser(source, Environment())
 
-    assert parser._collect_macro_args() == '"value1()",value2,value3'
+    compare_token(
+        parser._collect_macro_args(),
+        Token(
+            TokenType.TEXT, '"value1()",value2,value3', generate_context(0, 0, 0, 24)
+        ),
+    )
 
 
 def test_collect_macro_arguments_multiple_argument_with_escaped_quotes():
@@ -61,4 +87,7 @@ def test_collect_macro_arguments_multiple_argument_with_escaped_quotes():
 
     parser = init_parser(source, Environment())
 
-    assert parser._collect_macro_args() == r"\"value2,value3"
+    compare_token(
+        parser._collect_macro_args(),
+        Token(TokenType.TEXT, r"\"value2,value3", generate_context(0, 0, 0, 15)),
+    )

@@ -19,7 +19,7 @@ def test_verbatim():
     expected = [
         Node(
             content=VerbatimNodeContent("Many different words"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 22)),
         ),
     ]
 
@@ -32,7 +32,7 @@ def test_verbatim_escaped_backtick():
     expected = [
         Node(
             content=VerbatimNodeContent("`"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 4)),
         )
     ]
 
@@ -45,7 +45,7 @@ def test_verbatim_style_inside_verbatim():
     expected = [
         Node(
             content=VerbatimNodeContent("_Many different words_"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 24)),
         ),
     ]
 
@@ -58,7 +58,7 @@ def test_verbatim_open():
     expected = [
         Node(
             content=TextNodeContent("`Many different words"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 21)),
         ),
     ]
 
@@ -71,7 +71,7 @@ def test_verbatim_escape_characters():
     expected = [
         Node(
             content=VerbatimNodeContent(r"$Many$ %different% \words"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 27)),
         ),
     ]
 

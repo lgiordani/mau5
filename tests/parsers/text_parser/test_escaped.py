@@ -19,7 +19,7 @@ def test_dollar():
     expected = [
         Node(
             content=TextNodeContent("Many different words"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 22)),
         )
     ]
 
@@ -32,7 +32,7 @@ def test_percent():
     expected = [
         Node(
             content=TextNodeContent("Many different words"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 22)),
         ),
     ]
 
@@ -45,7 +45,7 @@ def test_dollar_can_escape_percent():
     expected = [
         Node(
             content=TextNodeContent("Many %different% words"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 24)),
         ),
     ]
 
@@ -58,7 +58,7 @@ def test_dollar_can_escape_backtick():
     expected = [
         Node(
             content=TextNodeContent("Many `different` words"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 24)),
         ),
     ]
 
@@ -71,7 +71,7 @@ def test_percent_can_escape_dollar():
     expected = [
         Node(
             content=TextNodeContent("Many $different$ words"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 24)),
         ),
     ]
 
@@ -84,7 +84,7 @@ def test_percent_can_escape_backtick():
     expected = [
         Node(
             content=TextNodeContent("Many `different` words"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 24)),
         ),
     ]
 
@@ -97,7 +97,7 @@ def test_dollar_escapes_style():
     expected = [
         Node(
             content=TextNodeContent("Many _different_ words"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 24)),
         ),
     ]
 
@@ -110,7 +110,7 @@ def test_percent_escapes_style():
     expected = [
         Node(
             content=TextNodeContent("Many _different_ words"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 24)),
         ),
     ]
 
@@ -123,7 +123,7 @@ def test_escaped_dollar():
     expected = [
         Node(
             content=TextNodeContent("$"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 4)),
         ),
     ]
 
@@ -136,7 +136,7 @@ def test_escaped_percent():
     expected = [
         Node(
             content=TextNodeContent("%"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 4)),
         ),
     ]
 
@@ -149,7 +149,7 @@ def test_open_dollar():
     expected = [
         Node(
             content=TextNodeContent("$Many different words"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 21)),
         ),
     ]
 
@@ -162,7 +162,7 @@ def test_open_percent():
     expected = [
         Node(
             content=TextNodeContent("%Many different words"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 21)),
         ),
     ]
 

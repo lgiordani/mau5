@@ -2,7 +2,6 @@ from unittest.mock import Mock
 
 import pytest
 
-
 from mau.environment.environment import Environment
 from mau.lexers.base_lexer.lexer import BaseLexer
 from mau.parsers.base_parser.managers.tokens_manager import TokenError, TokensManager

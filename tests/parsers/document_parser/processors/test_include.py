@@ -2,7 +2,7 @@ import pytest
 
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer.lexer import DocumentLexer
-from mau.nodes.include import IncludeNodeContent, IncludeImageNodeContent
+from mau.nodes.include import IncludeImageNodeContent, IncludeNodeContent
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.arguments_parser.parser import Arguments

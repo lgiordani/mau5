@@ -6,11 +6,11 @@ if TYPE_CHECKING:
     from .parser import DocumentParser
 
 
-from mau.text_buffer.context import Context
-from mau.nodes.include import IncludeNodeContent, IncludeImageNodeContent
-from mau.nodes.node import Node, NodeInfo, NodeContent
+from mau.nodes.include import IncludeImageNodeContent, IncludeNodeContent
+from mau.nodes.node import Node, NodeContent, NodeInfo
 from mau.parsers.arguments_parser.parser import Arguments, ArgumentsParser
 from mau.parsers.base_parser.parser import MauParserException
+from mau.text_buffer.context import Context
 from mau.tokens.token import TokenType
 
 

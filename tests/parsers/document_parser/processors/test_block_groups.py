@@ -1,5 +1,5 @@
+
 import pytest
-from unittest.mock import patch
 
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.block import BlockGroupNodeContent, BlockNodeContent

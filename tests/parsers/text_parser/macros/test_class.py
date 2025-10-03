@@ -7,6 +7,7 @@ from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser.parser import MauParserException
 from mau.parsers.text_parser.parser import TextParser
 from mau.test_helpers import (
+    compare_nodes,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -26,16 +27,18 @@ def test_macro_class_with_single_class():
                 "text": [
                     Node(
                         content=TextNodeContent("text with that class"),
-                        info=NodeInfo(context=generate_context(0, 9)),
+                        info=NodeInfo(context=generate_context(0, 9, 0, 29)),
                     )
                 ]
             },
             content=MacroClassNodeContent(["classname"]),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 42)),
         ),
     ]
 
-    assert runner(source).nodes == expected_nodes
+    parser = runner(source)
+
+    compare_nodes(parser.nodes, expected_nodes)
 
 
 def test_macro_class_with_multiple_classes():
@@ -47,16 +50,18 @@ def test_macro_class_with_multiple_classes():
                 "text": [
                     Node(
                         content=TextNodeContent("text with that class"),
-                        info=NodeInfo(context=generate_context(0, 9)),
+                        info=NodeInfo(context=generate_context(0, 9, 0, 29)),
                     )
                 ]
             },
             content=MacroClassNodeContent(["classname1", "classname2"]),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 55)),
         ),
     ]
 
-    assert runner(source).nodes == expected_nodes
+    parser = runner(source)
+
+    compare_nodes(parser.nodes, expected_nodes)
 
 
 def test_macro_class_with_rich_text():
@@ -68,36 +73,40 @@ def test_macro_class_with_rich_text():
                 "text": [
                     Node(
                         content=TextNodeContent("Some text with "),
-                        info=NodeInfo(context=generate_context(0, 9)),
+                        info=NodeInfo(context=generate_context(0, 9, 0, 24)),
                     ),
                     Node(
                         content=VerbatimNodeContent("verbatim words"),
-                        info=NodeInfo(context=generate_context(0, 24)),
+                        info=NodeInfo(context=generate_context(0, 24, 0, 40)),
                     ),
                     Node(
                         content=TextNodeContent(" and "),
-                        info=NodeInfo(context=generate_context(0, 40)),
+                        info=NodeInfo(context=generate_context(0, 40, 0, 45)),
                     ),
                     Node(
                         children={
                             "content": [
                                 Node(
                                     content=TextNodeContent("styled ones"),
-                                    info=NodeInfo(context=generate_context(0, 46)),
+                                    info=NodeInfo(
+                                        context=generate_context(0, 46, 0, 57)
+                                    ),
                                 )
                             ]
                         },
                         content=StyleNodeContent("underscore"),
-                        info=NodeInfo(context=generate_context(0, 45)),
+                        info=NodeInfo(context=generate_context(0, 45, 0, 58)),
                     ),
                 ]
             },
             content=MacroClassNodeContent(["classname"]),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 71)),
         ),
     ]
 
-    assert runner(source).nodes == expected_nodes
+    parser = runner(source)
+
+    compare_nodes(parser.nodes, expected_nodes)
 
 
 def test_macro_class_without_classes():
@@ -109,16 +118,18 @@ def test_macro_class_without_classes():
                 "text": [
                     Node(
                         content=TextNodeContent("text with that class"),
-                        info=NodeInfo(context=generate_context(0, 9)),
+                        info=NodeInfo(context=generate_context(0, 9, 0, 29)),
                     )
                 ]
             },
             content=MacroClassNodeContent([]),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 31)),
         ),
     ]
 
-    assert runner(source).nodes == expected_nodes
+    parser = runner(source)
+
+    compare_nodes(parser.nodes, expected_nodes)
 
 
 def test_macro_class_without_text():
@@ -127,4 +138,4 @@ def test_macro_class_without_text():
     with pytest.raises(MauParserException) as exc:
         runner(source)
 
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 9)

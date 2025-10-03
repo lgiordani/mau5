@@ -14,14 +14,15 @@ from mau.text_buffer.context import Context
 from mau.tokens.token import Token, TokenType
 
 from .buffers.arguments_buffer import ArgumentsBuffer
-from .buffers.control_buffer import ControlBuffer
 from .buffers.children_buffer import ChildrenBuffer
-from .managers.footnotes_manager import FootnotesManager
+from .buffers.control_buffer import ControlBuffer
 from .managers.block_group_manager import BlockGroupManager
+from .managers.footnotes_manager import FootnotesManager
 from .managers.header_links_manager import HeaderLinksManager
 from .managers.toc_manager import TocManager
 from .processors.arguments import arguments_processor
 from .processors.block import block_processor
+from .processors.child import child_processor
 from .processors.command import command_processor
 from .processors.control import control_processor
 from .processors.header import header_processor
@@ -29,10 +30,11 @@ from .processors.horizontal_rule import horizontal_rule_processor
 from .processors.include import include_processor
 from .processors.list import list_processor
 from .processors.paragraph import paragraph_processor
-from .processors.child import child_processor
 from .processors.variable_definition import variable_definition_processor
 
-# Is it possible to add beginning and end to the context?
+# TODO Is it possible to add beginning and end to the context?
+# TODO why are macro arguments not a single TEXT token? I'm collecting them in the parser but it might as well be a lexer task.
+# TODO Check if it makes sense to have _error in the parser.
 
 
 # The DocumentParser is in charge of parsing

@@ -29,7 +29,7 @@ def test_variable_definition_without_value_is_empty():
         exc.value.message
         == "Error in variable definition. Variable 'attr' has no value."
     )
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 6)
 
 
 def test_variable_definition_with_plus_is_true():

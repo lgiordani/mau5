@@ -25,12 +25,12 @@ def test_macro_header():
             "text": [
                 Node(
                     content=TextNodeContent("link text"),
-                    info=NodeInfo(context=generate_context(0, 14)),
+                    info=NodeInfo(context=generate_context(0, 14, 0, 23)),
                 )
             ]
         },
         content=MacroHeaderNodeContent("id"),
-        info=NodeInfo(context=generate_context(0, 0)),
+        info=NodeInfo(context=generate_context(0, 0, 0, 25)),
     )
 
     parser = runner(source)
@@ -44,7 +44,7 @@ def test_macro_header_without_text():
     expected_node = Node(
         children={"text": []},
         content=MacroHeaderNodeContent("id"),
-        info=NodeInfo(context=generate_context(0, 0)),
+        info=NodeInfo(context=generate_context(0, 0, 0, 12)),
     )
 
     parser = runner(source)
@@ -58,4 +58,4 @@ def test_macro_header_without_target():
     with pytest.raises(MauParserException) as exc:
         runner(source)
 
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 10)

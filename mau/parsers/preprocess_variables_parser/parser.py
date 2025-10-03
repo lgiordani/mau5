@@ -1,3 +1,4 @@
+from mau.text_buffer.context import Context
 from mau.lexers.preprocess_variables_lexer.lexer import PreprocessVariablesLexer
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
@@ -21,7 +22,7 @@ class PreprocessVariablesParser(BaseParser):
         # process to take place.
 
         # Check is the token is an escape backslash.
-        self.tm.get_token(TokenType.LITERAL, "\\")
+        backslash = self.tm.get_token(TokenType.LITERAL, "\\")
 
         # Get the following character.
         char = self.tm.get_token()
@@ -31,10 +32,13 @@ class PreprocessVariablesParser(BaseParser):
         if char.value not in "{}":
             char.value = f"\\{char.value}"
 
+        # Merge the two contexts.
+        context = Context.merge_contexts(backslash.context, char.context)
+
         self._save(
             Node(
                 content=TextNodeContent(char.value),
-                info=NodeInfo(context=char.context),
+                info=NodeInfo(context=context),
             )
         )
 
@@ -58,16 +62,19 @@ class PreprocessVariablesParser(BaseParser):
         )
 
         # Check if the token is the closing backtick.
-        self.tm.get_token(TokenType.LITERAL, "`")
+        closing_tick = self.tm.get_token(TokenType.LITERAL, "`")
+
+        # Find the final context.
+        context = Context.merge_contexts(opening_tick.context, closing_tick.context)
 
         # Restore the original form of the text
         # with the surrounding backticks.
-        text = f"`{text}`"
+        text = f"`{text.value}`"
 
         self._save(
             Node(
                 content=TextNodeContent(text),
-                info=NodeInfo(context=opening_tick.context),
+                info=NodeInfo(context=context),
             )
         )
 
@@ -88,16 +95,21 @@ class PreprocessVariablesParser(BaseParser):
         )
 
         # Check if the token is the closing curly brace.
-        self.tm.get_token(TokenType.LITERAL, "}")
+        closing_bracket = self.tm.get_token(TokenType.LITERAL, "}")
+
+        # Find the final context.
+        context = Context.merge_contexts(
+            opening_bracket.context, closing_bracket.context
+        )
 
         try:
             # Extract from the environment the variable
             # mentioned between curly braces.
-            variable_value = self.environment.getvar_nodefault(variable_name)
+            variable_value = self.environment.getvar_nodefault(variable_name.value)
         except KeyError as exp:
             raise self._error(
                 f'Variable "{variable_name}" has not been defined.',
-                context=opening_bracket.context,
+                context=context,
             ) from exp
 
         # Boolean variables shouldn't be printed.
@@ -108,7 +120,7 @@ class PreprocessVariablesParser(BaseParser):
         self._save(
             Node(
                 content=TextNodeContent(variable_value),
-                info=NodeInfo(context=opening_bracket.context),
+                info=NodeInfo(context=context),
             )
         )
 
@@ -145,9 +157,15 @@ class PreprocessVariablesParser(BaseParser):
 
         # After having parsed the text and replaced the
         # variables, this should return a piece of text again.
-        context = self.nodes[0].info.context
-        text = "".join([str(i.content.value) for i in self.nodes])  # type: ignore[attr-defined]
+        text_tokens = [
+            Token(TokenType.TEXT, i.content.value, i.info.context) for i in self.nodes
+        ]
+
+        token = Token.from_token_list(text_tokens)
 
         self.nodes = [
-            Node(content=TextNodeContent(text), info=NodeInfo(context=context))
+            Node(
+                content=TextNodeContent(token.value),
+                info=NodeInfo(context=token.context),
+            )
         ]

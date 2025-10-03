@@ -22,7 +22,7 @@ def test_macro_footnote():
 
     footnote_node = Node(
         content=MacroFootnoteNodeContent("notename"),
-        info=NodeInfo(context=generate_context(0, 0)),
+        info=NodeInfo(context=generate_context(0, 0, 0, 20)),
     )
 
     parser = runner(source)
@@ -38,4 +38,4 @@ def test_macro_footnote_without_name():
     with pytest.raises(MauParserException) as exc:
         runner(source)
 
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 12)

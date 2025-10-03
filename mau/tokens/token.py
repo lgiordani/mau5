@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import Enum
 
 from mau.text_buffer.context import Context
@@ -44,6 +46,19 @@ class Token:
         self.type = _type
         self.context = context
         self.value = value or ""
+
+    @classmethod
+    def from_token_list(self, tokens: list[Token], join_with: str = "") -> Token:
+        if not tokens:
+            return Token(TokenType.TEXT, "")
+
+        start_context = tokens[0].context
+        end_context = tokens[-1].context
+        context = Context.merge_contexts(start_context, end_context)
+
+        value = join_with.join([t.value for t in tokens])
+
+        return Token(TokenType.TEXT, value, context)
 
     def asdict(self):
         return {

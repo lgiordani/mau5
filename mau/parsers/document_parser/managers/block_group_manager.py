@@ -3,10 +3,10 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import NewType
 
-from mau.text_buffer.context import Context
-from mau.nodes.block import BlockNodeContent, BlockGroupNodeContent
+from mau.nodes.block import BlockGroupNodeContent, BlockNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser.parser import MauParserException
+from mau.text_buffer.context import Context
 
 BlockGroup = NewType("BlockGroup", dict[str, Node[BlockNodeContent]])
 

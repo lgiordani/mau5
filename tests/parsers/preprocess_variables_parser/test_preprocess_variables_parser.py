@@ -22,7 +22,7 @@ def test_plain_text_with_no_variables():
     expected_nodes = [
         Node(
             content=TextNodeContent("This is text"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 12)),
         )
     ]
 
@@ -38,7 +38,7 @@ def test_plain_text_with_variables():
     expected_nodes = [
         Node(
             content=TextNodeContent("This is text"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 12)),
         )
     ]
 
@@ -54,7 +54,7 @@ def test_replace_variable():
     expected_nodes = [
         Node(
             content=TextNodeContent("This is number 5"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 21)),
         )
     ]
 
@@ -70,7 +70,7 @@ def test_manage_unclosed_curly_braces():
     expected_nodes = [
         Node(
             content=TextNodeContent("This is {attr"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 13)),
         )
     ]
 
@@ -86,7 +86,7 @@ def test_replace_variable_with_namespace():
     expected_nodes = [
         Node(
             content=TextNodeContent("This is number 5"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 25)),
         )
     ]
 
@@ -102,7 +102,7 @@ def test_replace_boolean():
     expected_nodes = [
         Node(
             content=TextNodeContent("This flag is "),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 19)),
         )
     ]
 
@@ -118,7 +118,7 @@ def test_escape_curly_braces():
     expected_nodes = [
         Node(
             content=TextNodeContent("This is {attr}"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 16)),
         )
     ]
 
@@ -134,7 +134,7 @@ def test_curly_braces_in_verbatim():
     expected_nodes = [
         Node(
             content=TextNodeContent("This is `{attr}`"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 16)),
         )
     ]
 
@@ -150,7 +150,7 @@ def test_open_verbatim():
     expected_nodes = [
         Node(
             content=TextNodeContent("This is `5"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 15)),
         )
     ]
 
@@ -166,7 +166,7 @@ def test_escape_curly_braces_in_verbatim():
     expected_nodes = [
         Node(
             content=TextNodeContent(r"This is `\{attr\}`"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 18)),
         )
     ]
 
@@ -182,7 +182,7 @@ def test_escape_other_chars():
     expected_nodes = [
         Node(
             content=TextNodeContent(r"This \_is\_ \text"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 17)),
         )
     ]
 
@@ -198,7 +198,7 @@ def test_curly_braces_in_escaped_verbatim():
     expected_nodes = [
         Node(
             content=TextNodeContent(r"This is \`5\`"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 18)),
         )
     ]
 
@@ -214,7 +214,7 @@ def test_variable_not_existing():
     with pytest.raises(MauParserException) as exc:
         runner(source, environment)
 
-    assert exc.value.context == generate_context(0, 15)
+    assert exc.value.context == generate_context(0, 15, 0, 21)
 
 
 def test_variables_can_contain_markers():
@@ -226,7 +226,7 @@ def test_variables_can_contain_markers():
     expected_nodes = [
         Node(
             content=TextNodeContent("A very *bold* text. Some code: `adict = {'a':5}`"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 40)),
         )
     ]
 
@@ -241,7 +241,7 @@ def test_escape_backtick():
     expected_nodes = [
         Node(
             content=TextNodeContent(r"This is `\``"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 12)),
         )
     ]
 

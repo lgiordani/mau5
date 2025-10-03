@@ -25,7 +25,7 @@ def test_parse_word():
     expected = [
         Node(
             content=TextNodeContent("Word"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 4)),
         ),
     ]
 
@@ -38,7 +38,7 @@ def test_multiple_words():
     expected = [
         Node(
             content=TextNodeContent("Many different words"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 20)),
         ),
     ]
 
@@ -51,7 +51,7 @@ def test_parse_escape_word():
     expected = [
         Node(
             content=TextNodeContent("Escaped"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 8)),
         ),
     ]
 
@@ -64,7 +64,7 @@ def test_parse_escape_symbol():
     expected = [
         Node(
             content=TextNodeContent('"Escaped'),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 9)),
         ),
     ]
 
@@ -77,7 +77,7 @@ def test_square_brackets():
     expected = [
         Node(
             content=TextNodeContent("This contains [ and ] and [this]"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 32)),
         ),
     ]
 

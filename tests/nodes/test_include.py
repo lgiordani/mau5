@@ -1,4 +1,4 @@
-from mau.nodes.include import IncludeNodeContent, IncludeImageNodeContent
+from mau.nodes.include import IncludeImageNodeContent, IncludeNodeContent
 
 
 def test_include_node_content():

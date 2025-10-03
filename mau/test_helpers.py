@@ -11,6 +11,10 @@ def dedent(text):
     return textwrap.dedent(text).strip()
 
 
+def compare_token(token_left, token_right):
+    assert token_left.asdict() == token_right.asdict()
+
+
 def compare_tokens(tokens_left, tokens_right):
     assert [i.asdict() for i in tokens_left] == [i.asdict() for i in tokens_right]
 

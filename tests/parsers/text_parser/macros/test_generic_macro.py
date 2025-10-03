@@ -4,6 +4,7 @@ from mau.nodes.macros import MacroNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.text_parser.parser import TextParser
 from mau.test_helpers import (
+    compare_nodes,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -20,11 +21,16 @@ def test_generic_macro():
     expected = [
         Node(
             content=MacroNodeContent("macroname", unnamed_args=["value1", "value2"]),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 26)),
         )
     ]
 
-    assert runner(source).nodes == expected
+    parser = runner(source)
+
+    compare_nodes(
+        parser.nodes,
+        expected,
+    )
 
 
 def test_generic_macro_incomplete():
@@ -33,11 +39,16 @@ def test_generic_macro_incomplete():
     expected = [
         Node(
             content=TextNodeContent("[macroname](value1"),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 18)),
         ),
     ]
 
-    assert runner(source).nodes == expected
+    parser = runner(source)
+
+    compare_nodes(
+        parser.nodes,
+        expected,
+    )
 
 
 def test_generic_macro_named_arguments():
@@ -50,11 +61,16 @@ def test_generic_macro_named_arguments():
                 unnamed_args=["name"],
                 named_args={"arg1": "value1"},
             ),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 29)),
         )
     ]
 
-    assert runner(source).nodes == expected
+    parser = runner(source)
+
+    compare_nodes(
+        parser.nodes,
+        expected,
+    )
 
 
 def test_generic_macro_without_arguments():
@@ -67,8 +83,13 @@ def test_generic_macro_without_arguments():
                 unnamed_args=[],
                 named_args={},
             ),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 13)),
         )
     ]
 
-    assert runner(source).nodes == expected
+    parser = runner(source)
+
+    compare_nodes(
+        parser.nodes,
+        expected,
+    )

@@ -6,9 +6,11 @@ if TYPE_CHECKING:
     from .parser import DocumentParser
 
 
+from mau.text_buffer.context import Context, reshape_context
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.paragraph import ParagraphNodeContent
-from mau.tokens.token import TokenType
+from mau.tokens.token import Token, TokenType
+from mau.parsers.preprocess_variables_parser.parser import PreprocessVariablesParser
 
 
 def paragraph_processor(parser: DocumentParser):
@@ -16,17 +18,14 @@ def paragraph_processor(parser: DocumentParser):
     # Paragraphs can be written on multiple lines and
     # end with an empty line.
 
-    # Get the context of the first token we are going to process
-    context = parser.tm.peek_token().context
-
     # Each line ends with EOL. This collects everything
     # before the EOL, then removes it. If the next token
     # is EOL we know that the paragraph is ended, otherwise
     # we continue to collect. If the token is EOF we
     # reached the end and we have to stop anyway.
-    lines = []
+    line_tokens: list[Token] = []
     while parser.tm.peek_token().type == TokenType.TEXT:
-        lines.append(parser.tm.get_token(TokenType.TEXT).value)
+        line_tokens.append(parser.tm.get_token(TokenType.TEXT))
 
     # Check the stored control
     if control := parser.control_buffer.pop():
@@ -36,10 +35,7 @@ def paragraph_processor(parser: DocumentParser):
         if not control.process(parser.environment):
             return True
 
-    # Multiple lines separated by a single
-    # EOL form the same paragraph.
-    # Join them with a space.
-    text = " ".join(lines)
+    text_token = Token.from_token_list(line_tokens, join_with=" ")
 
     # Get the stored arguments.
     # Paragraphs can receive arguments
@@ -47,10 +43,10 @@ def paragraph_processor(parser: DocumentParser):
     arguments = parser.arguments_buffer.pop_or_default()
 
     # Build the node info.
-    info = NodeInfo(context=context, **arguments.asdict())
+    info = NodeInfo(context=text_token.context, **arguments.asdict())
 
     # Process the text of the paragraph.
-    text_nodes = parser._parse_text(text, context=context)
+    text_nodes = parser._parse_text(text_token.value, context=text_token.context)
 
     node = Node(
         children={

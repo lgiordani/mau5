@@ -7,6 +7,7 @@ from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser.parser import MauParserException
 from mau.parsers.text_parser.parser import TextParser
 from mau.test_helpers import (
+    compare_nodes,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -25,11 +26,13 @@ def test_macro_control_if_true():
     expected = [
         Node(
             content=TextNodeContent("TRUE"),
-            info=NodeInfo(context=generate_context(0, 20)),
+            info=NodeInfo(context=generate_context(0, 20, 0, 24)),
         )
     ]
 
-    assert runner(source, environment=environment).nodes == expected
+    parser = runner(source, environment=environment)
+
+    compare_nodes(parser.nodes, expected)
 
 
 def test_macro_control_if_false():
@@ -40,13 +43,13 @@ def test_macro_control_if_false():
     expected = [
         Node(
             content=TextNodeContent("FALSE"),
-            info=NodeInfo(context=generate_context(0, 29)),
+            info=NodeInfo(context=generate_context(0, 29, 0, 34)),
         )
     ]
 
-    nodes = runner(source, environment=environment).nodes
+    parser = runner(source, environment=environment)
 
-    assert nodes == expected
+    compare_nodes(parser.nodes, expected)
 
 
 def test_macro_control_if_equal():
@@ -57,11 +60,13 @@ def test_macro_control_if_equal():
     expected = [
         Node(
             content=TextNodeContent("TRUE"),
-            info=NodeInfo(context=generate_context(0, 20)),
+            info=NodeInfo(context=generate_context(0, 20, 0, 24)),
         )
     ]
 
-    assert runner(source, environment=environment).nodes == expected
+    parser = runner(source, environment=environment)
+
+    compare_nodes(parser.nodes, expected)
 
 
 def test_macro_control_if_not_equal():
@@ -72,11 +77,13 @@ def test_macro_control_if_not_equal():
     expected = [
         Node(
             content=TextNodeContent("FALSE"),
-            info=NodeInfo(context=generate_context(0, 29)),
+            info=NodeInfo(context=generate_context(0, 29, 0, 34)),
         )
     ]
 
-    assert runner(source, environment=environment).nodes == expected
+    parser = runner(source, environment=environment)
+
+    compare_nodes(parser.nodes, expected)
 
 
 def test_macro_control_wrong_name_format():
@@ -139,16 +146,18 @@ def test_macro_control_ifeval_true():
                 "content": [
                     Node(
                         content=TextNodeContent("sometext"),
-                        info=NodeInfo(context=generate_context(0, 24)),
+                        info=NodeInfo(context=generate_context(0, 24, 0, 32)),
                     ),
                 ]
             },
             content=StyleNodeContent("underscore"),
-            info=NodeInfo(context=generate_context(0, 23)),
+            info=NodeInfo(context=generate_context(0, 23, 0, 33)),
         )
     ]
 
-    assert runner(source, environment=environment).nodes == expected
+    parser = runner(source, environment=environment)
+
+    compare_nodes(parser.nodes, expected)
 
 
 def test_macro_control_ifeval_false():
@@ -168,16 +177,18 @@ def test_macro_control_ifeval_false():
                 "content": [
                     Node(
                         content=TextNodeContent("othertext"),
-                        info=NodeInfo(context=generate_context(0, 37)),
+                        info=NodeInfo(context=generate_context(0, 37, 0, 46)),
                     ),
                 ]
             },
             content=StyleNodeContent("star"),
-            info=NodeInfo(context=generate_context(0, 36)),
+            info=NodeInfo(context=generate_context(0, 36, 0, 47)),
         )
     ]
 
-    assert runner(source, environment=environment).nodes == expected
+    parser = runner(source, environment=environment)
+
+    compare_nodes(parser.nodes, expected)
 
 
 def test_macro_control_ifeval_false_is_not_evaluated():
@@ -197,16 +208,18 @@ def test_macro_control_ifeval_false_is_not_evaluated():
                 "content": [
                     Node(
                         content=TextNodeContent("sometext"),
-                        info=NodeInfo(context=generate_context(0, 24)),
+                        info=NodeInfo(context=generate_context(0, 24, 0, 32)),
                     ),
                 ]
             },
             content=StyleNodeContent("underscore"),
-            info=NodeInfo(context=generate_context(0, 23)),
+            info=NodeInfo(context=generate_context(0, 23, 0, 33)),
         )
     ]
 
-    assert runner(source, environment=environment).nodes == expected
+    parser = runner(source, environment=environment)
+
+    compare_nodes(parser.nodes, expected)
 
 
 def test_macro_control_ifeval_true_is_not_evaluated():
@@ -226,16 +239,18 @@ def test_macro_control_ifeval_true_is_not_evaluated():
                 "content": [
                     Node(
                         content=TextNodeContent("sometext"),
-                        info=NodeInfo(context=generate_context(0, 33)),
+                        info=NodeInfo(context=generate_context(0, 33, 0, 41)),
                     ),
                 ]
             },
             content=StyleNodeContent("underscore"),
-            info=NodeInfo(context=generate_context(0, 32)),
+            info=NodeInfo(context=generate_context(0, 32, 0, 42)),
         )
     ]
 
-    assert runner(source, environment=environment).nodes == expected
+    parser = runner(source, environment=environment)
+
+    compare_nodes(parser.nodes, expected)
 
 
 def test_macro_control_ifeval_undefined_variable():
@@ -291,7 +306,7 @@ def test_macro_control_without_true_case():
     with pytest.raises(MauParserException) as exc:
         runner(source)
 
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 19)
 
 
 def test_macro_control_without_value():
@@ -300,7 +315,7 @@ def test_macro_control_without_value():
     with pytest.raises(MauParserException) as exc:
         runner(source)
 
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 11)
 
 
 def test_macro_control_without_variable():
@@ -309,4 +324,4 @@ def test_macro_control_without_variable():
     with pytest.raises(MauParserException) as exc:
         runner(source)
 
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 7)

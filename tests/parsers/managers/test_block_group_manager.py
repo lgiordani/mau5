@@ -1,7 +1,7 @@
 import pytest
 
 from mau.lexers.document_lexer.lexer import DocumentLexer
-from mau.nodes.block import BlockNodeContent, BlockGroupNodeContent
+from mau.nodes.block import BlockGroupNodeContent, BlockNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser.parser import MauParserException
 from mau.parsers.document_parser.managers.block_group_manager import (
