@@ -38,17 +38,17 @@ def format_parser_error(exception: MauParserException) -> str:
 
     if c := exception.context:
         output.append("")
-        output.append(f"Line: {c.line}")
-        output.append(f"Column: {c.column}")
-        output.append(f"Source: {c.source}")
+        output.append(str(c))
 
         if c.source:
             with open(c.source) as f:
                 lines = f.readlines()
 
                 output.append("")
-                output.append(lines[c.line].replace("\n", ""))
-                output.append(" " * c.column + "^")
+                output.append(lines[c.start_line].replace("\n", ""))
+                output.append(
+                    " " * c.start_column + "^" * (c.end_column - c.start_column)
+                )
 
     if lh := exception.long_help:
         output.append("")

@@ -27,7 +27,7 @@ def test_control():
     assert control.variable == "answer"
     assert control.comparison == ControlComparisons.EQUAL_EQUAL
     assert control.value == "42"
-    assert control.context == generate_context(0, 0)
+    assert control.context == generate_context(0, 0, 0, 14)
 
 
 def test_control_with_spaces():
@@ -42,4 +42,4 @@ def test_control_with_spaces():
     assert control.variable == "answer"
     assert control.comparison == ControlComparisons.EQUAL_EQUAL
     assert control.value == "42"
-    assert control.context == generate_context(0, 0)
+    assert control.context == generate_context(0, 0, 0, 22)

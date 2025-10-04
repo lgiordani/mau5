@@ -258,6 +258,9 @@ class TokensManager:
 
         tokens = self.collect(stop_tokens, preserve_escaped_stop_tokens)
 
+        if not tokens:
+            return Token(TokenType.TEXT, "")
+
         # Some tokens have value None, so this removes them
         token_values = [t.value for t in tokens if t.value != ""]
         value = join_with.join(token_values)

@@ -24,7 +24,7 @@ def test_horizontal_rule():
     expected_nodes = [
         Node(
             content=HorizontalRuleNodeContent(),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 3)),
         )
     ]
 
@@ -47,7 +47,7 @@ def test_horizontal_rule_with_arguments():
                 },
                 tags=["tag1"],
                 subtype="subtype1",
-                context=generate_context(0, 0),
+                context=generate_context(0, 0, 0, 3),
             ),
         )
     ]
@@ -73,7 +73,7 @@ def test_horizontal_rule_full_parse():
     expected_nodes = [
         Node(
             content=HorizontalRuleNodeContent(),
-            info=NodeInfo(context=generate_context(0, 0)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 3)),
         )
     ]
 

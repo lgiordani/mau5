@@ -1,6 +1,8 @@
 import textwrap
 
 from mau.environment.environment import Environment
+from mau.nodes.node import Node, NodeContent
+from mau.tokens.token import Token
 from mau.text_buffer.context import Context
 from mau.text_buffer.text_buffer import TextBuffer
 
@@ -11,20 +13,26 @@ def dedent(text):
     return textwrap.dedent(text).strip()
 
 
-def compare_token(token_left, token_right):
+def compare_token(token_left: Token, token_right: Token):
     assert token_left.asdict() == token_right.asdict()
 
 
-def compare_tokens(tokens_left, tokens_right):
+def compare_tokens(tokens_left: list[Token], tokens_right: list[Token]):
     assert [i.asdict() for i in tokens_left] == [i.asdict() for i in tokens_right]
 
 
-def compare_node(node_left, node_right):
+def compare_node(node_left: Node[NodeContent], node_right: Node[NodeContent]):
     assert node_left.asdict() == node_right.asdict()
 
 
-def compare_nodes(nodes_left, nodes_right):
+def compare_nodes(
+    nodes_left: list[Node[NodeContent]], nodes_right: list[Node[NodeContent]]
+):
     assert [i.asdict() for i in nodes_left] == [i.asdict() for i in nodes_right]
+
+
+def compare_text_lines(left: str, right: str):
+    assert left.split("\n") == right.split("\n")
 
 
 def generate_context(

@@ -1,4 +1,4 @@
-from mau.test_helpers import dedent
+from mau.test_helpers import dedent, generate_context
 from mau.text_buffer.text_buffer import Context, TextBuffer
 
 
@@ -268,10 +268,10 @@ def test_text_buffer_default_context():
     text_buffer.position = (2, 6)
 
     assert text_buffer.context.asdict() == {
-        "line": 2,
-        "column": 6,
-        "end_line": None,
-        "end_column": None,
+        "start_line": 2,
+        "start_column": 6,
+        "end_line": 2,
+        "end_column": 6,
         "source": None,
     }
 
@@ -286,16 +286,10 @@ def test_text_buffer_initial_context():
             to check the context()
             """
         ),
-        Context(72, 123, "main"),
+        generate_context(1, 42, 1, 42),
     )
 
     assert text_buffer.current_line == "Some text"
     assert text_buffer.line == 0
     assert text_buffer.column == 0
-    assert text_buffer.context.asdict() == {
-        "line": 72,
-        "column": 123,
-        "end_line": None,
-        "end_column": None,
-        "source": "main",
-    }
+    assert text_buffer.context == generate_context(1, 42, 1, 42)

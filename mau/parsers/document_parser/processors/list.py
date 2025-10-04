@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from .parser import DocumentParser
 
 
+from mau.text_buffer.context import Context
 from mau.nodes.lists import ListItemNodeContent, ListNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.tokens.token import Token, TokenType
@@ -29,11 +30,14 @@ def _process_list_nodes(parser: DocumentParser):
     # Compute the level of the item
     level = len(header.value)
 
+    # Find the final context.
+    context = Context.merge_contexts(header.context, content[-1].info.context)
+
     nodes = []
     nodes.append(
         Node(
             content=ListItemNodeContent(str(level)),
-            info=NodeInfo(context=header.context),
+            info=NodeInfo(context=context),
             children={"text": content},
         )
     )
@@ -60,10 +64,13 @@ def _process_list_nodes(parser: DocumentParser):
             # Compute the level of the item
             level = len(header.value)
 
+            # Find the final context.
+            context = Context.merge_contexts(header.context, content[-1].info.context)
+
             nodes.append(
                 Node(
                     content=ListItemNodeContent(str(level)),
-                    info=NodeInfo(context=header.context),
+                    info=NodeInfo(context=context),
                     children={"text": content},
                 )
             )
@@ -78,10 +85,13 @@ def _process_list_nodes(parser: DocumentParser):
             # Parse all the items at this level or higher.
             subnodes = _process_list_nodes(parser)
 
+            # Find the final context.
+            context = Context.merge_contexts(header.context, subnodes[-1].info.context)
+
             nodes.append(
                 Node(
                     content=ListNodeContent(ordered=ordered),
-                    info=NodeInfo(context=header.context),
+                    info=NodeInfo(context=context),
                     children={"nodes": subnodes},
                 )
             )
@@ -142,9 +152,12 @@ def list_processor(parser: DocumentParser):
         start = int(start)
         parser.latest_ordered_list_index = len(nodes) + start
 
+    # Find the final context.
+    context = Context.merge_contexts(nodes[0].info.context, nodes[-1].info.context)
+
     node = Node(
         content=ListNodeContent(ordered=ordered, main_node=True, start=start),
-        info=NodeInfo(context=header.context, **arguments.asdict()),
+        info=NodeInfo(context=context, **arguments.asdict()),
         children={"nodes": nodes},
     )
 

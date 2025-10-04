@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from .parser import DocumentParser
 
 
-from mau.text_buffer.context import Context, reshape_context
+from mau.text_buffer.context import Context
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.paragraph import ParagraphNodeContent
 from mau.tokens.token import Token, TokenType

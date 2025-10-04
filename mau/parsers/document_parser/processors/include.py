@@ -23,7 +23,10 @@ def include_processor(parser: DocumentParser):
     prefix = parser.tm.get_token(TokenType.INCLUDE)
 
     # Get the content type.
-    content_type = parser.tm.get_token(TokenType.TEXT).value
+    content_type = parser.tm.get_token(TokenType.TEXT)
+
+    # Find the final context.
+    context = Context.merge_contexts(prefix.context, content_type.context)
 
     arguments: Arguments | None = parser.arguments_buffer.pop()
 
@@ -35,7 +38,7 @@ def include_processor(parser: DocumentParser):
         if arguments:
             raise MauParserException(
                 "Syntax error. You cannot specify both boxed and inline arguments.",
-                prefix.context,
+                context,
                 IncludeNodeContent.long_help,
             )
 
@@ -56,7 +59,7 @@ def include_processor(parser: DocumentParser):
     if not arguments:
         raise MauParserException(
             "Syntax error. You need to specify a list of URIs.",
-            prefix.context,
+            context,
             IncludeNodeContent.long_help,
         )
 
@@ -68,13 +71,13 @@ def include_processor(parser: DocumentParser):
         if not control.process(parser.environment):
             return True
 
-    if content_type == "image":
-        content = _parse_image(arguments, prefix.context)
+    if content_type.value == "image":
+        content = _parse_image(arguments, context)
     else:
-        content = _parse_generic(content_type, arguments, prefix.context)
+        content = _parse_generic(content_type.value, arguments, context)
 
     # Build the node info.
-    info = NodeInfo(context=prefix.context, **arguments.asdict())
+    info = NodeInfo(context=context, **arguments.asdict())
 
     node = Node(content=content, info=info)
 

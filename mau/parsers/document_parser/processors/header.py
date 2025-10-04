@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from .parser import DocumentParser
 
 
+from mau.text_buffer.context import Context
 from mau.nodes.headers import HeaderNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.preprocess_variables_parser.parser import PreprocessVariablesParser
@@ -68,8 +69,11 @@ def header_processor(parser: DocumentParser):
     # Extract the header id if specified.
     header_id = arguments.named_args.get("id", None)
 
+    # Find the final context.
+    context = Context.merge_contexts(header.context, text_nodes[-1].info.context)
+
     # Build the node info.
-    info = NodeInfo(context=header.context, **arguments.asdict())
+    info = NodeInfo(context=context, **arguments.asdict())
 
     node = Node(
         content=HeaderNodeContent(level, unique_id),

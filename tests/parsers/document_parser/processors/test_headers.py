@@ -36,12 +36,12 @@ def test_header_level_1():
         [
             Node(
                 content=HeaderNodeContent(1, "XXXXXY"),
-                info=NodeInfo(context=generate_context(0, 0)),
+                info=NodeInfo(context=generate_context(0, 0, 0, 22)),
                 children={
                     "text": [
                         Node(
                             content=TextNodeContent("Title of the section"),
-                            info=NodeInfo(context=generate_context(0, 2)),
+                            info=NodeInfo(context=generate_context(0, 2, 0, 22)),
                         )
                     ]
                 },
@@ -68,12 +68,12 @@ def test_header_level_3():
         [
             Node(
                 content=HeaderNodeContent(3, "XXXXXY"),
-                info=NodeInfo(context=generate_context(0, 0)),
+                info=NodeInfo(context=generate_context(0, 0, 0, 25)),
                 children={
                     "text": [
                         Node(
                             content=TextNodeContent("Title of a subsection"),
-                            info=NodeInfo(context=generate_context(0, 4)),
+                            info=NodeInfo(context=generate_context(0, 4, 0, 25)),
                         )
                     ]
                 },
@@ -110,7 +110,7 @@ def test_header_attributes():
             Node(
                 content=HeaderNodeContent(1, "XXXXXY"),
                 info=NodeInfo(
-                    context=generate_context(0, 0),
+                    context=generate_context(0, 0, 0, 22),
                     unnamed_args=["arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
@@ -120,7 +120,7 @@ def test_header_attributes():
                     "text": [
                         Node(
                             content=TextNodeContent("Title of the section"),
-                            info=NodeInfo(context=generate_context(0, 2)),
+                            info=NodeInfo(context=generate_context(0, 2, 0, 22)),
                         )
                     ]
                 },
@@ -150,7 +150,7 @@ def test_header_attributes_can_overwrite_unique_id():
             Node(
                 content=HeaderNodeContent(1, "someheader"),
                 info=NodeInfo(
-                    context=generate_context(0, 0),
+                    context=generate_context(0, 0, 0, 8),
                     unnamed_args=["arg1"],
                     named_args={},
                     tags=["tag1"],
@@ -160,7 +160,7 @@ def test_header_attributes_can_overwrite_unique_id():
                     "text": [
                         Node(
                             content=TextNodeContent("Header"),
-                            info=NodeInfo(context=generate_context(0, 2)),
+                            info=NodeInfo(context=generate_context(0, 2, 0, 8)),
                         )
                     ]
                 },
@@ -188,12 +188,12 @@ def test_header_ignore_title():
         [
             Node(
                 content=HeaderNodeContent(1, "XXXXXY"),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 2, 22)),
                 children={
                     "text": [
                         Node(
                             content=TextNodeContent("Title of the section"),
-                            info=NodeInfo(context=generate_context(2, 2)),
+                            info=NodeInfo(context=generate_context(2, 2, 2, 22)),
                         )
                     ]
                 },
@@ -224,12 +224,12 @@ def test_header_uses_control_positive():
         [
             Node(
                 content=HeaderNodeContent(1, "XXXXXY"),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 2, 22)),
                 children={
                     "text": [
                         Node(
                             content=TextNodeContent("Title of the section"),
-                            info=NodeInfo(context=generate_context(2, 2)),
+                            info=NodeInfo(context=generate_context(2, 2, 2, 22)),
                         )
                     ]
                 },

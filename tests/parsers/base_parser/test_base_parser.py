@@ -10,6 +10,7 @@ from mau.parsers.base_parser.parser import (
     format_parser_error,
 )
 from mau.test_helpers import (
+    compare_text_lines,
     dedent,
     generate_context,
     init_parser_factory,
@@ -50,7 +51,7 @@ def test_format_parser_error():
 @patch("builtins.open", new_callable=mock_open, read_data="just some data")
 def test_format_parser_error_with_context(mock_open):
     test_message = "A test message"
-    test_context = generate_context(0, 5)
+    test_context = generate_context(0, 5, 0, 9)
 
     exception = MauParserException(test_message, test_context)
 
@@ -61,16 +62,14 @@ def test_format_parser_error_with_context(mock_open):
 
         Message: A test message
 
-        Line: 0
-        Column: 5
-        Source: test.py
+        test.py:0,5-0,9
 
         just some data
-             ^
+             ^^^^
         """
     )
 
-    assert format_parser_error(exception) == expected
+    compare_text_lines(format_parser_error(exception), expected)
 
 
 def test_error_no_context():
@@ -83,7 +82,7 @@ def test_error_no_context():
         raise parser._error("A message")
 
     assert exc.value.message == "A message"
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 9)
 
 
 def test_error_with_context():

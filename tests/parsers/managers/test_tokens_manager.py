@@ -299,6 +299,14 @@ def test_collect_join():
     assert tm.collect_join([Token(TokenType.EOF)]) == expected
 
 
+def test_collect_join_empty_list():
+    tm = init_tokens_manager("", Environment())
+
+    expected = Token(TokenType.TEXT, "")
+
+    assert tm.collect_join([Token(TokenType.EOF)]) == expected
+
+
 def test_collect_join_with_different_joiner():
     tm = init_tokens_manager("Some te\nxt that will be joined\n!", Environment())
 

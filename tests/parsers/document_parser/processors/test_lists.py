@@ -27,19 +27,21 @@ def test_parse_list_with_one_item():
         [
             Node(
                 content=ListNodeContent(ordered=False, main_node=True),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 1, 33)),
                 children={
                     "nodes": [
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(1, 0)),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 33)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent(
                                             "This is a list with one element"
                                         ),
-                                        info=NodeInfo(context=generate_context(1, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 2, 1, 33)
+                                        ),
                                     )
                                 ]
                             },
@@ -64,29 +66,33 @@ def test_parse_list_with_multiple_items():
         [
             Node(
                 content=ListNodeContent(ordered=False, main_node=True),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 2, 8)),
                 children={
                     "nodes": [
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(1, 0)),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 8)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 1"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 2, 1, 8)
+                                        ),
                                     )
                                 ]
                             },
                         ),
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(2, 0)),
+                            info=NodeInfo(context=generate_context(2, 0, 2, 8)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 2"),
-                                        info=NodeInfo(context=generate_context(2, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 2, 2, 8)
+                                        ),
                                     )
                                 ]
                             },
@@ -112,35 +118,41 @@ def test_parse_list_with_multiple_levels():
         [
             Node(
                 content=ListNodeContent(ordered=False, main_node=True),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 3, 8)),
                 children={
                     "nodes": [
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(1, 0)),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 8)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 1"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 2, 1, 8)
+                                        ),
                                     )
                                 ]
                             },
                         ),
                         Node(
                             content=ListNodeContent(ordered=False, main_node=False),
-                            info=NodeInfo(context=generate_context(2, 0)),
+                            info=NodeInfo(context=generate_context(2, 0, 2, 11)),
                             children={
                                 "nodes": [
                                     Node(
                                         content=ListItemNodeContent("2"),
-                                        info=NodeInfo(context=generate_context(2, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 0, 2, 11)
+                                        ),
                                         children={
                                             "text": [
                                                 Node(
                                                     content=TextNodeContent("Item 1.1"),
                                                     info=NodeInfo(
-                                                        context=generate_context(2, 3)
+                                                        context=generate_context(
+                                                            2, 3, 2, 11
+                                                        )
                                                     ),
                                                 )
                                             ]
@@ -151,12 +163,14 @@ def test_parse_list_with_multiple_levels():
                         ),
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 8)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 2"),
-                                        info=NodeInfo(context=generate_context(3, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 2, 3, 8)
+                                        ),
                                     )
                                 ]
                             },
@@ -182,35 +196,41 @@ def test_parse_numbered_list():
         [
             Node(
                 content=ListNodeContent(ordered=True, main_node=True),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 3, 8)),
                 children={
                     "nodes": [
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(1, 0)),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 8)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 1"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 2, 1, 8)
+                                        ),
                                     )
                                 ]
                             },
                         ),
                         Node(
                             content=ListNodeContent(ordered=True, main_node=False),
-                            info=NodeInfo(context=generate_context(2, 0)),
+                            info=NodeInfo(context=generate_context(2, 0, 2, 11)),
                             children={
                                 "nodes": [
                                     Node(
                                         content=ListItemNodeContent("2"),
-                                        info=NodeInfo(context=generate_context(2, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 0, 2, 11)
+                                        ),
                                         children={
                                             "text": [
                                                 Node(
                                                     content=TextNodeContent("Item 1.1"),
                                                     info=NodeInfo(
-                                                        context=generate_context(2, 3)
+                                                        context=generate_context(
+                                                            2, 3, 2, 11
+                                                        )
                                                     ),
                                                 )
                                             ]
@@ -221,12 +241,14 @@ def test_parse_numbered_list():
                         ),
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 8)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 2"),
-                                        info=NodeInfo(context=generate_context(3, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 2, 3, 8)
+                                        ),
                                     )
                                 ]
                             },
@@ -252,35 +274,41 @@ def test_parse_mixed_list():
         [
             Node(
                 content=ListNodeContent(ordered=False, main_node=True),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 3, 8)),
                 children={
                     "nodes": [
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(1, 0)),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 8)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 1"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 2, 1, 8)
+                                        ),
                                     )
                                 ]
                             },
                         ),
                         Node(
                             content=ListNodeContent(ordered=True, main_node=False),
-                            info=NodeInfo(context=generate_context(2, 0)),
+                            info=NodeInfo(context=generate_context(2, 0, 2, 11)),
                             children={
                                 "nodes": [
                                     Node(
                                         content=ListItemNodeContent("2"),
-                                        info=NodeInfo(context=generate_context(2, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 0, 2, 11)
+                                        ),
                                         children={
                                             "text": [
                                                 Node(
                                                     content=TextNodeContent("Item 1.1"),
                                                     info=NodeInfo(
-                                                        context=generate_context(2, 3)
+                                                        context=generate_context(
+                                                            2, 3, 2, 11
+                                                        )
                                                     ),
                                                 )
                                             ]
@@ -291,12 +319,14 @@ def test_parse_mixed_list():
                         ),
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 8)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 2"),
-                                        info=NodeInfo(context=generate_context(3, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 2, 3, 8)
+                                        ),
                                     )
                                 ]
                             },
@@ -340,29 +370,33 @@ def test_parse_numbered_list_continue():
         [
             Node(
                 content=ListNodeContent(ordered=True, main_node=True),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 2, 8)),
                 children={
                     "nodes": [
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(1, 0)),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 8)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 1"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 2, 1, 8)
+                                        ),
                                     )
                                 ]
                             },
                         ),
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(2, 0)),
+                            info=NodeInfo(context=generate_context(2, 0, 2, 8)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 2"),
-                                        info=NodeInfo(context=generate_context(2, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 2, 2, 8)
+                                        ),
                                     )
                                 ]
                             },
@@ -372,17 +406,19 @@ def test_parse_numbered_list_continue():
             ),
             Node(
                 content=ListNodeContent(ordered=True, main_node=True, start=3),
-                info=NodeInfo(context=generate_context(5, 0)),
+                info=NodeInfo(context=generate_context(5, 0, 5, 8)),
                 children={
                     "nodes": [
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(5, 0)),
+                            info=NodeInfo(context=generate_context(5, 0, 5, 8)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 3"),
-                                        info=NodeInfo(context=generate_context(5, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(5, 2, 5, 8)
+                                        ),
                                     )
                                 ]
                             },
@@ -412,17 +448,19 @@ def test_parse_numbered_list_continue_after_forced():
         [
             Node(
                 content=ListNodeContent(ordered=True, main_node=True),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 1, 8)),
                 children={
                     "nodes": [
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(1, 0)),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 8)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 1"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 2, 1, 8)
+                                        ),
                                     )
                                 ]
                             },
@@ -432,17 +470,19 @@ def test_parse_numbered_list_continue_after_forced():
             ),
             Node(
                 content=ListNodeContent(ordered=True, main_node=True, start=20),
-                info=NodeInfo(context=generate_context(4, 0)),
+                info=NodeInfo(context=generate_context(4, 0, 4, 9)),
                 children={
                     "nodes": [
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(4, 0)),
+                            info=NodeInfo(context=generate_context(4, 0, 4, 9)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 20"),
-                                        info=NodeInfo(context=generate_context(4, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 2, 4, 9)
+                                        ),
                                     )
                                 ]
                             },
@@ -452,17 +492,19 @@ def test_parse_numbered_list_continue_after_forced():
             ),
             Node(
                 content=ListNodeContent(ordered=True, main_node=True, start=21),
-                info=NodeInfo(context=generate_context(7, 0)),
+                info=NodeInfo(context=generate_context(7, 0, 7, 9)),
                 children={
                     "nodes": [
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(7, 0)),
+                            info=NodeInfo(context=generate_context(7, 0, 7, 9)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 21"),
-                                        info=NodeInfo(context=generate_context(7, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(7, 2, 7, 9)
+                                        ),
                                     )
                                 ]
                             },
@@ -488,17 +530,19 @@ def test_parse_numbered_list_do_not_continue_by_default():
         [
             Node(
                 content=ListNodeContent(ordered=True, main_node=True),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 1, 8)),
                 children={
                     "nodes": [
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(1, 0)),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 8)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 1"),
-                                        info=NodeInfo(context=generate_context(1, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 2, 1, 8)
+                                        ),
                                     )
                                 ]
                             },
@@ -508,17 +552,19 @@ def test_parse_numbered_list_do_not_continue_by_default():
             ),
             Node(
                 content=ListNodeContent(ordered=True, main_node=True),
-                info=NodeInfo(context=generate_context(3, 0)),
+                info=NodeInfo(context=generate_context(3, 0, 3, 8)),
                 children={
                     "nodes": [
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 8)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Item 2"),
-                                        info=NodeInfo(context=generate_context(3, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 2, 3, 8)
+                                        ),
                                     )
                                 ]
                             },
@@ -544,7 +590,7 @@ def test_parse_list_arguments():
             Node(
                 content=ListNodeContent(ordered=False, main_node=True),
                 info=NodeInfo(
-                    context=generate_context(2, 0),
+                    context=generate_context(2, 0, 2, 33),
                     unnamed_args=["arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
@@ -554,14 +600,16 @@ def test_parse_list_arguments():
                     "nodes": [
                         Node(
                             content=ListItemNodeContent("1"),
-                            info=NodeInfo(context=generate_context(2, 0)),
+                            info=NodeInfo(context=generate_context(2, 0, 2, 33)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent(
                                             "This is a list with one element"
                                         ),
-                                        info=NodeInfo(context=generate_context(2, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 2, 2, 33)
+                                        ),
                                     )
                                 ]
                             },

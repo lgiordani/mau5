@@ -128,7 +128,7 @@ def test_paragraph_with_style_full_parse():
                             content=TextNodeContent(
                                 ". This is part of the same paragraph."
                             ),
-                            info=NodeInfo(context=generate_context(1, 21, 2, 35)),
+                            info=NodeInfo(context=generate_context(1, 21, 1, 58)),
                         ),
                     ]
                 },
@@ -173,13 +173,13 @@ def test_paragraph_with_style_on_multiple_lines_full_parse():
                         ),
                         Node(
                             content=StyleNodeContent("star"),
-                            info=NodeInfo(context=generate_context(1, 10, 2, 11)),
+                            info=NodeInfo(context=generate_context(1, 10, 1, 32)),
                             children={
                                 "content": [
                                     Node(
                                         content=TextNodeContent("paragraph with style"),
                                         info=NodeInfo(
-                                            context=generate_context(1, 11, 2, 10)
+                                            context=generate_context(1, 11, 1, 31)
                                         ),
                                     )
                                 ]
@@ -189,12 +189,12 @@ def test_paragraph_with_style_on_multiple_lines_full_parse():
                             content=TextNodeContent(
                                 ". This is part of the same paragraph."
                             ),
-                            info=NodeInfo(context=generate_context(2, 11, 2, 52)),
+                            info=NodeInfo(context=generate_context(1, 32, 1, 69)),
                         ),
                     ]
                 },
                 content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(1, 0, 2, 35)),
+                info=NodeInfo(context=generate_context(1, 0, 2, 48)),
             ),
             Node(
                 children={
@@ -354,7 +354,7 @@ def test_paragraph_with_variable():
                     ]
                 },
                 content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(0, 0, 0, 31)),
+                info=NodeInfo(context=generate_context(0, 0, 0, 38)),
             )
         ],
     )
@@ -381,7 +381,7 @@ def test_paragraph_with_namespaced_variable():
                     ]
                 },
                 content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(0, 0, 0, 31)),
+                info=NodeInfo(context=generate_context(0, 0, 0, 44)),
             )
         ],
     )
@@ -435,7 +435,7 @@ def test_paragraph_with_escaped_variable():
                     ]
                 },
                 content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(0, 0, 0, 38)),
+                info=NodeInfo(context=generate_context(0, 0, 0, 40)),
             )
         ],
     )
@@ -505,7 +505,7 @@ def test_paragraph_with_nested_variables():
                     ]
                 },
                 content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(4, 0, 4, 16)),
+                info=NodeInfo(context=generate_context(4, 0, 4, 10)),
             )
         ],
     )

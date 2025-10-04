@@ -33,7 +33,7 @@ def test_include_content_inline_arguments():
             Node(
                 content=IncludeNodeContent("ctype1", ["/path/to/it", "/another/path"]),
                 info=NodeInfo(
-                    context=generate_context(0, 0),
+                    context=generate_context(0, 0, 0, 9),
                     unnamed_args=[],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
@@ -65,7 +65,7 @@ def test_include_content_boxed_arguments():
             Node(
                 content=IncludeNodeContent("ctype1", ["/path/to/it", "/another/path"]),
                 info=NodeInfo(
-                    context=generate_context(0, 0),
+                    context=generate_context(0, 0, 0, 9),
                     unnamed_args=[],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
@@ -93,7 +93,7 @@ def test_include_content_boxed_and_inline_arguments_are_forbidden():
         exc.value.message
         == "Syntax error. You cannot specify both boxed and inline arguments."
     )
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 9)
 
 
 def test_include_content_without_arguments_is_forbidden():
@@ -103,7 +103,7 @@ def test_include_content_without_arguments_is_forbidden():
         runner(source)
 
     assert exc.value.message == "Syntax error. You need to specify a list of URIs."
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 9)
 
 
 def test_include_content_without_unnamed_arguments_is_forbidden():
@@ -115,7 +115,7 @@ def test_include_content_without_unnamed_arguments_is_forbidden():
         include_processor(parser)
 
     assert exc.value.message == "Syntax error. You need to specify a list of URIs."
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 9)
 
 
 def test_include_content_with_title():
@@ -123,7 +123,7 @@ def test_include_content_with_title():
 
     parser: DocumentParser = init_parser(source)
     parser.children_buffer.push(
-        "title", "A title", generate_context(1, 2), Environment()
+        "title", "A title", generate_context(1, 2, 1, 9), Environment()
     )
 
     include_processor(parser)
@@ -133,12 +133,12 @@ def test_include_content_with_title():
         [
             Node(
                 content=IncludeNodeContent("ctype1", ["/path/to/it", "/another/path"]),
-                info=NodeInfo(context=generate_context(0, 0)),
+                info=NodeInfo(context=generate_context(0, 0, 0, 9)),
                 children={
                     "title": [
                         Node(
                             content=TextNodeContent("A title"),
-                            info=NodeInfo(context=generate_context(1, 2)),
+                            info=NodeInfo(context=generate_context(1, 2, 1, 9)),
                         )
                     ]
                 },
@@ -160,7 +160,7 @@ def test_include_full_parse():
             Node(
                 content=IncludeNodeContent("ctype1", ["/path/to/it", "/another/path"]),
                 info=NodeInfo(
-                    context=generate_context(1, 0),
+                    context=generate_context(1, 0, 1, 9),
                     unnamed_args=[],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
@@ -188,7 +188,7 @@ def test_header_uses_control_positive():
             Node(
                 content=IncludeNodeContent("ctype1", ["/path/to/it"]),
                 info=NodeInfo(
-                    context=generate_context(2, 0),
+                    context=generate_context(2, 0, 2, 9),
                     unnamed_args=[],
                     named_args={},
                     tags=[],
@@ -229,7 +229,7 @@ def test_include_image_with_only_path():
             Node(
                 content=IncludeImageNodeContent("/path/to/it.jpg"),
                 info=NodeInfo(
-                    context=generate_context(1, 0),
+                    context=generate_context(1, 0, 1, 8),
                     unnamed_args=[],
                     named_args={},
                     tags=[],
@@ -255,7 +255,7 @@ def test_include_image_with_alt_text_and_classes():
                     "/path/to/it.jpg", "Alt text", ["class1", "class2"]
                 ),
                 info=NodeInfo(
-                    context=generate_context(1, 0),
+                    context=generate_context(1, 0, 1, 8),
                     unnamed_args=[],
                     named_args={},
                     tags=[],
@@ -274,4 +274,4 @@ def test_include_image_without_uri():
     with pytest.raises(MauParserException) as exc:
         runner(source)
 
-    assert exc.value.context == generate_context(1, 9)
+    assert exc.value.context == generate_context(1, 9, 1, 10)

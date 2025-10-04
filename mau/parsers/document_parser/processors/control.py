@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from .parser import DocumentParser
 
 
+from mau.text_buffer.context import Context
 from mau.parsers.document_parser.buffers.control_buffer import Control
 from mau.tokens.token import TokenType
 
@@ -16,7 +17,7 @@ def control_processor(parser: DocumentParser):
     # @OPERATOR VARIABLE COMPARISON VALUE
 
     # Parse the mandatory @
-    prefix = parser.tm.get_token(TokenType.CONTROL, "@")
+    prefix_token = parser.tm.get_token(TokenType.CONTROL, "@")
 
     # Get the operator
     operator = parser.tm.get_token(TokenType.TEXT).value
@@ -28,9 +29,12 @@ def control_processor(parser: DocumentParser):
     comparison = parser.tm.get_token(TokenType.TEXT).value
 
     # Get the value
-    value = parser.tm.get_token(TokenType.TEXT).value
+    value_token = parser.tm.get_token(TokenType.TEXT)
 
-    control = Control(operator, variable, comparison, value, prefix.context)
+    # Find the final context.
+    context = Context.merge_contexts(prefix_token.context, value_token.context)
+
+    control = Control(operator, variable, comparison, value_token.value, context)
     parser.control_buffer.push(control)
 
     return True
