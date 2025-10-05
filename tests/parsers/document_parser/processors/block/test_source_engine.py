@@ -33,7 +33,7 @@ def test_source_engine_empty_block():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 3, 4)),
                 children={"content": []},
             ),
         ],
@@ -58,7 +58,9 @@ def test_source_engine_empty_block_language():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0), unnamed_args=["python"]),
+                info=NodeInfo(
+                    context=generate_context(2, 0, 3, 4), unnamed_args=["python"]
+                ),
                 children={"content": []},
             ),
         ],
@@ -87,37 +89,45 @@ def test_source_engine_contains_mau_code():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 7, 4)),
                 children={
                     "content": [
                         Node(
                             content=SourceNodeContent("text"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 6, 4)),
                             children={
                                 "code": [
                                     Node(
                                         content=SourceLineNodeContent(
                                             line_number="1", line_content="// A comment"
                                         ),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 12)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
                                             line_number="2", line_content="@@@@"
                                         ),
-                                        info=NodeInfo(context=generate_context(4, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 4)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
                                             line_number="3", line_content="A block"
                                         ),
-                                        info=NodeInfo(context=generate_context(5, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(5, 0, 5, 7)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
                                             line_number="4", line_content="@@@@"
                                         ),
-                                        info=NodeInfo(context=generate_context(6, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(6, 0, 6, 4)
+                                        ),
                                     ),
                                 ]
                             },
@@ -148,12 +158,12 @@ def test_source_engine_removes_escape_from_directive_like_text():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 4, 4)),
                 children={
                     "content": [
                         Node(
                             content=SourceNodeContent("text"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 26)),
                             children={
                                 "code": [
                                     Node(
@@ -161,7 +171,9 @@ def test_source_engine_removes_escape_from_directive_like_text():
                                             line_number="1",
                                             line_content="::#looks like a directive",
                                         ),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 26)
+                                        ),
                                     ),
                                 ]
                             },
@@ -194,32 +206,38 @@ def test_source_engine_with_code():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 6, 4)),
                 children={
                     "content": [
                         Node(
                             content=SourceNodeContent("python"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 5, 25)),
                             children={
                                 "code": [
                                     Node(
                                         content=SourceLineNodeContent(
                                             line_number="1", line_content="import os"
                                         ),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 9)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
                                             line_number="2", line_content=""
                                         ),
-                                        info=NodeInfo(context=generate_context(4, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 0)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
                                             line_number="3",
                                             line_content='print(os.environ["HOME"])',
                                         ),
-                                        info=NodeInfo(context=generate_context(5, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(5, 0, 5, 25)
+                                        ),
                                     ),
                                 ]
                             },
@@ -251,26 +269,30 @@ def test_source_engine_ignores_mau_syntax():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 5, 4)),
                 children={
                     "content": [
                         Node(
                             content=SourceNodeContent("text"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 4, 22)),
                             children={
                                 "code": [
                                     Node(
                                         content=SourceLineNodeContent(
                                             line_number="1", line_content=":answer:42"
                                         ),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 10)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
                                             line_number="2",
                                             line_content="The answer is {answer}",
                                         ),
-                                        info=NodeInfo(context=generate_context(4, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 22)
+                                        ),
                                     ),
                                 ]
                             },
@@ -301,12 +323,12 @@ def test_source_engine_respects_spaces_and_indentation():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 4, 4)),
                 children={
                     "content": [
                         Node(
                             content=SourceNodeContent("text"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 25)),
                             children={
                                 "code": [
                                     Node(
@@ -314,7 +336,9 @@ def test_source_engine_respects_spaces_and_indentation():
                                             line_number="1",
                                             line_content="  //    This is a comment",
                                         ),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 25)
+                                        ),
                                     ),
                                 ]
                             },
@@ -347,12 +371,12 @@ def test_source_engine_callouts_default_delimiter():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 6, 4)),
                 children={
                     "content": [
                         Node(
                             content=SourceNodeContent("text"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 5, 18)),
                             children={
                                 "code": [
                                     Node(
@@ -360,7 +384,9 @@ def test_source_engine_callouts_default_delimiter():
                                             line_number="1",
                                             line_content="import sys",
                                         ),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 10)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
@@ -368,7 +394,9 @@ def test_source_engine_callouts_default_delimiter():
                                             line_content="import os",
                                             marker="mark1",
                                         ),
-                                        info=NodeInfo(context=generate_context(4, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 16)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
@@ -376,7 +404,9 @@ def test_source_engine_callouts_default_delimiter():
                                             line_content="import enum",
                                             marker="mark2",
                                         ),
-                                        info=NodeInfo(context=generate_context(5, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(5, 0, 5, 18)
+                                        ),
                                     ),
                                 ]
                             },
@@ -407,12 +437,12 @@ def test_source_engine_callouts_potential_clash():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 4, 4)),
                 children={
                     "content": [
                         Node(
                             content=SourceNodeContent("text"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 17)),
                             children={
                                 "code": [
                                     Node(
@@ -421,7 +451,9 @@ def test_source_engine_callouts_potential_clash():
                                             line_content="import: os",
                                             marker="mark1",
                                         ),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 17)
+                                        ),
                                     ),
                                 ]
                             },
@@ -452,12 +484,12 @@ def test_source_engine_callouts_one_single_marker_is_skipped():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 4, 4)),
                 children={
                     "content": [
                         Node(
                             content=SourceNodeContent("text"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 7)),
                             children={
                                 "code": [
                                     Node(
@@ -465,7 +497,9 @@ def test_source_engine_callouts_one_single_marker_is_skipped():
                                             line_number="1",
                                             line_content="import:",
                                         ),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 7)
+                                        ),
                                     ),
                                 ]
                             },
@@ -498,12 +532,12 @@ def test_source_engine_marker_custom_delimiter():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 6, 4)),
                 children={
                     "content": [
                         Node(
                             content=SourceNodeContent("text"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 5, 18)),
                             children={
                                 "code": [
                                     Node(
@@ -511,14 +545,18 @@ def test_source_engine_marker_custom_delimiter():
                                             line_number="1",
                                             line_content="import sys",
                                         ),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 10)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
                                             line_number="2",
                                             line_content="import os:mark1:",
                                         ),
-                                        info=NodeInfo(context=generate_context(4, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 16)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
@@ -526,7 +564,9 @@ def test_source_engine_marker_custom_delimiter():
                                             line_content="import enum",
                                             marker="mark2",
                                         ),
-                                        info=NodeInfo(context=generate_context(5, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(5, 0, 5, 18)
+                                        ),
                                     ),
                                 ]
                             },
@@ -558,12 +598,12 @@ def test_source_engine_highlight_marker_with_default_style():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 5, 4)),
                 children={
                     "content": [
                         Node(
                             content=SourceNodeContent("text"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 4, 12)),
                             children={
                                 "code": [
                                     Node(
@@ -571,7 +611,9 @@ def test_source_engine_highlight_marker_with_default_style():
                                             line_number="1",
                                             line_content="import sys",
                                         ),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 10)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
@@ -579,7 +621,9 @@ def test_source_engine_highlight_marker_with_default_style():
                                             line_content="import os",
                                             highlight_style="default",
                                         ),
-                                        info=NodeInfo(context=generate_context(4, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 12)
+                                        ),
                                     ),
                                 ]
                             },
@@ -611,12 +655,12 @@ def test_source_engine_highlight_custom_marker():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 5, 4)),
                 children={
                     "content": [
                         Node(
                             content=SourceNodeContent("text"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 4, 12)),
                             children={
                                 "code": [
                                     Node(
@@ -624,7 +668,9 @@ def test_source_engine_highlight_custom_marker():
                                             line_number="1",
                                             line_content="import sys",
                                         ),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 10)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
@@ -632,7 +678,9 @@ def test_source_engine_highlight_custom_marker():
                                             line_content="import os",
                                             highlight_style="default",
                                         ),
-                                        info=NodeInfo(context=generate_context(4, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 12)
+                                        ),
                                     ),
                                 ]
                             },
@@ -664,12 +712,12 @@ def test_source_engine_highlight_marker_change_default_highlight_style():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 5, 4)),
                 children={
                     "content": [
                         Node(
                             content=SourceNodeContent("text"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 4, 12)),
                             children={
                                 "code": [
                                     Node(
@@ -677,7 +725,9 @@ def test_source_engine_highlight_marker_change_default_highlight_style():
                                             line_number="1",
                                             line_content="import sys",
                                         ),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 10)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
@@ -685,7 +735,9 @@ def test_source_engine_highlight_marker_change_default_highlight_style():
                                             line_content="import os",
                                             highlight_style="another",
                                         ),
-                                        info=NodeInfo(context=generate_context(4, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 12)
+                                        ),
                                     ),
                                 ]
                             },
@@ -718,12 +770,12 @@ def test_source_engine_highlight_marker_custom_highlight_style():
                     engine="source",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 6, 4)),
                 children={
                     "content": [
                         Node(
                             content=SourceNodeContent("text"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 5, 15)),
                             children={
                                 "code": [
                                     Node(
@@ -731,7 +783,9 @@ def test_source_engine_highlight_marker_custom_highlight_style():
                                             line_number="1",
                                             line_content="import sys",
                                         ),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 10)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
@@ -739,7 +793,9 @@ def test_source_engine_highlight_marker_custom_highlight_style():
                                             line_content="import os",
                                             highlight_style="green",
                                         ),
-                                        info=NodeInfo(context=generate_context(4, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 17)
+                                        ),
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
@@ -747,7 +803,9 @@ def test_source_engine_highlight_marker_custom_highlight_style():
                                             line_content="import enum",
                                             highlight_style="+",
                                         ),
-                                        info=NodeInfo(context=generate_context(5, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(5, 0, 5, 15)
+                                        ),
                                     ),
                                 ]
                             },

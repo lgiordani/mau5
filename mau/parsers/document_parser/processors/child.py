@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from .parser import DocumentParser
 
 
+from mau.text_buffer.context import Context
 from mau.tokens.token import TokenType
 
 
@@ -26,8 +27,8 @@ def child_processor(parser: DocumentParser):
     role = prefix.value[1:] or "title"
 
     # Get the text of the title
-    text = parser.tm.get_token(TokenType.TEXT).value
+    text = parser.tm.get_token(TokenType.TEXT)
 
-    parser.children_buffer.push(role, text, prefix.context, parser.environment)
+    parser.children_buffer.push(role, text.value, text.context, parser.environment)
 
     return True

@@ -30,7 +30,12 @@ def test_command_toc():
 
     compare_nodes(
         parser.nodes,
-        [Node(content=TocNodeContent(), info=NodeInfo(context=generate_context(0, 0)))],
+        [
+            Node(
+                content=TocNodeContent(),
+                info=NodeInfo(context=generate_context(0, 0, 0, 5)),
+            )
+        ],
     )
 
 
@@ -46,7 +51,7 @@ def test_command_toc_inline_arguments():
             Node(
                 content=TocNodeContent(),
                 info=NodeInfo(
-                    context=generate_context(0, 0),
+                    context=generate_context(0, 0, 0, 5),
                     unnamed_args=["arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
@@ -78,7 +83,7 @@ def test_command_toc_boxed_arguments():
             Node(
                 content=TocNodeContent(),
                 info=NodeInfo(
-                    context=generate_context(0, 0),
+                    context=generate_context(0, 0, 0, 5),
                     unnamed_args=["arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
@@ -109,7 +114,7 @@ def test_command_toc_boxed_and_inline_arguments_are_forbidden():
         exc.value.message
         == "Syntax error. You cannot specify both boxed and inline arguments."
     )
-    assert exc.value.context == generate_context(0, 0)
+    assert exc.value.context == generate_context(0, 0, 0, 5)
 
 
 def test_toc():
@@ -135,12 +140,12 @@ def test_toc():
 
     node_header_1_1 = Node(
         content=HeaderNodeContent(level=2, unique_id="Header 1.1-XXXXXX"),
-        info=NodeInfo(context=generate_context(2, 0)),
+        info=NodeInfo(context=generate_context(2, 0, 2, 13)),
         children={
             "text": [
                 Node(
                     content=TextNodeContent("Header 1.1"),
-                    info=NodeInfo(context=generate_context(2, 3)),
+                    info=NodeInfo(context=generate_context(2, 3, 2, 13)),
                 )
             ],
         },
@@ -148,12 +153,12 @@ def test_toc():
 
     node_header_1 = Node(
         content=HeaderNodeContent(level=1, unique_id="Header 1-XXXXXX"),
-        info=NodeInfo(context=generate_context(1, 0)),
+        info=NodeInfo(context=generate_context(1, 0, 1, 10)),
         children={
             "text": [
                 Node(
                     content=TextNodeContent("Header 1"),
-                    info=NodeInfo(context=generate_context(1, 2)),
+                    info=NodeInfo(context=generate_context(1, 2, 1, 10)),
                 )
             ],
         },
@@ -161,12 +166,12 @@ def test_toc():
 
     node_header_2 = Node(
         content=HeaderNodeContent(level=1, unique_id="Header 2-XXXXXX"),
-        info=NodeInfo(context=generate_context(3, 0)),
+        info=NodeInfo(context=generate_context(3, 0, 3, 10)),
         children={
             "text": [
                 Node(
                     content=TextNodeContent("Header 2"),
-                    info=NodeInfo(context=generate_context(3, 2)),
+                    info=NodeInfo(context=generate_context(3, 2, 3, 10)),
                 )
             ],
         },
@@ -174,13 +179,13 @@ def test_toc():
 
     node_toc_item_1_1 = Node(
         content=TocItemNodeContent(level=2, unique_id="Header 1.1-XXXXXX"),
-        info=NodeInfo(context=generate_context(2, 0)),
+        info=NodeInfo(context=generate_context(2, 0, 2, 13)),
         children={
             "entries": [],
             "text": [
                 Node(
                     content=TextNodeContent("Header 1.1"),
-                    info=NodeInfo(context=generate_context(2, 3)),
+                    info=NodeInfo(context=generate_context(2, 3, 2, 13)),
                 )
             ],
         },
@@ -188,13 +193,13 @@ def test_toc():
 
     node_toc_item_1 = Node(
         content=TocItemNodeContent(level=1, unique_id="Header 1-XXXXXX"),
-        info=NodeInfo(context=generate_context(1, 0)),
+        info=NodeInfo(context=generate_context(1, 0, 1, 10)),
         children={
             "entries": [node_toc_item_1_1],
             "text": [
                 Node(
                     content=TextNodeContent("Header 1"),
-                    info=NodeInfo(context=generate_context(1, 2)),
+                    info=NodeInfo(context=generate_context(1, 2, 1, 10)),
                 )
             ],
         },
@@ -202,13 +207,13 @@ def test_toc():
 
     node_toc_item_2 = Node(
         content=TocItemNodeContent(level=1, unique_id="Header 2-XXXXXX"),
-        info=NodeInfo(context=generate_context(3, 0)),
+        info=NodeInfo(context=generate_context(3, 0, 3, 10)),
         children={
             "entries": [],
             "text": [
                 Node(
                     content=TextNodeContent("Header 2"),
-                    info=NodeInfo(context=generate_context(3, 2)),
+                    info=NodeInfo(context=generate_context(3, 2, 3, 10)),
                 )
             ],
         },
@@ -216,7 +221,7 @@ def test_toc():
 
     node_toc = Node(
         content=TocNodeContent(),
-        info=NodeInfo(context=generate_context(5, 0)),
+        info=NodeInfo(context=generate_context(5, 0, 5, 5)),
         children={
             "nested_entries": [
                 node_toc_item_1,

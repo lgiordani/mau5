@@ -151,12 +151,14 @@ def test_header_links_full_parser():
 
     header_node = Node(
         content=HeaderNodeContent(2, "XXXXXX"),
-        info=NodeInfo(context=generate_context(4, 0), named_args={"id": "someid"}),
+        info=NodeInfo(
+            context=generate_context(4, 0, 4, 9), named_args={"id": "someid"}
+        ),
         children={
             "text": [
                 Node(
                     content=TextNodeContent("Header"),
-                    info=NodeInfo(context=generate_context(4, 3)),
+                    info=NodeInfo(context=generate_context(4, 3, 4, 9)),
                 )
             ],
         },
@@ -164,13 +166,13 @@ def test_header_links_full_parser():
 
     link_node = Node(
         content=MacroHeaderNodeContent("someid"),
-        info=NodeInfo(context=generate_context(1, 42)),
+        info=NodeInfo(context=generate_context(1, 42, 1, 69)),
         children={
             "header": [header_node],
             "text": [
                 Node(
                     content=TextNodeContent("link text"),
-                    info=NodeInfo(context=generate_context(1, 59)),
+                    info=NodeInfo(context=generate_context(1, 59, 1, 68)),
                 )
             ],
         },
@@ -191,4 +193,4 @@ def test_header_links_full_parser_no_header():
     with pytest.raises(MauParserException) as exc:
         runner(source)
 
-    assert exc.value.context == generate_context(1, 42)
+    assert exc.value.context == generate_context(1, 42, 1, 74)

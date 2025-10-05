@@ -108,7 +108,9 @@ def parse_raw_engine(
 
         if content.context:
             line_context = content.context.clone()
-            line_context.line += number - 1
+            line_context.start_line += number - 1
+            line_context.end_line = line_context.start_line
+            line_context.end_column = line_context.start_column + len(line_content)
 
         raw_content.append(
             Node(
@@ -234,7 +236,9 @@ def parse_source_engine(
 
         if content.context:
             line_context = content.context.clone()
-            line_context.line += number - 1
+            line_context.start_line += number - 1
+            line_context.end_line = line_context.start_line
+            line_context.end_column = line_context.start_column + len(line_content)
 
         # A simple way to remove escapes from
         # directive-like code.
@@ -335,6 +339,11 @@ def block_processor(parser: DocumentParser):
         if not control.process(parser.environment):
             return True
 
+    # Find the final context.
+    context = Context.merge_contexts(
+        opening_delimiter.context, closing_delimiter.context
+    )
+
     # Get the stored arguments.
     # Paragraphs can receive arguments
     # only through the arguments manager.
@@ -353,7 +362,7 @@ def block_processor(parser: DocumentParser):
         engine: EngineType = EngineType(engine_name)
     except ValueError as exc:
         raise parser._error(
-            f"Engine {engine_name} is not available", context=opening_delimiter.context
+            f"Engine {engine_name} is not available", context=context
         ) from exc
 
     # Create the block
@@ -367,11 +376,6 @@ def block_processor(parser: DocumentParser):
 
     if children := parser.children_buffer.pop():
         node.add_children(children, allow_all=True)
-
-    # Find the final context.
-    context = Context.merge_contexts(
-        opening_delimiter.context, closing_delimiter.context
-    )
 
     if not content:
         node.info = NodeInfo(context=context, **arguments.asdict())

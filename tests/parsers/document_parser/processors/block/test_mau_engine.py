@@ -43,12 +43,12 @@ def test_mau_engine_doesnt_add_headers_to_the_global_toc(mock_header_unique_id):
         [
             Node(
                 content=HeaderNodeContent(1, "XXYY"),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 1, 15)),
                 children={
                     "text": [
                         Node(
                             content=TextNodeContent("Global header"),
-                            info=NodeInfo(context=generate_context(1, 2)),
+                            info=NodeInfo(context=generate_context(1, 2, 1, 15)),
                         )
                     ],
                 },
@@ -59,17 +59,19 @@ def test_mau_engine_doesnt_add_headers_to_the_global_toc(mock_header_unique_id):
                     engine="mau",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(4, 0)),
+                info=NodeInfo(context=generate_context(4, 0, 6, 4)),
                 children={
                     "content": [
                         Node(
                             content=HeaderNodeContent(1, "XXYY"),
-                            info=NodeInfo(context=generate_context(5, 0)),
+                            info=NodeInfo(context=generate_context(5, 0, 5, 14)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Block header"),
-                                        info=NodeInfo(context=generate_context(5, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(5, 2, 5, 14)
+                                        ),
                                     )
                                 ],
                             },
@@ -85,12 +87,12 @@ def test_mau_engine_doesnt_add_headers_to_the_global_toc(mock_header_unique_id):
         [
             Node(
                 content=HeaderNodeContent(1, "XXYY"),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 1, 15)),
                 children={
                     "text": [
                         Node(
                             content=TextNodeContent("Global header"),
-                            info=NodeInfo(context=generate_context(1, 2)),
+                            info=NodeInfo(context=generate_context(1, 2, 1, 15)),
                         )
                     ]
                 },
@@ -124,12 +126,12 @@ def test_engine_mau_multiple_blocks_are_independent(mock_header_unique_id):
         [
             Node(
                 content=HeaderNodeContent(1, "XXYY"),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 1, 15)),
                 children={
                     "text": [
                         Node(
                             content=TextNodeContent("Global header"),
-                            info=NodeInfo(context=generate_context(1, 2)),
+                            info=NodeInfo(context=generate_context(1, 2, 1, 15)),
                         )
                     ],
                 },
@@ -140,17 +142,19 @@ def test_engine_mau_multiple_blocks_are_independent(mock_header_unique_id):
                     engine="mau",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(4, 0)),
+                info=NodeInfo(context=generate_context(4, 0, 6, 4)),
                 children={
                     "content": [
                         Node(
                             content=HeaderNodeContent(1, "XXYY"),
-                            info=NodeInfo(context=generate_context(5, 0)),
+                            info=NodeInfo(context=generate_context(5, 0, 5, 16)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Block header 1"),
-                                        info=NodeInfo(context=generate_context(5, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(5, 2, 5, 16)
+                                        ),
                                     )
                                 ],
                             },
@@ -164,17 +168,19 @@ def test_engine_mau_multiple_blocks_are_independent(mock_header_unique_id):
                     engine="mau",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(9, 0)),
+                info=NodeInfo(context=generate_context(9, 0, 11, 4)),
                 children={
                     "content": [
                         Node(
                             content=HeaderNodeContent(1, "XXYY"),
-                            info=NodeInfo(context=generate_context(10, 0)),
+                            info=NodeInfo(context=generate_context(10, 0, 10, 16)),
                             children={
                                 "text": [
                                     Node(
                                         content=TextNodeContent("Block header 2"),
-                                        info=NodeInfo(context=generate_context(10, 2)),
+                                        info=NodeInfo(
+                                            context=generate_context(10, 2, 10, 16)
+                                        ),
                                     )
                                 ],
                             },
@@ -190,12 +196,12 @@ def test_engine_mau_multiple_blocks_are_independent(mock_header_unique_id):
         [
             Node(
                 content=HeaderNodeContent(1, "XXYY"),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 1, 15)),
                 children={
                     "text": [
                         Node(
                             content=TextNodeContent("Global header"),
-                            info=NodeInfo(context=generate_context(1, 2)),
+                            info=NodeInfo(context=generate_context(1, 2, 1, 15)),
                         )
                     ],
                 },
@@ -226,12 +232,12 @@ def test_engine_mau_toc(mock_header_unique_id):
     # This is the global header.
     global_header_node = Node(
         content=HeaderNodeContent(1, "XXYY"),
-        info=NodeInfo(context=generate_context(1, 0)),
+        info=NodeInfo(context=generate_context(1, 0, 1, 15)),
         children={
             "text": [
                 Node(
                     content=TextNodeContent("Global header"),
-                    info=NodeInfo(context=generate_context(1, 2)),
+                    info=NodeInfo(context=generate_context(1, 2, 1, 15)),
                 )
             ],
         },
@@ -240,13 +246,13 @@ def test_engine_mau_toc(mock_header_unique_id):
     # This is the global header ToC item.
     global_header_toc_item_node = Node(
         content=TocItemNodeContent(1, "XXYY"),
-        info=NodeInfo(context=generate_context(1, 0)),
+        info=NodeInfo(context=generate_context(1, 0, 1, 15)),
         children={
             "entries": [],
             "text": [
                 Node(
                     content=TextNodeContent("Global header"),
-                    info=NodeInfo(context=generate_context(1, 2)),
+                    info=NodeInfo(context=generate_context(1, 2, 1, 15)),
                 )
             ],
         },
@@ -255,12 +261,12 @@ def test_engine_mau_toc(mock_header_unique_id):
     # This is the block header.
     block_header_node = Node(
         content=HeaderNodeContent(1, "XXYY"),
-        info=NodeInfo(context=generate_context(5, 0)),
+        info=NodeInfo(context=generate_context(5, 0, 5, 14)),
         children={
             "text": [
                 Node(
                     content=TextNodeContent("Block header"),
-                    info=NodeInfo(context=generate_context(5, 2)),
+                    info=NodeInfo(context=generate_context(5, 2, 5, 14)),
                 )
             ],
         },
@@ -269,13 +275,13 @@ def test_engine_mau_toc(mock_header_unique_id):
     # This is the block header ToC item.
     block_header_toc_item_node = Node(
         content=TocItemNodeContent(1, "XXYY"),
-        info=NodeInfo(context=generate_context(5, 0)),
+        info=NodeInfo(context=generate_context(5, 0, 5, 14)),
         children={
             "entries": [],
             "text": [
                 Node(
                     content=TextNodeContent("Block header"),
-                    info=NodeInfo(context=generate_context(5, 2)),
+                    info=NodeInfo(context=generate_context(5, 2, 5, 14)),
                 )
             ],
         },
@@ -293,7 +299,7 @@ def test_engine_mau_toc(mock_header_unique_id):
                     engine="mau",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(4, 0)),
+                info=NodeInfo(context=generate_context(4, 0, 8, 4)),
                 children={
                     "content": [
                         # This is the block header.
@@ -301,7 +307,7 @@ def test_engine_mau_toc(mock_header_unique_id):
                         # This is the block ToC.
                         Node(
                             content=TocNodeContent(),
-                            info=NodeInfo(context=generate_context(7, 0)),
+                            info=NodeInfo(context=generate_context(7, 0, 7, 5)),
                             children={
                                 "nested_entries": [block_header_toc_item_node],
                                 "plain_entries": [block_header_node],
@@ -313,7 +319,7 @@ def test_engine_mau_toc(mock_header_unique_id):
             # This is the global ToC
             Node(
                 content=TocNodeContent(),
-                info=NodeInfo(context=generate_context(10, 0)),
+                info=NodeInfo(context=generate_context(10, 0, 10, 5)),
                 children={
                     "nested_entries": [global_header_toc_item_node],
                     "plain_entries": [global_header_node],
@@ -358,7 +364,7 @@ def test_block_mau_can_see_internal_variables():
                     engine="mau",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 6, 4)),
                 children={
                     "content": [
                         Node(
@@ -366,12 +372,14 @@ def test_block_mau_can_see_internal_variables():
                                 "content": [
                                     Node(
                                         content=TextNodeContent("The answer is 42."),
-                                        info=NodeInfo(context=generate_context(5, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(5, 0, 5, 17)
+                                        ),
                                     ),
                                 ]
                             },
                             content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(5, 0)),
+                            info=NodeInfo(context=generate_context(5, 0, 5, 23)),
                         ),
                     ]
                 },

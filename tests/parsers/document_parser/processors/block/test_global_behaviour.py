@@ -21,7 +21,7 @@ runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 def test_parse_block_title_and_arguments():
     source = """
-    .Just a title
+    . Just a title
     [arg1, *subtype1, #tag1, key1=value1]
     ----
     ----
@@ -39,7 +39,7 @@ def test_parse_block_title_and_arguments():
                     preprocessor=None,
                 ),
                 info=NodeInfo(
-                    context=generate_context(3, 0),
+                    context=generate_context(3, 0, 4, 4),
                     unnamed_args=["arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
@@ -50,7 +50,7 @@ def test_parse_block_title_and_arguments():
                     "title": [
                         Node(
                             content=TextNodeContent("Just a title"),
-                            info=NodeInfo(context=generate_context(1, 0)),
+                            info=NodeInfo(context=generate_context(1, 2, 1, 14)),
                         )
                     ],
                 },
@@ -78,7 +78,7 @@ def test_block_classes_single_class():
                     preprocessor=None,
                 ),
                 info=NodeInfo(
-                    context=generate_context(2, 0),
+                    context=generate_context(2, 0, 3, 4),
                     subtype="subtype1",
                 ),
                 children={
@@ -108,7 +108,7 @@ def test_block_classes_multiple_classes():
                     preprocessor=None,
                 ),
                 info=NodeInfo(
-                    context=generate_context(2, 0),
+                    context=generate_context(2, 0, 3, 4),
                     subtype="subtype1",
                 ),
                 children={
@@ -129,7 +129,7 @@ def test_block_engine():
     with pytest.raises(MauParserException) as exc:
         runner(source)
 
-    assert exc.value.context == generate_context(2, 0)
+    assert exc.value.context == generate_context(2, 0, 3, 4)
 
 
 # def test_command_defblock():

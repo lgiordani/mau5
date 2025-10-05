@@ -6,20 +6,12 @@ if TYPE_CHECKING:
     from .parser import DocumentParser
 
 
-# from mau.lexers.base_lexer.lexer import TokenTypes as TokenType
+from mau.text_buffer.context import Context
 from mau.nodes.footnotes import FootnotesListNodeContent
 from mau.nodes.include import IncludeNodeContent
-
-# from mau.lexers.document_lexer.lexer import TokenTypes as TokenType
-# from mau.nodes.block import BlockGroupNode, BlockNode
-# from mau.nodes.content import ContentImageNode, ContentNode
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.toc import TocNodeContent
 from mau.parsers.arguments_parser.parser import Arguments, ArgumentsParser
-
-# from mau.nodes.page import ContainerNode
-# from mau.nodes.paragraph import ParagraphNode
-# from mau.nodes.source import MarkerNode, CalloutsEntryNode, SourceNode, SourceLineNode
 from mau.parsers.base_parser.parser import MauParserException
 from mau.tokens.token import TokenType
 
@@ -31,9 +23,12 @@ def command_processor(parser: DocumentParser):
     prefix = parser.tm.get_token(TokenType.COMMAND, "::")
 
     # Get the name of the command.
-    name = parser.tm.get_token(TokenType.TEXT).value
+    name = parser.tm.get_token(TokenType.TEXT)
 
     arguments: Arguments | None = parser.arguments_buffer.pop()
+
+    # Find the final context.
+    context = Context.merge_contexts(prefix.context, name.context)
 
     if parser.tm.peek_token_is(TokenType.LITERAL, ":"):
         # In this case arguments are inline
@@ -43,7 +38,7 @@ def command_processor(parser: DocumentParser):
         if arguments:
             raise MauParserException(
                 "Syntax error. You cannot specify both boxed and inline arguments.",
-                prefix.context,
+                context,
                 IncludeNodeContent.long_help,  # TODO This is not IncludeNodeContent, it should be a generic CommandNodeContent
             )
 
@@ -52,8 +47,8 @@ def command_processor(parser: DocumentParser):
 
         if parser.tm.peek_token().type != TokenType.TEXT:
             raise MauParserException(
-                f"Syntax error. If you use the colon after {name} you need to specify arguments.",
-                prefix.context,
+                f"Syntax error. If you use the colon after {name.value} you need to specify arguments.",
+                context,
                 IncludeNodeContent.long_help,
             )
 
@@ -71,9 +66,9 @@ def command_processor(parser: DocumentParser):
     arguments = arguments or Arguments()
 
     # Build the node info.
-    info = NodeInfo(context=prefix.context, **arguments.asdict())
+    info = NodeInfo(context=context, **arguments.asdict())
 
-    if name == "defblock":
+    if name.value == "defblock":
         # if len(command_args) < 1:
         #     parser._error("Block definitions require at least the alias")
 
@@ -85,14 +80,14 @@ def command_processor(parser: DocumentParser):
         #     "defaults": command_kwargs,
         # }
         pass
-    elif name == "toc":
+    elif name.value == "toc":
         toc_node: Node[TocNodeContent] = Node(content=TocNodeContent(), info=info)
 
         parser._save(toc_node)
 
         parser.toc_manager.add_toc_node(toc_node)
 
-    elif name == "footnotes":
+    elif name.value == "footnotes":
         footnotes_node: Node[FootnotesListNodeContent] = Node(
             content=FootnotesListNodeContent(), info=info
         )
@@ -101,13 +96,11 @@ def command_processor(parser: DocumentParser):
 
         parser.footnotes_manager.add_footnotes_list_node(footnotes_node)
 
-    elif name == "blockgroup":
+    elif name.value == "blockgroup":
         arguments.set_names(["group"])
         group_name = arguments.named_args.pop("group")
 
-        group_node = parser.block_group_manager.create_group_node(
-            group_name, prefix.context
-        )
+        group_node = parser.block_group_manager.create_group_node(group_name, context)
         parser._save(group_node)
 
     return True

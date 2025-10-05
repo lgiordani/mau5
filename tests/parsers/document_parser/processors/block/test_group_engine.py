@@ -1,4 +1,3 @@
-
 import pytest
 
 from mau.lexers.document_lexer.lexer import DocumentLexer
@@ -39,17 +38,19 @@ def test_group_engine():
         parser.block_group_manager.groups["group1"]["position1"],
         Node(
             content=BlockNodeContent(engine="group"),
-            info=NodeInfo(context=generate_context(2, 0)),
+            info=NodeInfo(context=generate_context(2, 0, 4, 4)),
             children={
                 "content": [
                     Node(
                         content=ParagraphNodeContent(),
-                        info=NodeInfo(context=generate_context(3, 0)),
+                        info=NodeInfo(context=generate_context(3, 0, 3, 12)),
                         children={
                             "content": [
                                 Node(
                                     content=TextNodeContent("Some text 1."),
-                                    info=NodeInfo(context=generate_context(3, 0)),
+                                    info=NodeInfo(
+                                        context=generate_context(3, 0, 3, 12)
+                                    ),
                                 )
                             ]
                         },
@@ -63,17 +64,19 @@ def test_group_engine():
         parser.block_group_manager.groups["group2"]["position2"],
         Node(
             content=BlockNodeContent(engine="group"),
-            info=NodeInfo(context=generate_context(7, 0)),
+            info=NodeInfo(context=generate_context(7, 0, 9, 4)),
             children={
                 "content": [
                     Node(
                         content=ParagraphNodeContent(),
-                        info=NodeInfo(context=generate_context(8, 0)),
+                        info=NodeInfo(context=generate_context(8, 0, 8, 12)),
                         children={
                             "content": [
                                 Node(
                                     content=TextNodeContent("Some text 2."),
-                                    info=NodeInfo(context=generate_context(8, 0)),
+                                    info=NodeInfo(
+                                        context=generate_context(8, 0, 8, 12)
+                                    ),
                                 )
                             ]
                         },
@@ -102,6 +105,6 @@ def test_group_engine_same_group_and_position():
 
     assert (
         exc.value.message
-        == f"Position position1 is already taken in group group1 by the block at {generate_context(2, 0)}"
+        == f"Position position1 is already taken in group group1 by the block at {generate_context(2, 0, 4, 4)}"
     )
-    assert exc.value.context == generate_context(7, 0)
+    assert exc.value.context == generate_context(7, 0, 9, 4)

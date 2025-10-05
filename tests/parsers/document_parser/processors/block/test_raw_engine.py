@@ -35,16 +35,16 @@ def test_raw_engine():
                     engine="raw",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 5, 4)),
                 children={
                     "content": [
                         Node(
                             content=RawNodeContent("Raw content"),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 11)),
                         ),
                         Node(
                             content=RawNodeContent("on multiple lines"),
-                            info=NodeInfo(context=generate_context(4, 0)),
+                            info=NodeInfo(context=generate_context(4, 0, 4, 17)),
                         ),
                     ]
                 },

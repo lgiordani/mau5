@@ -103,17 +103,19 @@ def test_block_content_variables():
                     engine=EngineType.DEFAULT.value,
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 4, 4)),
                 children={
                     "content": [
                         Node(
                             content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 23)),
                             children={
                                 "content": [
                                     Node(
                                         content=TextNodeContent("The answer is 42."),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 17)
+                                        ),
                                     )
                                 ]
                             },
@@ -144,17 +146,19 @@ def test_block_content_external_variables():
                     engine=EngineType.DEFAULT.value,
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 4, 4)),
                 children={
                     "content": [
                         Node(
                             content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(3, 0)),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 23)),
                             children={
                                 "content": [
                                     Node(
                                         content=TextNodeContent("The answer is 42."),
-                                        info=NodeInfo(context=generate_context(3, 0)),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 17)
+                                        ),
                                     )
                                 ]
                             },
@@ -185,7 +189,7 @@ def test_block_inside_block():
                     engine=EngineType.DEFAULT.value,
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(1, 0)),
+                info=NodeInfo(context=generate_context(1, 0, 4, 4)),
                 children={
                     "content": [
                         Node(
@@ -194,7 +198,7 @@ def test_block_inside_block():
                                 engine=EngineType.DEFAULT.value,
                                 preprocessor=None,
                             ),
-                            info=NodeInfo(context=generate_context(2, 0)),
+                            info=NodeInfo(context=generate_context(2, 0, 3, 4)),
                             children={"content": []},
                         )
                     ],
@@ -225,7 +229,7 @@ def test_block_uses_control_positive():
                     engine=EngineType.DEFAULT.value,
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0)),
+                info=NodeInfo(context=generate_context(2, 0, 3, 4)),
                 children={"content": []},
             )
         ],

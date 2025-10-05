@@ -39,17 +39,19 @@ def test_footnote_engine_records_footnote_blocks(mock_footnote_unique_id):
         footnote_content_node,
         Node(
             content=FootnoteNodeContent("somename"),
-            info=NodeInfo(context=generate_context(2, 0)),
+            info=NodeInfo(context=generate_context(2, 0, 4, 4)),
             children={
                 "content": [
                     Node(
                         content=ParagraphNodeContent(),
-                        info=NodeInfo(context=generate_context(3, 0)),
+                        info=NodeInfo(context=generate_context(3, 0, 3, 10)),
                         children={
                             "content": [
                                 Node(
                                     content=TextNodeContent("Some text."),
-                                    info=NodeInfo(context=generate_context(3, 0)),
+                                    info=NodeInfo(
+                                        context=generate_context(3, 0, 3, 10)
+                                    ),
                                 )
                             ]
                         },

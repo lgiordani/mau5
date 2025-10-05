@@ -1,4 +1,3 @@
-
 import pytest
 
 from mau.lexers.document_lexer.lexer import DocumentLexer
@@ -39,17 +38,17 @@ def test_group_engine():
 
     block_node1 = Node(
         content=BlockNodeContent(engine="group"),
-        info=NodeInfo(context=generate_context(2, 0)),
+        info=NodeInfo(context=generate_context(2, 0, 4, 4)),
         children={
             "content": [
                 Node(
                     content=ParagraphNodeContent(),
-                    info=NodeInfo(context=generate_context(3, 0)),
+                    info=NodeInfo(context=generate_context(3, 0, 3, 12)),
                     children={
                         "content": [
                             Node(
                                 content=TextNodeContent("Some text 1."),
-                                info=NodeInfo(context=generate_context(3, 0)),
+                                info=NodeInfo(context=generate_context(3, 0, 3, 12)),
                             )
                         ]
                     },
@@ -60,17 +59,17 @@ def test_group_engine():
 
     block_node2 = Node(
         content=BlockNodeContent(engine="group"),
-        info=NodeInfo(context=generate_context(7, 0)),
+        info=NodeInfo(context=generate_context(7, 0, 9, 4)),
         children={
             "content": [
                 Node(
                     content=ParagraphNodeContent(),
-                    info=NodeInfo(context=generate_context(8, 0)),
+                    info=NodeInfo(context=generate_context(8, 0, 8, 12)),
                     children={
                         "content": [
                             Node(
                                 content=TextNodeContent("Some text 2."),
-                                info=NodeInfo(context=generate_context(8, 0)),
+                                info=NodeInfo(context=generate_context(8, 0, 8, 12)),
                             )
                         ]
                     },
@@ -84,7 +83,7 @@ def test_group_engine():
         [
             Node(
                 content=BlockGroupNodeContent("group1"),
-                info=NodeInfo(context=generate_context(11, 0)),
+                info=NodeInfo(context=generate_context(11, 0, 11, 12)),
                 children={"position1": [block_node1], "position2": [block_node2]},
             )
         ],
@@ -109,4 +108,4 @@ def test_group_engine_wrong_group():
     with pytest.raises(MauParserException) as exc:
         runner(source)
 
-    assert exc.value.context == generate_context(11, 0)
+    assert exc.value.context == generate_context(11, 0, 11, 12)

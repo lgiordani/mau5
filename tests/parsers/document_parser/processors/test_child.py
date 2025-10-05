@@ -26,7 +26,7 @@ def test_child():
         [
             Node(
                 content=TextNodeContent("Some title"),
-                info=NodeInfo(context=generate_context(0, 0)),
+                info=NodeInfo(context=generate_context(0, 2, 0, 12)),
             )
         ],
     )
@@ -43,7 +43,7 @@ def test_child_with_spaces():
         [
             Node(
                 content=TextNodeContent("Some title"),
-                info=NodeInfo(context=generate_context(0, 0)),
+                info=NodeInfo(context=generate_context(0, 4, 0, 14)),
             )
         ],
     )
