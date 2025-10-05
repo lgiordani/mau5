@@ -246,7 +246,7 @@ class ArgumentsParser(BaseParser):
             # Check if the subtype contains
             # additional named_arguments.
             subtype_replacements = self.environment.getvar(
-                "mau.parser.subtype_replacements", Environment()
+                "mau.parser.subtypes", Environment()
             ).asdict()
             subtype_named_arguments = subtype_replacements.get(
                 self.subtype.content.value, {}

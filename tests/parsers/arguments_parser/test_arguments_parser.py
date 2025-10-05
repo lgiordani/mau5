@@ -637,10 +637,10 @@ def test_arguments():
     )
 
 
-def test_process_arguments_subtype_replacement():
+def test_process_arguments_subtype_as_alias():
     environment = Environment()
     environment.setvar(
-        "mau.parser.subtype_replacements",
+        "mau.parser.subtypes",
         {"subtype1": {"key1": "value1", "key2": "value2"}},
     )
 
@@ -680,7 +680,7 @@ def test_process_arguments_subtype_replacement():
 def test_process_arguments_subtype_does_not_overwrite_arguments():
     environment = Environment()
     environment.setvar(
-        "mau.parser.subtype_replacements",
+        "mau.parser.subtypes",
         {"subtype1": {"key1": "value1", "key2": "value2"}},
     )
 

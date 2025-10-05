@@ -79,31 +79,6 @@ class DocumentParser(BaseParser):
         self.children_buffer: ChildrenBuffer = ChildrenBuffer()
         self.control_buffer: ControlBuffer = ControlBuffer()
 
-        #     # These are the default block aliases
-        #     # If subtype is not set it will be the alias itself.
-        #     self.block_aliases = {
-        #         "source": {
-        #             "subtype": None,
-        #             "mandatory_args": ["language"],
-        #             "defaults": {"engine": "source", "language": "text"},
-        #         },
-        #         "footnote": {
-        #             "subtype": None,
-        #             "mandatory_args": ["name"],
-        #             "defaults": {"engine": "footnote"},
-        #         },
-        #         "admonition": {
-        #             "mandatory_args": ["class", "icon"],
-        #         },
-        #     }
-
-        #     # Iterate through block definitions passed as variables
-        #     self.block_aliases.update(
-        #         self.environment.getvar(
-        #             "mau.parser.block_definitions", Environment()
-        #         ).asdict()
-        #     )
-
         # The last index in the latest ordered list,
         # used to calculate the beginning value of them
         # next one when start=auto
@@ -175,7 +150,7 @@ class DocumentParser(BaseParser):
 
         return True
 
-    def _collect_lines(self, stop_tokens: list[Token]) -> list[str]:
+    def _collect_lines(self, stop_tokens: list[Token]) -> list[Token]:
         # This collects several lines of text in a list
         # until it gets to a line that begins with one
         # of the tokens listed in stop_tokens.
@@ -188,23 +163,6 @@ class DocumentParser(BaseParser):
             self.tm.get_token(TokenType.EOL)
 
         return lines
-
-    # def _parse_standard_content(self, content_type, uris, subtype, args, kwargs, tags):
-    #     # This is the fallback for an unknown content type
-
-    #     node = ContentNode(
-    #         content_type=content_type,
-    #         uris=uris,
-    #         subtype=subtype,
-    #         args=args,
-    #         kwargs=kwargs,
-    #         tags=tags,
-    #     )
-
-    #     node.title = self._pop_title(node)
-    #     self._save(node)
-
-    #     return True
 
     def finalise(self):
         super().finalise()
