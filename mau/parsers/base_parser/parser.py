@@ -1,3 +1,5 @@
+from typing import Callable
+
 import logging
 
 from mau.environment.environment import Environment
@@ -193,3 +195,18 @@ def recursive_check_nodes(nodes: list[Node]):
 
         for key, value in node.children.items():
             recursive_check_nodes(value)
+
+
+def recursive_list_nodes(
+    nodes: list[Node], checker: Callable[[Node], bool]
+) -> list[Node]:
+    if not nodes:
+        return []
+
+    positive_nodes = [node for node in nodes if checker(node)]
+
+    for node in nodes:
+        for key, value in node.children.items():
+            positive_nodes.extend(recursive_list_nodes(value, checker))
+
+    return positive_nodes

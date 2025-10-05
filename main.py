@@ -16,6 +16,7 @@ from mau.nodes.node import format_node
 from mau.parsers.base_parser.parser import (
     MauParserException,
     format_parser_error,
+    recursive_list_nodes,
 )
 from mau.tokens.token import format_token
 
@@ -202,7 +203,7 @@ def main():  # pylint: disable=too-many-statements
     logger.info("* Lexing %s", args.input_file)
     try:
         # Run the lexer
-        tokens = mau.run_lexer()
+        lexer = mau.run_lexer()
     except MauLexerException as exception:
         formatted_error = format_lexer_error(exception)
 
@@ -210,7 +211,7 @@ def main():  # pylint: disable=too-many-statements
         sys.exit(1)
 
     if args.lexer_show_tokens:
-        for token in tokens:
+        for token in lexer.tokens:
             print(format_token(token))
 
     if args.lexer_only:
@@ -220,7 +221,7 @@ def main():  # pylint: disable=too-many-statements
     logger.info("* Parsing tokens")
     try:
         # Run the parser
-        nodes = mau.run_parser(tokens)
+        parser = mau.run_parser(lexer.tokens)
     except MauParserException as exception:
         formatted_error = format_parser_error(exception)
 
@@ -228,10 +229,25 @@ def main():  # pylint: disable=too-many-statements
         sys.exit(1)
 
     if args.parser_show_nodes:
-        for node in nodes:
+        for node in parser.nodes:
             print(format_node(node))
             print()
         # print(yaml.dump(nodes, Dumper=yaml.Dumper))
+
+    print("RECURSIVE LIST: macro var")
+
+    l = recursive_list_nodes(
+        parser.nodes,
+        lambda node: node.content.type == "macro" and node.content.name == "var",
+    )
+
+    print(l)
+
+    print("RECURSIVE LIST: orphans")
+
+    l = recursive_list_nodes(parser.nodes, lambda node: node.parent is None)
+
+    print(l)
 
     if args.parser_only:
         sys.exit(1)
@@ -264,3 +280,154 @@ def main():  # pylint: disable=too-many-statements
 
 if __name__ == "__main__":
     main()
+
+
+a = [
+    {
+        "children": {
+            "content": [
+                {
+                    "children": {},
+                    "content": {
+                        "type": "text",
+                        "value": "Commit this list of periodicals to memory. Scan each new issue,                   find any hidden codes, decipher them.",
+                    },
+                    "info": {
+                        "context": "test.mau:2,0-2,101",
+                        "unnamed_args": [],
+                        "named_args": {},
+                        "tags": [],
+                        "subtype": None,
+                    },
+                }
+            ],
+            "attribution": [
+                {
+                    "children": {
+                        "content": [
+                            {
+                                "children": {},
+                                "content": {
+                                    "type": "text",
+                                    "value": "A Beautiful Mind",
+                                },
+                                "info": {
+                                    "context": "test.mau:0,14-0,30",
+                                    "unnamed_args": [],
+                                    "named_args": {},
+                                    "tags": [],
+                                    "subtype": None,
+                                },
+                            }
+                        ]
+                    },
+                    "content": {"type": "style", "value": "underscore"},
+                    "info": {
+                        "context": "test.mau:0,13-0,31",
+                        "unnamed_args": [],
+                        "named_args": {},
+                        "tags": [],
+                        "subtype": None,
+                    },
+                },
+                {
+                    "children": {},
+                    "content": {"type": "text", "value": " (2002)"},
+                    "info": {
+                        "context": "test.mau:0,31-0,38",
+                        "unnamed_args": [],
+                        "named_args": {},
+                        "tags": [],
+                        "subtype": None,
+                    },
+                },
+            ],
+        },
+        "content": {"type": "paragraph"},
+        "info": {
+            "context": "test.mau:2,0-2,101",
+            "unnamed_args": [],
+            "named_args": {},
+            "tags": [],
+            "subtype": "quote",
+        },
+    },
+    {
+        "children": {
+            "content": [
+                {
+                    "children": {},
+                    "content": {
+                        "type": "text",
+                        "value": "In the framework of programming languages, a scanner can be a                     very untidy piece of code.",
+                    },
+                    "info": {
+                        "context": "test.mau:4,0-4,88",
+                        "unnamed_args": [],
+                        "named_args": {},
+                        "tags": [],
+                        "subtype": None,
+                    },
+                }
+            ]
+        },
+        "content": {"type": "paragraph"},
+        "info": {
+            "context": "test.mau:4,0-4,88",
+            "unnamed_args": [],
+            "named_args": {},
+            "tags": [],
+            "subtype": None,
+        },
+    },
+    {
+        "children": {
+            "content": [
+                {
+                    "children": {},
+                    "content": {"type": "text", "value": "This is a question"},
+                    "info": {
+                        "context": "test.mau:8,0-8,18",
+                        "unnamed_args": [],
+                        "named_args": {},
+                        "tags": [],
+                        "subtype": None,
+                    },
+                }
+            ]
+        },
+        "content": {"type": "paragraph"},
+        "info": {
+            "context": "test.mau:8,0-8,18",
+            "unnamed_args": [],
+            "named_args": {},
+            "tags": [],
+            "subtype": "prompt",
+        },
+    },
+    {
+        "children": {
+            "content": [
+                {
+                    "children": {},
+                    "content": {"type": "text", "value": "This is a paragraph"},
+                    "info": {
+                        "context": "test.mau:10,0-10,19",
+                        "unnamed_args": [],
+                        "named_args": {},
+                        "tags": [],
+                        "subtype": None,
+                    },
+                }
+            ]
+        },
+        "content": {"type": "paragraph"},
+        "info": {
+            "context": "test.mau:10,0-10,19",
+            "unnamed_args": [],
+            "named_args": {},
+            "tags": [],
+            "subtype": None,
+        },
+    },
+]

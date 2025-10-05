@@ -36,6 +36,7 @@ from .processors.variable_definition import variable_definition_processor
 # TODO Check if it makes sense to have _error in the parser.
 # TODO Defblock?
 # TODO Does it make sense to have context column and line? It does for text, but for blocks?
+# TODO Marker nodes in source blocks?
 # Ultimately the block
 #
 # ----

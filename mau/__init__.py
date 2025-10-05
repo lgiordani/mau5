@@ -68,7 +68,7 @@ class Mau:
 
         lexer.process()
 
-        return lexer.tokens
+        return lexer
 
     def run_parser(self, tokens):
         # self.parser = DocumentParser(self.environment)
@@ -77,7 +77,7 @@ class Mau:
         parser.parse()
         parser.finalise()
 
-        return parser.nodes
+        return parser
 
     # def create_visitor(self):
     #     visitor_class = self.environment.getvar("mau.visitor.class")

@@ -8,3 +8,6 @@ In the framework of programming languages, a scanner can be a very untidy piece 
 [*prompt]
 This is a question
 
+This is a paragraph
+
+This is a macro [var](param1)
