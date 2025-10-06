@@ -1,76 +1,4 @@
-from mau.nodes.node import NodeContent
-
-# class CalloutsEntryNode(Node):
-#     # This is an entry in the list of callouts after source code
-
-#     node_type = "callouts_entry"
-
-#     def __init__(
-#         self,
-#         marker,
-#         value,
-#         parent=None,
-#         parent_position=None,
-#         children=None,
-#         subtype=None,
-#         args=None,
-#         kwargs=None,
-#         tags=None,
-#         context=None,
-#     ):
-#         super().__init__(
-#             parent=parent,
-#             parent_position=parent_position,
-#             children=children,
-#             subtype=subtype,
-#             args=args,
-#             kwargs=kwargs,
-#             tags=tags,
-#             context=context,
-#         )
-#         self.marker = marker
-#         self.value = value
-
-#     def _custom_dict(self):
-#         return {
-#             "value": self.value,
-#             "marker": self.marker,
-#         }
-
-
-# class MarkerNode(Node):
-#     # This is a marker near a source code line
-
-#     node_type = "marker"
-
-#     def __init__(
-#         self,
-#         value,
-#         parent=None,
-#         parent_position=None,
-#         children=None,
-#         subtype=None,
-#         args=None,
-#         kwargs=None,
-#         tags=None,
-#         context=None,
-#     ):
-#         super().__init__(
-#             parent=parent,
-#             parent_position=parent_position,
-#             children=children,
-#             subtype=subtype,
-#             args=args,
-#             kwargs=kwargs,
-#             tags=tags,
-#             context=context,
-#         )
-#         self.value = value
-
-#     def _custom_dict(self):
-#         return {
-#             "value": self.value,
-#         }
+from mau.nodes.node import NodeContent, ValueNodeContent
 
 
 class SourceNodeContent(NodeContent):
@@ -121,17 +49,16 @@ class SourceLineNodeContent(NodeContent):
     """
 
     type = "source-line"
+    allowed_keys = {"marker": "The marker attached to this line"}
 
     def __init__(
         self,
         line_number: str,
         line_content: str,
-        marker: str | None = None,
         highlight_style: str | None = None,
     ):
         self.line_number = line_number
         self.line_content = line_content
-        self.marker = marker
         self.highlight_style = highlight_style
 
     def asdict(self):
@@ -140,9 +67,14 @@ class SourceLineNodeContent(NodeContent):
             {
                 "line_number": self.line_number,
                 "line_content": self.line_content,
-                "marker": self.marker,
                 "highlight_style": self.highlight_style,
             }
         )
 
         return base
+
+
+class SourceLineMarkerNodeContext(ValueNodeContent):
+    # This is a marker near a source code line
+
+    node_type = "source-marker"

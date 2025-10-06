@@ -13,7 +13,11 @@ from mau.nodes.block import BlockNodeContent
 from mau.nodes.footnotes import FootnoteNodeContent
 from mau.nodes.inline import RawNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.source import SourceLineNodeContent, SourceNodeContent
+from mau.nodes.source import (
+    SourceLineNodeContent,
+    SourceNodeContent,
+    SourceLineMarkerNodeContext,
+)
 from mau.parsers.arguments_parser.parser import Arguments
 from mau.text_buffer.context import Context
 from mau.tokens.token import Token, TokenType
@@ -270,12 +274,36 @@ def parse_source_engine(
             highlight_style = marker[1:] or highlight_default_style
             marker = None
 
+        # Clone the line context.
+        marker_context: Context | None = None
+
+        # If there is a marker, change the line
+        # context to remove the marker.
+        if marker:
+            # Take into account the two colons.
+            marker_length = len(marker) + 2
+
+            # Calculate the line length.
+            line_length = len(line_content)
+
+            # Clone the line context.
+            marker_context = line_context.clone()
+
+            # Remove the marker from the end
+            # of the line context.
+            line_context.end_column -= marker_length
+
+            # Remove the line from the
+            # marker context.
+            marker_context.start_column += line_length
+
         create_source_line(
             code,
             line_number,
             line_content,
             line_context,
             marker=marker,
+            marker_context=marker_context,
             highlight_style=highlight_style,
         )
 
@@ -294,6 +322,7 @@ def create_source_line(
     line_content: str,
     line_context: Context | None,
     marker: str | None = None,
+    marker_context: Context | None = None,
     highlight_style: str | None = None,
 ):
     # Prepare the source line
@@ -301,11 +330,22 @@ def create_source_line(
         content=SourceLineNodeContent(
             line_number,
             line_content=line_content,
-            marker=marker,
             highlight_style=highlight_style,
         ),
         info=NodeInfo(context=line_context),
     )
+
+    if marker:
+        source_line_node.add_children(
+            {
+                "marker": [
+                    Node(
+                        content=SourceLineMarkerNodeContext(marker),
+                        info=NodeInfo(context=marker_context),
+                    )
+                ]
+            }
+        )
 
     code.append(source_line_node)
 

@@ -6,7 +6,8 @@ from functools import partial
 
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer.lexer import DocumentLexer
-from mau.nodes.node import Node, NodeContent
+from mau.nodes.node import Node, NodeContent, NodeInfo
+from mau.nodes.document import DocumentNodeContent, ContainerNodeContent
 from mau.parsers.base_parser.parser import BaseParser
 from mau.parsers.preprocess_variables_parser.parser import PreprocessVariablesParser
 from mau.parsers.text_parser.parser import TextParser
@@ -31,17 +32,6 @@ from .processors.include import include_processor
 from .processors.list import list_processor
 from .processors.paragraph import paragraph_processor
 from .processors.variable_definition import variable_definition_processor
-
-# TODO Check if it makes sense to have _error in the parser.
-# TODO Does it make sense to have context column and line? It does for text, but for blocks?
-# TODO Marker nodes in source blocks?
-# Ultimately the block
-#
-# ----
-# asdfahlsdkjfhlakjsdhflakjsdhfl
-# ----
-#
-# Goes from 0,0 to 2,4, but it actually covers more horizontally.
 
 
 # The DocumentParser is in charge of parsing
@@ -83,8 +73,8 @@ class DocumentParser(BaseParser):
         # next one when start=auto
         self.latest_ordered_list_index = 0
 
-    #     # This is the final output of the parser
-    #     self.output = {}
+        # This is the final output of the parser
+        self.output = {}
 
     def _process_functions(self):
         # All the functions that this parser provides.
@@ -180,22 +170,30 @@ class DocumentParser(BaseParser):
         # Process ToC nodes.
         self.toc_manager.process()
 
-    #     # The content wrappers are cloned to avoid
-    #     # storing the whole parsed document in the
-    #     # environment.
-    #     content_wrapper = self.environment.getvar(
-    #         "mau.parser.content_wrapper", ContainerNode()
-    #     ).clone()
-    #     content_wrapper.children = self.nodes
+        document_content_class = self.environment.getvar(
+            "mau.parser.document_wrapper", DocumentNodeContent
+        )
 
-    #     toc_wrapper = self.environment.getvar(
-    #         "mau.parser.toc_wrapper", ContainerNode()
-    #     ).clone()
-    #     toc_wrapper.add_children([toc])
+        # Find the document context.
+        context = Context.merge_contexts(
+            self.nodes[0].info.context, self.nodes[-1].info.context
+        )
 
-    #     self.output.update(
-    #         {
-    #             "content": content_wrapper,
-    #             "toc": toc_wrapper,
-    #         }
-    #     )
+        nodes_wrapper = self.environment.getvar(
+            "mau.parser.nodes_wrapper", ContainerNodeContent
+        )
+
+        self.output.update(
+            {
+                "document": Node(
+                    content=document_content_class(),
+                    info=NodeInfo(context=context),
+                    children={"content": self.nodes},
+                ),
+                # "toc": Node(
+                #     content=nodes_wrapper("toc"),
+                #     info=NodeInfo(context=context),
+                #     children={"content": self.toc_manager.toc_nodes},
+                # ),
+            }
+        )

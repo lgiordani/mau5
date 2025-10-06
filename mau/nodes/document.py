@@ -1,6 +1,6 @@
 # Page nodes can be found at top level in a page
 
-from mau.nodes.node import NodeContent
+from mau.nodes.node import NodeContent, ValueNodeContent
 
 
 class HorizontalRuleNodeContent(NodeContent):
@@ -9,29 +9,31 @@ class HorizontalRuleNodeContent(NodeContent):
     type = "horizontal_rule"
 
 
-# class ContainerNode(Node):
-#     node_type = "container"
-
-#     def clone(self):
-#         return self.__class__(
-#             parent=self.parent,
-#             parent_position=self.parent_position,
-#             children=self.children,
-#             subtype=self.subtype,
-#             args=self.args,
-#             kwargs=self.kwargs,
-#             tags=self.tags,
-#             context=self.context,
-#         )
+class WrapperNodeContent(NodeContent):
+    type = "wrapper"
+    allowed_keys = {"content": "The nodes inside the wrapper"}
 
 
-# class DocumentNode(ContainerNode):
-#     """A document.
+class DocumentNodeContent(WrapperNodeContent):
+    """A document.
 
-#     This node represents the full document.
+    This node represents the full document.
 
-#     Arguments:
-#         content: the content of the document
-#     """
+    Arguments:
+        content: the content of the document
+    """
 
-#     node_type = "document"
+    type = "document"
+
+
+class ContainerNodeContent(WrapperNodeContent):
+    type = "container"
+
+    def __init__(self, label: str):
+        self.label = label
+
+    def asdict(self):
+        base = super().asdict()
+        base.update({"label": self.label})
+
+        return base

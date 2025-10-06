@@ -1,7 +1,11 @@
 from mau.lexers.document_lexer.lexer import DocumentLexer
 from mau.nodes.block import BlockNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.source import SourceLineNodeContent, SourceNodeContent
+from mau.nodes.source import (
+    SourceLineNodeContent,
+    SourceNodeContent,
+    SourceLineMarkerNodeContext,
+)
 from mau.parsers.document_parser.parser import DocumentParser
 from mau.test_helpers import (
     compare_nodes,
@@ -392,21 +396,47 @@ def test_source_engine_callouts_default_delimiter():
                                         content=SourceLineNodeContent(
                                             line_number="2",
                                             line_content="import os",
-                                            marker="mark1",
                                         ),
                                         info=NodeInfo(
-                                            context=generate_context(4, 0, 4, 16)
+                                            context=generate_context(4, 0, 4, 9)
                                         ),
+                                        children={
+                                            "marker": [
+                                                Node(
+                                                    content=SourceLineMarkerNodeContext(
+                                                        "mark1"
+                                                    ),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            4, 9, 4, 16
+                                                        )
+                                                    ),
+                                                )
+                                            ]
+                                        },
                                     ),
                                     Node(
                                         content=SourceLineNodeContent(
                                             line_number="3",
                                             line_content="import enum",
-                                            marker="mark2",
                                         ),
                                         info=NodeInfo(
-                                            context=generate_context(5, 0, 5, 18)
+                                            context=generate_context(5, 0, 5, 11)
                                         ),
+                                        children={
+                                            "marker": [
+                                                Node(
+                                                    content=SourceLineMarkerNodeContext(
+                                                        "mark2"
+                                                    ),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            5, 11, 5, 18
+                                                        )
+                                                    ),
+                                                )
+                                            ]
+                                        },
                                     ),
                                 ]
                             },
@@ -449,11 +479,24 @@ def test_source_engine_callouts_potential_clash():
                                         content=SourceLineNodeContent(
                                             line_number="1",
                                             line_content="import: os",
-                                            marker="mark1",
                                         ),
                                         info=NodeInfo(
-                                            context=generate_context(3, 0, 3, 17)
+                                            context=generate_context(3, 0, 3, 10)
                                         ),
+                                        children={
+                                            "marker": [
+                                                Node(
+                                                    content=SourceLineMarkerNodeContext(
+                                                        "mark1"
+                                                    ),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            3, 10, 3, 17
+                                                        )
+                                                    ),
+                                                )
+                                            ]
+                                        },
                                     ),
                                 ]
                             },
@@ -562,11 +605,24 @@ def test_source_engine_marker_custom_delimiter():
                                         content=SourceLineNodeContent(
                                             line_number="3",
                                             line_content="import enum",
-                                            marker="mark2",
                                         ),
                                         info=NodeInfo(
-                                            context=generate_context(5, 0, 5, 18)
+                                            context=generate_context(5, 0, 5, 11)
                                         ),
+                                        children={
+                                            "marker": [
+                                                Node(
+                                                    content=SourceLineMarkerNodeContext(
+                                                        "mark2"
+                                                    ),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            5, 11, 5, 18
+                                                        )
+                                                    ),
+                                                )
+                                            ]
+                                        },
                                     ),
                                 ]
                             },
