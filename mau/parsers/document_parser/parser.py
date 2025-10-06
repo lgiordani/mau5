@@ -170,6 +170,9 @@ class DocumentParser(BaseParser):
         # Process ToC nodes.
         self.toc_manager.process()
 
+        if not self.nodes:
+            return self.output
+
         document_content_class = self.environment.getvar(
             "mau.parser.document_wrapper", DocumentNodeContent
         )
