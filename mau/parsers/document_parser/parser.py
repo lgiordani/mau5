@@ -193,10 +193,15 @@ class DocumentParser(BaseParser):
                     info=NodeInfo(context=context),
                     children={"content": self.nodes},
                 ),
-                # "toc": Node(
-                #     content=nodes_wrapper("toc"),
-                #     info=NodeInfo(context=context),
-                #     children={"content": self.toc_manager.toc_nodes},
-                # ),
+                "nested_toc": Node(
+                    content=nodes_wrapper("toc"),
+                    info=NodeInfo(context=context),
+                    children={"content": self.toc_manager.nested_headers},
+                ),
+                "plain_toc": Node(
+                    content=nodes_wrapper("toc"),
+                    info=NodeInfo(context=context),
+                    children={"content": self.toc_manager.headers},
+                ),
             }
         )

@@ -83,6 +83,8 @@ class TocManager:
             header_unique_id_function or default_header_unique_id
         )
 
+        self.nested_headers: list[Node[TocItemNodeContent]] = []
+
     def add_header(self, node: Node[HeaderNodeContent]):
         self.headers.append(node)
 
@@ -94,7 +96,7 @@ class TocManager:
         self.toc_nodes.extend(other.toc_nodes)
 
     def process(self):
-        nested_headers: list[Node[TocItemNodeContent]] = []
+        self.nested_headers = []
 
         for header in self.headers:
             if header.content.unique_id is not None:
@@ -104,8 +106,8 @@ class TocManager:
             unique_id = self.header_unique_id_function(header)
             header.content.unique_id = unique_id
 
-        add_nodes_under_level(0, self.headers, 0, nested_headers)
+        add_nodes_under_level(0, self.headers, 0, self.nested_headers)
 
         for toc_node in self.toc_nodes:
-            toc_node.children["nested_entries"] = nested_headers  # type: ignore[assignment]
+            toc_node.children["nested_entries"] = self.nested_headers  # type: ignore[assignment]
             toc_node.children["plain_entries"] = self.headers  # type: ignore[assignment]
