@@ -68,19 +68,7 @@ def command_processor(parser: DocumentParser):
     # Build the node info.
     info = NodeInfo(context=context, **arguments.asdict())
 
-    if name.value == "defblock":
-        # if len(command_args) < 1:
-        #     parser._error("Block definitions require at least the alias")
-
-        # alias = command_args.pop(0)
-
-        # parser.block_aliases[alias] = {
-        #     "subtype": command_subtype,
-        #     "mandatory_args": command_args,
-        #     "defaults": command_kwargs,
-        # }
-        pass
-    elif name.value == "toc":
+    if name.value == "toc":
         toc_node: Node[TocNodeContent] = Node(content=TocNodeContent(), info=info)
 
         parser._save(toc_node)

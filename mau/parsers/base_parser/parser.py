@@ -94,11 +94,6 @@ class BaseParser:
         # The parse functions available in this parser
         return []
 
-    def _error(self, message: str, context: Context | None = None):
-        context = context or self.tm.current_token.context
-
-        return MauParserException(message=message, context=context)
-
     def parse(self):
         """
         Run the parser on the lexed tokens.
@@ -117,7 +112,7 @@ class BaseParser:
                 next_token == self.last_processed_token
                 and next_token.context == self.last_processed_token.context
             ):
-                raise self._error(
+                raise MauParserException(
                     "Loop detected, cannot parse token"
                 )  # pragma: no cover
             else:
@@ -148,7 +143,7 @@ class BaseParser:
             # we didn't find any function to parse the
             # current token.
             if result is False:
-                raise self._error(
+                raise MauParserException(
                     "Cannot parse token",
                     self.tm.peek_token().context,
                 )

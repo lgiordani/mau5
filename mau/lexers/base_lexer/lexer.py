@@ -99,9 +99,6 @@ class BaseLexer:
         if value is not None:
             self.text_buffer.skip(len(value))
 
-    def _error(self, message=None):
-        raise MauLexerException(message=message, context=self._context)
-
     def _process(self):
         # This should not be touched by child classes
         # as it is the core of the lexer. It tries
@@ -134,7 +131,9 @@ class BaseLexer:
             self.last_visited_context is not None
             and self.last_visited_context == self._context
         ):
-            self._error("Loop detected, cannot process context.")  # pragma: no cover
+            raise MauLexerException(
+                message="Loop detected, cannot process context", context=self._context
+            )  # pragma: no cover
 
         self.last_visited_context = self._context
 
@@ -155,7 +154,7 @@ class BaseLexer:
         ]
 
     def _process_error(self):
-        self._error("No function found to process context.")
+        raise MauLexerException(message="Cannot process token", context=self._context)
 
     def _create_token_and_skip(
         self, token_type, token_value: str | None = None

@@ -22,7 +22,7 @@ from mau.nodes.macros import (
 from mau.nodes.node import Node, NodeContent, NodeInfo
 from mau.parsers.arguments_parser.parser import ArgumentsParser
 from mau.parsers.base_parser.managers.tokens_manager import TokenError
-from mau.parsers.base_parser.parser import BaseParser
+from mau.parsers.base_parser.parser import BaseParser, MauParserException
 from mau.text_buffer.context import Context
 from mau.tokens.token import Token, TokenType
 
@@ -493,7 +493,7 @@ class TextParser(BaseParser):
         try:
             target = parser.named_argument_nodes["target"]
         except KeyError as exc:
-            raise self._error(
+            raise MauParserException(
                 message="Syntax: [link](TARGET, text)", context=context
             ) from exc
 
@@ -539,7 +539,7 @@ class TextParser(BaseParser):
         try:
             header_id = parser.named_argument_nodes["header_id"]
         except KeyError as exc:
-            raise self._error(
+            raise MauParserException(
                 message="Syntax: [header](ID, text)", context=context
             ) from exc
 
@@ -581,7 +581,7 @@ class TextParser(BaseParser):
         try:
             target = parser.named_argument_nodes["email"]
         except KeyError as exc:
-            raise self._error(
+            raise MauParserException(
                 message="Syntax: [mailto](EMAIL, text)", context=context
             ) from exc
 
@@ -631,7 +631,7 @@ class TextParser(BaseParser):
         try:
             text = parser.named_argument_nodes["text"]
         except KeyError as exc:
-            raise self._error(
+            raise MauParserException(
                 message="Syntax: [class](TEXT, class1, class2, ...)", context=context
             ) from exc
 
@@ -661,7 +661,7 @@ class TextParser(BaseParser):
         try:
             uri = parser.named_argument_nodes["uri"]
         except KeyError as exc:
-            raise self._error(
+            raise MauParserException(
                 message="Syntax: [image](URI, alt_text, width, height)", context=context
             ) from exc
 
@@ -700,7 +700,7 @@ class TextParser(BaseParser):
         try:
             name_node = parser.named_argument_nodes["name"]
         except KeyError as exc:
-            raise self._error(
+            raise MauParserException(
                 message="Syntax: [footnote](NAME)", context=context
             ) from exc
 
@@ -734,7 +734,7 @@ class TextParser(BaseParser):
             test_value = test[1:]
 
             if test_value not in ["true", "false"]:
-                raise self._error(f"Boolean value '{test_value}' is invalid")
+                raise MauParserException(f"Boolean value '{test_value}' is invalid")
 
             # pylint: disable=simplifiable-if-expression
             boolean_test_value = True if test_value == "true" else False
@@ -744,7 +744,7 @@ class TextParser(BaseParser):
             # value match.
             return bool(value) and boolean_test_value
 
-        raise self._error(f"Test '{test}' is not supported")
+        raise MauParserException(f"Test '{test}' is not supported")
 
     def _parse_macro_control(
         self, macro_name: str, parser: ArgumentsParser, context: Context | None
@@ -761,7 +761,7 @@ class TextParser(BaseParser):
 
         # Check if the operator is supported.
         if operator not in ["if", "ifeval"]:
-            raise self._error(f"Control operator '{operator}' is not supported")
+            raise MauParserException(f"Control operator '{operator}' is not supported")
 
         # Assign names to arguments.
         parser.set_names(["variable", "test", "true_case", "false_case"])
@@ -772,7 +772,7 @@ class TextParser(BaseParser):
             test = parser.named_argument_nodes["test"]
             true_case = parser.named_argument_nodes["true_case"]
         except KeyError as exc:
-            raise self._error(
+            raise MauParserException(
                 message=f"Syntax: [{macro_name}](VARIABLE, TEST, TRUE_CASE, false_case)",
                 context=context,
             ) from exc
@@ -785,7 +785,7 @@ class TextParser(BaseParser):
             None,
         )
         if variable_value is None:
-            raise self._error(f"Variable '{variable}' has not been defined")
+            raise MauParserException(f"Variable '{variable}' has not been defined")
 
         # Check if the variable value passes the test.
         test_result = self._process_test(
@@ -800,7 +800,7 @@ class TextParser(BaseParser):
         # as the name of a variable.
         if operator == "ifeval":
             if result is None:
-                raise self._error(
+                raise MauParserException(
                     "Test result negative but evaluation variable has not been defined for that case."
                 )
 
@@ -811,7 +811,7 @@ class TextParser(BaseParser):
 
             # If the variable wasn't defined yell at the user.
             if variable_value is None:
-                raise self._error(
+                raise MauParserException(
                     f"Variable '{result.content.value}' has not been defined"
                 )
 

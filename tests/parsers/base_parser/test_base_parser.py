@@ -72,29 +72,6 @@ def test_format_parser_error_with_context(mock_open):
     compare_text_lines(format_parser_error(exception), expected)
 
 
-def test_error_no_context():
-    parser = init_parser("Some text", Environment())
-
-    # This advances to the first token
-    parser.tm.get_token()
-
-    with pytest.raises(MauParserException) as exc:
-        raise parser._error("A message")
-
-    assert exc.value.message == "A message"
-    assert exc.value.context == generate_context(0, 0, 0, 9)
-
-
-def test_error_with_context():
-    parser = init_parser("Some text", Environment())
-
-    with pytest.raises(MauParserException) as exc:
-        raise parser._error("A message", generate_context(42, 4242))
-
-    assert exc.value.message == "A message"
-    assert exc.value.context == generate_context(42, 4242)
-
-
 def test_unknown_token():
     test_context = generate_context(42, 24)
     test_token = Token(TokenType.EOL, "", test_context)

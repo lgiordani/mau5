@@ -7,6 +7,7 @@ if TYPE_CHECKING:
 
 from enum import Enum
 
+from mau.parsers.base_parser.parser import BaseParser, MauParserException
 from mau.environment.environment import Environment
 from mau.nodes.block import BlockNodeContent
 from mau.nodes.footnotes import FootnoteNodeContent
@@ -361,7 +362,7 @@ def block_processor(parser: DocumentParser):
     try:
         engine: EngineType = EngineType(engine_name)
     except ValueError as exc:
-        raise parser._error(
+        raise MauParserException(
             f"Engine {engine_name} is not available", context=context
         ) from exc
 
@@ -408,6 +409,8 @@ def block_processor(parser: DocumentParser):
             node.info = NodeInfo(context=context, **arguments.asdict())
             parser._save(node)
         case _:
-            raise parser._error(f"Engine {engine} is not available", context=context)
+            raise MauParserException(
+                f"Engine {engine} is not available", context=context
+            )
 
     return True
