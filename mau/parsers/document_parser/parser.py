@@ -32,9 +32,7 @@ from .processors.list import list_processor
 from .processors.paragraph import paragraph_processor
 from .processors.variable_definition import variable_definition_processor
 
-# TODO why are macro arguments not a single TEXT token? I'm collecting them in the parser but it might as well be a lexer task.
 # TODO Check if it makes sense to have _error in the parser.
-# TODO Defblock?
 # TODO Does it make sense to have context column and line? It does for text, but for blocks?
 # TODO Marker nodes in source blocks?
 # Ultimately the block

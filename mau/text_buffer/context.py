@@ -41,6 +41,7 @@ class Context:
         if self.source:
             source_prefix = f"{self.source}:"
 
-        return repr(
-            f"{source_prefix}{self.start_line},{self.start_column}-{self.end_line},{self.end_column}"
-        )
+        return f"{source_prefix}{self.start_line},{self.start_column}-{self.end_line},{self.end_column}"
+
+    def __str__(self):
+        return repr(self)
