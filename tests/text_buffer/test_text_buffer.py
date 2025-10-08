@@ -1,5 +1,5 @@
-from mau.test_helpers import dedent, generate_context
-from mau.text_buffer.text_buffer import Context, TextBuffer
+from mau.test_helpers import dedent, generate_context, TEST_CONTEXT_SOURCE
+from mau.text_buffer.text_buffer import Context, TextBuffer, Position
 
 
 def test_text_buffer_current_line():
@@ -130,7 +130,7 @@ def test_text_buffer_eof_on_single_line():
 
 
 def test_text_buffer_eol():
-    text_buffer = TextBuffer("abcdef", Context(source="main"))
+    text_buffer = TextBuffer("abcdef")
 
     text_buffer.column = 0
     assert text_buffer.eol is False
@@ -224,13 +224,6 @@ def test_text_buffer_position_outext_bufferide():
     assert text_buffer.position == (123, 456)
 
 
-def test_text_buffer_set_position():
-    text_buffer = TextBuffer()
-    text_buffer.position = (222, 333)
-
-    assert text_buffer.position == (222, 333)
-
-
 def test_text_buffer_skip_defaults_to_one():
     text_buffer = TextBuffer("abc\ndef\nghi")
     text_buffer.skip()
@@ -250,46 +243,4 @@ def test_text_buffer_skip_can_go_beyond_eol():
     text_buffer.nextline()
     text_buffer.skip(25)
 
-    assert text_buffer.column == 6
-
-
-def test_text_buffer_default_context():
-    text_buffer = TextBuffer(
-        dedent(
-            """
-            Some text
-            on multiple lines
-            that I will use
-            to check the context()
-            """
-        ),
-    )
-
-    text_buffer.position = (2, 6)
-
-    assert text_buffer.context.asdict() == {
-        "start_line": 2,
-        "start_column": 6,
-        "end_line": 2,
-        "end_column": 6,
-        "source": None,
-    }
-
-
-def test_text_buffer_initial_context():
-    text_buffer = TextBuffer(
-        dedent(
-            """
-            Some text
-            on multiple lines
-            that I will use
-            to check the context()
-            """
-        ),
-        generate_context(1, 42, 1, 42),
-    )
-
-    assert text_buffer.current_line == "Some text"
-    assert text_buffer.line == 0
-    assert text_buffer.column == 0
-    assert text_buffer.context == generate_context(1, 42, 1, 42)
+    assert text_buffer.column == 25

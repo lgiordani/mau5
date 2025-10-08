@@ -23,9 +23,6 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-# "Jinja2",
-"pyyaml",
-"rich",
 ]
 readme = "README.md"
 
@@ -54,10 +51,7 @@ mau = "mau.main:main"
 [tool.coverage.run]
 source = ["mau"]
 omit=[
-  "mau/__init__.py",
-  "mau/errors.py",
-  "mau/helpers.py",
-  "mau/main.py",
+  "**/__init__.py",
   "mau/test_helpers.py",
 ]
 
@@ -74,18 +68,7 @@ exclude_also = [
 ]
 
 [tool.pylint.main]
-disable = [
-  "import-error",
-  "missing-class-docstring",
-  "missing-function-docstring",
-  "missing-module-docstring",
-  "protected-access",
-  "too-few-public-methods",
-  "too-many-arguments",
-  "too-many-instance-attributes",
-  "too-many-return-statements",
-  "use-implicit-booleaness-not-comparison"
-]
+disable = []
 
 [tool.pytest.ini_options]
 addopts = """\

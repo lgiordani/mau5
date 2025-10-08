@@ -45,29 +45,17 @@ Position = tuple[int, int]
 
 
 class TextBuffer:
-    def __init__(self, text: str = "", context: Context | None = None):
-        self.lines: list[str] = []
-        self.load(text, context)
-
-    def load(self, text: str, context: Context | None = None) -> None:
-        self.lines = text.split("\n") if text != "" else []
-
-        self.initial_context = context or Context()
+    def __init__(
+        self,
+        text: str = "",
+        source_filename: str | None = None,
+    ):
         self.line = 0
         self.column = 0
+        self.source_filename = source_filename
 
-    @property
-    def context(self) -> Context:
-        line = self.line + self.initial_context.start_line
-        column = self.column + self.initial_context.start_column
-
-        return Context(
-            start_line=line,
-            start_column=column,
-            end_line=line,
-            end_column=column,
-            source=self.initial_context.source,
-        )
+        # Split the input text into lines.
+        self.lines = text.split("\n") if text != "" else []
 
     @property
     def eof(self) -> bool:
@@ -157,13 +145,6 @@ class TextBuffer:
         """
         return (self.line, self.column)
 
-    @position.setter
-    def position(self, position: Position):
-        """
-        Sets the current position.
-        """
-        self.line, self.column = position
-
     def nextline(self):
         """
         Moves the index to the beginning of the next line
@@ -178,4 +159,4 @@ class TextBuffer:
         Skips the given number of characters (default 1). Can silently
         go over the end of the line.
         """
-        self.column = min(self.column + chars, len(self.current_line))
+        self.column = self.column + chars

@@ -6,21 +6,29 @@ from dataclasses import dataclass
 @dataclass
 class Context:
     # Context objects represent the place where a token was found
-    # in the source code. They contain line and column where they
-    # begin, the name of the source file (if provided), and the
-    # text of the full line.
+    # in the source code. They contain start and enf line and
+    # column of the text block, and the name of the source file
+    # (if provided).
 
-    start_line: int = 0
-    start_column: int = 0
-    end_line: int = 0
-    end_column: int = 0
+    start_line: int
+    start_column: int
+    end_line: int
+    end_column: int
     source: str | None = None
 
     @classmethod
-    def merge_contexts(cls, start_context: Context, end_context: Context) -> Context:
-        context = start_context.clone()
-        context.end_line = end_context.end_line
-        context.end_column = end_context.end_column
+    def merge_contexts(cls, ctx1: Context, ctx2: Context) -> Context:
+        """Merge two contexts.
+        This function merges two contexts, returning
+        a context that contains both.
+        """
+        context = Context(
+            start_line=min(ctx1.start_line, ctx2.start_line),
+            start_column=min(ctx1.start_column, ctx2.start_column),
+            end_line=max(ctx1.end_line, ctx2.end_line),
+            end_column=max(ctx1.end_column, ctx2.end_column),
+            source=ctx1.source,
+        )
 
         return context
 
