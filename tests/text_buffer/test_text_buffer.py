@@ -1,5 +1,5 @@
-from mau.test_helpers import dedent, generate_context, TEST_CONTEXT_SOURCE
-from mau.text_buffer.text_buffer import Context, TextBuffer, Position
+from mau.test_helpers import dedent
+from mau.text_buffer.text_buffer import TextBuffer
 
 
 def test_text_buffer_current_line():
@@ -71,6 +71,7 @@ def test_text_buffer_eof_character_after_end_of_last_line():
 
     text_buffer.line = 2
     text_buffer.column = 6
+
     assert text_buffer.eof is True
 
 

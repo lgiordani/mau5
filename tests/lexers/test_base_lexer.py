@@ -1,34 +1,293 @@
-# from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
-# import pytest
+import pytest
 
-# from mau.lexers.base_lexer.lexer import (
-#     BaseLexer,
-# )
-# from mau.test_helpers import (
-#     init_lexer_factory,
-#     lexer_runner_factory,
-# )
-# from mau.text_buffer.context import Context
-# from mau.tokens.token import Token, TokenType
+from mau.environment.environment import Environment
+from mau.lexers.base_lexer.lexer import (
+    BaseLexer,
+    MauLexerException,
+    rematch,
+)
+from mau.test_helpers import (
+    TEST_CONTEXT_SOURCE,
+    compare_tokens,
+    dedent,
+    generate_context,
+    init_lexer_factory,
+    lexer_runner_factory,
+)
+from mau.text_buffer.text_buffer import TextBuffer
+from mau.token import Token, TokenType
 
-# init_lexer = init_lexer_factory(BaseLexer)
+init_lexer = init_lexer_factory(BaseLexer)
 
-# runner = lexer_runner_factory(BaseLexer)
+runner = lexer_runner_factory(BaseLexer)
 
 
-# def test_text_buffer_properties():
-#     mock_text_buffer = Mock()
-#     lex = BaseLexer(mock_text_buffer, Environment())
+@patch("mau.lexers.base_lexer.lexer.re")
+def test_rematch(mock_re):
+    mock_regexp = Mock()
+    mock_text = Mock()
 
-#     assert lex._current_char == mock_text_buffer.current_char
+    rematch(mock_regexp, mock_text)
 
-#     assert lex._current_line == mock_text_buffer.current_line
+    mock_re.compile.assert_called_with(mock_regexp)
+    mock_re.compile().match.assert_called_with(mock_text)
 
-#     assert lex._tail == mock_text_buffer.tail
 
-#     lex._nextline()
-#     mock_text_buffer.nextline.assert_called()
+def test_text_buffer_properties():
+    mock_text_buffer = Mock()
+    test_environment = Environment()
 
-#     lex._skip("four")
-#     mock_text_buffer.skip.assert_called_with(4)
+    lex = BaseLexer(mock_text_buffer, test_environment)
+
+    assert lex.text_buffer == mock_text_buffer
+    assert lex.tokens == []
+    assert lex.environment == test_environment
+
+    assert lex._current_char == mock_text_buffer.current_char
+    assert lex._current_line == mock_text_buffer.current_line
+    assert lex._position == mock_text_buffer.position
+    assert lex._tail == mock_text_buffer.tail
+
+    lex._nextline()
+    mock_text_buffer.nextline.assert_called()
+
+    lex._skip("sometext")
+    mock_text_buffer.skip.assert_called_with(8)
+
+
+def test_create_token_and_skip():
+    text_buffer = TextBuffer("somevalue", source_filename=TEST_CONTEXT_SOURCE)
+
+    lex = BaseLexer(text_buffer)
+    token = lex._create_token_and_skip(TokenType.TEXT, "somevalue")
+
+    assert token == Token(TokenType.TEXT, "somevalue", generate_context(0, 0, 0, 9))
+
+
+def test_process_error():
+    mock_text_buffer = Mock()
+    lex = BaseLexer(mock_text_buffer)
+
+    with pytest.raises(MauLexerException):
+        lex._process_error()
+
+
+def test_process_eof_if_true():
+    text_buffer = TextBuffer("", source_filename=TEST_CONTEXT_SOURCE)
+
+    lex = BaseLexer(text_buffer)
+    tokens = lex._process_eof()
+
+    compare_tokens(
+        tokens,
+        [
+            Token(TokenType.EOF, "", generate_context(0, 0, 0, 0)),
+        ],
+    )
+
+
+def test_process_eof_if_false():
+    text_buffer = TextBuffer("somevalue", source_filename=TEST_CONTEXT_SOURCE)
+
+    lex = BaseLexer(text_buffer)
+    tokens = lex._process_eof()
+
+    assert tokens is None
+
+
+def test_process_empty_line_empty():
+    test_text = ""
+    text_buffer = TextBuffer(test_text, source_filename=TEST_CONTEXT_SOURCE)
+
+    lex = BaseLexer(text_buffer)
+    tokens = lex._process_empty_line()
+
+    compare_tokens(
+        tokens,
+        [
+            Token(TokenType.EOL, test_text, generate_context(0, 0, 0, 0)),
+        ],
+    )
+    assert lex._position == (1, 0)
+
+
+def test_process_empty_line_with_spaces():
+    test_text = "   "
+    text_buffer = TextBuffer(test_text, source_filename=TEST_CONTEXT_SOURCE)
+
+    lex = BaseLexer(text_buffer)
+    tokens = lex._process_empty_line()
+
+    compare_tokens(
+        tokens,
+        [
+            Token(TokenType.EOL, test_text, generate_context(0, 0, 0, len(test_text))),
+        ],
+    )
+    assert lex._position == (1, 0)
+
+
+def test_process_empty_line_not_empty():
+    test_text = "sometext"
+    text_buffer = TextBuffer(test_text, source_filename=TEST_CONTEXT_SOURCE)
+
+    lex = BaseLexer(text_buffer)
+    tokens = lex._process_empty_line()
+
+    assert tokens is None
+    assert lex._position == (0, 0)
+
+
+def test_process_trailing_spaces():
+    test_text = "sometext   "
+    text_buffer = TextBuffer(test_text, source_filename=TEST_CONTEXT_SOURCE)
+
+    # This skips the text.
+    text_buffer.column = 8
+
+    lex = BaseLexer(text_buffer)
+    tokens = lex._process_trailing_spaces()
+
+    compare_tokens(tokens, [])
+    assert lex._position == (1, 0)
+
+
+def test_process_trailing_spaces_no_spaces():
+    test_text = "sometext"
+    text_buffer = TextBuffer(test_text, source_filename=TEST_CONTEXT_SOURCE)
+
+    # This skips the text.
+    text_buffer.column = 8
+
+    lex = BaseLexer(text_buffer)
+    tokens = lex._process_trailing_spaces()
+
+    compare_tokens(tokens, [])
+    assert lex._position == (1, 0)
+
+
+def test_process_trailing_spaces_not_eol():
+    test_text = "sometext  more text"
+    text_buffer = TextBuffer(test_text, source_filename=TEST_CONTEXT_SOURCE)
+
+    # This skips the first word.
+    # There are spaces but also
+    # more words.
+    text_buffer.column = 8
+
+    lex = BaseLexer(text_buffer)
+    tokens = lex._process_trailing_spaces()
+
+    assert tokens is None
+    assert lex._position == (0, 8)
+
+
+def test_process_text():
+    test_text = "sometext"
+    text_buffer = TextBuffer(test_text, source_filename=TEST_CONTEXT_SOURCE)
+
+    lex = BaseLexer(text_buffer)
+    tokens = lex._process_text()
+
+    compare_tokens(
+        tokens,
+        [
+            Token(TokenType.TEXT, "sometext", generate_context(0, 0, 0, 8)),
+        ],
+    )
+    assert lex._position == (1, 0)
+
+
+def test_process_text_just_tail():
+    test_text = "sometext and more text"
+    text_buffer = TextBuffer(test_text, source_filename=TEST_CONTEXT_SOURCE)
+
+    # This skips the initial word
+    text_buffer.column = 8
+
+    lex = BaseLexer(text_buffer)
+    tokens = lex._process_text()
+
+    compare_tokens(
+        tokens,
+        [
+            Token(TokenType.TEXT, " and more text", generate_context(0, 8, 0, 22)),
+        ],
+    )
+    assert lex._position == (1, 0)
+
+
+def test_run_empty_text():
+    lex = runner("")
+
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.EOF, "", generate_context(0, 0, 0, 0)),
+        ],
+    )
+
+
+def test_empty_lines():
+    lex = runner("\n")
+
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.EOL, "", generate_context(0, 0, 0, 0)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
+        ],
+    )
+
+
+def test_lines_with_only_spaces():
+    lex = runner("      \n      ")
+
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.EOL, "", generate_context(0, 0, 0, 0)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
+        ],
+    )
+
+
+def test_text():
+    lex = runner("Just simple text")
+
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, "Just simple text", generate_context(0, 0, 0, 16)),
+            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
+        ],
+    )
+
+
+def test_multiple_lines():
+    text = dedent(
+        """
+        This is text
+        split into multiple lines
+
+        with an empty line
+        """
+    )
+    lex = runner(text)
+
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, "This is text", generate_context(0, 0, 0, 12)),
+            Token(
+                TokenType.TEXT,
+                "split into multiple lines",
+                generate_context(1, 0, 1, 25),
+            ),
+            Token(TokenType.EOL, "", generate_context(2, 0, 2, 0)),
+            Token(TokenType.TEXT, "with an empty line", generate_context(3, 0, 3, 18)),
+            Token(TokenType.EOF, "", generate_context(4, 0, 4, 0)),
+        ],
+    )

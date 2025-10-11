@@ -1,6 +1,6 @@
+from mau.test_helpers import TEST_CONTEXT_SOURCE, generate_context
 from mau.text_buffer.context import Context
 from mau.token import Token, TokenType
-from mau.test_helpers import generate_context, TEST_CONTEXT_SOURCE
 
 
 def test_token_accepts_type_and_value():

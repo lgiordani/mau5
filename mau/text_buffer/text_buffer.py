@@ -1,4 +1,3 @@
-from mau.text_buffer.context import Context
 
 Position = tuple[int, int]
 
