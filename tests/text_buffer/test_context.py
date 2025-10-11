@@ -18,6 +18,18 @@ def test_context():
     assert str(ctx) == "main:1,7-5,10"
 
 
+def test_context_empty():
+    ctx = Context.empty()
+
+    assert ctx.asdict() == {
+        "start_line": 0,
+        "start_column": 0,
+        "end_line": 0,
+        "end_column": 0,
+        "source": None,
+    }
+
+
 def test_context_merge():
     ctx1 = generate_context(1, 7, 5, 10)
     ctx2 = generate_context(100, 107, 105, 110)

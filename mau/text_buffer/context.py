@@ -17,6 +17,10 @@ class Context:
     source: str | None = None
 
     @classmethod
+    def empty(cls) -> Context:
+        return Context(0, 0, 0, 0)
+
+    @classmethod
     def merge_contexts(cls, ctx1: Context, ctx2: Context) -> Context:
         """Merge two contexts.
         This function merges two contexts, returning
