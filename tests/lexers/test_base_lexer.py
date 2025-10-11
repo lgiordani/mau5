@@ -16,7 +16,7 @@ from mau.test_helpers import (
     init_lexer_factory,
     lexer_runner_factory,
 )
-from mau.text_buffer.text_buffer import TextBuffer
+from mau.text_buffer import TextBuffer
 from mau.token import Token, TokenType
 
 init_lexer = init_lexer_factory(BaseLexer)
@@ -64,6 +64,24 @@ def test_create_token_and_skip():
     token = lex._create_token_and_skip(TokenType.TEXT, "somevalue")
 
     assert token == Token(TokenType.TEXT, "somevalue", generate_context(0, 0, 0, 9))
+
+
+def test_create_token_and_skip_with_no_value():
+    text_buffer = TextBuffer("somevalue", source_filename=TEST_CONTEXT_SOURCE)
+
+    lex = BaseLexer(text_buffer)
+    token = lex._create_token_and_skip(TokenType.TEXT)
+
+    assert token == Token(TokenType.TEXT, "", generate_context(0, 0, 0, 0))
+
+
+def test_create_token_and_skip_with_value_none():
+    text_buffer = TextBuffer("somevalue", source_filename=TEST_CONTEXT_SOURCE)
+
+    lex = BaseLexer(text_buffer)
+    token = lex._create_token_and_skip(TokenType.TEXT, None)
+
+    assert token == Token(TokenType.TEXT, "", generate_context(0, 0, 0, 0))
 
 
 def test_process_error():

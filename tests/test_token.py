@@ -1,5 +1,5 @@
 from mau.test_helpers import TEST_CONTEXT_SOURCE, generate_context
-from mau.text_buffer.context import Context
+from mau.text_buffer import Context
 from mau.token import Token, TokenType
 
 
@@ -53,7 +53,7 @@ def test_token_equality_considers_value():
 
 def test_token_equality_considers_type():
     assert Token(TokenType.TEXT, "somevalue", generate_context(1, 2, 3, 4)) != Token(
-        TokenType.TITLE, "somevalue", generate_context(1, 2, 3, 4)
+        TokenType.LABEL, "somevalue", generate_context(1, 2, 3, 4)
     )
 
 

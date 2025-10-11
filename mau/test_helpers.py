@@ -1,8 +1,7 @@
 import textwrap
 
 from mau.environment.environment import Environment
-from mau.text_buffer.context import Context
-from mau.text_buffer.text_buffer import TextBuffer
+from mau.text_buffer import Context, TextBuffer
 from mau.token import Token
 
 TEST_CONTEXT_SOURCE = "test.py"

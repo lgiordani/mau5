@@ -1,9 +1,9 @@
 import logging
 import re
+from typing import Callable
 
 from mau.environment.environment import Environment
-from mau.text_buffer.context import Context
-from mau.text_buffer.text_buffer import Position, TextBuffer
+from mau.text_buffer import Context, Position, TextBuffer
 from mau.token import Token, TokenType
 
 logger = logging.getLogger(__name__)
@@ -79,10 +79,18 @@ class BaseLexer:
         if value is not None:
             self.text_buffer.skip(len(value))
 
-    def _create_token_and_skip(self, token_type, token_value: str = "") -> Token:
+    def _create_token_and_skip(
+        self, token_type, token_value: str | None = None
+    ) -> Token:
         # Create the token and advance the position
         # in the text buffer to skip the characters
         # that are part of the token.
+
+        # If the token value is None,
+        # transform it into an empty string.
+        # This is useful as regular expression
+        # groups can be None if they are optional.
+        token_value = token_value or ""
 
         # Get the initial position.
         initial_position = self._position
@@ -176,7 +184,7 @@ class BaseLexer:
 
             return
 
-    def _process_functions(self):
+    def _process_functions(self) -> list[Callable[[], list[Token] | None]]:
         return [
             self._process_text,
         ]
@@ -184,7 +192,7 @@ class BaseLexer:
     def _process_error(self):
         raise MauLexerException(message="Cannot process token", position=self._position)
 
-    def _process_eof(self):
+    def _process_eof(self) -> list[Token] | None:
         # If we are not at the end of
         # the buffer just return.
         if not self.text_buffer.eof:
@@ -195,7 +203,7 @@ class BaseLexer:
 
         return tokens
 
-    def _process_empty_line(self):
+    def _process_empty_line(self) -> list[Token] | None:
         # This detects an fully empty line,
         # that we want to preserve.
 
@@ -214,7 +222,7 @@ class BaseLexer:
 
         return tokens
 
-    def _process_trailing_spaces(self):
+    def _process_trailing_spaces(self) -> list[Token] | None:
         # This detects and skips any trailing spaces,
         # reaches the end of line and proceeds to the next line.
 
@@ -234,7 +242,7 @@ class BaseLexer:
 
         return []
 
-    def _process_text(self):
+    def _process_text(self) -> list[Token] | None:
         # Build a text token with everything
         # contained in this line until the end.
         tokens = [

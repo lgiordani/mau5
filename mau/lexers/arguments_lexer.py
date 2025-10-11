@@ -1,4 +1,7 @@
-from mau.lexers.base_lexer import BaseLexer, TokenType, rematch
+from typing import Callable
+
+from mau.lexers.base_lexer import BaseLexer, rematch
+from mau.token import Token, TokenType
 
 
 class ArgumentsLexer(BaseLexer):
@@ -25,14 +28,14 @@ class ArgumentsLexer(BaseLexer):
     "value1", "some \"value\""
     """
 
-    def _process_functions(self):
+    def _process_functions(self) -> list[Callable[[], list[Token] | None]]:
         return [
             self._process_whitespace,
             self._process_literal,
             self._process_text,
         ]
 
-    def _process_whitespace(self):
+    def _process_whitespace(self) -> list[Token] | None:
         # Find any amount of whitespace.
         match = rematch(r" +", self._tail)
 
@@ -41,7 +44,7 @@ class ArgumentsLexer(BaseLexer):
 
         return [self._create_token_and_skip(TokenType.WHITESPACE, match.group())]
 
-    def _process_literal(self):
+    def _process_literal(self) -> list[Token] | None:
         # Find if the current character is one
         # of the special characters we are
         # interested in, \=,"
@@ -50,7 +53,7 @@ class ArgumentsLexer(BaseLexer):
 
         return [self._create_token_and_skip(TokenType.LITERAL, self._current_char)]
 
-    def _process_text(self):
+    def _process_text(self) -> list[Token] | None:
         # Anything that is not a special character
         # or a space can become a text token.
         match = rematch(r'[^\\=," ]+', self._tail)

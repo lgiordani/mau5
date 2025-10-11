@@ -1,6 +1,7 @@
-from mau.lexers.base_lexer import BaseLexer, TokenType, rematch
-from mau.token import Token
-from mau.text_buffer.context import Context
+from typing import Callable
+
+from mau.lexers.base_lexer import BaseLexer, rematch
+from mau.token import Token, TokenType
 
 
 class PreprocessVariablesLexer(BaseLexer):
@@ -10,7 +11,7 @@ class PreprocessVariablesLexer(BaseLexer):
     variable, the escape \, or the backtick `.
     """
 
-    def _process_literal(self):
+    def _process_literal(self) -> list[Token] | None:
         # Spot if the current character is one
         # among \`{}. These wil be useful to the
         # parser as they might contain
@@ -23,7 +24,7 @@ class PreprocessVariablesLexer(BaseLexer):
 
         return [self._create_token_and_skip(TokenType.LITERAL, self._current_char)]
 
-    def _process_text(self):
+    def _process_text(self) -> list[Token] | None:
         # Anything that is not a special character
         # can be collected under the generic name
         # of "text".
@@ -34,7 +35,7 @@ class PreprocessVariablesLexer(BaseLexer):
 
         return [self._create_token_and_skip(TokenType.TEXT, match.group())]
 
-    def _process_functions(self):
+    def _process_functions(self) -> list[Callable[[], list[Token] | None]]:
         return [
             self._process_literal,
             self._process_text,

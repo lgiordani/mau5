@@ -83,3 +83,6 @@ extend-select = ["I"]
 
 [tool.mypy]
 check_untyped_defs = true
+exclude = [
+"tests/.*"
+]

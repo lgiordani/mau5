@@ -1,5 +1,5 @@
 from mau.test_helpers import dedent
-from mau.text_buffer.text_buffer import TextBuffer
+from mau.text_buffer import TextBuffer
 
 
 def test_text_buffer_current_line():

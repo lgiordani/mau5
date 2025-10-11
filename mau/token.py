@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-from mau.text_buffer.context import Context
+from mau.text_buffer import Context
 
 
 class TokenType(Enum):
@@ -26,7 +26,7 @@ class TokenType(Enum):
     # Free text without a specific value in
     # the language
     TEXT = "TEXT"
-    TITLE = "TITLE"
+    LABEL = "LABEL"
     VARIABLE = "VARIABLE"
     WHITESPACE = "WHITESPACE"
 

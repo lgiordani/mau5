@@ -1,5 +1,5 @@
 from mau.test_helpers import generate_context
-from mau.text_buffer.context import Context
+from mau.text_buffer import Context
 
 
 def test_context():
@@ -71,3 +71,12 @@ def test_context_clones_are_independent():
     ctx2.start_line = 200
 
     assert ctx1.start_line == 1
+
+
+def test_context_position_attributes():
+    ctx = Context(
+        start_line=1, start_column=7, end_line=5, end_column=10, source="main"
+    )
+
+    assert ctx.start_position == (1, 7)
+    assert ctx.end_position == (5, 10)
