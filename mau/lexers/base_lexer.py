@@ -19,6 +19,9 @@ class MauLexerException(ValueError):
         self.message = message
         self.position = position
 
+    def __str__(self):
+        return f"{self.message} - {self.position}"
+
 
 class BaseLexer:
     """

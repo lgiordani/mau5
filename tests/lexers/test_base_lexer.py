@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from mau.environment.environment import Environment
-from mau.lexers.base_lexer.lexer import (
+from mau.lexers.base_lexer import (
     BaseLexer,
     MauLexerException,
     rematch,
@@ -24,7 +24,7 @@ init_lexer = init_lexer_factory(BaseLexer)
 runner = lexer_runner_factory(BaseLexer)
 
 
-@patch("mau.lexers.base_lexer.lexer.re")
+@patch("mau.lexers.base_lexer.re")
 def test_rematch(mock_re):
     mock_regexp = Mock()
     mock_text = Mock()

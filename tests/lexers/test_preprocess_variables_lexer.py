@@ -1,5 +1,5 @@
-from mau.lexers.base_lexer.lexer import TokenType
-from mau.lexers.preprocess_variables_lexer.lexer import PreprocessVariablesLexer
+from mau.lexers.base_lexer import TokenType
+from mau.lexers.preprocess_variables_lexer import PreprocessVariablesLexer
 from mau.test_helpers import (
     compare_tokens,
     generate_context,
