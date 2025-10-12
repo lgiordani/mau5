@@ -1,0 +1,79 @@
+// Mau Lexer test.
+
+////
+This is a test file to check the end-to-end behaviour of the lexer.
+
+It actually tests the DocumentLexer only, as the TextLexer will be called on demand
+by the parser when it needs to process paragraphs.
+
+This is a multiline comment. When processed, it doesn't generate any token.
+////
+
+// A horizontal rule.
+---
+
+// A block.
+@@@@
+Some text inside the block.
+@@@@
+
+// A block with a different delimiter.
+----
+Some text inside the block.
+----
+
+// All text inside the block is
+// collected into a single
+// text token.
+----
+// A block within the block.
+####
+Some text inside the block.
+####
+----
+
+// A command.
+::command
+
+// A command with arguments.
+::command:arg1,#tag1,*subtype1,key1=value1
+
+// A control statement.
+@operator var1==value1
+
+// Included content.
+<< type
+
+// Included content with arguments.
+<< type:arg1,#tag1,*subtype1,key1=value1
+
+// Variable declarations.
+:var
+:var_1
+:namespace.var
+:+var
+:-var
+:var:value
+
+// Arguments.
+[arg1,#tag1,*subtype1,key1=value1]
+
+// Labels.
+. Title
+.title Title
+.label Label
+
+// Lists.
+* Unordered list item1.
+* Unordered list item2.
+# Ordered list item1.
+# Ordered list item2.
+
+// Headers.
+= Header 1
+== Header 2
+==== Header 4
+======== Header 8
+
+// Paragraph
+Standard text with "double quotes", 'single quotes', *styles*, [macros](args), and {variables}.

@@ -1,0 +1,84 @@
+TokenType.EOL '' e2e/lexers/document.mau:1,0-1,0
+TokenType.EOL '' e2e/lexers/document.mau:10,0-10,0
+TokenType.HORIZONTAL_RULE '---' e2e/lexers/document.mau:12,0-12,3
+TokenType.EOL '' e2e/lexers/document.mau:13,0-13,0
+TokenType.BLOCK '@@@@' e2e/lexers/document.mau:15,0-15,4
+TokenType.TEXT 'Some text inside the block.' e2e/lexers/document.mau:16,0-16,27
+TokenType.BLOCK '@@@@' e2e/lexers/document.mau:17,0-17,4
+TokenType.EOL '' e2e/lexers/document.mau:18,0-18,0
+TokenType.BLOCK '----' e2e/lexers/document.mau:20,0-20,4
+TokenType.TEXT 'Some text inside the block.' e2e/lexers/document.mau:21,0-21,27
+TokenType.BLOCK '----' e2e/lexers/document.mau:22,0-22,4
+TokenType.EOL '' e2e/lexers/document.mau:23,0-23,0
+TokenType.BLOCK '----' e2e/lexers/document.mau:27,0-27,4
+TokenType.TEXT '// A block within the block.\n####\nSome text inside the block.\n####' e2e/lexers/document.mau:28,0-31,4
+TokenType.BLOCK '----' e2e/lexers/document.mau:32,0-32,4
+TokenType.EOL '' e2e/lexers/document.mau:33,0-33,0
+TokenType.COMMAND '::' e2e/lexers/document.mau:35,0-35,2
+TokenType.TEXT 'command' e2e/lexers/document.mau:35,2-35,9
+TokenType.EOL '' e2e/lexers/document.mau:36,0-36,0
+TokenType.COMMAND '::' e2e/lexers/document.mau:38,0-38,2
+TokenType.TEXT 'command' e2e/lexers/document.mau:38,2-38,9
+TokenType.LITERAL ':' e2e/lexers/document.mau:38,9-38,10
+TokenType.TEXT 'arg1,#tag1,*subtype1,key1=value1' e2e/lexers/document.mau:38,10-38,42
+TokenType.EOL '' e2e/lexers/document.mau:39,0-39,0
+TokenType.CONTROL '@' e2e/lexers/document.mau:41,0-41,1
+TokenType.TEXT 'operator' e2e/lexers/document.mau:41,1-41,9
+TokenType.TEXT 'var1' e2e/lexers/document.mau:41,10-41,14
+TokenType.TEXT '==' e2e/lexers/document.mau:41,14-41,16
+TokenType.TEXT 'value1' e2e/lexers/document.mau:41,16-41,22
+TokenType.EOL '' e2e/lexers/document.mau:42,0-42,0
+TokenType.INCLUDE '<<' e2e/lexers/document.mau:44,0-44,2
+TokenType.TEXT 'type' e2e/lexers/document.mau:44,3-44,7
+TokenType.EOL '' e2e/lexers/document.mau:45,0-45,0
+TokenType.INCLUDE '<<' e2e/lexers/document.mau:47,0-47,2
+TokenType.TEXT 'type' e2e/lexers/document.mau:47,3-47,7
+TokenType.LITERAL ':' e2e/lexers/document.mau:47,7-47,8
+TokenType.TEXT 'arg1,#tag1,*subtype1,key1=value1' e2e/lexers/document.mau:47,8-47,40
+TokenType.EOL '' e2e/lexers/document.mau:48,0-48,0
+TokenType.VARIABLE ':' e2e/lexers/document.mau:50,0-50,1
+TokenType.TEXT 'var' e2e/lexers/document.mau:50,1-50,4
+TokenType.VARIABLE ':' e2e/lexers/document.mau:51,0-51,1
+TokenType.TEXT 'var_1' e2e/lexers/document.mau:51,1-51,6
+TokenType.VARIABLE ':' e2e/lexers/document.mau:52,0-52,1
+TokenType.TEXT 'namespace.var' e2e/lexers/document.mau:52,1-52,14
+TokenType.VARIABLE ':' e2e/lexers/document.mau:53,0-53,1
+TokenType.TEXT '+var' e2e/lexers/document.mau:53,1-53,5
+TokenType.VARIABLE ':' e2e/lexers/document.mau:54,0-54,1
+TokenType.TEXT '-var' e2e/lexers/document.mau:54,1-54,5
+TokenType.VARIABLE ':' e2e/lexers/document.mau:55,0-55,1
+TokenType.TEXT 'var' e2e/lexers/document.mau:55,1-55,4
+TokenType.LITERAL ':' e2e/lexers/document.mau:55,4-55,5
+TokenType.TEXT 'value' e2e/lexers/document.mau:55,5-55,10
+TokenType.EOL '' e2e/lexers/document.mau:56,0-56,0
+TokenType.ARGUMENTS '[' e2e/lexers/document.mau:58,0-58,1
+TokenType.TEXT 'arg1,#tag1,*subtype1,key1=value1' e2e/lexers/document.mau:58,1-58,33
+TokenType.LITERAL ']' e2e/lexers/document.mau:58,33-58,34
+TokenType.EOL '' e2e/lexers/document.mau:59,0-59,0
+TokenType.LABEL '.' e2e/lexers/document.mau:61,0-61,1
+TokenType.TEXT 'Title' e2e/lexers/document.mau:61,2-61,7
+TokenType.LABEL '.title' e2e/lexers/document.mau:62,0-62,6
+TokenType.TEXT 'Title' e2e/lexers/document.mau:62,7-62,12
+TokenType.LABEL '.label' e2e/lexers/document.mau:63,0-63,6
+TokenType.TEXT 'Label' e2e/lexers/document.mau:63,7-63,12
+TokenType.EOL '' e2e/lexers/document.mau:64,0-64,0
+TokenType.LIST '*' e2e/lexers/document.mau:66,0-66,1
+TokenType.TEXT 'Unordered list item1.' e2e/lexers/document.mau:66,2-66,23
+TokenType.LIST '*' e2e/lexers/document.mau:67,0-67,1
+TokenType.TEXT 'Unordered list item2.' e2e/lexers/document.mau:67,2-67,23
+TokenType.LIST '#' e2e/lexers/document.mau:68,0-68,1
+TokenType.TEXT 'Ordered list item1.' e2e/lexers/document.mau:68,2-68,21
+TokenType.LIST '#' e2e/lexers/document.mau:69,0-69,1
+TokenType.TEXT 'Ordered list item2.' e2e/lexers/document.mau:69,2-69,21
+TokenType.EOL '' e2e/lexers/document.mau:70,0-70,0
+TokenType.HEADER '=' e2e/lexers/document.mau:72,0-72,1
+TokenType.TEXT 'Header 1' e2e/lexers/document.mau:72,2-72,10
+TokenType.HEADER '==' e2e/lexers/document.mau:73,0-73,2
+TokenType.TEXT 'Header 2' e2e/lexers/document.mau:73,3-73,11
+TokenType.HEADER '====' e2e/lexers/document.mau:74,0-74,4
+TokenType.TEXT 'Header 4' e2e/lexers/document.mau:74,5-74,13
+TokenType.HEADER '========' e2e/lexers/document.mau:75,0-75,8
+TokenType.TEXT 'Header 8' e2e/lexers/document.mau:75,9-75,17
+TokenType.EOL '' e2e/lexers/document.mau:76,0-76,0
+TokenType.TEXT 'Standard text with "double quotes", \'single quotes\', *styles*, [macros](args), and {variables}.' e2e/lexers/document.mau:78,0-78,95
+TokenType.EOF '' e2e/lexers/document.mau:79,0-79,0

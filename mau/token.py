@@ -68,7 +68,7 @@ class Token:
         }
 
     def __repr__(self):
-        return f'Token({self.type}, "{self.value}", {self.context})'
+        return f'Token({self.type}, "{repr(self.value)}", {self.context})'
 
     def __eq__(self, other):
         if not isinstance(other, Token):
