@@ -10,7 +10,7 @@ from mau.test_helpers import (
     init_tokens_manager_factory,
 )
 from mau.text_buffer import Context
-from mau.token import Token, TokenType
+from mau.token import EOF, Token, TokenType
 
 init_tokens_manager = init_tokens_manager_factory(BaseLexer, TokensManager)
 
@@ -143,7 +143,7 @@ def test_peek_token():
     assert tm.index == -1
 
     tm.get_token()
-    assert tm.peek_token() == Token(TokenType.EOF, "", generate_context(0, 0, 0, 0))
+    assert tm.peek_token() == EOF
 
 
 def test_base_lexer_can_peek_after_eof():
@@ -158,7 +158,7 @@ def test_base_lexer_can_peek_after_eof():
     # Get "EOF".
     tm.get_token()
 
-    assert tm.peek_token() == Token(TokenType.EOF, "", generate_context(0, 0, 0, 0))
+    assert tm.peek_token() == EOF
 
 
 def test_peek_token_checks_type():
@@ -286,14 +286,14 @@ def test_collect():
     tm = init_tokens_manager("Some text\nSome other text", Environment())
 
     # This collects everything up to EOF excluded.
-    tokens = tm.collect([Token(TokenType.EOF, "", generate_context(0, 0, 0, 0))])
+    tokens = tm.collect([EOF])
 
     assert tokens == [
         Token(TokenType.TEXT, "Some text", generate_context(0, 0, 0, 9)),
         Token(TokenType.TEXT, "Some other text", generate_context(0, 0, 0, 15)),
     ]
 
-    tokens = tm.collect([Token(TokenType.EOF, "", generate_context(0, 0, 0, 0))])
+    tokens = tm.collect([EOF])
 
     assert tokens == []
 
@@ -302,7 +302,7 @@ def test_collect_join():
     tm = init_tokens_manager("Some te\nxt that will be joined\n!", Environment())
 
     # This collects every token up to EOF excluded and joins them.
-    tokens = tm.collect_join([Token(TokenType.EOF, "", generate_context(0, 0, 0, 0))])
+    tokens = tm.collect_join([EOF])
 
     expected = Token(
         TokenType.TEXT,
@@ -316,12 +316,9 @@ def test_collect_join():
 def test_collect_join_empty_list():
     tm = init_tokens_manager("", Environment())
 
-    expected = Token(TokenType.TEXT, "", generate_context(0, 0, 0, 0))
+    expected = Token.generate(TokenType.TEXT)
 
-    assert (
-        tm.collect_join([Token(TokenType.EOF, "", generate_context(0, 0, 0, 0))])
-        == expected
-    )
+    assert tm.collect_join([EOF]) == expected
 
 
 def test_collect_join_with_different_joiner():
@@ -333,61 +330,58 @@ def test_collect_join_with_different_joiner():
         context=generate_context(0, 0, 2, 1),
     )
 
-    assert (
-        tm.collect_join([Token(TokenType.EOF, "", generate_context(0, 0, 0, 0))], "-")
-        == expected
-    )
+    assert tm.collect_join([EOF], "-") == expected
 
 
 def test_collect_escapes_are_kept():
     tm = init_tokens_manager("", Environment())
     tm.tokens = [
-        Token(TokenType.TEXT, "Some text", generate_context(0, 0, 0, 0)),
-        Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 0)),
-        Token(TokenType.TEXT, "Some other text", generate_context(0, 0, 0, 0)),
-        Token(TokenType.EOF, "", generate_context(0, 0, 0, 0)),
+        Token.generate(TokenType.TEXT, "Some text"),
+        Token.generate(TokenType.LITERAL, "\\"),
+        Token.generate(TokenType.TEXT, "Some other text"),
+        EOF,
     ]
 
-    tokens = tm.collect([Token(TokenType.EOF, "", generate_context(0, 0, 0, 0))])
+    tokens = tm.collect([EOF])
 
     assert tokens == [
-        Token(TokenType.TEXT, "Some text", generate_context(0, 0, 0, 0)),
-        Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 0)),
-        Token(TokenType.TEXT, "Some other text", generate_context(0, 0, 0, 0)),
+        Token.generate(TokenType.TEXT, "Some text"),
+        Token.generate(TokenType.LITERAL, "\\"),
+        Token.generate(TokenType.TEXT, "Some other text"),
     ]
 
 
 def test_collect_escape_stop_tokens_are_removed():
     tm = init_tokens_manager("", Environment())
     tm.tokens = [
-        Token(TokenType.TEXT, "Some text", generate_context(0, 0, 0, 0)),
-        Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 0)),
-        Token(TokenType.LITERAL, "[", generate_context(0, 0, 0, 0)),
+        Token.generate(TokenType.TEXT, "Some text"),
+        Token.generate(TokenType.LITERAL, "\\"),
+        Token.generate(TokenType.LITERAL, "["),
     ]
 
-    tokens = tm.collect([Token(TokenType.LITERAL, "[", generate_context(0, 0, 0, 0))])
+    tokens = tm.collect([Token.generate(TokenType.LITERAL, "[")])
 
     assert tokens == [
-        Token(TokenType.TEXT, "Some text", generate_context(0, 0, 0, 0)),
-        Token(TokenType.LITERAL, "[", generate_context(0, 0, 0, 0)),
+        Token.generate(TokenType.TEXT, "Some text"),
+        Token.generate(TokenType.LITERAL, "["),
     ]
 
 
 def test_collect_escape_stop_tokens_are_removed2():
     tm = init_tokens_manager("", Environment())
     tm.tokens = [
-        Token(TokenType.TEXT, "Some text", generate_context(0, 0, 0, 0)),
-        Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 0)),
-        Token(TokenType.LITERAL, "[", generate_context(0, 0, 0, 0)),
+        Token.generate(TokenType.TEXT, "Some text"),
+        Token.generate(TokenType.LITERAL, "\\"),
+        Token.generate(TokenType.LITERAL, "["),
     ]
 
     tokens = tm.collect(
-        [Token(TokenType.LITERAL, "[", generate_context(0, 0, 0, 0))],
+        [Token.generate(TokenType.LITERAL, "[")],
         preserve_escaped_stop_tokens=True,
     )
 
     assert tokens == [
-        Token(TokenType.TEXT, "Some text", generate_context(0, 0, 0, 0)),
-        Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 0)),
-        Token(TokenType.LITERAL, "[", generate_context(0, 0, 0, 0)),
+        Token.generate(TokenType.TEXT, "Some text"),
+        Token.generate(TokenType.LITERAL, "\\"),
+        Token.generate(TokenType.LITERAL, "["),
     ]

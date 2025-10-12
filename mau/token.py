@@ -48,6 +48,11 @@ class Token:
         self.context = context
 
     @classmethod
+    def generate(cls, ttype: TokenType, value: str = ""):
+        """Generate a token without a context."""
+        return Token(ttype, value, Context.empty())
+
+    @classmethod
     def from_token_list(self, tokens: list[Token], join_with: str = "") -> Token:
         if not tokens:
             return Token(TokenType.TEXT, "", Context.empty())
@@ -86,12 +91,5 @@ class Token:
         return 0
 
 
-# def format_token(token: Token) -> str:  # pragma: no cover
-#     output = str(token.type)
-
-#     if token.context:
-#         output = f"{output} {token.context.line},{token.context.column}"
-
-#     output = f'{output} "{token.value}"'
-
-#     return output
+EOF = Token.generate(TokenType.EOF)
+EOL = Token.generate(TokenType.EOL)

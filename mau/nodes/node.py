@@ -20,7 +20,7 @@ class NodeInfo:
 
     def __init__(
         self,
-        context: Context | None = None,
+        context: Context,
         unnamed_args: list | None = None,
         named_args: dict | None = None,
         tags: list | None = None,
@@ -31,6 +31,10 @@ class NodeInfo:
         self.named_args = named_args or {}
         self.tags = tags or []
         self.subtype = subtype
+
+    @classmethod
+    def empty(cls) -> NodeInfo:
+        return NodeInfo(context=Context.empty())
 
     def asdict(self):
         return {
@@ -90,7 +94,7 @@ class Node(Generic[Content_co]):
         if children:
             self.add_children(children)
 
-        self.info: NodeInfo = info or NodeInfo()
+        self.info: NodeInfo = info or NodeInfo.empty()
 
         # Get a copy of the class allowed_keys
         # in case we need to modify it for this

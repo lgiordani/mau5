@@ -1,250 +1,258 @@
-# import pytest
+import pytest
 
-# from mau.environment.environment import Environment
-# from mau.lexers.preprocess_variables_lexer.lexer import PreprocessVariablesLexer
-# from mau.nodes.inline import TextNodeContent
-# from mau.nodes.node import Node, NodeInfo
-# from mau.parsers.base_parser.parser import MauParserException
-# from mau.parsers.preprocess_variables_parser.parser import PreprocessVariablesParser
-# from mau.test_helpers import (
-#     generate_context,
-#     init_parser_factory,
-#     parser_runner_factory,
-# )
+from mau.environment.environment import Environment
+from mau.lexers.preprocess_variables_lexer import PreprocessVariablesLexer
+from mau.nodes.inline import TextNodeContent
+from mau.nodes.node import Node, NodeInfo
+from mau.parsers.base_parser import MauParserException
+from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
+from mau.test_helpers import (
+    generate_context,
+    init_parser_factory,
+    parser_runner_factory,
+)
 
-# init_parser = init_parser_factory(PreprocessVariablesLexer, PreprocessVariablesParser)
-# runner = parser_runner_factory(PreprocessVariablesLexer, PreprocessVariablesParser)
+init_parser = init_parser_factory(PreprocessVariablesLexer, PreprocessVariablesParser)
+runner = parser_runner_factory(PreprocessVariablesLexer, PreprocessVariablesParser)
 
 
-# def test_plain_text_with_no_variables():
-#     source = "This is text"
+def test_empty():
+    source = ""
 
-#     expected_nodes = [
-#         Node(
-#             content=TextNodeContent("This is text"),
-#             info=NodeInfo(context=generate_context(0, 0, 0, 12)),
-#         )
-#     ]
+    parser = runner(source)
 
-#     parser = runner(source)
+    assert parser.nodes == []
 
-#     assert parser.nodes == expected_nodes
 
+def test_plain_text_with_no_variables():
+    source = "This is text"
 
-# def test_plain_text_with_variables():
-#     environment = Environment.from_dict({"attr": "5"})
-#     source = "This is text"
+    expected_nodes = [
+        Node(
+            content=TextNodeContent("This is text"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 12)),
+        )
+    ]
 
-#     expected_nodes = [
-#         Node(
-#             content=TextNodeContent("This is text"),
-#             info=NodeInfo(context=generate_context(0, 0, 0, 12)),
-#         )
-#     ]
+    parser = runner(source)
 
-#     parser = runner(source, environment)
+    assert parser.nodes == expected_nodes
 
-#     assert parser.nodes == expected_nodes
 
+def test_plain_text_with_variables():
+    environment = Environment.from_dict({"attr": "5"})
+    source = "This is text"
 
-# def test_replace_variable():
-#     environment = Environment.from_dict({"attr": "5"})
-#     source = "This is number {attr}"
+    expected_nodes = [
+        Node(
+            content=TextNodeContent("This is text"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 12)),
+        )
+    ]
 
-#     expected_nodes = [
-#         Node(
-#             content=TextNodeContent("This is number 5"),
-#             info=NodeInfo(context=generate_context(0, 0, 0, 21)),
-#         )
-#     ]
+    parser = runner(source, environment)
 
-#     parser = runner(source, environment)
+    assert parser.nodes == expected_nodes
 
-#     assert parser.nodes == expected_nodes
 
+def test_replace_variable():
+    environment = Environment.from_dict({"attr": "5"})
+    source = "This is number {attr}"
 
-# def test_manage_unclosed_curly_braces():
-#     environment = Environment.from_dict({"attr": "5"})
-#     source = "This is {attr"
+    expected_nodes = [
+        Node(
+            content=TextNodeContent("This is number 5"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 21)),
+        )
+    ]
 
-#     expected_nodes = [
-#         Node(
-#             content=TextNodeContent("This is {attr"),
-#             info=NodeInfo(context=generate_context(0, 0, 0, 13)),
-#         )
-#     ]
+    parser = runner(source, environment)
 
-#     parser = runner(source, environment)
+    assert parser.nodes == expected_nodes
 
-#     assert parser.nodes == expected_nodes
 
+def test_manage_unclosed_curly_braces():
+    environment = Environment.from_dict({"attr": "5"})
+    source = "This is {attr"
 
-# def test_replace_variable_with_namespace():
-#     environment = Environment.from_dict({"app": {"attr": "5"}})
-#     source = "This is number {app.attr}"
+    expected_nodes = [
+        Node(
+            content=TextNodeContent("This is {attr"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 13)),
+        )
+    ]
 
-#     expected_nodes = [
-#         Node(
-#             content=TextNodeContent("This is number 5"),
-#             info=NodeInfo(context=generate_context(0, 0, 0, 25)),
-#         )
-#     ]
+    parser = runner(source, environment)
 
-#     parser = runner(source, environment)
+    assert parser.nodes == expected_nodes
 
-#     assert parser.nodes == expected_nodes
 
+def test_replace_variable_with_namespace():
+    environment = Environment.from_dict({"app": {"attr": "5"}})
+    source = "This is number {app.attr}"
 
-# def test_replace_boolean():
-#     environment = Environment.from_dict({"flag": True})
-#     source = "This flag is {flag}"
+    expected_nodes = [
+        Node(
+            content=TextNodeContent("This is number 5"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 25)),
+        )
+    ]
 
-#     expected_nodes = [
-#         Node(
-#             content=TextNodeContent("This flag is "),
-#             info=NodeInfo(context=generate_context(0, 0, 0, 19)),
-#         )
-#     ]
+    parser = runner(source, environment)
 
-#     parser = runner(source, environment)
+    assert parser.nodes == expected_nodes
 
-#     assert parser.nodes == expected_nodes
 
+def test_replace_boolean():
+    environment = Environment.from_dict({"flag": True})
+    source = "This flag is {flag}"
 
-# def test_escape_curly_braces():
-#     environment = Environment.from_dict({"attr": "5"})
-#     source = r"This is \{attr\}"
+    expected_nodes = [
+        Node(
+            content=TextNodeContent("This flag is "),
+            info=NodeInfo(context=generate_context(0, 0, 0, 19)),
+        )
+    ]
 
-#     expected_nodes = [
-#         Node(
-#             content=TextNodeContent("This is {attr}"),
-#             info=NodeInfo(context=generate_context(0, 0, 0, 16)),
-#         )
-#     ]
+    parser = runner(source, environment)
 
-#     parser = runner(source, environment)
+    assert parser.nodes == expected_nodes
 
-#     assert parser.nodes == expected_nodes
 
+def test_escape_curly_braces():
+    environment = Environment.from_dict({"attr": "5"})
+    source = r"This is \{attr\}"
 
-# def test_curly_braces_in_verbatim():
-#     environment = Environment.from_dict({"attr": "5"})
-#     source = "This is `{attr}`"
+    expected_nodes = [
+        Node(
+            content=TextNodeContent("This is {attr}"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 16)),
+        )
+    ]
 
-#     expected_nodes = [
-#         Node(
-#             content=TextNodeContent("This is `{attr}`"),
-#             info=NodeInfo(context=generate_context(0, 0, 0, 16)),
-#         )
-#     ]
+    parser = runner(source, environment)
 
-#     parser = runner(source, environment)
+    assert parser.nodes == expected_nodes
 
-#     assert parser.nodes == expected_nodes
 
+def test_curly_braces_in_verbatim():
+    environment = Environment.from_dict({"attr": "5"})
+    source = "This is `{attr}`"
 
-# def test_open_verbatim():
-#     environment = Environment.from_dict({"attr": "5"})
-#     source = "This is `{attr}"
+    expected_nodes = [
+        Node(
+            content=TextNodeContent("This is `{attr}`"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 16)),
+        )
+    ]
 
-#     expected_nodes = [
-#         Node(
-#             content=TextNodeContent("This is `5"),
-#             info=NodeInfo(context=generate_context(0, 0, 0, 15)),
-#         )
-#     ]
+    parser = runner(source, environment)
 
-#     parser = runner(source, environment)
+    assert parser.nodes == expected_nodes
 
-#     assert parser.nodes == expected_nodes
 
+def test_open_verbatim():
+    environment = Environment.from_dict({"attr": "5"})
+    source = "This is `{attr}"
 
-# def test_escape_curly_braces_in_verbatim():
-#     environment = Environment.from_dict({"attr": "5"})
-#     source = r"This is `\{attr\}`"
+    expected_nodes = [
+        Node(
+            content=TextNodeContent("This is `5"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 15)),
+        )
+    ]
 
-#     expected_nodes = [
-#         Node(
-#             content=TextNodeContent(r"This is `\{attr\}`"),
-#             info=NodeInfo(context=generate_context(0, 0, 0, 18)),
-#         )
-#     ]
+    parser = runner(source, environment)
 
-#     parser = runner(source, environment)
+    assert parser.nodes == expected_nodes
 
-#     assert parser.nodes == expected_nodes
 
+def test_escape_curly_braces_in_verbatim():
+    environment = Environment.from_dict({"attr": "5"})
+    source = r"This is `\{attr\}`"
 
-# def test_escape_other_chars():
-#     environment = Environment.from_dict({"attr": "5"})
-#     source = r"This \_is\_ \text"
+    expected_nodes = [
+        Node(
+            content=TextNodeContent(r"This is `\{attr\}`"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 18)),
+        )
+    ]
 
-#     expected_nodes = [
-#         Node(
-#             content=TextNodeContent(r"This \_is\_ \text"),
-#             info=NodeInfo(context=generate_context(0, 0, 0, 17)),
-#         )
-#     ]
+    parser = runner(source, environment)
 
-#     parser = runner(source, environment)
+    assert parser.nodes == expected_nodes
 
-#     assert parser.nodes == expected_nodes
 
+def test_escape_other_chars():
+    environment = Environment.from_dict({"attr": "5"})
+    source = r"This \_is\_ \text"
 
-# def test_curly_braces_in_escaped_verbatim():
-#     environment = Environment.from_dict({"attr": "5"})
-#     source = r"This is \`{attr}\`"
+    expected_nodes = [
+        Node(
+            content=TextNodeContent(r"This \_is\_ \text"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 17)),
+        )
+    ]
 
-#     expected_nodes = [
-#         Node(
-#             content=TextNodeContent(r"This is \`5\`"),
-#             info=NodeInfo(context=generate_context(0, 0, 0, 18)),
-#         )
-#     ]
+    parser = runner(source, environment)
 
-#     parser = runner(source, environment)
+    assert parser.nodes == expected_nodes
 
-#     assert parser.nodes == expected_nodes
 
+def test_curly_braces_in_escaped_verbatim():
+    environment = Environment.from_dict({"attr": "5"})
+    source = r"This is \`{attr}\`"
 
-# def test_variable_not_existing():
-#     environment = Environment()
-#     source = "This is number {attr}"
+    expected_nodes = [
+        Node(
+            content=TextNodeContent(r"This is \`5\`"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 18)),
+        )
+    ]
 
-#     with pytest.raises(MauParserException) as exc:
-#         runner(source, environment)
+    parser = runner(source, environment)
 
-#     assert exc.value.context == generate_context(0, 15, 0, 21)
+    assert parser.nodes == expected_nodes
 
 
-# def test_variables_can_contain_markers():
-#     environment = Environment.from_dict(
-#         {"bold": "*bold*", "dictdef": "`adict = {'a':5}`"}
-#     )
-#     source = "A very {bold} text. Some code: {dictdef}"
+def test_variable_not_existing():
+    environment = Environment()
+    source = "This is number {attr}"
 
-#     expected_nodes = [
-#         Node(
-#             content=TextNodeContent("A very *bold* text. Some code: `adict = {'a':5}`"),
-#             info=NodeInfo(context=generate_context(0, 0, 0, 40)),
-#         )
-#     ]
+    with pytest.raises(MauParserException) as exc:
+        runner(source, environment)
 
-#     parser = runner(source, environment)
+    assert exc.value.context == generate_context(0, 15, 0, 21)
 
-#     assert parser.nodes == expected_nodes
 
+def test_variables_can_contain_markers():
+    environment = Environment.from_dict(
+        {"bold": "*bold*", "dictdef": "`adict = {'a':5}`"}
+    )
+    source = "A very {bold} text. Some code: {dictdef}"
 
-# def test_escape_backtick():
-#     source = r"This is `\``"
+    expected_nodes = [
+        Node(
+            content=TextNodeContent("A very *bold* text. Some code: `adict = {'a':5}`"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 40)),
+        )
+    ]
 
-#     expected_nodes = [
-#         Node(
-#             content=TextNodeContent(r"This is `\``"),
-#             info=NodeInfo(context=generate_context(0, 0, 0, 12)),
-#         )
-#     ]
+    parser = runner(source, environment)
 
-#     parser = runner(source)
+    assert parser.nodes == expected_nodes
 
-#     assert parser.nodes == expected_nodes
+
+def test_escape_backtick():
+    source = r"This is `\``"
+
+    expected_nodes = [
+        Node(
+            content=TextNodeContent(r"This is `\``"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 12)),
+        )
+    ]
+
+    parser = runner(source)
+
+    assert parser.nodes == expected_nodes

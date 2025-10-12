@@ -2,6 +2,7 @@ from unittest.mock import Mock
 
 from mau.nodes.node import Node, NodeContent, NodeInfo, ValueNodeContent
 from mau.test_helpers import generate_context
+from mau.text_buffer import Context
 
 
 def test_info():
@@ -34,7 +35,7 @@ def test_node():
         "children": {},
         "content": {"type": "none"},
         "info": {
-            "context": None,
+            "context": Context.empty(),
             "unnamed_args": [],
             "named_args": {},
             "tags": [],
@@ -58,7 +59,7 @@ def test_node_children():
         "children": {"title": [mock_node.asdict()]},
         "content": {"type": "none"},
         "info": {
-            "context": None,
+            "context": Context.empty(),
             "unnamed_args": [],
             "named_args": {},
             "tags": [],
