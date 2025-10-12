@@ -115,6 +115,8 @@ class TextBuffer:
     def __init__(
         self,
         text: str = "",
+        start_line: int = 0,
+        start_column: int = 0,
         source_filename: str | None = None,
     ):
         self.line = 0

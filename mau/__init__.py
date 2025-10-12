@@ -112,7 +112,7 @@ class Mau:  # pragma: no cover
         environment: Environment | None = None,
     ):
         # The text buffer that manages the main input file.
-        self.text_buffer = TextBuffer(text, input_file_name)
+        self.text_buffer = TextBuffer(text, source_filename=input_file_name)
 
         # This will contain all the variables declared
         # in the text and in the configuration
