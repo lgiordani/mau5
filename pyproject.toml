@@ -44,6 +44,7 @@ development = [
   "pip",
   "pylint",
   "ruff",
+  "types-PyYAML",
   "wheel",
 ]
 
@@ -53,7 +54,6 @@ mau = "mau.main:main"
 [tool.coverage.run]
 source = ["mau"]
 omit=[
-  "**/__init__.py",
   "mau/test_helpers.py",
 ]
 

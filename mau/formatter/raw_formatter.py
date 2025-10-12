@@ -1,5 +1,6 @@
-from .base_formatter import BaseFormatter
 from mau.token import Token
+
+from .base_formatter import BaseFormatter
 
 
 class RawFormatter(BaseFormatter):

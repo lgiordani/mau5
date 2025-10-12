@@ -1,8 +1,9 @@
-from .base_formatter import BaseFormatter
-from mau.token import Token
-
 from rich.console import Console
 from rich.table import Table
+
+from mau.token import Token
+
+from .base_formatter import BaseFormatter
 
 console = Console()
 

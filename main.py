@@ -4,7 +4,8 @@ import sys
 
 from rich.traceback import install
 
-from mau import Mau, __version__
+from mau import Mau, __version__, load_environment_files, load_environment_variables
+from mau.environment.environment import Environment
 from mau.formatter.raw_formatter import RawFormatter
 from mau.formatter.rich_formatter import RichFormatter
 
@@ -48,6 +49,44 @@ def parse_args():
     )
 
     parser.add_argument(
+        "-e",
+        "--environment-file",
+        action="append",
+        required=False,
+        help=(
+            "Optional text/YAML file in the form key=path (can be specified "
+            "multiple times). The key can be dotted to add namespaces."
+        ),
+    )
+
+    parser.add_argument(
+        "--environment-files-namespace",
+        action="store",
+        default="envfiles",
+        required=False,
+        help="Optional namespace for environment files (default: envfiles)",
+    )
+
+    parser.add_argument(
+        "-v",
+        "--environment-variable",
+        action="append",
+        required=False,
+        help=(
+            "Optional environment variable in the form key=value (can be specified "
+            "multiple times). The key can be dotted to add namespaces."
+        ),
+    )
+
+    parser.add_argument(
+        "--environment-variables-namespace",
+        action="store",
+        default="envvars",
+        required=False,
+        help="Optional namespace for environment variables (default: envvars)",
+    )
+
+    parser.add_argument(
         "--formatter",
         action="store",
         choices=available_formatters.keys(),
@@ -87,6 +126,29 @@ def main():
     # Read the input file
     with open(args.input_file, "r", encoding="utf-8") as input_file:
         text = input_file.read()
+
+    # Start with a clean environment.
+    environment = Environment()
+
+    # The list of environment files passed on the command line.
+    environment_files = args.environment_file or []
+
+    # Load the files inside the environment.
+    load_environment_files(
+        environment,
+        environment_files,
+        namespace=args.environment_files_namespace,
+    )
+
+    # The list of environment variables passed on the command line.
+    environment_variables = args.environment_variable or []
+
+    # Load the variables inside the environment.
+    load_environment_variables(
+        environment,
+        environment_variables,
+        namespace=args.environment_variables_namespace,
+    )
 
     # The Mau object configured with what we figured out above.
     mau = Mau(args.input_file, text)
