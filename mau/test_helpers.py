@@ -1,6 +1,8 @@
 import textwrap
 
+from collections.abc import MutableSequence
 from mau.environment.environment import Environment
+from mau.nodes.node import Node, NodeContent
 from mau.text_buffer import Context, TextBuffer
 from mau.token import Token
 
@@ -15,12 +17,25 @@ def compare_token(token_left: Token, token_right: Token):
     assert token_left.asdict() == token_right.asdict()
 
 
-def compare_tokens(tokens_left: list[Token], tokens_right: list[Token]):
+def compare_tokens(
+    tokens_left: MutableSequence[Token], tokens_right: MutableSequence[Token]
+):
     assert [i.asdict() for i in tokens_left] == [i.asdict() for i in tokens_right]
 
 
 def compare_text_lines(left: str, right: str):
     assert left.split("\n") == right.split("\n")
+
+
+def compare_node(node_left: Node[NodeContent], node_right: Node[NodeContent]):
+    assert node_left.asdict() == node_right.asdict()
+
+
+def compare_nodes(
+    nodes_left: MutableSequence[Node[NodeContent]],
+    nodes_right: MutableSequence[Node[NodeContent]],
+):
+    assert [i.asdict() for i in nodes_left] == [i.asdict() for i in nodes_right]
 
 
 def generate_context(line: int, column: int, end_line: int, end_column: int):

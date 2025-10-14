@@ -2,6 +2,13 @@ from unittest.mock import Mock, patch
 
 import pytest
 
+import textwrap
+
+from collections.abc import MutableSequence
+from mau.environment.environment import Environment
+from mau.nodes.node import Node, NodeContent
+from mau.text_buffer import Context, TextBuffer
+from mau.token import Token
 from mau.environment.environment import Environment
 from mau.lexers.base_lexer import (
     BaseLexer,
@@ -307,5 +314,27 @@ def test_multiple_lines():
             Token(TokenType.EOL, "", generate_context(2, 0, 2, 0)),
             Token(TokenType.TEXT, "with an empty line", generate_context(3, 0, 3, 18)),
             Token(TokenType.EOF, "", generate_context(4, 0, 4, 0)),
+        ],
+    )
+
+
+def test_text_buffer_offset():
+    source = "Just simple text"
+
+    text_buffer = TextBuffer(
+        textwrap.dedent(source),
+        start_line=11,
+        start_column=22,
+        source_filename=TEST_CONTEXT_SOURCE,
+    )
+
+    lex = init_lexer(text_buffer)
+    lex.process()
+
+    compare_tokens(
+        lex.tokens,
+        [
+            Token(TokenType.TEXT, "Just simple text", generate_context(11, 22, 11, 38)),
+            Token(TokenType.EOF, "", generate_context(12, 0, 12, 0)),
         ],
     )

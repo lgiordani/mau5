@@ -121,6 +121,8 @@ class TextBuffer:
     ):
         self.line = 0
         self.column = 0
+        self.start_line = start_line
+        self.start_column = start_column
         self.source_filename = source_filename
 
         # Split the input text into lines.
@@ -212,7 +214,7 @@ class TextBuffer:
         """
         Returns a tuple with the current position.
         """
-        return (self.line, self.column)
+        return (self.line + self.start_line, self.column + self.start_column)
 
     def nextline(self):
         """
@@ -221,6 +223,11 @@ class TextBuffer:
         if self.line <= len(self.lines):
             self.line += 1
 
+        # If we go to a new line, the
+        # start column should be reset
+        # as well. The buffer is not a
+        # text box floating in the page.
+        self.start_column = 0
         self.column = 0
 
     def skip(self, chars=1):

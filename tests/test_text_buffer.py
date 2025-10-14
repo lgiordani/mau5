@@ -217,12 +217,18 @@ def test_text_buffer_position():
     assert text_buffer.position == (1, 3)
 
 
-def test_text_buffer_position_outext_bufferide():
+def test_text_buffer_position_outside():
     text_buffer = TextBuffer()
     text_buffer.line = 123
     text_buffer.column = 456
 
     assert text_buffer.position == (123, 456)
+
+
+def test_text_buffer_position_offset():
+    text_buffer = TextBuffer(start_line=11, start_column=22)
+
+    assert text_buffer.position == (11, 22)
 
 
 def test_text_buffer_skip_defaults_to_one():

@@ -84,6 +84,9 @@ class Token:
             other.value,
         )
 
+    def __hash__(self):
+        return hash((self.type, self.value))
+
     def __len__(self):
         if self.value:
             return len(self.value)
