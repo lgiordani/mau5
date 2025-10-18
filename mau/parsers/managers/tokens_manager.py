@@ -22,6 +22,10 @@ class TokenError(ValueError):
 
 
 class TokensManager:
+    """This manager collects tokens and provides
+    several methods to interact with them.
+    """
+
     def __init__(
         self,
         tokens: list[Token],

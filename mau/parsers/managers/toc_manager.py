@@ -77,6 +77,15 @@ def add_nodes_under_level(
 
 
 class TocManager:
+    """This manager collects headers and TOC nodes.
+    When the manager process is run, all headers
+    are given a unique ID (if not already initialised),
+    Headers are then reshaped into a hierarchy,
+    according to their level and position in the list,
+    and both plain and hierarchical headers are added to
+    each TOC node.
+    """
+
     def __init__(self, header_unique_id_function=None):
         # This list contains the headers
         # found parsing a document
@@ -95,12 +104,12 @@ class TocManager:
 
     def add_header(self, node: Node[HeaderNodeContent]):
         """Add a single header to the list
-        managed headers."""
+        of managed headers."""
         self.headers.append(node)
 
     def add_toc_node(self, node: Node[TocNodeContent]):
         """Add a single TOC node to the list
-        managed TOC nodes."""
+        of managed TOC nodes."""
         self.toc_nodes.append(node)
 
     def update(self, other: TocManager):
@@ -113,6 +122,8 @@ class TocManager:
     def process(self):
         self.nested_headers = []
 
+        # Check that all headers have a
+        # unique ID. If not, create it.
         for header in self.headers:
             if header.content.unique_id is not None:
                 continue
@@ -121,8 +132,11 @@ class TocManager:
             unique_id = self.header_unique_id_function(header)
             header.content.unique_id = unique_id
 
+        # Create the nodes hierarchy.
         add_nodes_under_level(0, self.headers, 0, self.nested_headers)
 
+        # Store the plain and hierarchical nodes
+        # inside each TOC node.
         for toc_node in self.toc_nodes:
             toc_node.children["nested_entries"] = self.nested_headers  # type: ignore[assignment]
             toc_node.children["plain_entries"] = self.headers  # type: ignore[assignment]
