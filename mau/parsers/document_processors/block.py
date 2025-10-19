@@ -65,8 +65,7 @@ def parse_block_content_update(
     # The footnote mentions and definitions
     # found in this block are part of the
     # main document. Import them.
-    # TODO
-    # parser.footnotes_manager.update(content_parser.footnotes_manager)
+    parser.footnotes_manager.update(content_parser.footnotes_manager)
 
     # The internal links and headers
     # found in this block are part of the

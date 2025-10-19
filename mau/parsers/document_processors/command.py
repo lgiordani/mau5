@@ -9,6 +9,8 @@ if TYPE_CHECKING:
 from mau.nodes.include import IncludeNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.toc import TocNodeContent
+from mau.nodes.footnotes import FootnotesNodeContent
+from mau.nodes.block import BlockGroupNodeContent, BlockNodeContent
 from mau.parsers.arguments_parser import Arguments, ArgumentsParser
 from mau.parsers.base_parser import MauParserException
 from mau.text_buffer import Context
@@ -77,20 +79,25 @@ def command_processor(parser: DocumentParser):
 
         parser.toc_manager.add_toc_node(toc_node)
 
-    # elif name.value == "footnotes":
-    #     footnotes_node: Node[FootnotesListNodeContent] = Node(
-    #         content=FootnotesListNodeContent(), info=info
-    #     )
+    elif name.value == "footnotes":
+        footnotes_node: Node[FootnotesNodeContent] = Node(
+            content=FootnotesNodeContent(), info=info
+        )
 
-    #     parser._save(footnotes_node)
+        parser._save(footnotes_node)
 
-    #     parser.footnotes_manager.add_footnotes_list_node(footnotes_node)
+        parser.footnotes_manager.add_footnotes_node(footnotes_node)
 
-    # elif name.value == "blockgroup":
-    #     arguments.set_names(["group"])
-    #     group_name = arguments.named_args.pop("group")
+    elif name.value == "blockgroup":
+        arguments.set_names(["group"])
+        group_name = arguments.named_args.pop("group")
 
-    #     group_node = parser.block_group_manager.create_group_node(group_name, context)
-    #     parser._save(group_node)
+        group_node = Node(
+            content=BlockGroupNodeContent(group_name),
+            info=NodeInfo(context=context),
+        )
+
+        parser.block_group_manager.add_group_node(group_node)
+        parser._save(group_node)
 
     return True

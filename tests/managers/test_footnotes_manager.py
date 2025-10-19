@@ -15,7 +15,7 @@ def test_footnotes_manager_init():
 
     assert fnm.mentions == []
     assert fnm.data == {}
-    assert fnm.footnotes_list_nodes == []
+    assert fnm.footnotes_nodes == []
 
 
 def test_footnotes_manager_add_mention():
@@ -27,7 +27,7 @@ def test_footnotes_manager_add_mention():
 
     assert fnm.mentions == [footnote_macro_node]
     assert fnm.data == {}
-    assert fnm.footnotes_list_nodes == []
+    assert fnm.footnotes_nodes == []
 
 
 def test_footnotes_manager_add_mentions():
@@ -39,7 +39,7 @@ def test_footnotes_manager_add_mentions():
 
     assert fnm.mentions == [footnote_macro_node]
     assert fnm.data == {}
-    assert fnm.footnotes_list_nodes == []
+    assert fnm.footnotes_nodes == []
 
 
 def test_footnotes_manager_add_data():
@@ -54,7 +54,7 @@ def test_footnotes_manager_add_data():
 
     assert fnm.mentions == []
     assert fnm.data == {"footnote_name": footnote_node}
-    assert fnm.footnotes_list_nodes == []
+    assert fnm.footnotes_nodes == []
 
 
 def test_footnotes_manager_add_data_duplicate_name():
@@ -82,20 +82,46 @@ def test_footnotes_manager_add_data_duplicate_name():
 
     assert fnm.mentions == []
     assert fnm.data == {"footnote_name": footnote_node1}
-    assert fnm.footnotes_list_nodes == []
+    assert fnm.footnotes_nodes == []
     assert exc.value.context == context2
 
 
-def test_footnotes_manager_add_footnotes_list_node():
+def test_footnotes_manager_add_footnotes_node():
     fnm = FootnotesManager()
 
     footnote_list_node = Node(content=FootnotesNodeContent())
 
-    fnm.add_footnotes_list_node(footnote_list_node)
+    fnm.add_footnotes_node(footnote_list_node)
 
     assert fnm.mentions == []
     assert fnm.data == {}
-    assert fnm.footnotes_list_nodes == [footnote_list_node]
+    assert fnm.footnotes_nodes == [footnote_list_node]
+
+
+def test_footnotes_manager_update():
+    fnm = FootnotesManager()
+
+    footnote_macro_node = Node(content=MacroFootnoteNodeContent("footnote_name"))
+
+    fnm.add_mentions([footnote_macro_node])
+
+    footnote_name = "footnote_name"
+    footnote_node = Node(
+        content=FootnotesItemNodeContent(footnote_name), children={"content": []}
+    )
+
+    fnm.add_data(footnote_node)
+
+    footnote_list_node = Node(content=FootnotesNodeContent())
+
+    fnm.add_footnotes_node(footnote_list_node)
+
+    other_fnm = FootnotesManager()
+    other_fnm.update(fnm)
+
+    assert other_fnm.mentions == [footnote_macro_node]
+    assert other_fnm.data == {"footnote_name": footnote_node}
+    assert other_fnm.footnotes_nodes == [footnote_list_node]
 
 
 @patch("mau.parsers.managers.footnotes_manager.default_footnote_unique_id")
@@ -125,7 +151,7 @@ def test_footnotes_manager_process(mock_footnote_unique_id):
 
     footnote_list_node = Node(content=FootnotesNodeContent())
 
-    fnm.add_footnotes_list_node(footnote_list_node)
+    fnm.add_footnotes_node(footnote_list_node)
 
     fnm.process()
 

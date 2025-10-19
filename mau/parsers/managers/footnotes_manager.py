@@ -35,7 +35,7 @@ class FootnotesManager:
         # created through blocks.
         self.data: dict[str, Node[FootnotesItemNodeContent]] = {}
 
-        self.footnotes_list_nodes: list[Node[FootnotesNodeContent]] = []
+        self.footnotes_nodes: list[Node[FootnotesNodeContent]] = []
 
         self.footnote_unique_id_function = (
             footnote_unique_id_function or default_footnote_unique_id
@@ -63,10 +63,18 @@ class FootnotesManager:
 
         self.data[name] = node
 
-    def add_footnotes_list_node(self, node: Node[FootnotesNodeContent]):
+    def add_footnotes_node(self, node: Node[FootnotesNodeContent]):
         """Add a footnotes list node to
         the list of managed nodes."""
-        self.footnotes_list_nodes.append(node)
+        self.footnotes_nodes.append(node)
+
+    def update(self, other: FootnotesManager):
+        """Update mentions, data, and footnotes nodes
+        with those contained in another
+        Footnotes Manager."""
+        self.mentions.extend(other.mentions)
+        self.data.update(other.data)
+        self.footnotes_nodes.extend(other.footnotes_nodes)
 
     def process(self):
         # Process all mentions. For each mention
@@ -95,5 +103,5 @@ class FootnotesManager:
             node.children["footnote"] = [footnote_node]
 
         # Update all the nodes that list footnotes.
-        for footnotes_list_node in self.footnotes_list_nodes:
-            footnotes_list_node.children["entries"] = self.data.values()
+        for footnotes_node in self.footnotes_nodes:
+            footnotes_node.children["entries"] = self.data.values()

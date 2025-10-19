@@ -173,6 +173,9 @@ class DocumentParser(BaseParser):
         # Process ToC nodes.
         self.toc_manager.process()
 
+        # Process block groups.
+        self.block_group_manager.process()
+
         if not self.nodes:
             return self.output
 
