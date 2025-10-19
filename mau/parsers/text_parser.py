@@ -1,8 +1,8 @@
 # mypy: disable-error-code="attr-defined"
 
-from collections.abc import MutableMapping, MutableSequence
 import itertools
 import logging
+from collections.abc import MutableMapping, MutableSequence
 
 from mau.environment.environment import Environment
 from mau.lexers.text_lexer import TextLexer
@@ -22,10 +22,9 @@ from mau.nodes.macros import (
 )
 from mau.nodes.node import Node, NodeContent, NodeInfo
 from mau.parsers.arguments_parser import ArgumentsParser
-from mau.parsers.managers.tokens_manager import TokenError
 from mau.parsers.base_parser import BaseParser, MauParserException
 from mau.text_buffer import Context
-from mau.token import Token, TokenType, EOL, EOF
+from mau.token import EOF, EOL, Token, TokenType
 
 logger = logging.getLogger(__name__)
 

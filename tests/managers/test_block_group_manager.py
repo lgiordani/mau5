@@ -1,6 +1,5 @@
 import pytest
 
-
 from mau.nodes.block import BlockGroupNodeContent, BlockNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser import MauParserException

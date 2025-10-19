@@ -7,7 +7,7 @@ from mau.nodes.macros import MacroFootnoteNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.managers.footnotes_manager import FootnotesManager
-from mau.test_helpers import generate_context, compare_nodes
+from mau.test_helpers import compare_nodes, generate_context
 
 
 def test_footnotes_manager_init():

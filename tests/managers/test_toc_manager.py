@@ -1,4 +1,4 @@
-from unittest.mock import Mock, patch, call
+from unittest.mock import call, patch
 
 from mau.nodes.headers import HeaderNodeContent
 from mau.nodes.inline import TextNodeContent

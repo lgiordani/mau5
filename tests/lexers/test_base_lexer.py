@@ -1,14 +1,8 @@
+import textwrap
 from unittest.mock import Mock, patch
 
 import pytest
 
-import textwrap
-
-from collections.abc import MutableSequence
-from mau.environment.environment import Environment
-from mau.nodes.node import Node, NodeContent
-from mau.text_buffer import Context, TextBuffer
-from mau.token import Token
 from mau.environment.environment import Environment
 from mau.lexers.base_lexer import (
     BaseLexer,
