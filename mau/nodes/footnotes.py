@@ -1,8 +1,14 @@
 from mau.nodes.node import NodeContent
 
 
-# TODO tests for this class
-class FootnoteNodeContent(NodeContent):
+class FootnotesNodeContent(NodeContent):
+    type = "footnotes"
+    allowed_keys = {
+        "entries": "All footnotes in order of appearance (mention).",
+    }
+
+
+class FootnotesItemNodeContent(NodeContent):
     """An entry of the list of footnotes."""
 
     type = "footnote"
@@ -37,13 +43,3 @@ class FootnoteNodeContent(NodeContent):
         )
 
         return base
-
-
-# TODO find a decent name for this and for the ToC node.
-# They should be similar, as both contain the result of a command,
-# and ultimately a list of elements collected in the text.
-class FootnotesListNodeContent(NodeContent):
-    type = "footnotes-list"
-    allowed_keys = {
-        "entries": "All footnotes in order of appearance (mention).",
-    }

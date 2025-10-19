@@ -1,8 +1,8 @@
-from mau.nodes.footnotes import FootnoteNodeContent
+from mau.nodes.footnotes import FootnotesItemNodeContent
 
 
 def test_footnote_node_content():
-    node_content = FootnoteNodeContent("somename")
+    node_content = FootnotesItemNodeContent("somename")
 
     assert node_content.type == "footnote"
     assert node_content.name == "somename"
@@ -17,7 +17,9 @@ def test_footnote_node_content():
 
 
 def test_footnote_node_content_with_id():
-    node_content = FootnoteNodeContent("somename", "some_public_id", "some_private_id")
+    node_content = FootnotesItemNodeContent(
+        "somename", "some_public_id", "some_private_id"
+    )
 
     assert node_content.type == "footnote"
     assert node_content.name == "somename"

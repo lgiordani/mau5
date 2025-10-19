@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from mau.nodes.footnotes import FootnoteNodeContent, FootnotesListNodeContent
+from mau.nodes.footnotes import FootnotesItemNodeContent, FootnotesNodeContent
 from mau.nodes.macros import MacroFootnoteNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser import MauParserException
@@ -47,7 +47,7 @@ def test_footnotes_manager_add_data():
 
     footnote_name = "footnote_name"
     footnote_node = Node(
-        content=FootnoteNodeContent(footnote_name), children={"content": []}
+        content=FootnotesItemNodeContent(footnote_name), children={"content": []}
     )
 
     fnm.add_data(footnote_node)
@@ -65,12 +65,12 @@ def test_footnotes_manager_add_data_duplicate_name():
 
     footnote_name = "footnote_name"
     footnote_node1 = Node(
-        content=FootnoteNodeContent(footnote_name),
+        content=FootnotesItemNodeContent(footnote_name),
         children={"content": []},
         info=NodeInfo(context=context1),
     )
     footnote_node2 = Node(
-        content=FootnoteNodeContent(footnote_name),
+        content=FootnotesItemNodeContent(footnote_name),
         children={"content": []},
         info=NodeInfo(context=context2),
     )
@@ -89,7 +89,7 @@ def test_footnotes_manager_add_data_duplicate_name():
 def test_footnotes_manager_add_footnotes_list_node():
     fnm = FootnotesManager()
 
-    footnote_list_node = Node(content=FootnotesListNodeContent())
+    footnote_list_node = Node(content=FootnotesNodeContent())
 
     fnm.add_footnotes_list_node(footnote_list_node)
 
@@ -114,16 +114,16 @@ def test_footnotes_manager_process(mock_footnote_unique_id):
     fnm.add_mention(footnote_macro_node2)
 
     footnote_node1 = Node(
-        content=FootnoteNodeContent(footnote_name1), children={"content": []}
+        content=FootnotesItemNodeContent(footnote_name1), children={"content": []}
     )
     fnm.add_data(footnote_node1)
 
     footnote_node2 = Node(
-        content=FootnoteNodeContent(footnote_name2), children={"content": []}
+        content=FootnotesItemNodeContent(footnote_name2), children={"content": []}
     )
     fnm.add_data(footnote_node2)
 
-    footnote_list_node = Node(content=FootnotesListNodeContent())
+    footnote_list_node = Node(content=FootnotesNodeContent())
 
     fnm.add_footnotes_list_node(footnote_list_node)
 

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from mau.nodes.footnotes import FootnoteNodeContent, FootnotesListNodeContent
+from mau.nodes.footnotes import FootnotesItemNodeContent, FootnotesNodeContent
 from mau.nodes.macros import MacroFootnoteNodeContent
 from mau.nodes.node import Node
 from mau.parsers.base_parser import MauParserException
 
 
 def default_footnote_unique_id(
-    node: Node[FootnoteNodeContent],
+    node: Node[FootnotesItemNodeContent],
 ) -> str:  # pragma: no cover
     """
     Return a unique ID for a footnote.
@@ -33,9 +33,9 @@ class FootnotesManager:
 
         # This dictionary contains the content of footnote
         # created through blocks.
-        self.data: dict[str, Node[FootnoteNodeContent]] = {}
+        self.data: dict[str, Node[FootnotesItemNodeContent]] = {}
 
-        self.footnotes_list_nodes: list[Node[FootnotesListNodeContent]] = []
+        self.footnotes_list_nodes: list[Node[FootnotesNodeContent]] = []
 
         self.footnote_unique_id_function = (
             footnote_unique_id_function or default_footnote_unique_id
@@ -51,7 +51,7 @@ class FootnotesManager:
         of managed mentions."""
         self.mentions.extend(nodes)
 
-    def add_data(self, node: Node[FootnoteNodeContent]):
+    def add_data(self, node: Node[FootnotesItemNodeContent]):
         """Add the content of a footnote to
         the list of contents."""
         name = node.content.name
@@ -63,7 +63,7 @@ class FootnotesManager:
 
         self.data[name] = node
 
-    def add_footnotes_list_node(self, node: Node[FootnotesListNodeContent]):
+    def add_footnotes_list_node(self, node: Node[FootnotesNodeContent]):
         """Add a footnotes list node to
         the list of managed nodes."""
         self.footnotes_list_nodes.append(node)

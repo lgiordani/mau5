@@ -145,7 +145,7 @@ def list_processor(parser: DocumentParser):
     arguments = parser.arguments_buffer.pop_or_default()
 
     # Check if the list has a forced start.
-    if (start := arguments.named_args.pop("start", 1)) == "auto":  # TODO:get
+    if (start := arguments.named_args.get("start", 1)) == "auto":
         start = parser.latest_ordered_list_index
         parser.latest_ordered_list_index += len(nodes)
     else:

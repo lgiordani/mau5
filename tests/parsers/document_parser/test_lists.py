@@ -406,7 +406,9 @@ def test_parse_numbered_list_continue():
             ),
             Node(
                 content=ListNodeContent(ordered=True, main_node=True, start=3),
-                info=NodeInfo(context=generate_context(5, 0, 5, 8)),
+                info=NodeInfo(
+                    context=generate_context(5, 0, 5, 8), named_args={"start": "auto"}
+                ),
                 children={
                     "nodes": [
                         Node(
@@ -470,7 +472,9 @@ def test_parse_numbered_list_continue_after_forced():
             ),
             Node(
                 content=ListNodeContent(ordered=True, main_node=True, start=20),
-                info=NodeInfo(context=generate_context(4, 0, 4, 9)),
+                info=NodeInfo(
+                    context=generate_context(4, 0, 4, 9), named_args={"start": "20"}
+                ),
                 children={
                     "nodes": [
                         Node(
@@ -492,7 +496,9 @@ def test_parse_numbered_list_continue_after_forced():
             ),
             Node(
                 content=ListNodeContent(ordered=True, main_node=True, start=21),
-                info=NodeInfo(context=generate_context(7, 0, 7, 9)),
+                info=NodeInfo(
+                    context=generate_context(7, 0, 7, 9), named_args={"start": "auto"}
+                ),
                 children={
                     "nodes": [
                         Node(

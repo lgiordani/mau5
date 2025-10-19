@@ -10,7 +10,7 @@ from enum import Enum
 from mau.parsers.base_parser import BaseParser, MauParserException
 from mau.environment.environment import Environment
 from mau.nodes.block import BlockNodeContent
-from mau.nodes.footnotes import FootnoteNodeContent
+from mau.nodes.footnotes import FootnotesItemNodeContent
 from mau.nodes.inline import RawNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.source import (
@@ -65,6 +65,7 @@ def parse_block_content_update(
     # The footnote mentions and definitions
     # found in this block are part of the
     # main document. Import them.
+    # TODO
     # parser.footnotes_manager.update(content_parser.footnotes_manager)
 
     # The internal links and headers
@@ -147,7 +148,7 @@ def parse_footnote_engine(
     )
 
     footnote_node = Node(
-        content=FootnoteNodeContent(name),
+        content=FootnotesItemNodeContent(name),
         info=NodeInfo(context=block_context),
         children={"content": content_parser.nodes},
     )

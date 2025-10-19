@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from mau.lexers.document_lexer import DocumentLexer
-from mau.nodes.footnotes import FootnoteNodeContent
+from mau.nodes.footnotes import FootnotesItemNodeContent
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.paragraph import ParagraphNodeContent
@@ -36,7 +36,7 @@ def test_footnote_engine_records_footnote_blocks(mock_footnote_unique_id):
     compare_node(
         footnote_content_node,
         Node(
-            content=FootnoteNodeContent("somename"),
+            content=FootnotesItemNodeContent("somename"),
             info=NodeInfo(context=generate_context(2, 0, 4, 4)),
             children={
                 "content": [
