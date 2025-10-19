@@ -32,8 +32,7 @@ from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.parsers.text_parser import TextParser
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
-
-# from mau.parsers.document_processors.block import block_processor
+from mau.parsers.document_processors.block import block_processor
 
 
 # The DocumentParser is in charge of parsing
@@ -90,7 +89,7 @@ class DocumentParser(BaseParser):
             partial(control_processor, self),
             partial(arguments_processor, self),
             partial(header_processor, self),
-            # partial(block_processor, self),
+            partial(block_processor, self),
             partial(include_processor, self),
             partial(list_processor, self),
             partial(paragraph_processor, self),
