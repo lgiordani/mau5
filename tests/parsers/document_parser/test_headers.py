@@ -1,4 +1,3 @@
-
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.headers import HeaderNodeContent
@@ -19,7 +18,7 @@ runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 def test_header_level_1():
     environment = Environment()
-    environment["mau.parser.header_unique_id_function"] = lambda node: "XXXXXY"
+    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
 
     source = """
     = Title of the section
@@ -48,7 +47,7 @@ def test_header_level_1():
 
 def test_header_level_3():
     environment = Environment()
-    environment["mau.parser.header_unique_id_function"] = lambda node: "XXXXXY"
+    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
 
     source = """
     === Title of a subsection
@@ -77,7 +76,7 @@ def test_header_level_3():
 
 def test_header_attributes():
     environment = Environment()
-    environment["mau.parser.header_unique_id_function"] = lambda node: "XXXXXY"
+    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
 
     source = """
     [arg1, #tag1, *subtype1, key1=value1]
@@ -111,9 +110,9 @@ def test_header_attributes():
     )
 
 
-def test_header_attributes_can_overwrite_unique_id():
+def test_header_attributes_can_overwrite_internal_id():
     source = """
-    [arg1, #tag1, *subtype1, unique_id=someheader]
+    [arg1, #tag1, *subtype1, internal_id=someheader]
     = Header
     """
 
@@ -146,7 +145,7 @@ def test_header_attributes_can_overwrite_unique_id():
 
 def test_header_ignores_label():
     environment = Environment()
-    environment["mau.parser.header_unique_id_function"] = lambda node: "XXXXXY"
+    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
 
     source = """
     . This is a title
@@ -178,7 +177,7 @@ def test_header_ignores_label():
 
 def test_header_uses_control_positive():
     environment = Environment()
-    environment["mau.parser.header_unique_id_function"] = lambda node: "XXXXXY"
+    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
     environment["answer"] = "42"
 
     source = """

@@ -7,7 +7,9 @@ from mau.nodes.node import Node
 from mau.nodes.toc import TocItemNodeContent, TocNodeContent
 
 
-def default_header_unique_id(node: Node[HeaderNodeContent]) -> str:  # pragma: no cover
+def default_header_internal_id(
+    node: Node[HeaderNodeContent],
+) -> str:  # pragma: no cover
     """
     Return a unique ID for a header.
     """
@@ -31,7 +33,7 @@ def header_to_toc_item(header: Node[HeaderNodeContent]) -> Node[TocItemNodeConte
     return Node(
         content=TocItemNodeContent(
             level=header.content.level,  # type: ignore[attr-defined]
-            unique_id=header.content.unique_id,  # type: ignore[attr-defined]
+            internal_id=header.content.internal_id,  # type: ignore[attr-defined]
         ),
         info=header.info,
         children={"text": header.children["text"], "entries": []},
@@ -86,7 +88,7 @@ class TocManager:
     each TOC node.
     """
 
-    def __init__(self, header_unique_id_function=None):
+    def __init__(self, header_internal_id_function=None):
         # This list contains the headers
         # found parsing a document
         self.headers: list[Node[HeaderNodeContent]] = []
@@ -96,8 +98,8 @@ class TocManager:
         # has been processed
         self.toc_nodes: list[Node[TocNodeContent]] = []
 
-        self.header_unique_id_function = (
-            header_unique_id_function or default_header_unique_id
+        self.header_internal_id_function = (
+            header_internal_id_function or default_header_internal_id
         )
 
         self.nested_headers: list[Node[TocItemNodeContent]] = []
@@ -123,14 +125,14 @@ class TocManager:
         self.nested_headers = []
 
         # Check that all headers have a
-        # unique ID. If not, create it.
+        # unique internal ID. If not, create it.
         for header in self.headers:
-            if header.content.unique_id is not None:
+            if header.content.internal_id is not None:
                 continue
 
-            # Create the unique ID.
-            unique_id = self.header_unique_id_function(header)
-            header.content.unique_id = unique_id
+            # Create the unique internal ID.
+            internal_id = self.header_internal_id_function(header)
+            header.content.internal_id = internal_id
 
         # Create the nodes hierarchy.
         add_nodes_under_level(0, self.headers, 0, self.nested_headers)

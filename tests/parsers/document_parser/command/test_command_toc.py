@@ -1,4 +1,3 @@
-
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.headers import HeaderNodeContent
@@ -98,7 +97,7 @@ def test_command_toc_boxed_arguments():
 
 
 def test_command_toc():
-    def _header_unique_id(node: Node[HeaderNodeContent]) -> str:
+    def _header_internal_id(node: Node[HeaderNodeContent]) -> str:
         # Lowercase the text of the header.
         text_node = node.children["text"][0]
         text = text_node.content.value
@@ -106,7 +105,7 @@ def test_command_toc():
         return f"{text}-XXXXXX"
 
     environment = Environment()
-    environment["mau.parser.header_unique_id_function"] = _header_unique_id
+    environment["mau.parser.header_internal_id_function"] = _header_internal_id
 
     source = """
     = Header 1
@@ -119,7 +118,7 @@ def test_command_toc():
     parser = runner(source, environment)
 
     node_header_1_1 = Node(
-        content=HeaderNodeContent(level=2, unique_id="Header 1.1-XXXXXX"),
+        content=HeaderNodeContent(level=2, internal_id="Header 1.1-XXXXXX"),
         info=NodeInfo(context=generate_context(2, 0, 2, 13)),
         children={
             "text": [
@@ -132,7 +131,7 @@ def test_command_toc():
     )
 
     node_header_1 = Node(
-        content=HeaderNodeContent(level=1, unique_id="Header 1-XXXXXX"),
+        content=HeaderNodeContent(level=1, internal_id="Header 1-XXXXXX"),
         info=NodeInfo(context=generate_context(1, 0, 1, 10)),
         children={
             "text": [
@@ -145,7 +144,7 @@ def test_command_toc():
     )
 
     node_header_2 = Node(
-        content=HeaderNodeContent(level=1, unique_id="Header 2-XXXXXX"),
+        content=HeaderNodeContent(level=1, internal_id="Header 2-XXXXXX"),
         info=NodeInfo(context=generate_context(3, 0, 3, 10)),
         children={
             "text": [
@@ -158,7 +157,7 @@ def test_command_toc():
     )
 
     node_toc_item_1_1 = Node(
-        content=TocItemNodeContent(level=2, unique_id="Header 1.1-XXXXXX"),
+        content=TocItemNodeContent(level=2, internal_id="Header 1.1-XXXXXX"),
         info=NodeInfo(context=generate_context(2, 0, 2, 13)),
         children={
             "entries": [],
@@ -172,7 +171,7 @@ def test_command_toc():
     )
 
     node_toc_item_1 = Node(
-        content=TocItemNodeContent(level=1, unique_id="Header 1-XXXXXX"),
+        content=TocItemNodeContent(level=1, internal_id="Header 1-XXXXXX"),
         info=NodeInfo(context=generate_context(1, 0, 1, 10)),
         children={
             "entries": [node_toc_item_1_1],
@@ -186,7 +185,7 @@ def test_command_toc():
     )
 
     node_toc_item_2 = Node(
-        content=TocItemNodeContent(level=1, unique_id="Header 2-XXXXXX"),
+        content=TocItemNodeContent(level=1, internal_id="Header 2-XXXXXX"),
         info=NodeInfo(context=generate_context(3, 0, 3, 10)),
         children={
             "entries": [],

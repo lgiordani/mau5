@@ -29,17 +29,17 @@ class TocItemNodeContent(NodeContent):
     def __init__(
         self,
         level: int,
-        unique_id: str,
+        internal_id: str,
     ):
         self.level = level
-        self.unique_id = unique_id
+        self.internal_id = internal_id
 
     def asdict(self):
         base = super().asdict()
         base.update(
             {
                 "level": self.level,
-                "unique_id": self.unique_id,
+                "internal_id": self.internal_id,
             }
         )
 

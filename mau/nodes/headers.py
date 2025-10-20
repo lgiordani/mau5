@@ -7,23 +7,22 @@ class HeaderNodeContent(NodeContent):
     type = "header"
     allowed_keys = {
         "text": "The text of the header.",
-        # "entries": "All headers nested under this in the ToC.",
     }
 
     def __init__(
         self,
         level: int,
-        unique_id: str | None = None,
+        internal_id: str | None = None,
     ):
         self.level = level
-        self.unique_id = unique_id
+        self.internal_id = internal_id
 
     def asdict(self):
         base = super().asdict()
         base.update(
             {
                 "level": self.level,
-                "unique_id": self.unique_id,
+                "internal_id": self.internal_id,
             }
         )
 

@@ -21,16 +21,17 @@ class HeaderLinksManager:
         # flagged with an id
         self._headers: dict[str, Node[HeaderNodeContent]] = {}
 
-    def add_header(self, header_id: str, node: Node[HeaderNodeContent]):
+    def add_header(self, external_id: str, node: Node[HeaderNodeContent]):
         """Add a single header to the list
         of managed headers. Check that the header
         ID is not already in use."""
-        if header_id in self._headers:
+        if external_id in self._headers:
             raise MauParserException(
-                f"Duplicate header id detected: {header_id}", context=node.info.context
+                f"Duplicate header id detected: {external_id}",
+                context=node.info.context,
             )
 
-        self._headers[header_id] = node
+        self._headers[external_id] = node
 
     def add_links(self, links: list[Node[MacroHeaderNodeContent]]):
         """Add the given list of links
@@ -43,8 +44,8 @@ class HeaderLinksManager:
         Header Links Manager."""
         self.add_links(other._links)
 
-        for header_id, node in other._headers.items():
-            self.add_header(header_id, node)
+        for external_id, node in other._headers.items():
+            self.add_header(external_id, node)
 
     def process(self):
         # Process each macro node, find the
