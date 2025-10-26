@@ -112,7 +112,7 @@ class DocumentParser(BaseParser):
 
         # If the preprocessor doesn't return any
         # node we can stop here.
-        if not preprocess_parser.nodes:
+        if not preprocess_parser.nodes:  # pragma: no cover
             return []
 
         # The preprocess parser outputs a single node.
@@ -141,20 +141,6 @@ class DocumentParser(BaseParser):
         self.tm.get_token(TokenType.EOL)
 
         return True
-
-    def _collect_lines(self, stop_tokens: list[Token]) -> list[Token]:
-        # This collects several lines of text in a list
-        # until it gets to a line that begins with one
-        # of the tokens listed in stop_tokens.
-        # It is useful for block or other elements that
-        # are clearly surrounded by delimiters.
-        lines = []
-
-        while self.tm.peek_token() not in stop_tokens:
-            lines.append(self.tm.collect_join([Token.generate(TokenType.EOL)]))
-            self.tm.get_token(TokenType.EOL)
-
-        return lines
 
     def finalise(self):
         super().finalise()

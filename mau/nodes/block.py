@@ -39,23 +39,3 @@ class BlockNodeContent(NodeContent):
         )
 
         return base
-
-
-class BlockGroupNodeContent(NodeContent):
-    type = "block-group"
-
-    def __init__(
-        self,
-        name: str,
-    ):
-        self.name = name
-
-    def asdict(self):
-        base = super().asdict()
-        base.update(
-            {
-                "name": self.name,
-            }
-        )
-
-        return base

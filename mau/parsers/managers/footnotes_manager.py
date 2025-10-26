@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from mau.nodes.footnotes import FootnotesItemNodeContent, FootnotesNodeContent
+from mau.nodes.command import FootnotesItemNodeContent, FootnotesNodeContent
 from mau.nodes.macros import MacroFootnoteNodeContent
 from mau.nodes.node import Node
 from mau.parsers.base_parser import MauParserException
@@ -79,7 +79,7 @@ class FootnotesManager:
     def process(self):
         # Process all mentions. For each mention
         # find the relative content, calculate
-        # the public and private IDs, then
+        # the public and explicit IDs, then
         # connect mention and content.
         for number, node in enumerate(self.mentions, start=1):
             # Find the content for this mention.

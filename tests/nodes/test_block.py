@@ -1,4 +1,5 @@
-from mau.nodes.block import BlockGroupNodeContent, BlockNodeContent
+from mau.nodes.block import BlockNodeContent
+from mau.nodes.command import BlockGroupNodeContent
 
 
 def test_block_node_content():

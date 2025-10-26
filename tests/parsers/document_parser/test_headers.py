@@ -110,9 +110,9 @@ def test_header_attributes():
     )
 
 
-def test_header_attributes_can_overwrite_internal_id():
+def test_header_attributes_can_overwrite_ids():
     source = """
-    [arg1, #tag1, *subtype1, internal_id=someheader]
+    [arg1, #tag1, *subtype1, internal_id=some_internal_id, external_id=some_external_id]
     = Header
     """
 
@@ -122,7 +122,9 @@ def test_header_attributes_can_overwrite_internal_id():
         parser.nodes,
         [
             Node(
-                content=HeaderNodeContent(1, "someheader"),
+                content=HeaderNodeContent(
+                    1, internal_id="some_internal_id", external_id="some_external_id"
+                ),
                 info=NodeInfo(
                     context=generate_context(2, 0, 2, 8),
                     unnamed_args=["arg1"],

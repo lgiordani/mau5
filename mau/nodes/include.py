@@ -1,13 +1,24 @@
 from mau.nodes.node import NodeContent
 
 INCLUDE_HELP = """
-Syntax: << TYPE URI1, [URI2, ...]
+Syntax:
 
-The include operator `<<` includes content of type TYPE using the provided URIs.
+([URI+, ARGS])?
+(@CONTROL)?
+(. LABEL)*
+<< TYPE(:URI+, ARGS)?
+
+The include operator `<<` includes content of type TYPE using the provided ARGS.
+The ARGS must contain at least one unnamed URI.
 """
 
 INCLUDE_IMAGE_HELP = """
-Syntax: << image URI, [ALT_TEXT, CLASSES]
+Syntax:
+
+([URI, ALT_TEXT, CLASSES, ARGS])?
+(@CONTROL)?
+(. LABEL)*
+<< image(:URI, ALT_TEXT, CLASSES, ARGS)?
 
 The include operator `<< image` includes an image using the provided URI.
 """

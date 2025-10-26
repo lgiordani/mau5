@@ -1,4 +1,4 @@
-from mau.nodes.toc import TocItemNodeContent, TocNodeContent
+from mau.nodes.command import TocItemNodeContent, TocNodeContent
 
 
 def test_toc_node_content():

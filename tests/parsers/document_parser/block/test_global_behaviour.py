@@ -1,13 +1,20 @@
 import pytest
 
+from mau.nodes.paragraph import ParagraphNodeContent
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNodeContent
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
-from mau.parsers.document_processors.block import EngineType
+from mau.token import Token, TokenType
+from mau.text_buffer import Context
+from mau.parsers.document_processors.block import (
+    EngineType,
+    parse_block_content_sections,
+)
 from mau.test_helpers import (
+    dedent,
     compare_nodes,
     generate_context,
     init_parser_factory,
@@ -27,7 +34,7 @@ def test_parse_block_title_and_arguments():
     ----
     """
 
-    parser: DocumentParser = runner(source)
+    parser = runner(source)
 
     compare_nodes(
         parser.nodes,
@@ -66,7 +73,7 @@ def test_block_classes_single_class():
     ----
     """
 
-    parser: DocumentParser = runner(source)
+    parser = runner(source)
 
     compare_nodes(
         parser.nodes,
@@ -96,7 +103,7 @@ def test_block_classes_multiple_classes():
     ----
     """
 
-    parser: DocumentParser = runner(source)
+    parser = runner(source)
 
     compare_nodes(
         parser.nodes,
@@ -121,7 +128,7 @@ def test_block_classes_multiple_classes():
 
 def test_block_engine():
     source = """
-    [*subtype,engine=someengine]
+    [*subtype,engine=doesnotexist]
     ----
     ----
     """

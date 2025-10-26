@@ -15,6 +15,8 @@ BASE_NAMESPACE = "mau"
 DEFAULT_ENVIRONMENT_FILES_NAMESPACE = "envfiles"
 DEFAULT_ENVIRONMENT_VARIABLES_NAMESPACE = "envvars"
 
+# TODO Add help to each node and use it in exceptions
+
 
 class ConfigurationError(ValueError):
     """Used to signal an error in the configuration"""

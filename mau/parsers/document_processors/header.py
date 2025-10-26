@@ -12,6 +12,9 @@ from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.text_buffer import Context
 from mau.token import TokenType
 
+# TODO Currently, headers do not support
+# * labels
+
 
 def header_processor(parser: DocumentParser):
     # Parse a header in the form
@@ -77,7 +80,7 @@ def header_processor(parser: DocumentParser):
     internal_id = arguments.named_args.pop("internal_id", None)
 
     # Extract the header id if specified.
-    external_id = arguments.named_args.get("id", None)
+    external_id = arguments.named_args.pop("external_id", None)
 
     # Find the final context.
     context = Context.merge_contexts(header.context, text_nodes[-1].info.context)
@@ -86,7 +89,11 @@ def header_processor(parser: DocumentParser):
     info = NodeInfo(context=context, **arguments.asdict())
 
     node = Node(
-        content=HeaderNodeContent(level, internal_id),
+        content=HeaderNodeContent(
+            level,
+            internal_id=internal_id,
+            external_id=external_id,
+        ),
         info=info,
         children={"text": text_nodes},
     )

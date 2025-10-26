@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -7,10 +8,11 @@ if TYPE_CHECKING:
 
 from enum import Enum
 
+from collections import defaultdict
 from mau.parsers.base_parser import BaseParser, MauParserException
 from mau.environment.environment import Environment
 from mau.nodes.block import BlockNodeContent
-from mau.nodes.footnotes import FootnotesItemNodeContent
+from mau.nodes.command import FootnotesItemNodeContent
 from mau.nodes.inline import RawNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.source import (
@@ -23,6 +25,9 @@ from mau.text_buffer import Context
 from mau.token import Token, TokenType
 
 
+DEFAULT_SECTION_PREFIX = "++ "
+
+
 class EngineType(Enum):
     DEFAULT = "default"
     FOOTNOTE = "footnote"
@@ -32,45 +37,156 @@ class EngineType(Enum):
     SOURCE = "source"
 
 
+def _get_section_name(line: str, prefix: str) -> str | None:
+    if not line.startswith(prefix):
+        return None
+
+    return line.replace(prefix, "")
+
+
+def parse_block_content_sections(content: Token) -> dict[str, Token]:
+    # Convert the text token to a list of text tokens.
+
+    # Create a list of TEXT tokens from
+    # the single token.
+    tokens = content.to_token_list()
+
+    # This function is run only when
+    # the user turns on sections.
+    # This means that the first line
+    # must contain a section, otherwise
+    # there is an error.
+    first_section_name = _get_section_name(tokens[0].value, DEFAULT_SECTION_PREFIX)
+    if not first_section_name:
+        raise MauParserException(
+            "The first line of the block must contain a section declaration.",
+            context=tokens[0].context,
+        )
+
+    # This splits the list of tokens into
+    # groups of normal lines or section lines.
+    # E.g.
+    #
+    # ++ Section 1
+    # Some text.
+    # ++ Section 2
+    # Some text 2a.
+    # Some text 2b.
+    # ++ Section 3
+    # ++ Section 4
+    # Some text 4.
+    #
+    # becomes
+    #
+    # True [Token("++ Section 1")]
+    # False [Token("Some text.")]
+    # True [Token("++ Section 2")]
+    # False [Token("Some text 2a."), Token("Some text 2b.")]
+    # True [Token("++ Section 3"), Token("++ Section 4")]
+    # False [Token("Some text 4."2)]
+    section_groups = itertools.groupby(tokens, lambda x: x.value.startswith("++ "))
+
+    # This is the final dictionary
+    # of sections.
+    sections: dict[str, Token] = {}
+
+    # This is the current section name.
+    current_section_name: str = ""
+
+    # Loop through all groups.
+    # If they are a group of sections
+    # create all of them. If they
+    # are a group of lines merge
+    # them into a single token
+    # and add that to the section.
+    for section_flag, tokens in section_groups:
+        # The list of tokens contains
+        # a list of section lines.
+        if section_flag:
+            # Loop through all sections
+            # and create each one of them
+            # in the sections dictionary.
+            # Store the name so that
+            # the next batch of normal
+            # line tokens can be added to it.
+            for section_token in tokens:
+                current_section_name: str = section_token.value.replace(
+                    DEFAULT_SECTION_PREFIX, ""
+                )
+
+                sections[current_section_name] = Token(
+                    TokenType.TEXT, "", section_token.context
+                )
+
+            continue
+
+        # We reach this line if the group
+        # contains normal lines. We need
+        # to store them all under the
+        # last section.
+        sections[current_section_name] = Token.from_token_list(
+            list(tokens), join_with="\n"
+        )
+
+    return sections
+
+
 def parse_block_content(
     parser: DocumentParser,
     node: Node[BlockNodeContent],
     content: Token,
+    arguments: Arguments,
+    update: bool,
 ):
-    content_parser = parser.lex_and_parse(
-        content.value,
-        Environment(),
-        *content.context.start_position,
-        content.context.source,
-    )
-    content_parser.finalise()
+    # Sections are disabled by default.
+    # The option `enable_sections` set to
+    # "true" turns them on.
+    if arguments.named_args.get("enable_sections", "false") == "true":
+        sections = parse_block_content_sections(content)
+    else:
+        # If there are no sections, we
+        # fake a single section called
+        # "content" so that the next code
+        # results in the standard block
+        # setup with children under
+        # that kay.
+        sections = {"content": content}
 
-    node.children["content"] = content_parser.nodes
+    # The parsing environment
+    # can be either the one contained
+    # in the external parser or an empty
+    # one. This depends if the
+    # current parsing is updating
+    # the external parser or not.
+    environment = parser.environment if update else Environment()
 
+    # Loop through all sections,
+    # parse the content, and add
+    # the children to the block node.
+    for name, token in sections.items():
+        content_parser = parser.lex_and_parse(
+            token.value,
+            environment,
+            *token.context.start_position,
+            token.context.source,
+        )
+        content_parser.finalise()
 
-def parse_block_content_update(
-    parser: DocumentParser,
-    node: Node[BlockNodeContent],
-    content: Token,
-):
-    content_parser = parser.lex_and_parse(
-        content.value,
-        parser.environment,
-        *content.context.start_position,
-        content.context.source,
-    )
+        # Sections names are not conventional,
+        # so we need to allow them when we
+        # add the nodes as children.
+        node.add_children_at_position(name, content_parser.nodes, allow_all=True)
 
-    node.children["content"] = content_parser.nodes
+    if update:
+        # The footnote mentions and definitions
+        # found in this block are part of the
+        # main document. Import them.
+        parser.footnotes_manager.update(content_parser.footnotes_manager)
 
-    # The footnote mentions and definitions
-    # found in this block are part of the
-    # main document. Import them.
-    parser.footnotes_manager.update(content_parser.footnotes_manager)
-
-    # The internal links and headers
-    # found in this block are part of the
-    # main document. Import them.
-    parser.toc_manager.update(content_parser.toc_manager)
+        # The internal links and headers
+        # found in this block are part of the
+        # main document. Import them.
+        parser.toc_manager.update(content_parser.toc_manager)
 
 
 def parse_default_engine(
@@ -80,7 +196,7 @@ def parse_default_engine(
     block_context: Context,
     arguments: Arguments,
 ):
-    parse_block_content_update(parser, node, content)
+    parse_block_content(parser, node, content, arguments, update=True)
 
 
 def parse_mau_engine(
@@ -90,7 +206,7 @@ def parse_mau_engine(
     block_context: Context,
     arguments: Arguments,
 ):
-    parse_block_content(parser, node, content)
+    parse_block_content(parser, node, content, arguments, update=False)
 
 
 def parse_raw_engine(
@@ -439,7 +555,9 @@ def block_processor(parser: DocumentParser):
             parse_source_engine(parser, node, content, context, arguments)
             node.info = NodeInfo(context=context, **arguments.asdict())
             parser._save(node)
-        case _:
+        # This has been checked before but is required to
+        # check the full type value space.
+        case _:  # pragma: no cover
             raise MauParserException(
                 f"Engine {engine} is not available", context=context
             )

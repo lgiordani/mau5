@@ -80,3 +80,19 @@ def test_context_position_attributes():
 
     assert ctx.start_position == (1, 7)
     assert ctx.end_position == (5, 10)
+
+
+def test_context_move_to():
+    ctx = Context(
+        start_line=0, start_column=0, end_line=5, end_column=10, source="main"
+    )
+
+    ctx = ctx.move_to(3, 5)
+
+    assert ctx.asdict() == {
+        "start_line": 3,
+        "start_column": 5,
+        "end_line": 8,
+        "end_column": 15,
+        "source": "main",
+    }

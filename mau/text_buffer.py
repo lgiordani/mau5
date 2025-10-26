@@ -46,6 +46,15 @@ class Context:
     def end_position(self) -> Position:
         return (self.end_line, self.end_column)
 
+    def move_to(self, line: int, column: int) -> Context:
+        """Move the context to a new start position."""
+        self.start_line += line
+        self.end_line += line
+        self.start_column += column
+        self.end_column += column
+
+        return self
+
     def asdict(self):
         return {
             "start_line": self.start_line,

@@ -1,4 +1,4 @@
-from mau.nodes.footnotes import FootnotesItemNodeContent
+from mau.nodes.command import FootnotesItemNodeContent
 
 
 def test_footnote_node_content():

@@ -1,5 +1,57 @@
 from mau.nodes.node import NodeContent, ValueNodeContent
 
+MACRO_HELP = """
+Syntax:
+
+[NAME](ARGS)
+
+A generic macro named NAME that contains the given ARGS.
+"""
+
+MACRO_CLASS_HELP = """
+Syntax:
+
+[class](class1, class2, ...)
+
+A macro to assign classes to text.
+"""
+
+MACRO_LINK_HELP = """
+Syntax:
+
+[link](target[, text])
+
+A macro that creates a link. The text of the link is the target itself
+unless the option `text` is gien a value.
+"""
+
+MACRO_IMAGE_HELP = """
+Syntax:
+
+[image](uri[, alt_text, width, height])
+
+A macro that inserts an image. The macro requires the `uri` and
+accepts optional `alt_text`, `width`, and `height`.
+"""
+
+MACRO_HEADER_HELP = """
+Syntax:
+
+[header](header_external_id)
+
+A macro that inserts a link to a header. The macro requires
+the header exernal ID as a parameter.
+"""
+
+MACRO_FOOTNOTE_HELP = """
+Syntax:
+
+[footnote](footnote_name)
+
+A macro that inserts a link to a footnote. The macro requires
+the footnote name associated with the relative data block.
+"""
+
 
 class MacroNodeContent(NodeContent):
     """This node contains a macro, with a name and arguments."""

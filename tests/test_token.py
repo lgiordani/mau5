@@ -1,4 +1,4 @@
-from mau.test_helpers import TEST_CONTEXT_SOURCE, generate_context
+from mau.test_helpers import TEST_CONTEXT_SOURCE, generate_context, compare_tokens
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
 
@@ -95,3 +95,50 @@ def test_token_from_empty_list():
     assert token.type == TokenType.TEXT
     assert token.value == ""
     assert token.context == Context(0, 0, 0, 0)
+
+
+def test_token_to_list():
+    token = Token(
+        TokenType.TEXT, "This is \na list \nof tokens.", generate_context(0, 0, 0, 25)
+    )
+
+    tokens = token.to_token_list()
+
+    compare_tokens(
+        tokens,
+        [
+            Token(TokenType.TEXT, "This is ", generate_context(0, 0, 0, 8)),
+            Token(TokenType.TEXT, "a list ", generate_context(1, 0, 1, 7)),
+            Token(TokenType.TEXT, "of tokens.", generate_context(2, 0, 2, 10)),
+        ],
+    )
+
+
+def test_token_to_list_single_line():
+    token = Token(
+        TokenType.TEXT, "This is a single token.", generate_context(0, 0, 0, 23)
+    )
+
+    tokens = token.to_token_list()
+
+    compare_tokens(
+        tokens,
+        [
+            Token(
+                TokenType.TEXT, "This is a single token.", generate_context(0, 0, 0, 23)
+            ),
+        ],
+    )
+
+
+def test_token_to_list_empty():
+    token = Token(TokenType.TEXT, "", generate_context(0, 0, 0, 0))
+
+    tokens = token.to_token_list()
+
+    compare_tokens(
+        tokens,
+        [
+            Token(TokenType.TEXT, "", generate_context(0, 0, 0, 0)),
+        ],
+    )

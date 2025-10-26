@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from mau.nodes.footnotes import FootnotesItemNodeContent, FootnotesNodeContent
+from mau.nodes.command import FootnotesItemNodeContent, FootnotesNodeContent
 from mau.nodes.macros import MacroFootnoteNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser import MauParserException

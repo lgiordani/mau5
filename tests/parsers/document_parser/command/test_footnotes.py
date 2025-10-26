@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from mau.lexers.document_lexer import DocumentLexer
-from mau.nodes.footnotes import FootnotesItemNodeContent, FootnotesNodeContent
+from mau.nodes.command import FootnotesItemNodeContent, FootnotesNodeContent
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.lists import ListItemNodeContent, ListNodeContent
 from mau.nodes.macros import MacroFootnoteNodeContent

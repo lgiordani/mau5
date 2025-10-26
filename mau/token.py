@@ -54,16 +54,56 @@ class Token:
 
     @classmethod
     def from_token_list(self, tokens: list[Token], join_with: str = "") -> Token:
+        """Convert a list of TEXT tokens into a single
+        TEXT token joining the values of all tokens and
+        merging their contexts."""
+
+        # If there are no tokens in the list
+        # we output an empty token
         if not tokens:
             return Token(TokenType.TEXT, "", Context.empty())
 
+        # Get the context of the first token, this
+        # will mark the starting position.
         start_context = tokens[0].context
+
+        # Get the context of the last token, this
+        # will mark the end position.
         end_context = tokens[-1].context
+
+        # Build the final context merging the two.
         context = Context.merge_contexts(start_context, end_context)
 
+        # Build the token value joining their
+        # values of all the tokens in the list.
         value = join_with.join([t.value for t in tokens])
 
         return Token(TokenType.TEXT, value, context)
+
+    def to_token_list(self) -> list[Token]:
+        """Split a TEXT token into a list of TEXT tokens."""
+
+        # Split the token value into lines.
+        token_lines = self.value.split("\n")
+
+        # Prepare an empty list to host the resulting tokens.
+        result: list[Token] = []
+
+        # Process each line. Keep track of the line
+        # number to adjust the context.
+        for line_number, line_content in enumerate(token_lines):
+            # Clone the context of the source token and
+            # move it to the beginning of the current line.
+            context = self.context.clone().move_to(line_number, 0)
+
+            # Make sure the size of the token is correct in the context.
+            context.end_column = context.start_column + len(line_content)
+
+            # Create the token for this line and
+            # append it to the results list.
+            result.append(Token(TokenType.TEXT, line_content, context))
+
+        return result
 
     def asdict(self):
         return {

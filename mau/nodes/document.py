@@ -2,6 +2,16 @@
 
 from mau.nodes.node import NodeContent
 
+HORIZONTAL_RULE_HELP = """
+Syntax:
+
+([ARGS])?
+---
+
+The horizontal rule marks a separation between text sections
+in the same document.
+"""
+
 
 class HorizontalRuleNodeContent(NodeContent):
     """A horizontal rule."""

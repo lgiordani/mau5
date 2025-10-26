@@ -8,7 +8,7 @@ from mau.nodes.headers import HeaderNodeContent
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.paragraph import ParagraphNodeContent
-from mau.nodes.toc import TocItemNodeContent, TocNodeContent
+from mau.nodes.command import TocItemNodeContent, TocNodeContent
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (

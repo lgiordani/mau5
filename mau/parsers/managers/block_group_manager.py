@@ -3,7 +3,8 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import NewType
 
-from mau.nodes.block import BlockGroupNodeContent, BlockNodeContent
+from mau.nodes.block import BlockNodeContent
+from mau.nodes.command import BlockGroupNodeContent
 from mau.nodes.node import Node
 from mau.parsers.base_parser import MauParserException
 

@@ -6,15 +6,21 @@ if TYPE_CHECKING:
     from .parser import DocumentParser
 
 
-from mau.nodes.include import IncludeNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.toc import TocNodeContent
-from mau.nodes.footnotes import FootnotesNodeContent
-from mau.nodes.block import BlockGroupNodeContent, BlockNodeContent
+from mau.nodes.command import (
+    COMMAND_HELP,
+    TocNodeContent,
+    FootnotesNodeContent,
+    BlockGroupNodeContent,
+)
 from mau.parsers.arguments_parser import Arguments, ArgumentsParser
 from mau.parsers.base_parser import MauParserException
 from mau.text_buffer import Context
 from mau.token import TokenType
+
+# TODO Currently, commands do not support
+# * labels
+# * control
 
 
 def command_processor(parser: DocumentParser):
@@ -40,7 +46,7 @@ def command_processor(parser: DocumentParser):
             raise MauParserException(
                 "Syntax error. You cannot specify both boxed and inline arguments.",
                 context,
-                IncludeNodeContent.long_help,  # TODO This is not IncludeNodeContent, it should be a generic CommandNodeContent
+                COMMAND_HELP,
             )
 
         # Get the colon.
@@ -50,7 +56,7 @@ def command_processor(parser: DocumentParser):
             raise MauParserException(
                 f"Syntax error. If you use the colon after {name.value} you need to specify arguments.",
                 context,
-                IncludeNodeContent.long_help,
+                COMMAND_HELP,
             )
 
         # Get the inline arguments.
