@@ -18,9 +18,7 @@ from mau.parsers.base_parser import MauParserException
 from mau.text_buffer import Context
 from mau.token import TokenType
 
-# TODO Currently, commands do not support
-# * labels
-# * control
+# TODO The implementation at lines 81-145 is horrendous.
 
 
 def command_processor(parser: DocumentParser):
@@ -32,6 +30,9 @@ def command_processor(parser: DocumentParser):
     # Get the name of the command.
     name = parser.tm.get_token(TokenType.TEXT)
 
+    # Get the stored arguments.
+    # Commands can receive arguments
+    # through the arguments manager or inline..
     arguments: Arguments | None = parser.arguments_buffer.pop()
 
     # Find the final context.
@@ -79,31 +80,68 @@ def command_processor(parser: DocumentParser):
     info = NodeInfo(context=context, **arguments.asdict())
 
     if name.value == "toc":
-        toc_node: Node[TocNodeContent] = Node(content=TocNodeContent(), info=info)
+        node: Node[TocNodeContent] = Node(content=TocNodeContent(), info=info)
 
-        parser._save(toc_node)
+        parser._save(node)
 
-        parser.toc_manager.add_toc_node(toc_node)
+        parser.toc_manager.add_toc_node(node)
+
+        if label := parser.label_buffer.pop():
+            node.add_children(label, allow_all=True)
+
+        # Check the stored control
+        if control := parser.control_buffer.pop():
+            # If control is False, we need to stop
+            # processing here and return without
+            # saving any node.
+            if not control.process(parser.environment):
+                return True
 
     elif name.value == "footnotes":
-        footnotes_node: Node[FootnotesNodeContent] = Node(
+        node: Node[FootnotesNodeContent] = Node(
             content=FootnotesNodeContent(), info=info
         )
 
-        parser._save(footnotes_node)
+        parser._save(node)
 
-        parser.footnotes_manager.add_footnotes_node(footnotes_node)
+        parser.footnotes_manager.add_footnotes_node(node)
+
+        if label := parser.label_buffer.pop():
+            node.add_children(label, allow_all=True)
+
+        # Check the stored control
+        if control := parser.control_buffer.pop():
+            # If control is False, we need to stop
+            # processing here and return without
+            # saving any node.
+            if not control.process(parser.environment):
+                return True
 
     elif name.value == "blockgroup":
         arguments.set_names(["group"])
         group_name = arguments.named_args.pop("group")
 
-        group_node = Node(
+        node = Node(
             content=BlockGroupNodeContent(group_name),
             info=NodeInfo(context=context),
         )
 
-        parser.block_group_manager.add_group_node(group_node)
-        parser._save(group_node)
+        parser.block_group_manager.add_group_node(node)
+        parser._save(node)
+
+        if label := parser.label_buffer.pop():
+            node.add_children(label, allow_all=True)
+
+        # Check the stored control
+        if control := parser.control_buffer.pop():
+            # If control is False, we need to stop
+            # processing here and return without
+            # saving any node.
+            if not control.process(parser.environment):
+                return True
+
+    else:
+        parser.label_buffer.pop()
+        parser.control_buffer.pop()
 
     return True

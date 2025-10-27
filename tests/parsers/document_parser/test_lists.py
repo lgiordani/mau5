@@ -625,3 +625,22 @@ def test_parse_list_arguments():
             ),
         ],
     )
+
+
+def test_parse_list_control():
+    source = """
+    :answer:44
+    
+    @if answer==42
+    [arg1, arg2]
+    . Some title
+    * This is a list with one element
+    """
+
+    parser = runner(source)
+
+    compare_nodes(parser.nodes, [])
+
+    assert parser.arguments_buffer.arguments is None
+    assert parser.label_buffer.labels == {}
+    assert parser.control_buffer.control is None

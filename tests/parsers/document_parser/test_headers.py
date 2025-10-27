@@ -145,12 +145,12 @@ def test_header_attributes_can_overwrite_ids():
     )
 
 
-def test_header_ignores_label():
+def test_header_usese_labels():
     environment = Environment()
     environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
 
     source = """
-    . This is a title
+    . This is a label
     = Title of the section
     """
 
@@ -168,13 +168,17 @@ def test_header_ignores_label():
                             content=TextNodeContent("Title of the section"),
                             info=NodeInfo(context=generate_context(2, 2, 2, 22)),
                         )
-                    ]
+                    ],
+                    "title": [
+                        Node(
+                            content=TextNodeContent("This is a label"),
+                            info=NodeInfo(context=generate_context(1, 2, 1, 17)),
+                        )
+                    ],
                 },
             )
         ],
     )
-
-    assert list(parser.label_buffer.labels.keys()) == ["title"]
 
 
 def test_header_uses_control_positive():
@@ -216,9 +220,15 @@ def test_header_uses_control_negative():
 
     source = """
     @if answer==42
+    [arg1, arg2]
+    . Some title
     = Title of the section
     """
 
     parser = runner(source, environment)
 
     compare_nodes(parser.nodes, [])
+
+    assert parser.arguments_buffer.arguments is None
+    assert parser.label_buffer.labels == {}
+    assert parser.control_buffer.control is None

@@ -10,17 +10,17 @@ class ArgumentsBuffer:
     def __init__(self):
         # This is where the buffer keeps the
         # stored arguments.
-        self._arguments: Arguments | None = None
+        self.arguments: Arguments | None = None
 
     def push(self, arguments: Arguments):
         # Store the given arguements.
-        self._arguments = arguments
+        self.arguments = arguments
 
     def pop(self) -> Arguments | None:
         # Retrieve the stored arguments
         # and reset the internal slot.
-        arguments = self._arguments
-        self._arguments = None
+        arguments = self.arguments
+        self.arguments = None
 
         return arguments
 

@@ -12,9 +12,6 @@ from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.text_buffer import Context
 from mau.token import TokenType
 
-# TODO Currently, headers do not support
-# * labels
-
 
 def header_processor(parser: DocumentParser):
     # Parse a header in the form
@@ -46,14 +43,6 @@ def header_processor(parser: DocumentParser):
 
     # The output of the preprocess parser.
     text_nodes = preprocess_parser.nodes
-
-    # Check the stored control
-    if control := parser.control_buffer.pop():
-        # If control is False, we need to stop
-        # processing here and return without
-        # saving any node.
-        if not control.process(parser.environment):
-            return True
 
     # Get the stored arguments.
     # Headers can receive arguments
@@ -97,6 +86,17 @@ def header_processor(parser: DocumentParser):
         info=info,
         children={"text": text_nodes},
     )
+
+    if label := parser.label_buffer.pop():
+        node.add_children(label, allow_all=True)
+
+    # Check the stored control
+    if control := parser.control_buffer.pop():
+        # If control is False, we need to stop
+        # processing here and return without
+        # saving any node.
+        if not control.process(parser.environment):
+            return True
 
     # If there is an id store the header node
     # to be matched with potential header links.

@@ -11,8 +11,6 @@ from mau.nodes.node import Node, NodeInfo
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
 
-# TODO no support for control.
-
 
 def _process_list_nodes(parser: DocumentParser):
     # This parses all items of a list
@@ -162,6 +160,17 @@ def list_processor(parser: DocumentParser):
         info=NodeInfo(context=context, **arguments.asdict()),
         children={"nodes": nodes},
     )
+
+    if label := parser.label_buffer.pop():
+        node.add_children(label, allow_all=True)
+
+    # Check the stored control
+    if control := parser.control_buffer.pop():
+        # If control is False, we need to stop
+        # processing here and return without
+        # saving any node.
+        if not control.process(parser.environment):
+            return True
 
     parser._save(node)
 

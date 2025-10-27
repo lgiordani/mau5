@@ -63,16 +63,16 @@ class ControlBuffer:
     def __init__(self):
         # This is where the buffer keeps the
         # stored control statement.
-        self._control: Control | None = None
+        self.control: Control | None = None
 
     def push(self, control: Control):
         # Store the given control statement.
-        self._control = control
+        self.control = control
 
     def pop(self):
         # Retrieve the stored control statement
         # and reset the internal slot.
-        control = self._control
-        self._control = None
+        control = self.control
+        self.control = None
 
         return control

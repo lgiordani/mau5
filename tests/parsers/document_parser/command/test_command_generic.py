@@ -7,6 +7,7 @@ from mau.test_helpers import (
     generate_context,
     init_parser_factory,
     parser_runner_factory,
+    compare_nodes,
 )
 
 init_parser = init_parser_factory(DocumentLexer, DocumentParser)
@@ -43,3 +44,22 @@ def test_command_colon_after_command_requires_arguments():
         == "Syntax error. If you use the colon after cmd you need to specify arguments."
     )
     assert exc.value.context == generate_context(1, 0, 1, 5)
+
+
+def test_command_control():
+    source = """
+    :answer:44
+    
+    @if answer==42
+    [arg1, arg2]
+    . Some title
+    ::cmd
+    """
+
+    parser = runner(source)
+
+    compare_nodes(parser.nodes, [])
+
+    assert parser.arguments_buffer.arguments is None
+    assert parser.label_buffer.labels == {}
+    assert parser.control_buffer.control is None
