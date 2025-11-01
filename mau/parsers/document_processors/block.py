@@ -30,9 +30,8 @@ DEFAULT_SECTION_PREFIX = "++ "
 
 class EngineType(Enum):
     DEFAULT = "default"
-    FOOTNOTE = "footnote"
     GROUP = "group"
-    MAU = "mau"
+    ISOLATE = "isolate"
     RAW = "raw"
     SOURCE = "source"
 
@@ -110,7 +109,7 @@ def parse_block_content_sections(content: Token) -> dict[str, Token]:
             # the next batch of normal
             # line tokens can be added to it.
             for section_token in tokens:
-                current_section_name: str = section_token.value.replace(
+                current_section_name = section_token.value.replace(
                     DEFAULT_SECTION_PREFIX, ""
                 )
 
@@ -133,16 +132,17 @@ def parse_block_content_sections(content: Token) -> dict[str, Token]:
 
 def parse_block_content(
     parser: DocumentParser,
-    node: Node[BlockNodeContent],
     content: Token,
     arguments: Arguments,
-    update: bool,
-):
+) -> dict[str, list[Node]]:
+    children: dict[str, list[Node]] = {}
+    raw_sections: dict[str, Token]
+
     # Sections are disabled by default.
     # The option `enable_sections` set to
     # "true" turns them on.
     if arguments.named_args.get("enable_sections", "false") == "true":
-        sections = parse_block_content_sections(content)
+        raw_sections = parse_block_content_sections(content)
     else:
         # If there are no sections, we
         # fake a single section called
@@ -150,7 +150,9 @@ def parse_block_content(
         # results in the standard block
         # setup with children under
         # that kay.
-        sections = {"content": content}
+        raw_sections = {"content": content}
+
+    update = arguments.named_args.get("block::isolate", "false") == "false"
 
     # The parsing environment
     # can be either the one contained
@@ -163,7 +165,7 @@ def parse_block_content(
     # Loop through all sections,
     # parse the content, and add
     # the children to the block node.
-    for name, token in sections.items():
+    for name, token in raw_sections.items():
         content_parser = parser.lex_and_parse(
             token.value,
             environment,
@@ -172,10 +174,7 @@ def parse_block_content(
         )
         content_parser.finalise()
 
-        # Sections names are not conventional,
-        # so we need to allow them when we
-        # add the nodes as children.
-        node.add_children_at_position(name, content_parser.nodes, allow_all=True)
+        children[name] = content_parser.nodes
 
     if update:
         # The footnote mentions and definitions
@@ -188,34 +187,22 @@ def parse_block_content(
         # main document. Import them.
         parser.toc_manager.update(content_parser.toc_manager)
 
+    return children
+
 
 def parse_default_engine(
     parser: DocumentParser,
-    node: Node[BlockNodeContent],
     content: Token,
-    block_context: Context,
     arguments: Arguments,
-):
-    parse_block_content(parser, node, content, arguments, update=True)
-
-
-def parse_mau_engine(
-    parser: DocumentParser,
-    node: Node[BlockNodeContent],
-    content: Token,
-    block_context: Context,
-    arguments: Arguments,
-):
-    parse_block_content(parser, node, content, arguments, update=False)
+) -> dict[str, list[Node]]:
+    return parse_block_content(parser, content, arguments)
 
 
 def parse_raw_engine(
     parser: DocumentParser,
-    node: Node[BlockNodeContent],
     content: Token,
-    block_context: Context,
     arguments: Arguments,
-):
+) -> dict[str, list[Node]]:
     # Engine "raw" doesn't process the content,
     # so we just pass it untouched in the form of
     # a RawNode per line.
@@ -239,73 +226,71 @@ def parse_raw_engine(
             )
         )
 
-    node.children["content"] = raw_content
+    return {"content": raw_content}
 
 
-def parse_footnote_engine(
-    parser: DocumentParser,
-    node: Node[BlockNodeContent],
-    content: Token,
-    block_context: Context,
-    arguments: Arguments,
-):
-    # The current block contains footnote data.
-    # Extract the content and store it in
-    # the footnotes manager.
-    arguments.set_names(["name"])
-    name = arguments.named_args.pop("name")
+# def parse_footnote_engine(
+#     parser: DocumentParser,
+#     node: Node[BlockNodeContent],
+#     content: Token,
+#     block_context: Context,
+#     arguments: Arguments,
+# ):
+#     # The current block contains footnote data.
+#     # Extract the content and store it in
+#     # the footnotes manager.
+#     arguments.set_names(["name"])
+#     name = arguments.named_args.pop("name")
 
-    content_parser = parser.lex_and_parse(
-        content.value,
-        parser.environment,
-        *content.context.start_position,
-        content.context.source,
-    )
+#     content_parser = parser.lex_and_parse(
+#         content.value,
+#         parser.environment,
+#         *content.context.start_position,
+#         content.context.source,
+#     )
 
-    footnote_node = Node(
-        content=FootnotesItemNodeContent(name),
-        info=NodeInfo(context=block_context),
-        children={"content": content_parser.nodes},
-    )
+#     footnote_node = Node(
+#         content=FootnotesItemNodeContent(name),
+#         info=NodeInfo(context=block_context),
+#         children={"content": content_parser.nodes},
+#     )
 
-    parser.footnotes_manager.add_data(footnote_node)
+#     parser.footnotes_manager.add_data(footnote_node)
 
 
-def parse_group_engine(
-    parser: DocumentParser,
-    node: Node[BlockNodeContent],
-    content: Token,
-    block_context: Context,
-    arguments: Arguments,
-):
-    arguments.set_names(["group", "position"])
+# def parse_group_engine(
+#     parser: DocumentParser,
+#     node: Node[BlockNodeContent],
+#     content: Token,
+#     block_context: Context,
+#     arguments: Arguments,
+# ):
+#     arguments.set_names(["group", "position"])
 
-    group_name = arguments.named_args.pop("group")
-    position = arguments.named_args.pop("position")
+#     group_name = arguments.named_args.pop("group")
+#     position = arguments.named_args.pop("position")
 
-    content_parser = parser.lex_and_parse(
-        content.value,
-        parser.environment,
-        *content.context.start_position,
-        content.context.source,
-    )
+#     content_parser = parser.lex_and_parse(
+#         content.value,
+#         parser.environment,
+#         *content.context.start_position,
+#         content.context.source,
+#     )
 
-    node = Node(
-        content=BlockNodeContent(engine="group"),
-        info=NodeInfo(context=block_context),
-        children={"content": content_parser.nodes},
-    )
+#     node = Node(
+#         content=BlockNodeContent(engine="group"),
+#         info=NodeInfo(context=block_context),
+#         children={"content": content_parser.nodes},
+#     )
 
-    parser.block_group_manager.add_block(group_name, position, node)
+#     parser.block_group_manager.add_block(group_name, position, node)
 
 
 def parse_source_engine(
     parser: DocumentParser,
-    node: Node[BlockNodeContent],
     content: Token,
-    block_context: Context,
     arguments: Arguments,
-):
+) -> dict[str, list[Node]]:
     # Parse a source block in the form
     #
     # [engine=source]
@@ -424,13 +409,15 @@ def parse_source_engine(
             highlight_style=highlight_style,
         )
 
-    node.children["content"] = [
-        Node(
-            content=SourceNodeContent(language),
-            children={"code": code},
-            info=NodeInfo(context=content.context),
-        )
-    ]
+    return {
+        "content": [
+            Node(
+                content=SourceNodeContent(language),
+                children={"code": code},
+                info=NodeInfo(context=content.context),
+            )
+        ]
+    }
 
 
 def create_source_line(
@@ -479,14 +466,6 @@ def block_processor(parser: DocumentParser):
     # Get the closing delimiter.
     closing_delimiter = parser.tm.get_token(TokenType.BLOCK)
 
-    # Check the stored control
-    if control := parser.control_buffer.pop():
-        # If control is False, we need to stop
-        # processing here and return without
-        # saving any node.
-        if not control.process(parser.environment):
-            return True
-
     # Find the final context.
     context = Context.merge_contexts(
         opening_delimiter.context, closing_delimiter.context
@@ -528,38 +507,90 @@ def block_processor(parser: DocumentParser):
     if not content:
         node.info = NodeInfo(context=context, **arguments.asdict())
 
+        # Check the stored control
+        if control := parser.control_buffer.pop():
+            # If control is False, we need to stop
+            # processing here and return without
+            # saving any node.
+            if not control.process(parser.environment):
+                return True
+
         parser._save(node)
 
         return True
 
+    save_node: bool = True
+
+    children: dict[str, list[Node]]
+
     match engine:
-        case EngineType.DEFAULT:
-            parse_default_engine(parser, node, content, context, arguments)
-            node.info = NodeInfo(context=context, **arguments.asdict())
-            parser._save(node)
-        case EngineType.FOOTNOTE:
-            parse_footnote_engine(parser, node, content, context, arguments)
-            node.info = NodeInfo(context=context, **arguments.asdict())
-        case EngineType.GROUP:
-            parse_group_engine(parser, node, content, context, arguments)
-            node.info = NodeInfo(context=context, **arguments.asdict())
-        case EngineType.MAU:
-            parse_mau_engine(parser, node, content, context, arguments)
-            node.info = NodeInfo(context=context, **arguments.asdict())
-            parser._save(node)
-        case EngineType.RAW:
-            parse_raw_engine(parser, node, content, context, arguments)
-            node.info = NodeInfo(context=context, **arguments.asdict())
-            parser._save(node)
-        case EngineType.SOURCE:
-            parse_source_engine(parser, node, content, context, arguments)
-            node.info = NodeInfo(context=context, **arguments.asdict())
-            parser._save(node)
+        case EngineType.DEFAULT:  # Real engine: decides how the content is processed
+            children = parse_default_engine(parser, content, arguments)
+
+        # case EngineType.GROUP:  # NOT an engine, just an option.
+        #     parse_group_engine(parser, node, content, context, arguments)
+
+        #     # Blocks that belong to a group are not rendered where they are defined.
+        #     save_node = False
+
+        case EngineType.RAW:  # Real engine: decides how the content is processed
+            children = parse_raw_engine(parser, content, arguments)
+
+        case EngineType.SOURCE:  # Real engine: decides how the content is processed
+            children = parse_source_engine(parser, content, arguments)
+
         # This has been checked before but is required to
         # check the full type value space.
         case _:  # pragma: no cover
             raise MauParserException(
                 f"Engine {engine} is not available", context=context
             )
+
+    footnote_name = arguments.named_args.get("block::footnote")
+
+    if footnote_name:
+        node = Node(
+            content=FootnotesItemNodeContent(footnote_name),
+            info=NodeInfo(context=context, **arguments.asdict()),
+        )
+
+        for name, nodes in children.items():
+            node.add_children_at_position(name, nodes, allow_all=True)
+
+        parser.footnotes_manager.add_data(node)
+
+        return True
+
+    group_name = arguments.named_args.get("block::group")
+    position = arguments.named_args.get("block::position")
+
+    if group_name:
+        node = Node(
+            content=BlockNodeContent(engine="group"),
+            info=NodeInfo(context=context),
+        )
+
+        for name, nodes in children.items():
+            node.add_children_at_position(name, nodes, allow_all=True)
+
+        parser.block_group_manager.add_block(group_name, position, node)
+
+        return True
+
+    for name, nodes in children.items():
+        node.add_children_at_position(name, nodes, allow_all=True)
+
+    node.info = NodeInfo(context=context, **arguments.asdict())
+
+    # Check the stored control
+    if control := parser.control_buffer.pop():
+        # If control is False, we need to stop
+        # processing here and return without
+        # saving any node.
+        if not control.process(parser.environment):
+            return True
+
+    if save_node:
+        parser._save(node)
 
     return True

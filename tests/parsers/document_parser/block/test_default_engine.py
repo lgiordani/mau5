@@ -44,7 +44,7 @@ def test_default_engine_adds_footnotes_to_global_toc():
     ----
     Some text with a [footnote](note).
 
-    [note, engine=footnote]
+    [block::footnote=note]
     ####
     Some text.
     ####

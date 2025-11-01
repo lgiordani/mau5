@@ -8,6 +8,8 @@ from mau import Mau, __version__, load_environment_files, load_environment_varia
 from mau.environment.environment import Environment
 from mau.formatter.raw_formatter import RawFormatter
 from mau.formatter.rich_formatter import RichFormatter
+from mau.parsers.base_parser import MauParserException
+from mau.lexers.base_lexer import MauLexerException
 
 default_formatter = RichFormatter.type
 available_formatters = {
@@ -102,6 +104,13 @@ def parse_args():
     )
 
     parser.add_argument(
+        "--parser-only",
+        dest="parser_only",
+        help="stop after parsing",
+        action="store_true",
+    )
+
+    parser.add_argument(
         "--version", action="version", version=f"Mau version {__version__}"
     )
 
@@ -156,10 +165,35 @@ def main():
     # Run the lexer on the input data.
     logger.info("* Lexing %s", args.input_file)
 
-    # Run the lexer
-    lexer = mau.run_lexer()
+    # Run the lexer.
+    try:
+        tokens = mau.run_lexer()
+    except MauLexerException as exc:
+        formatter.print_lexer_exception(exc)
+        sys.exit(1)
 
-    formatter.print_tokens(lexer.tokens)
+    # The user wants us to run the lexer
+    # only, so we print the resulting tokens
+    # and quit.
+    if args.lexer_only:
+        # Print the tokens collected by the lexer.
+        formatter.print_tokens(tokens)
+        sys.exit(0)
+
+    # Run the parser.
+    try:
+        nodes = mau.run_parser()
+    except MauParserException as exc:
+        formatter.print_parser_exception(exc)
+        sys.exit(1)
+
+    # The user wants us to run the parser
+    # only, so we print the resulting nodes
+    # and quit.
+    if args.parser_only:
+        # Print the nodes collected by the parser.
+        formatter.print_nodes(nodes)
+        sys.exit(0)
 
 
 if __name__ == "__main__":

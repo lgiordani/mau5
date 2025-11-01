@@ -82,7 +82,8 @@ class BaseParser:
                 and next_token.context == self.last_processed_token.context
             ):
                 raise MauParserException(
-                    "Loop detected, cannot parse token"
+                    f"Loop detected, cannot parse token {next_token}",
+                    next_token.context,
                 )  # pragma: no cover
             else:
                 self.last_processed_token = next_token

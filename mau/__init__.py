@@ -7,7 +7,10 @@ __version__ = metadata.version("mau")
 
 from mau.environment.environment import Environment
 from mau.lexers.base_lexer import BaseLexer
+from mau.token import Token
+from mau.nodes.node import Node
 from mau.lexers.document_lexer import DocumentLexer
+from mau.parsers.document_parser import DocumentParser
 from mau.text_buffer import TextBuffer
 
 BASE_NAMESPACE = "mau"
@@ -16,6 +19,10 @@ DEFAULT_ENVIRONMENT_FILES_NAMESPACE = "envfiles"
 DEFAULT_ENVIRONMENT_VARIABLES_NAMESPACE = "envvars"
 
 # TODO Add help to each node and use it in exceptions
+
+
+# class RuntimeError(ValueError):
+#     """Used to signal an error at runtime"""
 
 
 class ConfigurationError(ValueError):
@@ -117,12 +124,30 @@ class Mau:  # pragma: no cover
         self.text_buffer = TextBuffer(text, source_filename=input_file_name)
 
         # This will contain all the variables declared
-        # in the text and in the configuration
+        # in the text and in the configuration.
         self.environment = environment or Environment()
 
-    def run_lexer(self) -> BaseLexer:
+        # This will contain the lexer tokens.
+        self.tokens: list[Token] = []
+
+        # This will contain the parser nodes.
+        self.nodes: list[Node] = []
+
+    def run_lexer(self) -> list[Token]:
         lexer = DocumentLexer(self.text_buffer, self.environment)
 
         lexer.process()
 
-        return lexer
+        self.tokens = lexer.tokens
+
+        return self.tokens
+
+    def run_parser(self) -> list[Node]:
+        parser = DocumentParser(self.tokens, self.environment)
+
+        parser.parse()
+        parser.finalise()
+
+        self.nodes = parser.nodes
+
+        return self.nodes

@@ -1,0 +1,523 @@
+// Mau Parser test.
+
+////
+This is a test file to check the end-to-end behaviour of the parser.
+It also serves as a showcase of the main Mau features.
+
+This is a multiline comment. When processed, it doesn't generate any nodes.
+////
+
+// Variables can be declared with `:NAME:VALUE`.
+// Variable names can contain letters, numbers,
+// and the symbols `_+-`, but cannot start with
+// a number.
+// The value is always interpreted as a string,
+// even if it's made of digits.
+:var:42
+:var_1:42
+
+// Variables can be printed using curly braces.
+Value of `var`: {var}
+
+// Variable names can contain dots. Internally,
+// this creates a namespace.
+:namespace.var:42
+
+Value of `namespace.var`: {namespace.var}
+
+// Variables with a name that starts with `+` are
+// given the value `true`.  If the name starts
+// with `-` the value is `false`.
+// Those values are not booleans but strings.
+:+var:
+:-var:
+
+// If specified, the value of boolean variables
+// is ignored.
+// The following variable has value `true`.
+:+var:42
+
+// Keep in mind that the "boolean" values
+// are pure strings. There is no difference
+// between the next two lines.
+:+somevar:
+:somevar:true
+
+
+
+//- VARIABLES -------------------------------------
+
+// Paragraphs are blocks of text on a single line.
+Standard text on a single line.
+
+// Multiple adjacent lines are collapsed into a
+// single paragraph.
+This is still
+a single paragraph.
+
+// Paragraphs can contain 4 different text styles.
+// Surround text with `*`, `_`, `^`, or `~`.
+Text line with styles: *star*, _underscore_, ^caret^, ~tilde~.
+
+// Verbatim text is a special style that escapes Mau syntax.
+Text line with `verbatim` text. `*this is not styled text*`.
+
+// You can escape without giving the text a specific
+// style using `$` and `%`. You can always escape a single
+// special character with a backslash `\`.
+Text line with escapes: verbatim escapes dollar and percent `$%`, dollar escapes percent $%$, and percent escapes dollar %$%.
+
+Text line with escaped Mau syntax: $[not](a macro)$, \`not verbatim\`.
+
+// Text can contain macros. They come in the form
+// [macro_name](macro_arguments).
+// Mau contains the predefined macros `link`, `class`, `header`,
+// `mailto`, `image`, `footnote`, and `@control`.
+A link without text: [link](www.wikipedia.org)
+
+A link with text: [link](www.wikipedia.org, "the free encyclopedia")
+
+Text with classes: [class]("piece of text", class1, class2).
+
+
+
+//- ARGUMENTS -------------------------------------
+
+// You can use square brackets to specify arguments that
+// will be passed to the next element in the document.
+[arg1, arg2]
+
+// Arguments can be unnamed or named.
+// All unnamed arguments must be specified before
+// named arguments.
+[unnamed1, unnamed2, name1=value1, name2=value2]
+
+// Unnamed arguments that start with a `#` are
+// stored as tags.
+[arg1, arg2, #tag1]
+
+// An unnamed argument that start with a `*` is
+// stored as subtype.
+// There can be only one subtype
+[arg1, arg2, *subtype]
+
+// The arguments buffer contains one single slot
+// so defining arguments twice results in the
+// second definition overwriting the first.
+[arg1, arg2]
+[arg3, name1=value1]
+
+
+
+//- LABELS ----------------------------------------
+
+// You can store a single line of text as a "label"
+// under a given "role" using the syntax `.ROLE LABEL`
+.details This is a label with role "details"
+
+// The default role is "title", so you can add a title
+// in two different ways.
+. This is a title
+.title This is also a title
+
+// The label buffer contains one single slot
+// per role, so defining two labels with the same
+// role results in the definition overwriting the first.
+.details This is the first label
+.details This overwrites the previous label
+.title This doesn't overwrite any label
+
+This paragraph will receive the labels defined above.
+
+
+
+//- CONTROL ---------------------------------------
+
+// You can conditionally render a structure using
+// the syntax `@ OPERATOR CONDITION`
+:answer:42
+@if answer==42
+This paragraph will be rendered.
+
+// Mau supports the operator `@if` and the comparisons
+// `==` and `!=`.
+:answer:42
+@if answer!=42
+This paragraph will not be rendered.
+
+// Control stops the resource from being rendered,
+// which means that if the resource reads arguments or
+// labels those will disappear and not be attached to
+// the next resource.
+:answer:42
+. Some title
+@if answer!=42
+This paragraph will not be rendered.
+
+This paragraph will not receive the title.
+
+
+
+//- HORIZONTAL RULE -------------------------------
+
+// A horizontal rule can be created with three dashes.
+---
+
+// Horizontal rules support arguments.
+[arg, #tag, *subtype, key=value]
+---
+
+
+
+//- INCLUDE ---------------------------------------
+
+
+// Included content is created with `<< TYPE`
+<< type:someuri
+
+// Included content with inline arguments.
+<< type:someuri, #tag, *subtype, key=value
+
+// Included content with stand-alone arguments.
+[someuri, #tag, *subtype, key=value]
+<< type
+
+// Included content supports labels.
+.somerole Somelabel
+<< type:someuri
+
+// Included content supports control.
+// This will be rendered.
+:var:42
+
+@if var == 42
+<< type:some_uri_shown
+
+// This will NOT be rendered.
+@if var == 43
+<< type:some_uri_not_shown
+
+
+
+//- GENERIC COMMAND -------------------------------
+
+// A command. This command won't generate
+// any nodes and is here for demonstration
+// purposes only.
+// Mau implements the commands: `toc`, `footnotes`
+// and `blockgroup` that will be demonstrated
+// later.
+::command
+
+// A command with inline arguments.
+::command:arg, #tag, *subtype, key=value
+
+// A command with stand-alone arguments.
+[arg, #tag, *subtype, key=value]
+::command
+
+// Labels? Control?
+
+//- LISTS -----------------------------------------
+
+// Unordered lists are created with `*`.
+* Unordered list item 1
+* Unordered list item 2
+
+// Ordered lists are create with `#`.
+# Ordered list item 1
+# Ordered list item 2
+
+// Items can be nested using multiple prefix symbols.
+* Unordered list item 1
+** Unordered list item 1.1
+* Unordered list item 2
+** Unordered list item 2.1
+*** Unordered list item 2.1.1
+
+// Both unordered and ordered lists can be nested.
+# Ordered list item 1
+## Ordered list item 1.1
+# Ordered list item 2
+## Ordered list item 2.1
+### Ordered list item 2.1.1
+
+// Unordered and ordered lists can be mixed.
+# Ordered list item 1
+** Unordered list item 1.1
+** Unordered list item 1.2
+** Unordered list item 1.3
+# Ordered list item 2
+
+// Lists can start with a custom number.
+[start=20]
+# Ordered list item 20
+# Ordered list item 21
+# Ordered list item 22
+
+// Lists can be interrupted and restart with the right number.
+# Ordered list item 1
+# Ordered list item 2
+# Ordered list item 3
+
+Some paragraph that interrupts the list.
+
+[start=auto]
+# Ordered list item 4
+# Ordered list item 5
+# Ordered list item 6
+
+
+
+//- HEADERS ---------------------------------------
+
+// Headers are created with the symbol `=`.
+// The symbol is repeated to increase
+// the level of the header. The higher the
+// level, the more nested the header.
+= Header 1
+== Header 2
+=== Header 3
+==== Header 4
+===== Header 5
+====== Header 6
+
+// Mau is not connected with HTML only,
+// so you can go as deep as you want.
+======== Header 8
+
+// Headers support arguments and labels.
+[arg1, arg2]
+.details Some details
+= Header 1
+
+// Headers support control.
+:var:44
+
+@if var == 42
+[arg1, arg2]
+.details Some details
+= This header won't be rendered
+
+= This header won't receive arguments or labels
+
+// An internal link to a header can
+// be created with the macro `header`.
+
+[external_id=myheader]
+= This header has the name myheader
+
+This paragraph contains a [header](myheader, "Link to the header").
+
+// The command `toc` collects the document headers
+// and creates a node that represents the
+// Table of Contents.
+::toc
+
+
+
+//- BLOCKS ----------------------------------------
+
+// Mau text can be wrapped by a block. The block
+// is surrounded by any four identical characters,
+// with the exception of `////` which denotes
+// a multi-line comment.
+@@@@
+This is a block surrounded by `@@@@`.
+@@@@
+
+####
+This is a block surrounded by `####`.
+####
+
+// Blocks can contain other blocks.
+----
+This is the outer block, level 0.
+
+####
+This is an inner block, level 1.
+
+@@@@
+This is an inner block, level 2.
+@@@@
+####
+----
+
+// Blocks support labels and attributes.
+. Title of the block
+[arg1, arg2]
+----
+This is a block with title and attributes.
+----
+
+// Blocks support control.
+:var:44
+
+@if var == 42
+. Title of the block
+[arg1, arg2]
+----
+This block will not be rendered.
+----
+
+----
+This block will not receive title or arguments.
+----
+
+// Blocks support multiple engines that
+// decide how to treat the content.
+// The available engines are:
+// * `default`
+// * `footnote`
+// * `group`
+// * `isolate`
+// * `raw`
+// * `source`
+
+// The default engine parses Mau syntax inside
+// the block and adds the resulting nodes
+// to the main document.
+----
+= This will become a document header.
+----
+
+// The engine is passed with the argument
+// `engine` and it defaults to `default`.
+[engine=default]
+----
+This block behaves normally.
+----
+
+// The engine `isolate` parses text exactly
+// like the default engine, but all
+// the structures inside it are kept
+// private. Headers and footnotes are not
+// added to the global lists.
+[engine=isolate]
+----
+= This header will not appear in the ToC.
+----
+
+
+
+//- BLOCKS: SECTIONS ------------------------------
+
+// The default engine supports sections that assign
+// different parts of the block content to a different
+// label. Sections must be enabled with
+// `enable_sections=true`. Each section is identified
+// by a line in the form `++ SECTION NAME`.
+// The section name can be made of multiple words.
+[enable_sections=true]
+----
+++ Section 1
+Some text in section 1.
+
+++ Section 2
+Some other text in section 2.
+
+++ Details
+A third section.
+----
+
+// Section names are not processed, so they are
+// case sensitive and spaces are not stripped.
+[enable_sections=true]
+----
+++ Section 1
+Some text in section 1.
+
+++ Section1
+This is a different section.
+
+++ section 1
+Even this is a different section.
+----
+
+// If sections are enabled, the first line
+// of the block content must be a section label.
+// If sections are not enabled, the whole
+// content belongs to a section called `content`
+[enable_sections=false]
+----
+All this belongs
+to the section `content`.
+----
+
+
+
+//- BLOCKS: FOOTNOTES -----------------------------
+
+// Footnotes in Mau are created with a macro
+// inside a paragraph and associated with a
+// block that contains the content of the
+// footnote.
+This paragraph contain a note[footnote](mynote).
+
+[mynote, engine=footnote]
+----
+This is the content of the footnote.
+----
+
+// This command will display footnotes.
+::footnotes
+
+
+
+//- BLOCKS: RAW -----------------------------------
+
+// The `raw` engine preserves the content of
+// the whole block verbatim.
+// This means that raw blocks cannot contain
+// other blocks, as the fences delimiters are
+// not parsed as such.
+// In case the closing delimiter must be added
+// to the block, the first character needs
+// to be escaped.
+[engine=raw]
+----
+= Not a header
+
+// Not a comment and not a command
+::footnotes
+
+####
+Not a block
+####
+\----
+----
+
+
+
+//- BLOCKS: GROUPS --------------------------------
+
+// Sometimes sections are not enough, and
+// you need more space to organise parts of
+// the same output.
+// Multiple blocks can be added to the same
+// group in different positions, and the
+// group can be rendered with a specific
+// command.
+
+[mygroup, position1, engine=group]
+----
+This is a block within in the group `mygroup` at position `position1`.
+----
+
+[mygroup, position2, engine=group]
+----
+This is a block within in the group `mygroup` at position `position2`.
+----
+
+// This renders the group.
+::blockgroup:mygroup
+
+// The above is equivalent to the following
+[enable_sections=true]
+----
+++ position1
+This is a block within in the group `mygroup` at position `position1`.
+
+++ position2
+This is a block within in the group `mygroup` at position `position2`.
+----

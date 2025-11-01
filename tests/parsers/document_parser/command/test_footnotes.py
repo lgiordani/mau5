@@ -28,7 +28,7 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
     source = """
     This contains a footnote[footnote](somename).
 
-    [somename, engine=footnote]
+    [block::footnote=somename]
     ----
     Some text.
     ----
@@ -38,7 +38,10 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
 
     footnote_node = Node(
         content=FootnotesItemNodeContent("somename", "1", "XXYY"),
-        info=NodeInfo(context=generate_context(4, 0, 6, 4)),
+        info=NodeInfo(
+            context=generate_context(4, 0, 6, 4),
+            named_args={"block::footnote": "somename"},
+        ),
         children={
             "content": [
                 Node(
@@ -96,7 +99,7 @@ def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
     source = """
     * This contains a footnote[footnote](somename).
 
-    [somename, engine=footnote]
+    [block::footnote=somename]
     ----
     Some text.
     ----
@@ -106,7 +109,10 @@ def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
 
     footnote_node = Node(
         content=FootnotesItemNodeContent("somename", "1", "XXYY"),
-        info=NodeInfo(context=generate_context(4, 0, 6, 4)),
+        info=NodeInfo(
+            context=generate_context(4, 0, 6, 4),
+            named_args={"block::footnote": "somename"},
+        ),
         children={
             "content": [
                 Node(
@@ -182,7 +188,7 @@ def test_footnotes_command(mock_footnote_unique_id):
     source = """
     This contains a footnote[footnote](somename).
 
-    [somename, engine=footnote]
+    [block::footnote=somename]
     ----
     Some text.
     ----
@@ -194,7 +200,10 @@ def test_footnotes_command(mock_footnote_unique_id):
 
     footnote_node = Node(
         content=FootnotesItemNodeContent("somename", "1", "XXYY"),
-        info=NodeInfo(context=generate_context(4, 0, 6, 4)),
+        info=NodeInfo(
+            context=generate_context(4, 0, 6, 4),
+            named_args={"block::footnote": "somename"},
+        ),
         children={
             "content": [
                 Node(

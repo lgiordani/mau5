@@ -238,7 +238,7 @@ def test_block_uses_control_positive():
     assert parser.control_buffer.pop() is None
 
 
-def test_header_uses_control_negative():
+def test_block_uses_control_negative():
     environment = Environment()
     environment["answer"] = "24"
 
@@ -253,3 +253,23 @@ def test_header_uses_control_negative():
     compare_nodes(parser.nodes, [])
 
     assert parser.control_buffer.pop() is None
+
+
+def test_block_control():
+    source = """
+    :answer:44
+    
+    @if answer==42
+    [arg1, arg2]
+    . Some title
+    ----
+    ----
+    """
+
+    parser = runner(source)
+
+    compare_nodes(parser.nodes, [])
+
+    assert parser.arguments_buffer.arguments is None
+    assert parser.label_buffer.labels == {}
+    assert parser.control_buffer.control is None

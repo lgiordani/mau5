@@ -25,14 +25,6 @@ def paragraph_processor(parser: DocumentParser):
     while parser.tm.peek_token().type == TokenType.TEXT:
         line_tokens.append(parser.tm.get_token(TokenType.TEXT))
 
-    # Check the stored control
-    if control := parser.control_buffer.pop():
-        # If control is False, we need to stop
-        # processing here and return without
-        # saving any node.
-        if not control.process(parser.environment):
-            return True
-
     text_token = Token.from_token_list(line_tokens, join_with=" ")
 
     # Get the stored arguments.
@@ -57,6 +49,14 @@ def paragraph_processor(parser: DocumentParser):
 
     if label := parser.label_buffer.pop():
         node.add_children(label, allow_all=True)
+
+    # Check the stored control
+    if control := parser.control_buffer.pop():
+        # If control is False, we need to stop
+        # processing here and return without
+        # saving any node.
+        if not control.process(parser.environment):
+            return True
 
     parser._save(node)
 

@@ -550,3 +550,22 @@ def test_paragraph_uses_control_negative():
     )
 
     assert parser.control_buffer.pop() is None
+
+
+def test_paragraph_control():
+    source = """
+    :answer:44
+    
+    @if answer==42
+    [arg1, arg2]
+    . Some title
+    This paragraph won't be rendered
+    """
+
+    parser = runner(source)
+
+    compare_nodes(parser.nodes, [])
+
+    assert parser.arguments_buffer.arguments is None
+    assert parser.label_buffer.labels == {}
+    assert parser.control_buffer.control is None

@@ -22,12 +22,12 @@ runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 def test_group_engine():
     source = """
-    [group1, position1, engine=group]
+    [block::group=group1, block::position=position1]
     ----
     Some text 1.
     ----
 
-    [group1, position2, engine=group]
+    [block::group=group1, block::position=position2]
     ----
     Some text 2.
     ----
@@ -93,12 +93,12 @@ def test_group_engine():
 
 def test_group_engine_wrong_group():
     source = """
-    [group1, position1, engine=group]
+    [block::group=group1, block::position=position1]
     ----
     Some text 1.
     ----
 
-    [group1, position2, engine=group]
+    [block::group=group1, block::position=position2]
     ----
     Some text 2.
     ----

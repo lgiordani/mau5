@@ -24,13 +24,13 @@ runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
 @patch("mau.parsers.managers.toc_manager.default_header_internal_id")
-def test_mau_engine_doesnt_add_headers_to_the_global_toc(mock_header_internal_id):
+def test_block_isolation_doesnt_add_headers_to_the_global_toc(mock_header_internal_id):
     mock_header_internal_id.return_value = "XXYY"
 
     source = """
     = Global header
 
-    [engine=mau]
+    [block::isolate=true]
     ----
     = Block header
     ----
@@ -56,10 +56,13 @@ def test_mau_engine_doesnt_add_headers_to_the_global_toc(mock_header_internal_id
             Node(
                 content=BlockNodeContent(
                     classes=[],
-                    engine="mau",
+                    engine="default",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(4, 0, 6, 4)),
+                info=NodeInfo(
+                    context=generate_context(4, 0, 6, 4),
+                    named_args={"block::isolate": "true"},
+                ),
                 children={
                     "content": [
                         Node(
@@ -102,18 +105,18 @@ def test_mau_engine_doesnt_add_headers_to_the_global_toc(mock_header_internal_id
 
 
 @patch("mau.parsers.managers.toc_manager.default_header_internal_id")
-def test_engine_mau_multiple_blocks_are_independent(mock_header_internal_id):
+def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id):
     mock_header_internal_id.return_value = "XXYY"
 
     source = """
     = Global header
 
-    [engine=mau]
+    [block::isolate=true]
     ----
     = Block header 1
     ----
 
-    [engine=mau]
+    [block::isolate=true]
     ----
     = Block header 2
     ----
@@ -139,10 +142,13 @@ def test_engine_mau_multiple_blocks_are_independent(mock_header_internal_id):
             Node(
                 content=BlockNodeContent(
                     classes=[],
-                    engine="mau",
+                    engine="default",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(4, 0, 6, 4)),
+                info=NodeInfo(
+                    context=generate_context(4, 0, 6, 4),
+                    named_args={"block::isolate": "true"},
+                ),
                 children={
                     "content": [
                         Node(
@@ -165,10 +171,13 @@ def test_engine_mau_multiple_blocks_are_independent(mock_header_internal_id):
             Node(
                 content=BlockNodeContent(
                     classes=[],
-                    engine="mau",
+                    engine="default",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(9, 0, 11, 4)),
+                info=NodeInfo(
+                    context=generate_context(9, 0, 11, 4),
+                    named_args={"block::isolate": "true"},
+                ),
                 children={
                     "content": [
                         Node(
@@ -211,13 +220,13 @@ def test_engine_mau_multiple_blocks_are_independent(mock_header_internal_id):
 
 
 @patch("mau.parsers.managers.toc_manager.default_header_internal_id")
-def test_engine_mau_toc(mock_header_internal_id):
+def test_block_isolation_toc(mock_header_internal_id):
     mock_header_internal_id.return_value = "XXYY"
 
     source = """
     = Global header
 
-    [engine=mau]
+    [block::isolate=true]
     ----
     = Block header
 
@@ -296,10 +305,13 @@ def test_engine_mau_toc(mock_header_internal_id):
             Node(
                 content=BlockNodeContent(
                     classes=[],
-                    engine="mau",
+                    engine="default",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(4, 0, 8, 4)),
+                info=NodeInfo(
+                    context=generate_context(4, 0, 8, 4),
+                    named_args={"block::isolate": "true"},
+                ),
                 children={
                     "content": [
                         # This is the block header.
@@ -329,11 +341,11 @@ def test_engine_mau_toc(mock_header_internal_id):
     )
 
 
-def test_block_mau_cannot_see_external_variables():
+def test_block_isolation_cannot_see_external_variables():
     source = """
     :answer:42
 
-    [engine=mau]
+    [block::isolate=true]
     ----
     The answer is {answer}.
     ----
@@ -343,9 +355,9 @@ def test_block_mau_cannot_see_external_variables():
         assert runner(source)
 
 
-def test_block_mau_can_see_internal_variables():
+def test_block_isolation_can_see_internal_variables():
     source = """
-    [engine=mau]
+    [block::isolate=true]
     ----
     :answer:42
 
@@ -361,10 +373,13 @@ def test_block_mau_can_see_internal_variables():
             Node(
                 content=BlockNodeContent(
                     classes=[],
-                    engine="mau",
+                    engine="default",
                     preprocessor=None,
                 ),
-                info=NodeInfo(context=generate_context(2, 0, 6, 4)),
+                info=NodeInfo(
+                    context=generate_context(2, 0, 6, 4),
+                    named_args={"block::isolate": "true"},
+                ),
                 children={
                     "content": [
                         Node(
