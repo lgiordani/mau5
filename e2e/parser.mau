@@ -115,6 +115,9 @@ Text with classes: [class]("piece of text", class1, class2).
 // under a given "role" using the syntax `.ROLE LABEL`
 .details This is a label with role "details"
 
+// Labels can contain Mau syntax just like paragraphs.
+.details This is *a label* with _styles_
+
 // The default role is "title", so you can add a title
 // in two different ways.
 . This is a title
@@ -230,7 +233,7 @@ This paragraph will not receive the title.
 [arg, #tag, *subtype, key=value]
 ::command
 
-// Labels? Control?
+// TODO Labels? Control?
 
 //- LISTS -----------------------------------------
 

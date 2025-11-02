@@ -34,8 +34,6 @@ from mau.text_buffer import Context
 from mau.token import Token, TokenType
 from mau.parsers.document_processors.block import block_processor
 
-# Labels should be parsed text, maybe. Now they are pure text nodes.
-
 
 # The DocumentParser is in charge of parsing
 # the whole input, calling other parsers

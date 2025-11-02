@@ -1,5 +1,5 @@
 from mau.lexers.document_lexer import DocumentLexer
-from mau.nodes.inline import TextNodeContent
+from mau.nodes.inline import TextNodeContent, StyleNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -95,5 +95,35 @@ def test_label_multiple():
                 content=TextNodeContent("Some label"),
                 info=NodeInfo(context=generate_context(2, 7, 2, 17)),
             )
+        ],
+    )
+
+
+def test_label_can_contain_mau_syntax():
+    source = """
+    . Some _title_
+    """
+
+    parser = runner(source)
+
+    compare_nodes(
+        parser.label_buffer.pop()["title"],
+        [
+            Node(
+                content=TextNodeContent("Some "),
+                info=NodeInfo(context=generate_context(1, 2, 1, 7)),
+            ),
+            Node(
+                content=StyleNodeContent("underscore"),
+                info=NodeInfo(context=generate_context(1, 7, 1, 14)),
+                children={
+                    "content": [
+                        Node(
+                            content=TextNodeContent("title"),
+                            info=NodeInfo(context=generate_context(1, 8, 1, 13)),
+                        )
+                    ]
+                },
+            ),
         ],
     )
