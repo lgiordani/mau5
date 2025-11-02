@@ -4,7 +4,7 @@ import itertools
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .parser import DocumentParser
+    from mau.parsers.document_parser import DocumentParser
 
 from enum import Enum
 

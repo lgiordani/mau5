@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .parser import DocumentParser
+    from mau.parsers.document_parser import DocumentParser
 
 
 from mau.nodes.node import Node, NodeInfo
