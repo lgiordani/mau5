@@ -30,8 +30,6 @@ DEFAULT_SECTION_PREFIX = "++ "
 
 class EngineType(Enum):
     DEFAULT = "default"
-    GROUP = "group"
-    ISOLATE = "isolate"
     RAW = "raw"
     SOURCE = "source"
 
@@ -152,7 +150,7 @@ def parse_block_content(
         # that kay.
         raw_sections = {"content": content}
 
-    update = arguments.named_args.get("block::isolate", "false") == "false"
+    update = arguments.named_args.get("isolate", "false") == "false"
 
     # The parsing environment
     # can be either the one contained
@@ -176,16 +174,16 @@ def parse_block_content(
 
         children[name] = content_parser.nodes
 
-    if update:
-        # The footnote mentions and definitions
-        # found in this block are part of the
-        # main document. Import them.
-        parser.footnotes_manager.update(content_parser.footnotes_manager)
+        if update:
+            # The footnote mentions and definitions
+            # found in this block are part of the
+            # main document. Import them.
+            parser.footnotes_manager.update(content_parser.footnotes_manager)
 
-        # The internal links and headers
-        # found in this block are part of the
-        # main document. Import them.
-        parser.toc_manager.update(content_parser.toc_manager)
+            # The internal links and headers
+            # found in this block are part of the
+            # main document. Import them.
+            parser.toc_manager.update(content_parser.toc_manager)
 
     return children
 
@@ -227,63 +225,6 @@ def parse_raw_engine(
         )
 
     return {"content": raw_content}
-
-
-# def parse_footnote_engine(
-#     parser: DocumentParser,
-#     node: Node[BlockNodeContent],
-#     content: Token,
-#     block_context: Context,
-#     arguments: Arguments,
-# ):
-#     # The current block contains footnote data.
-#     # Extract the content and store it in
-#     # the footnotes manager.
-#     arguments.set_names(["name"])
-#     name = arguments.named_args.pop("name")
-
-#     content_parser = parser.lex_and_parse(
-#         content.value,
-#         parser.environment,
-#         *content.context.start_position,
-#         content.context.source,
-#     )
-
-#     footnote_node = Node(
-#         content=FootnotesItemNodeContent(name),
-#         info=NodeInfo(context=block_context),
-#         children={"content": content_parser.nodes},
-#     )
-
-#     parser.footnotes_manager.add_data(footnote_node)
-
-
-# def parse_group_engine(
-#     parser: DocumentParser,
-#     node: Node[BlockNodeContent],
-#     content: Token,
-#     block_context: Context,
-#     arguments: Arguments,
-# ):
-#     arguments.set_names(["group", "position"])
-
-#     group_name = arguments.named_args.pop("group")
-#     position = arguments.named_args.pop("position")
-
-#     content_parser = parser.lex_and_parse(
-#         content.value,
-#         parser.environment,
-#         *content.context.start_position,
-#         content.context.source,
-#     )
-
-#     node = Node(
-#         content=BlockNodeContent(engine="group"),
-#         info=NodeInfo(context=block_context),
-#         children={"content": content_parser.nodes},
-#     )
-
-#     parser.block_group_manager.add_block(group_name, position, node)
 
 
 def parse_source_engine(
@@ -527,12 +468,6 @@ def block_processor(parser: DocumentParser):
         case EngineType.DEFAULT:  # Real engine: decides how the content is processed
             children = parse_default_engine(parser, content, arguments)
 
-        # case EngineType.GROUP:  # NOT an engine, just an option.
-        #     parse_group_engine(parser, node, content, context, arguments)
-
-        #     # Blocks that belong to a group are not rendered where they are defined.
-        #     save_node = False
-
         case EngineType.RAW:  # Real engine: decides how the content is processed
             children = parse_raw_engine(parser, content, arguments)
 
@@ -546,7 +481,7 @@ def block_processor(parser: DocumentParser):
                 f"Engine {engine} is not available", context=context
             )
 
-    footnote_name = arguments.named_args.get("block::footnote")
+    footnote_name = arguments.named_args.get("footnote")
 
     if footnote_name:
         node = Node(
@@ -561,12 +496,12 @@ def block_processor(parser: DocumentParser):
 
         return True
 
-    group_name = arguments.named_args.get("block::group")
-    position = arguments.named_args.get("block::position")
+    group_name = arguments.named_args.get("group")
+    position = arguments.named_args.get("position")
 
     if group_name:
         node = Node(
-            content=BlockNodeContent(engine="group"),
+            content=BlockNodeContent(engine=engine.value),
             info=NodeInfo(context=context),
         )
 

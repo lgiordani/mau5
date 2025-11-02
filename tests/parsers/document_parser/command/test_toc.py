@@ -39,7 +39,7 @@ def test_command_toc_empty():
     )
 
 
-def test_command_toc_inline_arguments():
+def test_command_toc_supports_inline_arguments():
     source = """
     ::toc:arg1,#tag1,*subtype1,key1=value1
     """
@@ -67,7 +67,7 @@ def test_command_toc_inline_arguments():
     )
 
 
-def test_command_toc_boxed_arguments():
+def test_command_toc_supports_boxed_arguments():
     source = """
     [arg1, #tag1, *subtype1, key1=value1]
     ::toc
@@ -94,6 +94,55 @@ def test_command_toc_boxed_arguments():
             )
         ],
     )
+
+
+def test_command_toc_supports_labels():
+    source = """
+    . Some label
+    ::toc
+    """
+
+    parser = runner(source)
+
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=TocNodeContent(),
+                info=NodeInfo(context=generate_context(2, 0, 2, 5)),
+                children={
+                    "nested_entries": [],
+                    "plain_entries": [],
+                    "title": [
+                        Node(
+                            content=TextNodeContent("Some label"),
+                            info=NodeInfo(context=generate_context(1, 2, 1, 12)),
+                        )
+                    ],
+                },
+            )
+        ],
+    )
+
+
+def test_command_toc_supports_control():
+    environment = Environment()
+    environment["answer"] = "24"
+
+    source = """
+    @if answer==42
+    [arg1, arg2]
+    . Some title
+    ::toc
+    """
+
+    parser = runner(source, environment)
+
+    compare_nodes(parser.nodes, [])
+
+    assert parser.arguments_buffer.arguments is None
+    assert parser.label_buffer.labels == {}
+    assert parser.control_buffer.control is None
 
 
 def test_command_toc():

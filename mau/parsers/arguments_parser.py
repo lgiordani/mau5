@@ -246,16 +246,23 @@ class ArgumentsParser(BaseParser):
             # Get the only subtype and remove the leading "*"
             self.subtype = subtypes[0]
 
+        # Remove tags and subtype from unnamed arguments.
+        self.unnamed_argument_nodes = [
+            i for i in self.unnamed_argument_nodes if i not in self.tag_nodes + subtypes
+        ]
+
         if self.subtype:
             # Check if the subtype contains
             # additional named_arguments.
             subtype_replacements = self.environment.get(
                 "mau.parser.subtypes", Environment()
             ).asdict()
-            subtype_named_arguments = subtype_replacements.get(
+            subtype_replacement = subtype_replacements.get(
                 self.subtype.content.value,  # type:ignore[attr-defined]
                 {},
             )
+            subtype_args = subtype_replacement.get("args", {})
+            subtype_names = subtype_replacement.get("names", [])
 
             # We need to add those arguments as nodes
             # with the same context as the subtype.
@@ -264,13 +271,13 @@ class ArgumentsParser(BaseParser):
 
             # These are the keys added by the subtype
             # that are not already in the processed arguments.
-            missing_keys = set(subtype_named_arguments.keys()) - set(
+            missing_keys = set(subtype_args.keys()) - set(
                 self.named_argument_nodes.keys()
             )
 
             for key in missing_keys:
                 context = self.subtype.info.context
-                value = subtype_named_arguments[key]
+                value = subtype_args[key]
 
                 self.named_argument_nodes[key] = Node(
                     info=NodeInfo(context=context),
@@ -278,10 +285,7 @@ class ArgumentsParser(BaseParser):
                     parent=self.parent_node,
                 )
 
-        # Remove tags and subtype from unnamed arguments.
-        self.unnamed_argument_nodes = [
-            i for i in self.unnamed_argument_nodes if i not in self.tag_nodes + subtypes
-        ]
+            self.set_names(subtype_names)
 
     def set_names(self, positional_names: list[str]):
         self.unnamed_argument_nodes, self.named_argument_nodes = set_names(

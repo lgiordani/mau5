@@ -82,10 +82,6 @@ def command_processor(parser: DocumentParser):
     if name.value == "toc":
         node: Node[TocNodeContent] = Node(content=TocNodeContent(), info=info)
 
-        parser._save(node)
-
-        parser.toc_manager.add_toc_node(node)
-
         if label := parser.label_buffer.pop():
             node.add_children(label, allow_all=True)
 
@@ -96,16 +92,16 @@ def command_processor(parser: DocumentParser):
             # saving any node.
             if not control.process(parser.environment):
                 return True
+
+        parser._save(node)
+
+        parser.toc_manager.add_toc_node(node)
 
     elif name.value == "footnotes":
         node: Node[FootnotesNodeContent] = Node(
             content=FootnotesNodeContent(), info=info
         )
 
-        parser._save(node)
-
-        parser.footnotes_manager.add_footnotes_node(node)
-
         if label := parser.label_buffer.pop():
             node.add_children(label, allow_all=True)
 
@@ -116,6 +112,10 @@ def command_processor(parser: DocumentParser):
             # saving any node.
             if not control.process(parser.environment):
                 return True
+
+        parser._save(node)
+
+        parser.footnotes_manager.add_footnotes_node(node)
 
     elif name.value == "blockgroup":
         arguments.set_names(["group"])
@@ -123,11 +123,8 @@ def command_processor(parser: DocumentParser):
 
         node = Node(
             content=BlockGroupNodeContent(group_name),
-            info=NodeInfo(context=context),
+            info=info,
         )
-
-        parser.block_group_manager.add_group_node(node)
-        parser._save(node)
 
         if label := parser.label_buffer.pop():
             node.add_children(label, allow_all=True)
@@ -139,6 +136,10 @@ def command_processor(parser: DocumentParser):
             # saving any node.
             if not control.process(parser.environment):
                 return True
+
+        parser._save(node)
+
+        parser.block_group_manager.add_group_node(node)
 
     else:
         parser.label_buffer.pop()

@@ -2,6 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
+from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNodeContent
 from mau.nodes.headers import HeaderNodeContent
@@ -44,7 +45,7 @@ def test_default_engine_adds_footnotes_to_global_toc():
     ----
     Some text with a [footnote](note).
 
-    [block::footnote=note]
+    [footnote=note]
     ####
     Some text.
     ####
@@ -383,3 +384,47 @@ def test_parse_block_sections_keep_empty_lines():
             )
         ],
     )
+
+
+def test_parse_block_headers_in_sections_are_global():
+    environment = Environment()
+    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
+
+    source = """
+    ----
+    ++ Section 1
+    = Header section 1
+
+    ++ Section 2
+    = Header section 2
+    ----
+    """
+
+    parser = runner(source, environment)
+
+    assert parser.toc_manager.headers == [
+        Node(
+            content=HeaderNodeContent(1, "XXXXXY"),
+            info=NodeInfo(context=generate_context(3, 0, 3, 18)),
+            children={
+                "text": [
+                    Node(
+                        content=TextNodeContent("Header section 1"),
+                        info=NodeInfo(context=generate_context(3, 2, 3, 18)),
+                    )
+                ]
+            },
+        ),
+        Node(
+            content=HeaderNodeContent(1, "XXXXXY"),
+            info=NodeInfo(context=generate_context(6, 0, 6, 18)),
+            children={
+                "text": [
+                    Node(
+                        content=TextNodeContent("Header section 2"),
+                        info=NodeInfo(context=generate_context(6, 2, 6, 18)),
+                    )
+                ]
+            },
+        ),
+    ]

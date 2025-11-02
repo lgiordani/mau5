@@ -30,7 +30,7 @@ def test_block_isolation_doesnt_add_headers_to_the_global_toc(mock_header_intern
     source = """
     = Global header
 
-    [block::isolate=true]
+    [isolate=true]
     ----
     = Block header
     ----
@@ -61,7 +61,7 @@ def test_block_isolation_doesnt_add_headers_to_the_global_toc(mock_header_intern
                 ),
                 info=NodeInfo(
                     context=generate_context(4, 0, 6, 4),
-                    named_args={"block::isolate": "true"},
+                    named_args={"isolate": "true"},
                 ),
                 children={
                     "content": [
@@ -111,12 +111,12 @@ def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id
     source = """
     = Global header
 
-    [block::isolate=true]
+    [isolate=true]
     ----
     = Block header 1
     ----
 
-    [block::isolate=true]
+    [isolate=true]
     ----
     = Block header 2
     ----
@@ -147,7 +147,7 @@ def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id
                 ),
                 info=NodeInfo(
                     context=generate_context(4, 0, 6, 4),
-                    named_args={"block::isolate": "true"},
+                    named_args={"isolate": "true"},
                 ),
                 children={
                     "content": [
@@ -176,7 +176,7 @@ def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id
                 ),
                 info=NodeInfo(
                     context=generate_context(9, 0, 11, 4),
-                    named_args={"block::isolate": "true"},
+                    named_args={"isolate": "true"},
                 ),
                 children={
                     "content": [
@@ -226,7 +226,7 @@ def test_block_isolation_toc(mock_header_internal_id):
     source = """
     = Global header
 
-    [block::isolate=true]
+    [isolate=true]
     ----
     = Block header
 
@@ -310,7 +310,7 @@ def test_block_isolation_toc(mock_header_internal_id):
                 ),
                 info=NodeInfo(
                     context=generate_context(4, 0, 8, 4),
-                    named_args={"block::isolate": "true"},
+                    named_args={"isolate": "true"},
                 ),
                 children={
                     "content": [
@@ -345,7 +345,7 @@ def test_block_isolation_cannot_see_external_variables():
     source = """
     :answer:42
 
-    [block::isolate=true]
+    [isolate=true]
     ----
     The answer is {answer}.
     ----
@@ -357,7 +357,7 @@ def test_block_isolation_cannot_see_external_variables():
 
 def test_block_isolation_can_see_internal_variables():
     source = """
-    [block::isolate=true]
+    [isolate=true]
     ----
     :answer:42
 
@@ -378,7 +378,7 @@ def test_block_isolation_can_see_internal_variables():
                 ),
                 info=NodeInfo(
                     context=generate_context(2, 0, 6, 4),
-                    named_args={"block::isolate": "true"},
+                    named_args={"isolate": "true"},
                 ),
                 children={
                     "content": [

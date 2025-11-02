@@ -37,7 +37,7 @@ def test_variable_definition_with_plus_is_true():
     parser = runner(source)
 
     assert parser.nodes == []
-    assert parser.environment.asdict() == {"attr": "true"}
+    assert parser.environment["attr"] == "true"
 
 
 def test_variable_definition_with_minus_is_false():
@@ -48,7 +48,7 @@ def test_variable_definition_with_minus_is_false():
     parser = runner(source)
 
     assert parser.nodes == []
-    assert parser.environment.asdict() == {"attr": "false"}
+    assert parser.environment["attr"] == "false"
 
 
 def test_variable_definition_flag_plus_ignores_value():
@@ -59,7 +59,7 @@ def test_variable_definition_flag_plus_ignores_value():
     parser = runner(source)
 
     assert parser.nodes == []
-    assert parser.environment.asdict() == {"attr": "true"}
+    assert parser.environment["attr"] == "true"
 
 
 def test_variable_definition_flag_minus_ignores_value():
@@ -70,7 +70,7 @@ def test_variable_definition_flag_minus_ignores_value():
     parser = runner(source)
 
     assert parser.nodes == []
-    assert parser.environment.asdict() == {"attr": "false"}
+    assert parser.environment["attr"] == "false"
 
 
 def test_variable_definition_with_value_is_loaded():
@@ -81,7 +81,7 @@ def test_variable_definition_with_value_is_loaded():
     parser = runner(source)
 
     assert parser.nodes == []
-    assert parser.environment.asdict() == {"attr": "42"}
+    assert parser.environment["attr"] == "42"
 
 
 def test_variable_definition_multiple():
@@ -93,7 +93,8 @@ def test_variable_definition_multiple():
     parser = runner(source)
 
     assert parser.nodes == []
-    assert parser.environment.asdict() == {"attr1": "42", "attr2": "43"}
+    assert parser.environment["attr1"] == "42"
+    assert parser.environment["attr2"] == "43"
 
 
 def test_variable_definition_value_can_be_any_text():
@@ -104,9 +105,7 @@ def test_variable_definition_value_can_be_any_text():
     parser = runner(source)
 
     assert parser.nodes == []
-    assert parser.environment.asdict() == {
-        "attr": "[footnote](http://some.domain/path)",
-    }
+    assert parser.environment["attr"] == "[footnote](http://some.domain/path)"
 
 
 def test_variable_definition_with_namespace():
@@ -117,7 +116,7 @@ def test_variable_definition_with_namespace():
     parser = runner(source)
 
     assert parser.nodes == []
-    assert parser.environment.asdict() == {"meta": {"attr": "42"}}
+    assert parser.environment.get("meta").asdict() == {"attr": "42"}
 
 
 def test_variable_definition_with_multiple_dots():
@@ -128,4 +127,4 @@ def test_variable_definition_with_multiple_dots():
     parser = runner(source)
 
     assert parser.nodes == []
-    assert parser.environment.asdict() == {"meta": {"category": {"attr": "42"}}}
+    assert parser.environment.get("meta").asdict() == {"category": {"attr": "42"}}

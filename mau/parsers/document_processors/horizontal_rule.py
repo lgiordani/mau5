@@ -25,11 +25,23 @@ def horizontal_rule_processor(parser: DocumentParser):
     # Build the node info.
     info = NodeInfo(context=rule.context, **arguments.asdict())
 
-    parser._save(
-        Node(
-            content=HorizontalRuleNodeContent(),
-            info=info,
-        )
+    # Create the node.
+    node = Node(
+        content=HorizontalRuleNodeContent(),
+        info=info,
     )
+
+    if label := parser.label_buffer.pop():
+        node.add_children(label, allow_all=True)
+
+    # Check the stored control
+    if control := parser.control_buffer.pop():
+        # If control is False, we need to stop
+        # processing here and return without
+        # saving any node.
+        if not control.process(parser.environment):
+            return True
+
+    parser._save(node)
 
     return True

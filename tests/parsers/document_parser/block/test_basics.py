@@ -215,6 +215,54 @@ def test_block_uses_control_positive():
     source = """
     @if answer==42
     ----
+    Some text.
+    ----
+    """
+
+    parser = runner(source, environment)
+
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=BlockNodeContent(
+                    classes=[],
+                    engine=EngineType.DEFAULT.value,
+                    preprocessor=None,
+                ),
+                info=NodeInfo(context=generate_context(2, 0, 4, 4)),
+                children={
+                    "content": [
+                        Node(
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent("Some text."),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 10)
+                                        ),
+                                    ),
+                                ]
+                            },
+                            content=ParagraphNodeContent(),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+                        ),
+                    ]
+                },
+            )
+        ],
+    )
+
+    assert parser.control_buffer.pop() is None
+
+
+def test_block_uses_control_positive_when_block_is_empty():
+    environment = Environment()
+    environment["answer"] = "42"
+
+    source = """
+    @if answer==42
+    ----
     ----
     """
 
@@ -245,6 +293,24 @@ def test_block_uses_control_negative():
     source = """
     @if answer==42
     ----
+    This is a block
+    ----
+    """
+
+    parser = runner(source, environment)
+
+    compare_nodes(parser.nodes, [])
+
+    assert parser.control_buffer.pop() is None
+
+
+def test_block_uses_control_negative_when_block_is_empty():
+    environment = Environment()
+    environment["answer"] = "24"
+
+    source = """
+    @if answer==42
+    ----
     ----
     """
 
@@ -263,6 +329,7 @@ def test_block_control():
     [arg1, arg2]
     . Some title
     ----
+    This is a block
     ----
     """
 

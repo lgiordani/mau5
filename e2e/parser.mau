@@ -167,6 +167,20 @@ This paragraph will not receive the title.
 [arg, #tag, *subtype, key=value]
 ---
 
+// Horizontal rules support labels.
+. A title for the rule
+---
+
+// Horizontal rules support control.
+// This will be rendered.
+:var:42
+
+@if var == 42
+---
+
+// This will NOT be rendered.
+@if var == 43
+---
 
 
 //- INCLUDE ---------------------------------------
@@ -368,9 +382,6 @@ This block will not receive title or arguments.
 // decide how to treat the content.
 // The available engines are:
 // * `default`
-// * `footnote`
-// * `group`
-// * `isolate`
 // * `raw`
 // * `source`
 
@@ -388,12 +399,13 @@ This block will not receive title or arguments.
 This block behaves normally.
 ----
 
-// The engine `isolate` parses text exactly
-// like the default engine, but all
-// the structures inside it are kept
-// private. Headers and footnotes are not
+// The behaviour can be changed passing
+// the argument `isolate=true`.
+// That makes the block keep all
+// the structures inside it private.
+// Headers and footnotes are not
 // added to the global lists.
-[engine=isolate]
+[isolate=true]
 ----
 = This header will not appear in the ToC.
 ----
@@ -402,7 +414,7 @@ This block behaves normally.
 
 //- BLOCKS: SECTIONS ------------------------------
 
-// The default engine supports sections that assign
+// The engine `default` supports sections that assign
 // different parts of the block content to a different
 // label. Sections must be enabled with
 // `enable_sections=true`. Each section is identified
@@ -444,29 +456,23 @@ All this belongs
 to the section `content`.
 ----
 
-
-
-//- BLOCKS: FOOTNOTES -----------------------------
-
-// Footnotes in Mau are created with a macro
-// inside a paragraph and associated with a
-// block that contains the content of the
-// footnote.
-This paragraph contain a note[footnote](mynote).
-
-[mynote, engine=footnote]
+// Sections are just a way to separate the
+// content of blocks. Each section can
+// contain Mau syntax.
+[enable_sections=true]
 ----
-This is the content of the footnote.
-----
+++ Section 1
+== Header section 1
 
-// This command will display footnotes.
-::footnotes
+++ Section 2
+== Header section 2
+----
 
 
 
 //- BLOCKS: RAW -----------------------------------
 
-// The `raw` engine preserves the content of
+// The engine `raw` preserves the content of
 // the whole block verbatim.
 // This means that raw blocks cannot contain
 // other blocks, as the fences delimiters are
@@ -489,6 +495,96 @@ Not a block
 
 
 
+//- BLOCKS: SOURCE --------------------------------
+
+// The engine `source` is used to highlight
+// source code. The language can be specified with
+// `language`.
+[engine=source, language=python]
+----
+def sum(a, b):
+    return a + b
+----
+
+// Just like the engine `raw`, the content
+// is automatically escaped but for the closing
+// delimiter of the block.
+[engine=source, language=text]
+----
+####
+These is NOT a block within the block.
+####
+----
+
+// The engine supports markers. A marker is a
+// label attached to a line that can be rendered
+// separately (e.g. as an actual label at the
+// end of the line).
+// Here, `:1:` attaches the marker `1` to the line.
+[engine=source, language=python]
+----
+def sum(a, b):
+    return a + b:1:
+----
+
+// If the syntax `:marker:` clashes with
+// the programming language you are highlighting,
+// you can use `marker_delimiter` to use a
+// different character than `:`.
+[engine=source, language=python, marker_delimiter="|"]
+----
+def sum(a, b):
+    return a + b|1|
+----
+
+// Highlight styles are markers that start with
+// `@` and that will be attached to the line.
+// They can be used to change the rendering of
+// the specific line, for example setting a
+// specific background colour.
+// Here, `@added` attaches the highlight style
+// `added` to the code line.
+[engine=source, language=python]
+----
+def sum(a, b):
+    return a + b:@added:
+----
+
+// The standard syntax can be long to type, so
+// Mau defines a convenient shortcut
+// with the subtype `*source`.
+[*source, python]
+----
+answer: int = 42
+----
+
+
+////
+//- BLOCKS: FOOTNOTES -----------------------------
+
+// Footnotes in Mau are created with a macro
+// inside a paragraph and associated with a
+// block that contains the content of the
+// footnote.
+This paragraph contain a note[footnote](mynote).
+
+[footnote=mynote]
+----
+This is the content of the footnote.
+----
+
+// This command will display footnotes.
+::footnotes
+
+// The standard syntax can be long to type, so
+// Mau defines a convenient shortcut
+// with the subtype `*footnote`.
+[*footnote, anothernote]
+----
+This is the content of another footnote.
+----
+
+
 //- BLOCKS: GROUPS --------------------------------
 
 // Sometimes sections are not enough, and
@@ -499,12 +595,12 @@ Not a block
 // group can be rendered with a specific
 // command.
 
-[mygroup, position1, engine=group]
+[group=mygroup, position=position1]
 ----
 This is a block within in the group `mygroup` at position `position1`.
 ----
 
-[mygroup, position2, engine=group]
+[group=mygroup, position=position2]
 ----
 This is a block within in the group `mygroup` at position `position2`.
 ----
@@ -521,3 +617,20 @@ This is a block within in the group `mygroup` at position `position1`.
 ++ position2
 This is a block within in the group `mygroup` at position `position2`.
 ----
+
+// The advantage of groups is that you
+// can use several different engines,
+// which you can't do if you use sections.
+[group=mixgroup, position=position1]
+----
+This is a normal block.
+----
+
+[group=mixgroup, position=position2, engine=raw]
+----
+This is a block with raw content.
+----
+
+// This renders the group.
+::blockgroup:mixgroup
+////

@@ -1,5 +1,7 @@
+from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.document import HorizontalRuleNodeContent
+from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -55,3 +57,53 @@ def test_horizontal_rule_with_arguments():
     parser = runner(source)
 
     compare_nodes(parser.nodes, expected_nodes)
+
+
+def test_horizontal_rule_with_labels():
+    source = """
+    .details This is a label
+    ---
+    """
+
+    expected_nodes = [
+        Node(
+            content=HorizontalRuleNodeContent(),
+            info=NodeInfo(
+                context=generate_context(2, 0, 2, 3),
+            ),
+            children={
+                "details": [
+                    Node(
+                        content=TextNodeContent("This is a label"),
+                        info=NodeInfo(
+                            context=generate_context(1, 9, 1, 24),
+                        ),
+                    )
+                ]
+            },
+        )
+    ]
+
+    parser = runner(source)
+
+    compare_nodes(parser.nodes, expected_nodes)
+
+
+def test_horizontal_rule_with_control():
+    environment = Environment()
+    environment["answer"] = "24"
+
+    source = """
+    @if answer==42
+    [arg1, arg2]
+    . Some title
+    ---
+    """
+
+    parser = runner(source, environment)
+
+    compare_nodes(parser.nodes, [])
+
+    assert parser.arguments_buffer.arguments is None
+    assert parser.label_buffer.labels == {}
+    assert parser.control_buffer.control is None

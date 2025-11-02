@@ -34,13 +34,7 @@ from mau.text_buffer import Context
 from mau.token import Token, TokenType
 from mau.parsers.document_processors.block import block_processor
 
-# TODO horizontal rules do not support labels and control
-# TODO why is group an engine? Can't I just add any block to a group?
-#      Can I use source or raw blocks in a group?
-#      Same question for the mau group, can't that become an option?
-#      I think I need to parse named arguments like `block::group`
-#      or `block::isolate`. Engine is basically that
-#      but I cannot specify multiple engines.
+# Labels should be parsed text, maybe. Now they are pure text nodes.
 
 
 # The DocumentParser is in charge of parsing
@@ -56,7 +50,30 @@ class DocumentParser(BaseParser):
         environment: Environment | None = None,
         parent_node=None,
     ):
-        super().__init__(tokens, environment, parent_node)
+        # Define the default block aliases.
+        base_environment = Environment.from_dict(
+            {
+                "footnote": {
+                    "args": {},
+                    "names": ["footnote"],
+                },
+                "source": {
+                    "args": {"engine": "source"},
+                    "names": ["language"],
+                },
+            },
+            "mau.parser.subtypes",
+        )
+
+        # Update the base environment with the
+        # environment passed to the parser.
+        # This way, the base environment doens't
+        # override any parameter otherwise
+        # set outside.
+        if environment:
+            base_environment.update(environment.asdict())
+
+        super().__init__(tokens, base_environment, parent_node)
 
         # This is the function used to create internal IDs for headers.
         self.header_internal_id_function = self.environment.get(

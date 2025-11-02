@@ -1,5 +1,6 @@
 import pytest
 
+from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNodeContent
 from mau.nodes.command import BlockGroupNodeContent
@@ -22,12 +23,12 @@ runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 def test_group_engine():
     source = """
-    [block::group=group1, block::position=position1]
+    [group=group1, position=position1]
     ----
     Some text 1.
     ----
 
-    [block::group=group1, block::position=position2]
+    [group=group1, position=position2]
     ----
     Some text 2.
     ----
@@ -38,7 +39,7 @@ def test_group_engine():
     parser = runner(source)
 
     block_node1 = Node(
-        content=BlockNodeContent(engine="group"),
+        content=BlockNodeContent(engine="default"),
         info=NodeInfo(context=generate_context(2, 0, 4, 4)),
         children={
             "content": [
@@ -59,7 +60,7 @@ def test_group_engine():
     )
 
     block_node2 = Node(
-        content=BlockNodeContent(engine="group"),
+        content=BlockNodeContent(engine="default"),
         info=NodeInfo(context=generate_context(7, 0, 9, 4)),
         children={
             "content": [
@@ -84,7 +85,9 @@ def test_group_engine():
         [
             Node(
                 content=BlockGroupNodeContent("group1"),
-                info=NodeInfo(context=generate_context(11, 0, 11, 12)),
+                info=NodeInfo(
+                    context=generate_context(11, 0, 11, 12), unnamed_args=["group1"]
+                ),
                 children={"position1": [block_node1], "position2": [block_node2]},
             )
         ],
@@ -93,12 +96,12 @@ def test_group_engine():
 
 def test_group_engine_wrong_group():
     source = """
-    [block::group=group1, block::position=position1]
+    [group=group1, position=position1]
     ----
     Some text 1.
     ----
 
-    [block::group=group1, block::position=position2]
+    [group=group1, position=position2]
     ----
     Some text 2.
     ----
@@ -110,3 +113,192 @@ def test_group_engine_wrong_group():
         runner(source)
 
     assert exc.value.context == generate_context(11, 0, 11, 12)
+
+
+def test_command_toc_supports_inline_arguments():
+    source = """
+    [group=group1, position=position1]
+    ----
+    Some text 1.
+    ----
+
+    ::blockgroup:group1,arg1,#tag1,*subtype1,key1=value1
+    """
+
+    parser = runner(source)
+
+    block_node1 = Node(
+        content=BlockNodeContent(engine="default"),
+        info=NodeInfo(context=generate_context(2, 0, 4, 4)),
+        children={
+            "content": [
+                Node(
+                    content=ParagraphNodeContent(),
+                    info=NodeInfo(context=generate_context(3, 0, 3, 12)),
+                    children={
+                        "content": [
+                            Node(
+                                content=TextNodeContent("Some text 1."),
+                                info=NodeInfo(context=generate_context(3, 0, 3, 12)),
+                            )
+                        ]
+                    },
+                )
+            ],
+        },
+    )
+
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=BlockGroupNodeContent("group1"),
+                info=NodeInfo(
+                    context=generate_context(6, 0, 6, 12),
+                    unnamed_args=["group1", "arg1"],
+                    named_args={"key1": "value1"},
+                    tags=["tag1"],
+                    subtype="subtype1",
+                ),
+                children={
+                    "position1": [block_node1],
+                },
+            )
+        ],
+    )
+
+
+def test_command_toc_supports_boxed_arguments():
+    source = """
+    [group=group1, position=position1]
+    ----
+    Some text 1.
+    ----
+
+    [group1, arg1, #tag1, *subtype1, key1=value1]
+    ::blockgroup
+    """
+
+    parser = runner(source)
+
+    block_node1 = Node(
+        content=BlockNodeContent(engine="default"),
+        info=NodeInfo(context=generate_context(2, 0, 4, 4)),
+        children={
+            "content": [
+                Node(
+                    content=ParagraphNodeContent(),
+                    info=NodeInfo(context=generate_context(3, 0, 3, 12)),
+                    children={
+                        "content": [
+                            Node(
+                                content=TextNodeContent("Some text 1."),
+                                info=NodeInfo(context=generate_context(3, 0, 3, 12)),
+                            )
+                        ]
+                    },
+                )
+            ],
+        },
+    )
+
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=BlockGroupNodeContent("group1"),
+                info=NodeInfo(
+                    context=generate_context(7, 0, 7, 12),
+                    unnamed_args=["group1", "arg1"],
+                    named_args={"key1": "value1"},
+                    tags=["tag1"],
+                    subtype="subtype1",
+                ),
+                children={
+                    "position1": [block_node1],
+                },
+            )
+        ],
+    )
+
+
+def test_command_toc_supports_labels():
+    source = """
+    [group=group1, position=position1]
+    ----
+    Some text 1.
+    ----
+
+    . Some label
+    ::blockgroup:group1
+    """
+
+    parser = runner(source)
+
+    block_node1 = Node(
+        content=BlockNodeContent(engine="default"),
+        info=NodeInfo(context=generate_context(2, 0, 4, 4)),
+        children={
+            "content": [
+                Node(
+                    content=ParagraphNodeContent(),
+                    info=NodeInfo(context=generate_context(3, 0, 3, 12)),
+                    children={
+                        "content": [
+                            Node(
+                                content=TextNodeContent("Some text 1."),
+                                info=NodeInfo(context=generate_context(3, 0, 3, 12)),
+                            )
+                        ]
+                    },
+                )
+            ],
+        },
+    )
+
+    compare_nodes(
+        parser.nodes,
+        [
+            Node(
+                content=BlockGroupNodeContent("group1"),
+                info=NodeInfo(
+                    context=generate_context(7, 0, 7, 12),
+                    unnamed_args=["group1"],
+                ),
+                children={
+                    "position1": [block_node1],
+                    "title": [
+                        Node(
+                            content=TextNodeContent("Some label"),
+                            info=NodeInfo(context=generate_context(6, 2, 6, 12)),
+                        )
+                    ],
+                },
+            )
+        ],
+    )
+
+
+def test_command_toc_supports_control():
+    environment = Environment()
+    environment["answer"] = "24"
+
+    source = """
+    [group=group1, position=position1]
+    ----
+    Some text 1.
+    ----
+
+    @if answer==42
+    [group1, arg1, arg2]
+    . Some title
+    ::blockgroup
+    """
+
+    parser = runner(source, environment)
+
+    compare_nodes(parser.nodes, [])
+
+    assert parser.arguments_buffer.arguments is None
+    assert parser.label_buffer.labels == {}
+    assert parser.control_buffer.control is None

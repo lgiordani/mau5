@@ -640,7 +640,7 @@ def test_arguments():
 def test_process_arguments_subtype_as_alias():
     environment = Environment()
     environment["mau.parser.subtypes"] = {
-        "subtype1": {"key1": "value1", "key2": "value2"}
+        "subtype1": {"args": {"key1": "value1", "key2": "value2"}, "names": []}
     }
 
     source = "arg1, *subtype1"
@@ -679,7 +679,7 @@ def test_process_arguments_subtype_as_alias():
 def test_process_arguments_subtype_does_not_overwrite_arguments():
     environment = Environment()
     environment["mau.parser.subtypes"] = {
-        "subtype1": {"key1": "value1", "key2": "value2"}
+        "subtype1": {"args": {"key1": "value1", "key2": "value2"}, "names": []}
     }
 
     source = "arg1, *subtype1, key1=originalvalue1"
@@ -705,6 +705,91 @@ def test_process_arguments_subtype_does_not_overwrite_arguments():
     expected_subtype = Node(
         content=ValueNodeContent("subtype1"),
         info=NodeInfo(context=generate_context(0, 6, 0, 15)),
+    )
+
+    parser = runner(source, environment)
+
+    assert parser.unnamed_argument_nodes == expected_unnamed_nodes
+    assert parser.named_argument_nodes == expected_named_nodes
+    assert parser.tag_nodes == []
+    assert parser.subtype == expected_subtype
+
+
+def test_process_arguments_subtype_as_alias_supports_names():
+    environment = Environment()
+    environment["mau.parser.subtypes"] = {
+        "subtype1": {
+            "args": {"key1": "value1", "key2": "value2"},
+            "names": ["somename"],
+        }
+    }
+
+    source = "*subtype1, arg1"
+
+    expected_named_nodes = {
+        "key1": Node(
+            content=ValueNodeContent("value1"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 9)),
+        ),
+        "key2": Node(
+            content=ValueNodeContent("value2"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 9)),
+        ),
+        "somename": Node(
+            content=ValueNodeContent("arg1"),
+            info=NodeInfo(context=generate_context(0, 11, 0, 15)),
+        ),
+    }
+
+    expected_subtype = Node(
+        content=ValueNodeContent("subtype1"),
+        info=NodeInfo(context=generate_context(0, 0, 0, 9)),
+    )
+
+    parser = runner(source, environment)
+
+    assert parser.unnamed_argument_nodes == []
+    assert parser.named_argument_nodes == expected_named_nodes
+    assert parser.tag_nodes == []
+    assert parser.subtype == expected_subtype
+
+
+def test_process_arguments_subtype_as_alias_names_do_not_override():
+    environment = Environment()
+    environment["mau.parser.subtypes"] = {
+        "subtype1": {
+            "args": {"key1": "value1", "key2": "value2"},
+            "names": ["somename"],
+        }
+    }
+
+    source = "*subtype1, arg1, somename=somearg"
+
+    expected_unnamed_nodes = [
+        Node(
+            content=ValueNodeContent("arg1"),
+            info=NodeInfo(context=generate_context(0, 11, 0, 15)),
+        ),
+    ]
+
+    expected_named_nodes = {
+        "key1": Node(
+            content=ValueNodeContent("value1"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 9)),
+        ),
+        "key2": Node(
+            content=ValueNodeContent("value2"),
+            info=NodeInfo(context=generate_context(0, 0, 0, 9)),
+        ),
+        "somename": Node(
+            content=ValueNodeContent("somearg"),
+            info=NodeInfo(context=generate_context(0, 26, 0, 33)),
+        ),
+    }
+
+    expected_subtype = Node(
+        content=ValueNodeContent("subtype1"),
+        info=NodeInfo(context=generate_context(0, 0, 0, 9)),
     )
 
     parser = runner(source, environment)
