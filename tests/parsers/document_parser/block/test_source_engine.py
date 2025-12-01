@@ -3,8 +3,8 @@ from mau.nodes.block import BlockNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.source import (
     SourceLineNodeContent,
-    SourceNodeContent,
     SourceMarkerNodeContext,
+    SourceNodeContent,
 )
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (

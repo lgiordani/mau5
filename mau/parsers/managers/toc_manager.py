@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import hashlib
 
-from mau.nodes.headers import HeaderNodeContent
-from mau.nodes.node import Node
 from mau.nodes.command import (
     TocItemNodeContent,
     TocNodeContent,
 )
+from mau.nodes.headers import HeaderNodeContent
+from mau.nodes.node import Node
 
 
 def default_header_internal_id(

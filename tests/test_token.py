@@ -1,4 +1,4 @@
-from mau.test_helpers import TEST_CONTEXT_SOURCE, generate_context, compare_tokens
+from mau.test_helpers import TEST_CONTEXT_SOURCE, compare_tokens, generate_context
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
 

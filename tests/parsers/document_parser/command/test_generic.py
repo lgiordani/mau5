@@ -4,10 +4,10 @@ from mau.lexers.document_lexer import DocumentLexer
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
+    compare_nodes,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
-    compare_nodes,
 )
 
 init_parser = init_parser_factory(DocumentLexer, DocumentParser)

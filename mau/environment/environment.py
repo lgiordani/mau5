@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .helpers import flatten_nested_dict, nest_flattened_dict
 
 
@@ -18,10 +20,24 @@ class Environment:
     @classmethod
     def from_dict(cls, other: dict, namespace: str | None = None):
         env = cls()
-        env.update(other, namespace)
+        env.dupdate(other, namespace)
         return env
 
-    def update(self, other: dict, namespace: str | None = None):
+    @classmethod
+    def from_environment(cls, other: Environment, namespace: str | None = None):
+        return cls().from_dict(other.asdict(), namespace)
+
+    def update(self, other: Environment, namespace: str | None = None):
+        data = other._variables
+
+        # If there is a namespace store the
+        # new dictionary under it.
+        if namespace:
+            data = {namespace: data}
+
+        self._variables.update(data)
+
+    def dupdate(self, other: dict, namespace: str | None = None):
         # If there is a namespace store the
         # new dictionary under it.
         if namespace:
@@ -29,11 +45,17 @@ class Environment:
 
         self._variables.update(flatten_nested_dict(other))
 
-    def asdict(self):
+    def asdict(self) -> dict[str, str | dict]:
         return nest_flattened_dict(self._variables)
 
+    def asflatdict(self) -> dict[str, str]:
+        return self._variables
+
     def __setitem__(self, key, value):
-        self.update({key: value})
+        # If the value is a dictionary, we need to include
+        # it into the Environment namespace.
+        # This is why we don't update self._variables directly.
+        self.dupdate({key: value})
 
     def __getitem__(self, key):
         return self._variables[key]

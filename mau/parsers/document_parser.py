@@ -13,6 +13,7 @@ from mau.parsers.buffers.arguments_buffer import ArgumentsBuffer
 from mau.parsers.buffers.control_buffer import ControlBuffer
 from mau.parsers.buffers.label_buffer import LabelBuffer
 from mau.parsers.document_processors.arguments import arguments_processor
+from mau.parsers.document_processors.block import block_processor
 from mau.parsers.document_processors.command import command_processor
 from mau.parsers.document_processors.control import control_processor
 from mau.parsers.document_processors.header import header_processor
@@ -32,7 +33,6 @@ from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.parsers.text_parser import TextParser
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
-from mau.parsers.document_processors.block import block_processor
 
 
 # The DocumentParser is in charge of parsing
@@ -69,7 +69,7 @@ class DocumentParser(BaseParser):
         # override any parameter otherwise
         # set outside.
         if environment:
-            base_environment.update(environment.asdict())
+            base_environment.update(environment)
 
         super().__init__(tokens, base_environment, parent_node)
 
@@ -98,7 +98,11 @@ class DocumentParser(BaseParser):
         self.latest_ordered_list_index = 0
 
         # This is the final output of the parser
-        self.output = {}
+        self.output: dict[str, None | Node] = {
+            "document": None,
+            "nested_toc": None,
+            "plain_toc": None,
+        }
 
     def _process_functions(self):
         # All the functions that this parser provides.

@@ -1,5 +1,5 @@
 from mau.lexers.document_lexer import DocumentLexer
-from mau.nodes.inline import TextNodeContent, StyleNodeContent
+from mau.nodes.inline import StyleNodeContent, TextNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (

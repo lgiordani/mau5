@@ -38,3 +38,7 @@ class StyleNodeContent(ValueNodeContent):
 
     type = "style"
     allowed_keys = {"content": "The text nodes contained into this node."}
+
+    @property
+    def custom_attributes(self) -> list[str]:
+        return [self.value]

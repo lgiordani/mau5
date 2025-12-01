@@ -58,13 +58,40 @@ def test_init_with_flat_hierarchical_content():
     assert environment.asdict() == {"var1": {"var3": "value3"}, "var2": "value2"}
 
 
+def test_create_from_other_environment():
+    # Test that an Environment can be
+    # created from another environment.
+
+    environment_src = Environment.from_dict({"var1": "value1"})
+    environment_dst = Environment.from_environment(environment_src)
+
+    assert environment_dst.asdict() == {
+        "var1": "value1",
+    }
+
+
+def test_create_from_other_environment_with_namespace():
+    # Test that an Environment can be
+    # created from another environment
+    # using a namespace.
+
+    environment_src = Environment.from_dict({"var1": "value1"})
+    environment_dst = Environment.from_environment(environment_src, namespace="test")
+
+    assert environment_dst.asdict() == {
+        "test": {
+            "var1": "value1",
+        },
+    }
+
+
 def test_update_with_flat_content():
     # Test that an existing Environment can be
     # updated using a flat dictionary.
 
     environment = Environment.from_dict({"var1": "value1"})
 
-    environment.update({"var2": "value2", "var3": "value3"})
+    environment.dupdate({"var2": "value2", "var3": "value3"})
 
     assert environment.asdict() == {
         "var1": "value1",
@@ -79,7 +106,7 @@ def test_update_with_flat_content_and_namespace():
 
     environment = Environment.from_dict({"var1": "value1"})
 
-    environment.update({"var2": "value2", "var3": "value3"}, namespace="test")
+    environment.dupdate({"var2": "value2", "var3": "value3"}, namespace="test")
 
     assert environment.asdict() == {
         "var1": "value1",
@@ -93,7 +120,7 @@ def test_update_with_nested_content():
 
     environment = Environment.from_dict({"var1": "value1"})
 
-    environment.update({"var2": {"var3": "value3"}})
+    environment.dupdate({"var2": {"var3": "value3"}})
 
     assert environment.asdict() == {"var1": "value1", "var2": {"var3": "value3"}}
 
@@ -104,7 +131,7 @@ def test_update_with_nested_content_and_namespace():
 
     environment = Environment.from_dict({"var1": "value1"})
 
-    environment.update({"var2": {"var3": "value3"}}, namespace="test")
+    environment.dupdate({"var2": {"var3": "value3"}}, namespace="test")
 
     assert environment.asdict() == {
         "var1": "value1",
@@ -118,7 +145,7 @@ def test_update_deep():
 
     environment = Environment.from_dict({"mau": {"visitor": {"class": "someclass"}}})
 
-    environment.update(
+    environment.dupdate(
         {"visitor": {"custom_templates": {"template1": "value1"}}}, "mau"
     )
 

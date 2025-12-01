@@ -5,13 +5,6 @@ class SourceNodeContent(NodeContent):
     """A block of verbatim text or source code.
 
     This node contains verbatim text or source code.
-
-    Arguments:
-        language: the language of the code contained in this block
-        callouts: a list of callout CalloutEntryNode objects
-        code: content of the block
-        title: title of this block
-        kwargs: named arguments
     """
 
     type = "source"
@@ -35,15 +28,7 @@ class SourceNodeContent(NodeContent):
 
 
 class SourceLineNodeContent(NodeContent):
-    """A line of verbatim text or source code.
-
-    This node contains a single line of verbatim text or source code.
-
-    Arguments:
-        value: the verbatim content
-        marker: the marker attached to this line
-        kwargs: named arguments
-    """
+    """A line of verbatim text or source code."""
 
     type = "source-line"
     allowed_keys = {"marker": "The marker attached to this line"}

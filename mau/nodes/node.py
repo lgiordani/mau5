@@ -3,9 +3,12 @@ from __future__ import annotations
 from abc import ABC
 from collections import defaultdict
 from collections.abc import MutableMapping, MutableSequence
-from typing import Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 from mau.text_buffer import Context
+
+if TYPE_CHECKING:
+    from mau.visitors.base_visitor import BaseVisitor
 
 
 class NodeContentError(ValueError):
@@ -61,6 +64,10 @@ class NodeContent(ABC):
     # of the position for self-documentation
     # purposes.
     allowed_keys: dict[str, str] = {}
+
+    @property
+    def custom_attributes(self) -> list[str]:
+        return []
 
     def asdict(self):
         return {"type": self.type}
@@ -150,10 +157,12 @@ class Node(Generic[Content_co]):
 
         return set()
 
-    def asdict(self):
+    def asdict(self, recursive=True):
         children = {}
-        for key, value in self.children.items():
-            children[key] = [i.asdict() for i in value]
+
+        if recursive:
+            for key, value in self.children.items():
+                children[key] = [i.asdict() for i in value]
 
         return {
             # Parent is excluded to avoid
@@ -162,6 +171,34 @@ class Node(Generic[Content_co]):
             "content": self.content.asdict(),
             "info": self.info.asdict(),
         }
+
+    def accept(self, visitor: BaseVisitor, *args, **kwargs) -> dict:
+        # Simple implementation of the visitor pattern.
+        # Here, the node accepts a visitor and
+        # calls one of the visitor's methods according
+        # to the node content type.
+
+        # Some node types contain a dot to allow templates
+        # to be created in a hierarchy of directories
+        # but dots are not allowed in function names
+        method_name = f"_visit_{self.content.type.replace('.', '__')}"
+
+        # Try to call the computed method. If not
+        # available, call a default method.
+        try:
+            method = getattr(visitor, method_name)
+        except AttributeError:
+            method = getattr(visitor, "_visit_default")
+
+        return method(self, *args, **kwargs)
+
+    @property
+    def subtype(self):
+        return self.info.subtype
+
+    @property
+    def tags(self):
+        return self.info.tags
 
     def __eq__(self, other):
         if not isinstance(other, Node):

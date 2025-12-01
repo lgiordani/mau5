@@ -4,12 +4,19 @@ import sys
 
 from rich.traceback import install
 
-from mau import Mau, __version__, load_environment_files, load_environment_variables
+from mau import (
+    Mau,
+    __version__,
+    load_environment_files,
+    load_environment_variables,
+    load_visitors,
+)
 from mau.environment.environment import Environment
 from mau.formatter.raw_formatter import RawFormatter
 from mau.formatter.rich_formatter import RichFormatter
-from mau.parsers.base_parser import MauParserException
 from mau.lexers.base_lexer import MauLexerException
+from mau.parsers.base_parser import MauParserException
+from mau.visitors.base_visitor import MauVisitorException
 
 default_formatter = RichFormatter.type
 available_formatters = {
@@ -19,6 +26,9 @@ available_formatters = {
 install(show_locals=True)
 
 logger = logging.getLogger(__name__)
+
+visitor_classes = load_visitors()
+visitors = {i.format_code: i for i in visitor_classes}
 
 
 def parse_args():
@@ -67,6 +77,15 @@ def parse_args():
         default="envfiles",
         required=False,
         help="Optional namespace for environment files (default: envfiles)",
+    )
+
+    parser.add_argument(
+        "-f",
+        "--format",
+        action="store",
+        required=True,
+        choices=visitors.keys(),
+        help="Output format",
     )
 
     parser.add_argument(
@@ -160,14 +179,17 @@ def main():
     )
 
     # The Mau object configured with what we figured out above.
-    mau = Mau(args.input_file, text)
+    mau = Mau()
+
+    # Initialise the Text Buffer.
+    text_buffer = mau.init_text_buffer(text, args.input_file)
 
     # Run the lexer on the input data.
     logger.info("* Lexing %s", args.input_file)
 
     # Run the lexer.
     try:
-        tokens = mau.run_lexer()
+        lexer = mau.run_lexer(text_buffer)
     except MauLexerException as exc:
         formatter.print_lexer_exception(exc)
         sys.exit(1)
@@ -177,12 +199,12 @@ def main():
     # and quit.
     if args.lexer_only:
         # Print the tokens collected by the lexer.
-        formatter.print_tokens(tokens)
+        formatter.print_tokens(lexer.tokens)
         sys.exit(0)
 
     # Run the parser.
     try:
-        nodes = mau.run_parser()
+        parser = mau.run_parser(lexer.tokens)
     except MauParserException as exc:
         formatter.print_parser_exception(exc)
         sys.exit(1)
@@ -192,8 +214,20 @@ def main():
     # and quit.
     if args.parser_only:
         # Print the nodes collected by the parser.
-        formatter.print_nodes(nodes)
+        formatter.print_nodes(parser.nodes)
         sys.exit(0)
+
+    try:
+        visitor_class = visitors[args.format]
+        visitor = mau.init_visitor(visitor_class)
+
+        if document := parser.output["document"]:
+            rendered = mau.run_visitor(visitor, document)
+
+            print("Rendered")
+            print(rendered)
+    except MauVisitorException as exc:
+        formatter.print_visitor_exception(exc)
 
 
 if __name__ == "__main__":

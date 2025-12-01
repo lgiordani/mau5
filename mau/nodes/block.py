@@ -14,8 +14,7 @@ class BlockNodeContent(NodeContent):
 
     type = "block"
     allowed_keys = {
-        "content": "The text contained in this paragraph.",
-        "title": "The title of the included content.",
+        "content": "The text contained in this block.",
     }
 
     def __init__(

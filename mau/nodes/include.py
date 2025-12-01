@@ -31,7 +31,7 @@ class IncludeNodeContent(NodeContent):
     """
 
     type = "include"
-    allowed_keys = {"title": "The title of the included content."}
+    allowed_keys = {}
     long_help = INCLUDE_HELP
 
     def __init__(
@@ -41,6 +41,10 @@ class IncludeNodeContent(NodeContent):
     ):
         self.content_type = content_type
         self.uris = uris
+
+    @property
+    def custom_attributes(self) -> list[str]:
+        return [self.content_type]
 
     def asdict(self):
         base = super().asdict()
@@ -61,7 +65,7 @@ class IncludeImageNodeContent(NodeContent):
     """
 
     type = "include-image"
-    allowed_keys = {"title": "The title of the included image."}
+    allowed_keys = {}
     long_help = INCLUDE_IMAGE_HELP
 
     def __init__(
@@ -73,6 +77,12 @@ class IncludeImageNodeContent(NodeContent):
         self.uri = uri
         self.alt_text = alt_text
         self.classes = classes or []
+
+    @property
+    def custom_attributes(self) -> list[str]:
+        result = super().custom_attributes
+        result.extend(self.classes)
+        return result
 
     def asdict(self):
         base = super().asdict()

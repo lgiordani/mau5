@@ -1,7 +1,3 @@
-# from typing import Callable
-
-# import logging
-
 from collections.abc import MutableSequence
 
 from mau.environment.environment import Environment
@@ -11,12 +7,6 @@ from mau.text_buffer import Context, TextBuffer
 from mau.token import Token, TokenType
 
 from .managers.tokens_manager import TokensManager
-
-# from mau.errors import MauError, MauErrorException
-# from mau.parsers.arguments import set_names_and_defaults
-# from mau.text_buffer.context import print_context
-
-# logger = logging.getLogger(__name__)
 
 
 class MauParserException(ValueError):

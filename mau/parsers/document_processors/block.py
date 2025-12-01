@@ -8,8 +8,6 @@ if TYPE_CHECKING:
 
 from enum import Enum
 
-from collections import defaultdict
-from mau.parsers.base_parser import BaseParser, MauParserException
 from mau.environment.environment import Environment
 from mau.nodes.block import BlockNodeContent
 from mau.nodes.command import FootnotesItemNodeContent
@@ -17,13 +15,13 @@ from mau.nodes.inline import RawNodeContent
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.source import (
     SourceLineNodeContent,
-    SourceNodeContent,
     SourceMarkerNodeContext,
+    SourceNodeContent,
 )
 from mau.parsers.arguments_parser import Arguments
+from mau.parsers.base_parser import MauParserException
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
-
 
 DEFAULT_SECTION_PREFIX = "++ "
 

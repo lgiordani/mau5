@@ -25,6 +25,7 @@ requires-python = ">=3.10"
 dependencies = [
   "rich",
   "rich-gradient",
+  "jinja2",
 ]
 readme = "README.md"
 

@@ -6,13 +6,13 @@ if TYPE_CHECKING:
     from mau.parsers.document_parser import DocumentParser
 
 
-from mau.nodes.node import Node, NodeInfo
 from mau.nodes.command import (
     COMMAND_HELP,
-    TocNodeContent,
-    FootnotesNodeContent,
     BlockGroupNodeContent,
+    FootnotesNodeContent,
+    TocNodeContent,
 )
+from mau.nodes.node import Node, NodeInfo
 from mau.parsers.arguments_parser import Arguments, ArgumentsParser
 from mau.parsers.base_parser import MauParserException
 from mau.text_buffer import Context

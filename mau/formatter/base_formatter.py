@@ -1,7 +1,7 @@
 from abc import ABC
 
-from mau.token import Token
 from mau.text_buffer import Context, Position
+from mau.token import Token
 
 
 class BaseFormatter(ABC):

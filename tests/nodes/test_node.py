@@ -30,6 +30,8 @@ def test_node():
     assert node.children == {}
 
     assert node.content.asdict() == {"type": "none"}
+    assert node.subtype is None
+    assert node.tags == []
 
     assert node.asdict() == {
         "children": {},
@@ -40,6 +42,33 @@ def test_node():
             "named_args": {},
             "tags": [],
             "subtype": None,
+        },
+    }
+
+
+def test_node_with_info():
+    info = NodeInfo(
+        context=generate_context(0, 0, 0, 0),
+        unnamed_args=["arg1"],
+        named_args={"key1": "value1"},
+        tags=["tag1"],
+        subtype="subtype1",
+    )
+
+    node = Node(content=NodeContent(), info=info)
+
+    assert node.subtype == "subtype1"
+    assert node.tags == ["tag1"]
+
+    assert node.asdict() == {
+        "children": {},
+        "content": {"type": "none"},
+        "info": {
+            "context": generate_context(0, 0, 0, 0),
+            "unnamed_args": ["arg1"],
+            "named_args": {"key1": "value1"},
+            "tags": ["tag1"],
+            "subtype": "subtype1",
         },
     }
 
@@ -57,6 +86,18 @@ def test_node_children():
 
     assert node.asdict() == {
         "children": {"title": [mock_node.asdict()]},
+        "content": {"type": "none"},
+        "info": {
+            "context": Context.empty(),
+            "unnamed_args": [],
+            "named_args": {},
+            "tags": [],
+            "subtype": None,
+        },
+    }
+
+    assert node.asdict(recursive=False) == {
+        "children": {},
         "content": {"type": "none"},
         "info": {
             "context": Context.empty(),
@@ -174,3 +215,49 @@ def test_node_check_children_allow_all():
 
     assert node.check_children() == set()
     assert node.allowed_keys == {"content": "Dynamically added children"}
+
+
+def test_node_accept():
+    mock_visitor = Mock()
+
+    class TestNodeContent(NodeContent):
+        type = "test"
+        allowed_keys = {}
+
+    node = Node(content=TestNodeContent())
+
+    node.accept(mock_visitor)
+
+    mock_visitor._visit_test.assert_called_once()
+
+
+def test_node_accept_node_type_with_dot():
+    mock_visitor = Mock()
+
+    class TestNodeContent(NodeContent):
+        type = "some.test"
+        allowed_keys = {}
+
+    node = Node(content=TestNodeContent())
+
+    node.accept(mock_visitor)
+
+    mock_visitor._visit_some__test.assert_called_once()
+
+
+# TODO how to prepare a mock that
+# raises an AttributeError when a
+# given attribute is read?
+# def test_node_accept_default():
+#     mock_visitor = Mock()
+#     mock_visitor._visit_test
+
+#     class TestNodeContent(NodeContent):
+#         type = "test"
+#         allowed_keys = {}
+
+#     node = Node(content=TestNodeContent())
+
+#     node.accept(mock_visitor)
+
+#     mock_visitor._visit_test.assert_called_once()
