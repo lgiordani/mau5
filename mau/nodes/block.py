@@ -15,6 +15,8 @@ class BlockNodeContent(NodeContent):
     type = "block"
     allowed_keys = {
         "content": "The text contained in this block.",
+        # TODO TODO TOODO
+        # Why didn't this complain when I added the key "sections"?
     }
 
     def __init__(
@@ -34,6 +36,34 @@ class BlockNodeContent(NodeContent):
                 "classes": self.classes,
                 "engine": self.engine,
                 "preprocessor": self.preprocessor,
+            }
+        )
+
+        return base
+
+
+class BlockSectionNodeContent(NodeContent):
+    """A section.
+
+    This node contains a section of a block.
+    """
+
+    type = "block-section"
+    allowed_keys = {
+        "content": "The text contained in this block.",
+    }
+
+    def __init__(
+        self,
+        name,
+    ):
+        self.name = name or []
+
+    def asdict(self):
+        base = super().asdict()
+        base.update(
+            {
+                "name": self.name,
             }
         )
 

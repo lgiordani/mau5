@@ -1,9 +1,9 @@
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
-from mau.nodes.block import BlockNodeContent
+from mau.nodes.block import BlockNodeContent, BlockSectionNodeContent
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.paragraph import ParagraphNodeContent
+from mau.nodes.paragraph import ParagraphNodeContent, ParagraphLineNodeContent
 from mau.parsers.document_parser import DocumentParser
 from mau.parsers.document_processors.block import EngineType
 from mau.test_helpers import (
@@ -62,22 +62,49 @@ def test_block_content():
                 ),
                 info=NodeInfo(context=generate_context(1, 0, 3, 4)),
                 children={
-                    "content": [
+                    "content": [],
+                    "sections": [
                         Node(
-                            content=ParagraphNodeContent(),
+                            content=BlockSectionNodeContent("content"),
                             info=NodeInfo(context=generate_context(2, 0, 2, 20)),
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent("This is a paragraph."),
+                                        content=ParagraphNodeContent(),
                                         info=NodeInfo(
                                             context=generate_context(2, 0, 2, 20)
                                         ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            2, 0, 2, 20
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "This is a paragraph."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        2, 0, 2, 20
+                                                                    )
+                                                                ),
+                                                            )
+                                                        ]
+                                                    },
+                                                )
+                                            ]
+                                        },
                                     )
-                                ]
+                                ],
                             },
                         )
-                    ]
+                    ],
                 },
             )
         ],
@@ -105,22 +132,49 @@ def test_block_content_variables():
                 ),
                 info=NodeInfo(context=generate_context(1, 0, 4, 4)),
                 children={
-                    "content": [
+                    "content": [],
+                    "sections": [
                         Node(
-                            content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(3, 0, 3, 23)),
+                            content=BlockSectionNodeContent("content"),
+                            info=NodeInfo(context=generate_context(2, 0, 3, 23)),
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent("The answer is 42."),
+                                        content=ParagraphNodeContent(),
                                         info=NodeInfo(
-                                            context=generate_context(3, 0, 3, 17)
+                                            context=generate_context(3, 0, 3, 23)
                                         ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            3, 0, 3, 23
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "The answer is 42."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        3, 0, 3, 17
+                                                                    )
+                                                                ),
+                                                            )
+                                                        ]
+                                                    },
+                                                )
+                                            ]
+                                        },
                                     )
                                 ]
                             },
                         )
-                    ]
+                    ],
                 },
             )
         ],
@@ -148,22 +202,49 @@ def test_block_content_external_variables():
                 ),
                 info=NodeInfo(context=generate_context(2, 0, 4, 4)),
                 children={
-                    "content": [
+                    "content": [],
+                    "sections": [
                         Node(
-                            content=ParagraphNodeContent(),
+                            content=BlockSectionNodeContent("content"),
                             info=NodeInfo(context=generate_context(3, 0, 3, 23)),
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent("The answer is 42."),
+                                        content=ParagraphNodeContent(),
                                         info=NodeInfo(
-                                            context=generate_context(3, 0, 3, 17)
+                                            context=generate_context(3, 0, 3, 23)
                                         ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            3, 0, 3, 23
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "The answer is 42."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        3, 0, 3, 17
+                                                                    )
+                                                                ),
+                                                            )
+                                                        ]
+                                                    },
+                                                )
+                                            ]
+                                        },
                                     )
                                 ]
                             },
                         )
-                    ]
+                    ],
                 },
             )
         ],
@@ -191,15 +272,26 @@ def test_block_inside_block():
                 ),
                 info=NodeInfo(context=generate_context(1, 0, 4, 4)),
                 children={
-                    "content": [
+                    "content": [],
+                    "sections": [
                         Node(
-                            content=BlockNodeContent(
-                                classes=[],
-                                engine=EngineType.DEFAULT.value,
-                                preprocessor=None,
-                            ),
+                            content=BlockSectionNodeContent("content"),
                             info=NodeInfo(context=generate_context(2, 0, 3, 4)),
-                            children={"content": []},
+                            children={
+                                "content": [
+                                    Node(
+                                        content=BlockNodeContent(
+                                            classes=[],
+                                            engine=EngineType.DEFAULT.value,
+                                            preprocessor=None,
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 0, 3, 4)
+                                        ),
+                                        children={"content": []},
+                                    )
+                                ],
+                            },
                         )
                     ],
                 },
@@ -232,22 +324,49 @@ def test_block_uses_control_positive():
                 ),
                 info=NodeInfo(context=generate_context(2, 0, 4, 4)),
                 children={
-                    "content": [
+                    "content": [],
+                    "sections": [
                         Node(
+                            content=BlockSectionNodeContent("content"),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 10)),
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent("Some text."),
+                                        content=ParagraphNodeContent(),
                                         info=NodeInfo(
                                             context=generate_context(3, 0, 3, 10)
                                         ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            3, 0, 3, 10
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "Some text."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        3, 0, 3, 10
+                                                                    )
+                                                                ),
+                                                            ),
+                                                        ]
+                                                    },
+                                                )
+                                            ]
+                                        },
                                     ),
                                 ]
                             },
-                            content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(3, 0, 3, 10)),
-                        ),
-                    ]
+                        )
+                    ],
                 },
             )
         ],

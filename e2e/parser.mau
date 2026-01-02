@@ -59,7 +59,6 @@ a single paragraph.
 // Surround text with `*`, `_`, `^`, or `~`.
 Text line with styles: *star*, _underscore_, ^caret^, ~tilde~.
 
-////
 // Verbatim text is a special style that escapes Mau syntax.
 Text line with `verbatim` text. `*this is not styled text*`.
 
@@ -322,7 +321,7 @@ Some paragraph that interrupts the list.
 // An internal link to a header can
 // be created with the macro `header`.
 
-[external_id=myheader]
+[alias=myheader]
 = This header has the name myheader
 
 This paragraph contains a [header](myheader, "Link to the header").
@@ -436,6 +435,7 @@ Some other text in section 2.
 A third section.
 ----
 
+////
 // Section names are not processed, so they are
 // case sensitive and spaces are not stripped.
 [enable_sections=true]

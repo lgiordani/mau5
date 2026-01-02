@@ -3,7 +3,7 @@ from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.inline import StyleNodeContent, TextNodeContent
 from mau.nodes.macros import MacroLinkNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.paragraph import ParagraphNodeContent
+from mau.nodes.paragraph import ParagraphNodeContent, ParagraphLineNodeContent
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     compare_nodes,
@@ -31,30 +31,66 @@ def test_paragraph():
         parser.nodes,
         [
             Node(
-                children={
-                    "content": [
-                        Node(
-                            content=TextNodeContent(
-                                "This is a paragraph. This is part of the same paragraph."
-                            ),
-                            info=NodeInfo(context=generate_context(1, 0, 1, 56)),
-                        )
-                    ]
-                },
                 content=ParagraphNodeContent(),
                 info=NodeInfo(context=generate_context(1, 0, 2, 35)),
-            ),
-            Node(
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("This is another paragraph."),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 20)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent("This is a paragraph."),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 0, 1, 20)
+                                        ),
+                                    ),
+                                ]
+                            },
+                        ),
+                        Node(
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(2, 0, 2, 35)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(
+                                            "This is part of the same paragraph."
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 0, 2, 35)
+                                        ),
+                                    ),
+                                ]
+                            },
+                        ),
+                    ]
+                },
+            ),
+            Node(
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                children={
+                    "content": [
+                        Node(
+                            content=ParagraphLineNodeContent(),
                             info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(
+                                            "This is another paragraph."
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 26)
+                                        ),
+                                    ),
+                                ]
+                            },
                         )
                     ]
                 },
-                content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
             ),
         ],
     )
@@ -77,28 +113,60 @@ def test_paragraph_with_style():
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("This is a "),
-                            info=NodeInfo(context=generate_context(1, 0, 1, 10)),
-                        ),
-                        Node(
-                            content=StyleNodeContent("star"),
-                            info=NodeInfo(context=generate_context(1, 10, 1, 21)),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 22)),
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent("paragraph"),
+                                        content=TextNodeContent("This is a "),
                                         info=NodeInfo(
-                                            context=generate_context(1, 11, 1, 20)
+                                            context=generate_context(1, 0, 1, 10)
                                         ),
-                                    )
+                                    ),
+                                    Node(
+                                        content=StyleNodeContent("star"),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 10, 1, 21)
+                                        ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=TextNodeContent(
+                                                        "paragraph"
+                                                    ),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            1, 11, 1, 20
+                                                        )
+                                                    ),
+                                                )
+                                            ]
+                                        },
+                                    ),
+                                    Node(
+                                        content=TextNodeContent("."),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 21, 1, 22)
+                                        ),
+                                    ),
                                 ]
                             },
                         ),
                         Node(
-                            content=TextNodeContent(
-                                ". This is part of the same paragraph."
-                            ),
-                            info=NodeInfo(context=generate_context(1, 21, 1, 58)),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(2, 0, 2, 35)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(
+                                            "This is part of the same paragraph."
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 0, 2, 35)
+                                        ),
+                                    ),
+                                ]
+                            },
                         ),
                     ]
                 },
@@ -106,16 +174,28 @@ def test_paragraph_with_style():
                 info=NodeInfo(context=generate_context(1, 0, 2, 35)),
             ),
             Node(
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("This is another paragraph."),
+                            content=ParagraphLineNodeContent(),
                             info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(
+                                            "This is another paragraph."
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 26)
+                                        ),
+                                    )
+                                ]
+                            },
                         )
                     ]
                 },
-                content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
             ),
         ],
     )
@@ -135,48 +215,66 @@ def test_paragraph_with_style_on_multiple_lines():
         parser.nodes,
         [
             Node(
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(1, 0, 2, 48)),
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("This is a "),
-                            info=NodeInfo(context=generate_context(1, 0, 1, 10)),
-                        ),
-                        Node(
-                            content=StyleNodeContent("star"),
-                            info=NodeInfo(context=generate_context(1, 10, 1, 32)),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 20)),
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent("paragraph with style"),
+                                        content=TextNodeContent("This is a *paragraph"),
                                         info=NodeInfo(
-                                            context=generate_context(1, 11, 1, 31)
+                                            context=generate_context(1, 0, 1, 20)
                                         ),
-                                    )
+                                    ),
                                 ]
                             },
                         ),
                         Node(
-                            content=TextNodeContent(
-                                ". This is part of the same paragraph."
-                            ),
-                            info=NodeInfo(context=generate_context(1, 32, 1, 69)),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(2, 0, 2, 48)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(
+                                            "with style*. This is part of the same paragraph."
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 0, 2, 48)
+                                        ),
+                                    ),
+                                ]
+                            },
                         ),
                     ]
                 },
-                content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(1, 0, 2, 48)),
             ),
             Node(
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("This is another paragraph."),
+                            content=ParagraphLineNodeContent(),
                             info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(
+                                            "This is another paragraph."
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 26)
+                                        ),
+                                    ),
+                                ]
+                            },
                         )
                     ]
                 },
-                content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
             ),
         ],
     )
@@ -193,30 +291,46 @@ def test_paragraph_starting_with_a_macro():
         parser.nodes,
         [
             Node(
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(1, 0, 1, 49)),
                 children={
                     "content": [
                         Node(
-                            content=MacroLinkNodeContent("http://some.where"),
-                            info=NodeInfo(context=generate_context(1, 0, 1, 30)),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 49)),
                             children={
-                                "text": [
+                                "content": [
                                     Node(
-                                        content=TextNodeContent("This"),
+                                        content=MacroLinkNodeContent(
+                                            "http://some.where"
+                                        ),
                                         info=NodeInfo(
-                                            context=generate_context(1, 25, 1, 29)
+                                            context=generate_context(1, 0, 1, 30)
+                                        ),
+                                        children={
+                                            "text": [
+                                                Node(
+                                                    content=TextNodeContent("This"),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            1, 25, 1, 29
+                                                        )
+                                                    ),
+                                                ),
+                                            ]
+                                        },
+                                    ),
+                                    Node(
+                                        content=TextNodeContent(" is the link I want"),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 30, 1, 49)
                                         ),
                                     ),
                                 ]
                             },
-                        ),
-                        Node(
-                            content=TextNodeContent(" is the link I want"),
-                            info=NodeInfo(context=generate_context(1, 30, 1, 49)),
-                        ),
+                        )
                     ]
                 },
-                content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(1, 0, 1, 49)),
             ),
         ],
     )
@@ -234,14 +348,6 @@ def test_attributes_paragraph():
         parser.nodes,
         [
             Node(
-                children={
-                    "content": [
-                        Node(
-                            content=TextNodeContent("This is text"),
-                            info=NodeInfo(context=generate_context(2, 0, 2, 12)),
-                        ),
-                    ]
-                },
                 content=ParagraphNodeContent(),
                 info=NodeInfo(
                     context=generate_context(2, 0, 2, 12),
@@ -250,6 +356,24 @@ def test_attributes_paragraph():
                     tags=["tag1"],
                     subtype="subtype1",
                 ),
+                children={
+                    "content": [
+                        Node(
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(2, 0, 2, 12)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent("This is text"),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 0, 2, 12)
+                                        ),
+                                    ),
+                                ]
+                            },
+                        )
+                    ]
+                },
             ),
         ],
     )
@@ -270,9 +394,19 @@ def test_paragraph_label():
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("This is text"),
+                            content=ParagraphLineNodeContent(),
                             info=NodeInfo(context=generate_context(2, 0, 2, 12)),
-                        ),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent("This is text"),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 0, 2, 12)
+                                        ),
+                                    ),
+                                ]
+                            },
+                        )
                     ],
                     "title": [
                         Node(
@@ -307,16 +441,28 @@ def test_paragraph_with_variable():
         parser.nodes,
         [
             Node(
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(2, 0, 2, 38)),
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("This is a paragraph with a cat."),
-                            info=NodeInfo(context=generate_context(2, 0, 2, 31)),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(2, 0, 2, 38)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(
+                                            "This is a paragraph with a cat."
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 0, 2, 31)
+                                        ),
+                                    )
+                                ]
+                            },
                         )
                     ]
                 },
-                content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(2, 0, 2, 38)),
             )
         ],
     )
@@ -334,16 +480,28 @@ def test_paragraph_with_namespaced_variable():
         parser.nodes,
         [
             Node(
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(1, 0, 1, 44)),
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("This is a paragraph with a cat."),
-                            info=NodeInfo(context=generate_context(1, 0, 1, 31)),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 44)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(
+                                            "This is a paragraph with a cat."
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 0, 1, 31)
+                                        ),
+                                    )
+                                ]
+                            },
                         )
                     ]
                 },
-                content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(1, 0, 1, 44)),
             )
         ],
     )
@@ -360,16 +518,26 @@ def test_paragraph_with_escaped_mau_syntax():
         parser.nodes,
         [
             Node(
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(1, 0, 1, 11)),
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent(":answer:42"),
+                            content=ParagraphLineNodeContent(),
                             info=NodeInfo(context=generate_context(1, 0, 1, 11)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(":answer:42"),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 0, 1, 11)
+                                        ),
+                                    )
+                                ]
+                            },
                         )
                     ]
                 },
-                content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(1, 0, 1, 11)),
             )
         ],
     )
@@ -387,18 +555,28 @@ def test_paragraph_with_escaped_variable():
         parser.nodes,
         [
             Node(
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(1, 0, 1, 40)),
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent(
-                                "This is a paragraph with a {variable}."
-                            ),
-                            info=NodeInfo(context=generate_context(1, 0, 1, 38)),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 40)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(
+                                            "This is a paragraph with a {variable}."
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 0, 1, 38)
+                                        ),
+                                    )
+                                ]
+                            },
                         )
                     ]
                 },
-                content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(1, 0, 1, 40)),
             )
         ],
     )
@@ -416,30 +594,46 @@ def test_paragraph_with_variable_containing_syntax():
         parser.nodes,
         [
             Node(
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(1, 0, 1, 19)),
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("This is "),
-                            info=NodeInfo(context=generate_context(1, 0, 1, 8)),
-                        ),
-                        Node(
-                            content=StyleNodeContent("star"),
-                            info=NodeInfo(context=generate_context(1, 8, 1, 19)),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 19)),
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent("IMPORTANT"),
+                                        content=TextNodeContent("This is "),
                                         info=NodeInfo(
-                                            context=generate_context(1, 9, 1, 18)
+                                            context=generate_context(1, 0, 1, 8)
                                         ),
+                                    ),
+                                    Node(
+                                        content=StyleNodeContent("star"),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 8, 1, 19)
+                                        ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=TextNodeContent(
+                                                        "IMPORTANT"
+                                                    ),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            1, 9, 1, 18
+                                                        )
+                                                    ),
+                                                ),
+                                            ]
+                                        },
                                     ),
                                 ]
                             },
-                        ),
+                        )
                     ]
                 },
-                content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(1, 0, 1, 19)),
             )
         ],
     )
@@ -459,16 +653,26 @@ def test_paragraph_with_nested_variables():
         parser.nodes,
         [
             Node(
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(4, 0, 4, 10)),
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("The answer is 42"),
-                            info=NodeInfo(context=generate_context(4, 0, 4, 16)),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(4, 0, 4, 10)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent("The answer is 42"),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 16)
+                                        ),
+                                    )
+                                ]
+                            },
                         )
                     ]
                 },
-                content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(4, 0, 4, 10)),
             )
         ],
     )
@@ -490,28 +694,50 @@ def test_paragraph_uses_control_positive():
         parser.nodes,
         [
             Node(
-                children={
-                    "content": [
-                        Node(
-                            content=TextNodeContent("This is a paragraph."),
-                            info=NodeInfo(context=generate_context(2, 0, 2, 20)),
-                        )
-                    ]
-                },
                 content=ParagraphNodeContent(),
                 info=NodeInfo(context=generate_context(2, 0, 2, 20)),
-            ),
-            Node(
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("This is another paragraph."),
-                            info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(2, 0, 2, 20)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent("This is a paragraph."),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 0, 2, 20)
+                                        ),
+                                    )
+                                ]
+                            },
                         )
                     ]
                 },
+            ),
+            Node(
                 content=ParagraphNodeContent(),
                 info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                children={
+                    "content": [
+                        Node(
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(
+                                            "This is another paragraph."
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 26)
+                                        ),
+                                    )
+                                ]
+                            },
+                        )
+                    ]
+                },
             ),
         ],
     )
@@ -535,16 +761,28 @@ def test_paragraph_uses_control_negative():
         parser.nodes,
         [
             Node(
+                content=ParagraphNodeContent(),
+                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("This is another paragraph."),
+                            content=ParagraphLineNodeContent(),
                             info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(
+                                            "This is another paragraph."
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(4, 0, 4, 26)
+                                        ),
+                                    )
+                                ]
+                            },
                         )
                     ]
                 },
-                content=ParagraphNodeContent(),
-                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
             ),
         ],
     )
@@ -555,7 +793,7 @@ def test_paragraph_uses_control_negative():
 def test_paragraph_control():
     source = """
     :answer:44
-    
+
     @if answer==42
     [arg1, arg2]
     . Some title

@@ -2,12 +2,13 @@ from unittest.mock import patch
 
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
+from mau.nodes.block import BlockSectionNodeContent
 from mau.nodes.command import FootnotesItemNodeContent, FootnotesNodeContent
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.lists import ListItemNodeContent, ListNodeContent
 from mau.nodes.macros import MacroFootnoteNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.paragraph import ParagraphNodeContent
+from mau.nodes.paragraph import ParagraphNodeContent, ParagraphLineNodeContent
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     compare_node,
@@ -44,17 +45,42 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
             named_args={"footnote": "somename"},
         ),
         children={
-            "content": [
+            "content": [],
+            "sections": [
                 Node(
-                    content=ParagraphNodeContent(),
+                    content=BlockSectionNodeContent("content"),
                     info=NodeInfo(context=generate_context(5, 0, 5, 10)),
                     children={
                         "content": [
                             Node(
-                                content=TextNodeContent("Some text."),
+                                content=ParagraphNodeContent(),
                                 info=NodeInfo(context=generate_context(5, 0, 5, 10)),
+                                children={
+                                    "content": [
+                                        Node(
+                                            content=ParagraphLineNodeContent(),
+                                            info=NodeInfo(
+                                                context=generate_context(5, 0, 5, 10)
+                                            ),
+                                            children={
+                                                "content": [
+                                                    Node(
+                                                        content=TextNodeContent(
+                                                            "Some text."
+                                                        ),
+                                                        info=NodeInfo(
+                                                            context=generate_context(
+                                                                5, 0, 5, 10
+                                                            )
+                                                        ),
+                                                    )
+                                                ]
+                                            },
+                                        )
+                                    ]
+                                },
                             )
-                        ]
+                        ],
                     },
                 )
             ],
@@ -70,18 +96,36 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("This contains a footnote"),
-                            info=NodeInfo(context=generate_context(1, 0, 1, 24)),
-                        ),
-                        Node(
-                            content=MacroFootnoteNodeContent("somename", "1", "XXYY"),
-                            info=NodeInfo(context=generate_context(1, 24, 1, 44)),
-                            children={"footnote": [footnote_node]},
-                        ),
-                        Node(
-                            content=TextNodeContent("."),
-                            info=NodeInfo(context=generate_context(1, 44, 1, 45)),
-                        ),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 45)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(
+                                            "This contains a footnote"
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 0, 1, 24)
+                                        ),
+                                    ),
+                                    Node(
+                                        content=MacroFootnoteNodeContent(
+                                            "somename", "1", "XXYY"
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 24, 1, 44)
+                                        ),
+                                        children={"footnote": [footnote_node]},
+                                    ),
+                                    Node(
+                                        content=TextNodeContent("."),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 44, 1, 45)
+                                        ),
+                                    ),
+                                ]
+                            },
+                        )
                     ]
                 },
             )
@@ -115,17 +159,42 @@ def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
             named_args={"footnote": "somename"},
         ),
         children={
-            "content": [
+            "content": [],
+            "sections": [
                 Node(
-                    content=ParagraphNodeContent(),
+                    content=BlockSectionNodeContent("content"),
                     info=NodeInfo(context=generate_context(5, 0, 5, 10)),
                     children={
                         "content": [
                             Node(
-                                content=TextNodeContent("Some text."),
+                                content=ParagraphNodeContent(),
                                 info=NodeInfo(context=generate_context(5, 0, 5, 10)),
+                                children={
+                                    "content": [
+                                        Node(
+                                            content=ParagraphLineNodeContent(),
+                                            info=NodeInfo(
+                                                context=generate_context(5, 0, 5, 10)
+                                            ),
+                                            children={
+                                                "content": [
+                                                    Node(
+                                                        content=TextNodeContent(
+                                                            "Some text."
+                                                        ),
+                                                        info=NodeInfo(
+                                                            context=generate_context(
+                                                                5, 0, 5, 10
+                                                            )
+                                                        ),
+                                                    )
+                                                ]
+                                            },
+                                        )
+                                    ]
+                                },
                             )
-                        ]
+                        ],
                     },
                 )
             ],
@@ -206,17 +275,42 @@ def test_command_footnotes(mock_footnote_unique_id):
             named_args={"footnote": "somename"},
         ),
         children={
-            "content": [
+            "content": [],
+            "sections": [
                 Node(
-                    content=ParagraphNodeContent(),
+                    content=BlockSectionNodeContent("content"),
                     info=NodeInfo(context=generate_context(5, 0, 5, 10)),
                     children={
                         "content": [
                             Node(
-                                content=TextNodeContent("Some text."),
+                                content=ParagraphNodeContent(),
                                 info=NodeInfo(context=generate_context(5, 0, 5, 10)),
+                                children={
+                                    "content": [
+                                        Node(
+                                            content=ParagraphLineNodeContent(),
+                                            info=NodeInfo(
+                                                context=generate_context(5, 0, 5, 10)
+                                            ),
+                                            children={
+                                                "content": [
+                                                    Node(
+                                                        content=TextNodeContent(
+                                                            "Some text."
+                                                        ),
+                                                        info=NodeInfo(
+                                                            context=generate_context(
+                                                                5, 0, 5, 10
+                                                            )
+                                                        ),
+                                                    )
+                                                ]
+                                            },
+                                        )
+                                    ]
+                                },
                             )
-                        ]
+                        ],
                     },
                 )
             ],
@@ -232,17 +326,35 @@ def test_command_footnotes(mock_footnote_unique_id):
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("This contains a footnote"),
-                            info=NodeInfo(context=generate_context(1, 0, 1, 24)),
-                        ),
-                        Node(
-                            content=MacroFootnoteNodeContent("somename", "1", "XXYY"),
-                            info=NodeInfo(context=generate_context(1, 24, 1, 44)),
-                            children={"footnote": [footnote_node]},
-                        ),
-                        Node(
-                            content=TextNodeContent("."),
-                            info=NodeInfo(context=generate_context(1, 44, 1, 45)),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 45)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(
+                                            "This contains a footnote"
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 0, 1, 24)
+                                        ),
+                                    ),
+                                    Node(
+                                        content=MacroFootnoteNodeContent(
+                                            "somename", "1", "XXYY"
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 24, 1, 44)
+                                        ),
+                                        children={"footnote": [footnote_node]},
+                                    ),
+                                    Node(
+                                        content=TextNodeContent("."),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 44, 1, 45)
+                                        ),
+                                    ),
+                                ]
+                            },
                         ),
                     ]
                 },
@@ -388,17 +500,42 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
             named_args={"footnote": "somename"},
         ),
         children={
-            "content": [
+            "content": [],
+            "sections": [
                 Node(
-                    content=ParagraphNodeContent(),
+                    content=BlockSectionNodeContent("content"),
                     info=NodeInfo(context=generate_context(5, 0, 5, 10)),
                     children={
                         "content": [
                             Node(
-                                content=TextNodeContent("Some text."),
+                                content=ParagraphNodeContent(),
                                 info=NodeInfo(context=generate_context(5, 0, 5, 10)),
+                                children={
+                                    "content": [
+                                        Node(
+                                            content=ParagraphLineNodeContent(),
+                                            info=NodeInfo(
+                                                context=generate_context(5, 0, 5, 10)
+                                            ),
+                                            children={
+                                                "content": [
+                                                    Node(
+                                                        content=TextNodeContent(
+                                                            "Some text."
+                                                        ),
+                                                        info=NodeInfo(
+                                                            context=generate_context(
+                                                                5, 0, 5, 10
+                                                            )
+                                                        ),
+                                                    )
+                                                ]
+                                            },
+                                        )
+                                    ]
+                                },
                             )
-                        ]
+                        ],
                     },
                 )
             ],
@@ -414,18 +551,36 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
                 children={
                     "content": [
                         Node(
-                            content=TextNodeContent("This contains a footnote"),
-                            info=NodeInfo(context=generate_context(1, 0, 1, 24)),
-                        ),
-                        Node(
-                            content=MacroFootnoteNodeContent("somename", "1", "XXYY"),
-                            info=NodeInfo(context=generate_context(1, 24, 1, 44)),
-                            children={"footnote": [footnote_node]},
-                        ),
-                        Node(
-                            content=TextNodeContent("."),
-                            info=NodeInfo(context=generate_context(1, 44, 1, 45)),
-                        ),
+                            content=ParagraphLineNodeContent(),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 45)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=TextNodeContent(
+                                            "This contains a footnote"
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 0, 1, 24)
+                                        ),
+                                    ),
+                                    Node(
+                                        content=MacroFootnoteNodeContent(
+                                            "somename", "1", "XXYY"
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 24, 1, 44)
+                                        ),
+                                        children={"footnote": [footnote_node]},
+                                    ),
+                                    Node(
+                                        content=TextNodeContent("."),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 44, 1, 45)
+                                        ),
+                                    ),
+                                ]
+                            },
+                        )
                     ]
                 },
             )

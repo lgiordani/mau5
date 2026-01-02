@@ -99,7 +99,7 @@ def test_token_from_empty_list():
 
 def test_token_to_list():
     token = Token(
-        TokenType.TEXT, "This is \na list \nof tokens.", generate_context(0, 0, 0, 25)
+        TokenType.TEXT, "This is \na list \nof tokens.", generate_context(0, 0, 2, 25)
     )
 
     tokens = token.to_token_list()

@@ -91,6 +91,7 @@ class Token:
 
         # Process each line. Keep track of the line
         # number to adjust the context.
+
         for line_number, line_content in enumerate(token_lines):
             # Clone the context of the source token and
             # move it to the beginning of the current line.
@@ -98,6 +99,10 @@ class Token:
 
             # Make sure the size of the token is correct in the context.
             context.end_column = context.start_column + len(line_content)
+
+            # Since we split the text line by line
+            # the context spans a single line.
+            context.end_line = context.start_line
 
             # Create the token for this line and
             # append it to the results list.

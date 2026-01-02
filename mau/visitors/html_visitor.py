@@ -24,11 +24,7 @@ templates = _load_templates_from_path(
     str(files(__package__).joinpath("templates/html")), filter_html
 )
 
-DEFAULT_TEMPLATES = {
-    "macro.html": "",
-    "command.html": "",
-    "include.html": "",
-}
+DEFAULT_TEMPLATES = {"include.html": ""}
 
 
 class HtmlVisitor(JinjaVisitor):

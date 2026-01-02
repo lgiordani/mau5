@@ -20,8 +20,8 @@ class TemplateNotFound(ValueError):
 
 
 class MissingTemplateException(MauVisitorException):
-    def __init__(self, message: str, templates: list[str], node: Node):
-        super().__init__(message, templates=templates, node=node)
+    def __init__(self, message: str, templates: list[str], node: Node, data: dict):
+        super().__init__(message, templates=templates, node=node, data=data)
 
 
 def _create_templates(
@@ -316,7 +316,7 @@ class JinjaVisitor(BaseVisitor):
 
     join_with = {
         "document": "\n",
-        "paragraph": "",
+        "paragraph": " ",
     }
     join_with_default = ""
 
@@ -402,11 +402,6 @@ class JinjaVisitor(BaseVisitor):
         # all children, rendered and joined.
         result = super().visit(node, *args, **kwargs)
 
-        # The key "data" contains the values that we want
-        # to pass to the template. These are used as arguments
-        # when calling the template.
-        data = result["data"]
-
         # Create the template names for the
         # current node.
         templates = _create_templates(
@@ -418,22 +413,23 @@ class JinjaVisitor(BaseVisitor):
             self.template_prefixes,
         )
 
-        print(f"Node {node.asdict()}")
-        print(f"Templates: {templates}")
+        # print(f"#### Node {node.asdict()}")
+        # print(f"#### Result {result}")
+        # print(f"#### Templates: {templates}")
 
         # Scan all potential templates, trying to render
         # the given data with each of them.
         # Stop as soon as we find a working template.
         for template in templates:
             try:
-                print(f"RENDERING {template} WITH {data}")
-                return self._render(template, **data)
+                # print(f"RENDERING {template} WITH {data}")
+                return self._render(template, **result)
             except TemplateNotFound:
                 continue
 
         # No templates were found, stop with an error.
         raise MissingTemplateException(
-            "Cannot find templates for this node", templates, node
+            "Cannot find templates for this node", templates, node, result
         )
 
     def visitlist(self, node, nodes, *args, **kwargs):

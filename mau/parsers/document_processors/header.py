@@ -53,15 +53,9 @@ def header_processor(parser: DocumentParser):
     # in the document. For example, they might be
     # the anchor name in HTML. They are stored
     # in the header itself.
-    # External IDs are set by the user and stored
+    # Aliases are set by the user and stored
     # in the headers manager. They are used to link
-    # the header through the [header](ID) macro.
-    #
-    # We could in theory use just the internal ID,
-    # but since they are created automatically,
-    # it would be difficult for the user to access
-    # them. External IDs must be unique as well,
-    # but they will be probably used less often.
+    # the header through the [header](alias) macro.
 
     # Create the internal ID.
     # This uses the actual text contained in
@@ -69,7 +63,7 @@ def header_processor(parser: DocumentParser):
     internal_id = arguments.named_args.pop("internal_id", None)
 
     # Extract the header id if specified.
-    external_id = arguments.named_args.pop("external_id", None)
+    alias = arguments.named_args.pop("alias", None)
 
     # Find the final context.
     context = Context.merge_contexts(header.context, text_nodes[-1].info.context)
@@ -81,7 +75,7 @@ def header_processor(parser: DocumentParser):
         content=HeaderNodeContent(
             level,
             internal_id=internal_id,
-            external_id=external_id,
+            alias=alias,
         ),
         info=info,
         children={"text": text_nodes},
@@ -100,8 +94,8 @@ def header_processor(parser: DocumentParser):
 
     # If there is an id store the header node
     # to be matched with potential header links.
-    if external_id:
-        parser.header_links_manager.add_header(external_id, node)
+    if alias:
+        parser.header_links_manager.add_header(alias, node)
 
     parser.toc_manager.add_header(node)
 

@@ -5,9 +5,9 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from mau.parsers.document_parser import DocumentParser
 
-
+from mau.text_buffer import Context
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.paragraph import ParagraphNodeContent
+from mau.nodes.paragraph import ParagraphNodeContent, ParagraphLineNodeContent
 from mau.token import Token, TokenType
 
 
@@ -25,7 +25,26 @@ def paragraph_processor(parser: DocumentParser):
     while parser.tm.peek_token().type == TokenType.TEXT:
         line_tokens.append(parser.tm.get_token(TokenType.TEXT))
 
-    text_token = Token.from_token_list(line_tokens, join_with=" ")
+    # Fill a list of line nodes TODO
+    line_nodes: list[Node] = []
+
+    for line_token in line_tokens:
+        # Build the node info.
+        info = NodeInfo(context=line_token.context)
+
+        # Process the text of the paragraph.
+        text_nodes = parser._parse_text(line_token.value, context=line_token.context)
+
+        node = Node(
+            children={
+                "content": text_nodes,
+            },
+            content=ParagraphLineNodeContent(),
+            parent=parser.parent_node,
+            info=info,
+        )
+
+        line_nodes.append(node)
 
     # Get the stored arguments.
     # Paragraphs can receive arguments
@@ -33,14 +52,17 @@ def paragraph_processor(parser: DocumentParser):
     arguments = parser.arguments_buffer.pop_or_default()
 
     # Build the node info.
-    info = NodeInfo(context=text_token.context, **arguments.asdict())
-
-    # Process the text of the paragraph.
-    text_nodes = parser._parse_text(text_token.value, context=text_token.context)
+    info = NodeInfo(
+        context=Context.merge_contexts(
+            line_nodes[0].info.context,
+            line_nodes[-1].info.context,
+        ),
+        **arguments.asdict(),
+    )
 
     node = Node(
         children={
-            "content": text_nodes,
+            "content": line_nodes,
         },
         content=ParagraphNodeContent(),
         parent=parser.parent_node,

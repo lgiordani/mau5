@@ -251,7 +251,7 @@ def test_title_with_space():
     )
 
 
-def test_title_with_role():
+def test_label_with_role():
     lex = runner(".some-role A title")
 
     compare_tokens(

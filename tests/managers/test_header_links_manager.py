@@ -46,6 +46,7 @@ def test_header_links_manager():
     ilm.process()
 
     assert link_node.children["header"] == [header_node]
+    assert link_node.content.target_id == header_node.content.internal_id
 
 
 def test_header_links_manager_no_link():

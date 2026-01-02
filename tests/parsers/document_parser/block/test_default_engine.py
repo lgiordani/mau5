@@ -4,11 +4,11 @@ import pytest
 
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
-from mau.nodes.block import BlockNodeContent
+from mau.nodes.block import BlockNodeContent, BlockSectionNodeContent
 from mau.nodes.headers import HeaderNodeContent
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.paragraph import ParagraphNodeContent
+from mau.nodes.paragraph import ParagraphNodeContent, ParagraphLineNodeContent
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -80,22 +80,49 @@ def test_parse_block_disable_sections_on_text_without_sections():
                     named_args={"enable_sections": "false"},
                 ),
                 children={
-                    "content": [
+                    "content": [],
+                    "sections": [
                         Node(
+                            content=BlockSectionNodeContent("content"),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 10)),
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent("Some text."),
+                                        content=ParagraphNodeContent(),
                                         info=NodeInfo(
                                             context=generate_context(3, 0, 3, 10)
                                         ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            3, 0, 3, 10
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "Some text."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        3, 0, 3, 10
+                                                                    )
+                                                                ),
+                                                            ),
+                                                        ]
+                                                    },
+                                                )
+                                            ]
+                                        },
                                     ),
                                 ]
                             },
-                            content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(3, 0, 3, 10)),
-                        ),
-                    ]
+                        )
+                    ],
                 },
             )
         ],
@@ -127,24 +154,73 @@ def test_parse_block_disable_sections_on_text_with_sections():
                     named_args={"enable_sections": "false"},
                 ),
                 children={
-                    "content": [
+                    "content": [],
+                    "sections": [
                         Node(
+                            content=BlockSectionNodeContent("content"),
+                            info=NodeInfo(context=generate_context(3, 0, 4, 10)),
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent(
-                                            "++ Section 1 Some text."
-                                        ),
+                                        content=ParagraphNodeContent(),
                                         info=NodeInfo(
-                                            context=generate_context(3, 0, 3, 23)
+                                            context=generate_context(
+                                                3, 0, 4, 12
+                                            )  # TODO: This should be 4,10, not 4,12. Is the paragraph context calculated incorrectly?
                                         ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            3, 0, 3, 12
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "++ Section 1"
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        3, 0, 3, 12
+                                                                    )
+                                                                ),
+                                                            ),
+                                                        ]
+                                                    },
+                                                ),
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            4, 0, 4, 10
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "Some text."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        4, 0, 4, 10
+                                                                    )
+                                                                ),
+                                                            ),
+                                                        ]
+                                                    },
+                                                ),
+                                            ]
+                                        },
                                     ),
                                 ]
                             },
-                            content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(3, 0, 4, 12)),
-                        ),
-                    ]
+                        )
+                    ],
                 },
             )
         ],
@@ -167,13 +243,13 @@ def test_parse_block_enable_sections_on_text_with_sections():
     source = """
     [enable_sections=true]
     ----
-    ++ Section 1
+    ++ section_1
     Some text.
-    ++ Section 2
+    ++ section_2
     Some text 2a.
     Some text 2b.
-    ++ Section 3
-    ++ Section 4
+    ++ section_3
+    ++ section_4
     Some text 4.
     ----
     """
@@ -195,55 +271,155 @@ def test_parse_block_enable_sections_on_text_with_sections():
                 ),
                 children={
                     "content": [],
-                    "Section 1": [
+                    "sections": [
                         Node(
+                            content=BlockSectionNodeContent("section_1"),
+                            info=NodeInfo(context=generate_context(4, 0, 4, 10)),
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent("Some text."),
+                                        content=ParagraphNodeContent(),
                                         info=NodeInfo(
                                             context=generate_context(4, 0, 4, 10)
                                         ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            4, 0, 4, 10
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "Some text."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        4, 0, 4, 10
+                                                                    )
+                                                                ),
+                                                            ),
+                                                        ]
+                                                    },
+                                                )
+                                            ]
+                                        },
                                     ),
-                                ]
+                                ],
                             },
-                            content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(4, 0, 4, 10)),
                         ),
-                    ],
-                    "Section 2": [
                         Node(
-                            children={
-                                "content": [
-                                    Node(
-                                        content=TextNodeContent(
-                                            "Some text 2a. Some text 2b."
-                                        ),
-                                        info=NodeInfo(
-                                            context=generate_context(6, 0, 6, 27)
-                                        ),
-                                    ),
-                                ]
-                            },
-                            content=ParagraphNodeContent(),
+                            content=BlockSectionNodeContent("section_2"),
                             info=NodeInfo(context=generate_context(6, 0, 7, 13)),
-                        ),
-                    ],
-                    "Section 3": [],
-                    "Section 4": [
-                        Node(
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent("Some text 4."),
+                                        content=ParagraphNodeContent(),
+                                        info=NodeInfo(
+                                            context=generate_context(6, 0, 7, 13)
+                                        ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            6, 0, 6, 13
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "Some text 2a."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        6, 0, 6, 13
+                                                                    )
+                                                                ),
+                                                            ),
+                                                        ]
+                                                    },
+                                                ),
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            7, 0, 7, 13
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "Some text 2b."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        7, 0, 7, 13
+                                                                    )
+                                                                ),
+                                                            ),
+                                                        ]
+                                                    },
+                                                ),
+                                            ]
+                                        },
+                                    ),
+                                ],
+                            },
+                        ),
+                        Node(
+                            content=BlockSectionNodeContent("section_3"),
+                            info=NodeInfo(context=generate_context(9, 0, 9, 0)),
+                            children={
+                                "content": [],
+                            },
+                        ),
+                        Node(
+                            content=BlockSectionNodeContent("section_4"),
+                            info=NodeInfo(context=generate_context(10, 0, 10, 12)),
+                            children={
+                                "content": [
+                                    Node(
+                                        content=ParagraphNodeContent(),
                                         info=NodeInfo(
                                             context=generate_context(10, 0, 10, 12)
                                         ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            10, 0, 10, 12
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "Some text 4."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        10, 0, 10, 12
+                                                                    )
+                                                                ),
+                                                            ),
+                                                        ]
+                                                    },
+                                                )
+                                            ]
+                                        },
                                     ),
-                                ]
+                                ],
                             },
-                            content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(10, 0, 10, 12)),
                         ),
                     ],
                 },
@@ -256,11 +432,11 @@ def test_parse_block_sections_ignore_trailing_empty_lines():
     source = """
     [enable_sections=true]
     ----
-    ++ Section 1
+    ++ section_1
     Some text.
 
     
-    ++ Section 2
+    ++ section_2
     Some text 2.
     ----
     """
@@ -282,36 +458,86 @@ def test_parse_block_sections_ignore_trailing_empty_lines():
                 ),
                 children={
                     "content": [],
-                    "Section 1": [
+                    "sections": [
                         Node(
+                            content=BlockSectionNodeContent("section_1"),
+                            info=NodeInfo(context=generate_context(4, 0, 6, 10)),
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent("Some text."),
+                                        content=ParagraphNodeContent(),
                                         info=NodeInfo(
                                             context=generate_context(4, 0, 4, 10)
                                         ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            4, 0, 4, 10
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "Some text."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        4, 0, 4, 10
+                                                                    )
+                                                                ),
+                                                            ),
+                                                        ]
+                                                    },
+                                                )
+                                            ]
+                                        },
                                     ),
-                                ]
+                                ],
                             },
-                            content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(4, 0, 4, 10)),
                         ),
-                    ],
-                    "Section 2": [
                         Node(
+                            content=BlockSectionNodeContent("section_2"),
+                            info=NodeInfo(context=generate_context(8, 0, 8, 12)),
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent("Some text 2."),
+                                        content=ParagraphNodeContent(),
                                         info=NodeInfo(
                                             context=generate_context(8, 0, 8, 12)
                                         ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            8, 0, 8, 12
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "Some text 2."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        8, 0, 8, 12
+                                                                    )
+                                                                ),
+                                                            ),
+                                                        ]
+                                                    },
+                                                )
+                                            ]
+                                        },
                                     ),
-                                ]
+                                ],
                             },
-                            content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(8, 0, 8, 12)),
                         ),
                     ],
                 },
@@ -324,7 +550,7 @@ def test_parse_block_sections_keep_empty_lines():
     source = """
     [enable_sections=true]
     ----
-    ++ Section 1
+    ++ section_1
     Some text 1a.
 
     Some text 1b.
@@ -348,34 +574,78 @@ def test_parse_block_sections_keep_empty_lines():
                 ),
                 children={
                     "content": [],
-                    "Section 1": [
+                    "sections": [
                         Node(
+                            content=BlockSectionNodeContent("section_1"),
+                            info=NodeInfo(context=generate_context(4, 0, 6, 13)),
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent("Some text 1a."),
+                                        content=ParagraphNodeContent(),
                                         info=NodeInfo(
                                             context=generate_context(4, 0, 4, 13)
                                         ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            4, 0, 4, 13
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "Some text 1a."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        4, 0, 4, 13
+                                                                    )
+                                                                ),
+                                                            ),
+                                                        ]
+                                                    },
+                                                )
+                                            ]
+                                        },
                                     ),
-                                ]
-                            },
-                            content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(4, 0, 4, 13)),
-                        ),
-                        Node(
-                            children={
-                                "content": [
                                     Node(
-                                        content=TextNodeContent("Some text 1b."),
+                                        content=ParagraphNodeContent(),
                                         info=NodeInfo(
                                             context=generate_context(6, 0, 6, 13)
                                         ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            6, 0, 6, 13
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "Some text 1b."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        6, 0, 6, 13
+                                                                    )
+                                                                ),
+                                                            ),
+                                                        ]
+                                                    },
+                                                )
+                                            ]
+                                        },
                                     ),
                                 ]
                             },
-                            content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(6, 0, 6, 13)),
                         ),
                     ],
                 },
@@ -389,40 +659,44 @@ def test_parse_block_headers_in_sections_are_global():
     environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
 
     source = """
+    [enable_sections=true]
     ----
-    ++ Section 1
+    ++ section_1
     = Header section 1
 
-    ++ Section 2
+    ++ section_2
     = Header section 2
     ----
     """
 
     parser = runner(source, environment)
 
-    assert parser.toc_manager.headers == [
-        Node(
-            content=HeaderNodeContent(1, "XXXXXY"),
-            info=NodeInfo(context=generate_context(3, 0, 3, 18)),
-            children={
-                "text": [
-                    Node(
-                        content=TextNodeContent("Header section 1"),
-                        info=NodeInfo(context=generate_context(3, 2, 3, 18)),
-                    )
-                ]
-            },
-        ),
-        Node(
-            content=HeaderNodeContent(1, "XXXXXY"),
-            info=NodeInfo(context=generate_context(6, 0, 6, 18)),
-            children={
-                "text": [
-                    Node(
-                        content=TextNodeContent("Header section 2"),
-                        info=NodeInfo(context=generate_context(6, 2, 6, 18)),
-                    )
-                ]
-            },
-        ),
-    ]
+    compare_nodes(
+        parser.toc_manager.headers,
+        [
+            Node(
+                content=HeaderNodeContent(1, "XXXXXY"),
+                info=NodeInfo(context=generate_context(4, 0, 4, 18)),
+                children={
+                    "text": [
+                        Node(
+                            content=TextNodeContent("Header section 1"),
+                            info=NodeInfo(context=generate_context(4, 2, 4, 18)),
+                        )
+                    ]
+                },
+            ),
+            Node(
+                content=HeaderNodeContent(1, "XXXXXY"),
+                info=NodeInfo(context=generate_context(7, 0, 7, 18)),
+                children={
+                    "text": [
+                        Node(
+                            content=TextNodeContent("Header section 2"),
+                            info=NodeInfo(context=generate_context(7, 2, 7, 18)),
+                        )
+                    ]
+                },
+            ),
+        ],
+    )

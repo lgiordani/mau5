@@ -1,3 +1,4 @@
+import yaml
 import textwrap
 
 from mau.lexers.base_lexer import MauLexerException
@@ -13,6 +14,10 @@ class RawFormatter(BaseFormatter):
     type = "raw"
 
     @classmethod
+    def node_to_yaml(cls, node: Node) -> str:
+        return yaml.dump(node.asdict(), Dumper=yaml.Dumper)
+
+    @classmethod
     def print_tokens(cls, tokens: list[Token]):
         for token in tokens:
             print(
@@ -21,13 +26,16 @@ class RawFormatter(BaseFormatter):
 
     @classmethod
     def print_nodes(cls, nodes: list[Node], indent: int = 0):
-        space = "  " * indent
+        # space = "  " * indent
 
         for node in nodes:
-            print(f"{space}{node.content.asdict()} {node.info.asdict()}")
-            for label, children in node.children.items():
-                print(f"{space}  {label}:")
-                cls.print_nodes(children, indent + 1)
+            print(yaml.dump(node.asdict(recursive=True), Dumper=yaml.Dumper))
+
+        # for node in nodes:
+        #     print(f"{space}{node.content.asdict()} {node.info.asdict()}")
+        #     for label, children in node.children.items():
+        #         print(f"{space}  {label}:")
+        #         cls.print_nodes(children, indent + 1)
 
     @classmethod
     def print_lexer_exception(cls, exc: MauLexerException):
@@ -46,6 +54,9 @@ class RawFormatter(BaseFormatter):
 
     @classmethod
     def print_visitor_exception(cls, exc: MauVisitorException):
+        node: Node = exc.kwargs["node"]
+        data: dict = exc.kwargs["data"]
+
         print(
             textwrap.dedent(f"""
             Mau visitor error: {exc}
@@ -53,12 +64,18 @@ class RawFormatter(BaseFormatter):
             NODE:
             """)
         )
-        cls.print_nodes([exc.kwargs["node"]])
+        print(cls.node_to_yaml(node))
         print(
             textwrap.dedent(f"""
             TEMPLATES: {exc.kwargs["templates"]}
             """)
         )
+        print(
+            textwrap.dedent(f"""
+            DATA:
+            """)
+        )
+        print(yaml.dump(data, Dumper=yaml.Dumper))
 
         # TODO: This formatting should go into the exception itself
         # or into a method that is specific for that type of exception.

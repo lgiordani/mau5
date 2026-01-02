@@ -24,11 +24,16 @@ class HeaderNodeContent(NodeContent):
         self,
         level: int,
         internal_id: str | None = None,
-        external_id: str | None = None,
+        alias: str | None = None,
     ):
         self.level = level
         self.internal_id = internal_id
-        self.external_id = external_id
+
+        # This is an alias for this header,
+        # used to link it internally.
+        # Headers with an alias will still
+        # receive a programmatic ID.
+        self.alias = alias
 
     def asdict(self):
         base = super().asdict()
@@ -36,7 +41,7 @@ class HeaderNodeContent(NodeContent):
             {
                 "level": self.level,
                 "internal_id": self.internal_id,
-                "external_id": self.external_id,
+                "alias": self.alias,
             }
         )
 

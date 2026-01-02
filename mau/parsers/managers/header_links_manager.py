@@ -21,17 +21,17 @@ class HeaderLinksManager:
         # flagged with an id
         self._headers: dict[str, Node[HeaderNodeContent]] = {}
 
-    def add_header(self, external_id: str, node: Node[HeaderNodeContent]):
+    def add_header(self, alias: str, node: Node[HeaderNodeContent]):
         """Add a single header to the list
         of managed headers. Check that the header
         ID is not already in use."""
-        if external_id in self._headers:
+        if alias in self._headers:
             raise MauParserException(
-                f"Duplicate header id detected: {external_id}",
+                f"Duplicate header id detected: {alias}",
                 context=node.info.context,
             )
 
-        self._headers[external_id] = node
+        self._headers[alias] = node
 
     def add_links(self, links: list[Node[MacroHeaderNodeContent]]):
         """Add the given list of links
@@ -44,18 +44,22 @@ class HeaderLinksManager:
         Header Links Manager."""
         self.add_links(other._links)
 
-        for external_id, node in other._headers.items():
-            self.add_header(external_id, node)
+        for alias, node in other._headers.items():
+            self.add_header(alias, node)
 
     def process(self):
         # Process each macro node, find the
         # header it mentions in the list of
         # headers, and connect the two.
+
         for link in self._links:
             try:
-                link.children["header"] = [self._headers[link.content.value]]  # type: ignore[attr-defined]
+                target = self._headers[link.content.target_alias]  # type: ignore[attr-defined]
+
+                link.children["header"] = [target]
+                link.content.target_id = target.content.internal_id  # type: ignore[attr-defined]
             except KeyError as exc:
                 raise MauParserException(
-                    f"Cannot find header with id {link.content.value}",  # type: ignore[attr-defined]
+                    f"Cannot find header with id {link.content.target_alias}",  # type: ignore[attr-defined]
                     context=link.info.context,
                 ) from exc

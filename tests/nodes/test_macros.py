@@ -108,23 +108,27 @@ def test_macro_header_node_content():
     node_content = MacroHeaderNodeContent("someid")
 
     assert node_content.type == "macro.header"
-    assert node_content.value == "someid"
+    assert node_content.target_alias == "someid"
+    assert node_content.target_id is None
 
     assert node_content.asdict() == {
         "type": "macro.header",
-        "id": "someid",
+        "target_alias": "someid",
+        "target_id": None,
     }
 
 
 def test_macro_header_node_content_parameters():
-    node_content = MacroHeaderNodeContent("someid")
+    node_content = MacroHeaderNodeContent("someid", "targetid")
 
     assert node_content.type == "macro.header"
-    assert node_content.value == "someid"
+    assert node_content.target_alias == "someid"
+    assert node_content.target_id == "targetid"
 
     assert node_content.asdict() == {
         "type": "macro.header",
-        "id": "someid",
+        "target_alias": "someid",
+        "target_id": "targetid",
     }
 
 

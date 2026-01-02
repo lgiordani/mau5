@@ -3,12 +3,12 @@ from unittest.mock import patch
 import pytest
 
 from mau.lexers.document_lexer import DocumentLexer
-from mau.nodes.block import BlockNodeContent
+from mau.nodes.block import BlockNodeContent, BlockSectionNodeContent
 from mau.nodes.command import TocItemNodeContent, TocNodeContent
 from mau.nodes.headers import HeaderNodeContent
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.paragraph import ParagraphNodeContent
+from mau.nodes.paragraph import ParagraphNodeContent, ParagraphLineNodeContent
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -64,22 +64,37 @@ def test_block_isolation_doesnt_add_headers_to_the_global_toc(mock_header_intern
                     named_args={"isolate": "true"},
                 ),
                 children={
-                    "content": [
+                    "content": [],
+                    "sections": [
                         Node(
-                            content=HeaderNodeContent(1, "XXYY"),
+                            content=BlockSectionNodeContent("content"),
                             info=NodeInfo(context=generate_context(5, 0, 5, 14)),
                             children={
-                                "text": [
+                                "content": [
                                     Node(
-                                        content=TextNodeContent("Block header"),
+                                        content=HeaderNodeContent(1, "XXYY"),
                                         info=NodeInfo(
-                                            context=generate_context(5, 2, 5, 14)
+                                            context=generate_context(5, 0, 5, 14)
                                         ),
-                                    )
-                                ],
+                                        children={
+                                            "text": [
+                                                Node(
+                                                    content=TextNodeContent(
+                                                        "Block header"
+                                                    ),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            5, 2, 5, 14
+                                                        )
+                                                    ),
+                                                )
+                                            ],
+                                        },
+                                    ),
+                                ]
                             },
                         ),
-                    ]
+                    ],
                 },
             ),
         ],
@@ -150,22 +165,37 @@ def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id
                     named_args={"isolate": "true"},
                 ),
                 children={
-                    "content": [
+                    "content": [],
+                    "sections": [
                         Node(
-                            content=HeaderNodeContent(1, "XXYY"),
+                            content=BlockSectionNodeContent("content"),
                             info=NodeInfo(context=generate_context(5, 0, 5, 16)),
                             children={
-                                "text": [
+                                "content": [
                                     Node(
-                                        content=TextNodeContent("Block header 1"),
+                                        content=HeaderNodeContent(1, "XXYY"),
                                         info=NodeInfo(
-                                            context=generate_context(5, 2, 5, 16)
+                                            context=generate_context(5, 0, 5, 16)
                                         ),
-                                    )
-                                ],
+                                        children={
+                                            "text": [
+                                                Node(
+                                                    content=TextNodeContent(
+                                                        "Block header 1"
+                                                    ),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            5, 2, 5, 16
+                                                        )
+                                                    ),
+                                                )
+                                            ],
+                                        },
+                                    ),
+                                ]
                             },
                         ),
-                    ]
+                    ],
                 },
             ),
             Node(
@@ -179,22 +209,37 @@ def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id
                     named_args={"isolate": "true"},
                 ),
                 children={
-                    "content": [
+                    "content": [],
+                    "sections": [
                         Node(
-                            content=HeaderNodeContent(1, "XXYY"),
+                            content=BlockSectionNodeContent("content"),
                             info=NodeInfo(context=generate_context(10, 0, 10, 16)),
                             children={
-                                "text": [
+                                "content": [
                                     Node(
-                                        content=TextNodeContent("Block header 2"),
+                                        content=HeaderNodeContent(1, "XXYY"),
                                         info=NodeInfo(
-                                            context=generate_context(10, 2, 10, 16)
+                                            context=generate_context(10, 0, 10, 16)
                                         ),
-                                    )
-                                ],
+                                        children={
+                                            "text": [
+                                                Node(
+                                                    content=TextNodeContent(
+                                                        "Block header 2"
+                                                    ),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            10, 2, 10, 16
+                                                        )
+                                                    ),
+                                                )
+                                            ],
+                                        },
+                                    ),
+                                ]
                             },
                         ),
-                    ]
+                    ],
                 },
             ),
         ],
@@ -313,19 +358,32 @@ def test_block_isolation_toc(mock_header_internal_id):
                     named_args={"isolate": "true"},
                 ),
                 children={
-                    "content": [
-                        # This is the block header.
-                        block_header_node,
-                        # This is the block ToC.
+                    "content": [],
+                    "sections": [
                         Node(
-                            content=TocNodeContent(),
-                            info=NodeInfo(context=generate_context(7, 0, 7, 5)),
+                            content=BlockSectionNodeContent("content"),
+                            info=NodeInfo(context=generate_context(5, 0, 7, 5)),
                             children={
-                                "nested_entries": [block_header_toc_item_node],
-                                "plain_entries": [block_header_node],
+                                "content": [
+                                    # This is the block header.
+                                    block_header_node,
+                                    # This is the block ToC.
+                                    Node(
+                                        content=TocNodeContent(),
+                                        info=NodeInfo(
+                                            context=generate_context(7, 0, 7, 5)
+                                        ),
+                                        children={
+                                            "nested_entries": [
+                                                block_header_toc_item_node
+                                            ],
+                                            "plain_entries": [block_header_node],
+                                        },
+                                    ),
+                                ]
                             },
                         ),
-                    ]
+                    ],
                 },
             ),
             # This is the global ToC
@@ -381,22 +439,49 @@ def test_block_isolation_can_see_internal_variables():
                     named_args={"isolate": "true"},
                 ),
                 children={
-                    "content": [
+                    "content": [],
+                    "sections": [
                         Node(
+                            content=BlockSectionNodeContent("content"),
+                            info=NodeInfo(context=generate_context(3, 0, 5, 23)),
                             children={
                                 "content": [
                                     Node(
-                                        content=TextNodeContent("The answer is 42."),
+                                        content=ParagraphNodeContent(),
                                         info=NodeInfo(
-                                            context=generate_context(5, 0, 5, 17)
+                                            context=generate_context(5, 0, 5, 23)
                                         ),
+                                        children={
+                                            "content": [
+                                                Node(
+                                                    content=ParagraphLineNodeContent(),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            5, 0, 5, 23
+                                                        )
+                                                    ),
+                                                    children={
+                                                        "content": [
+                                                            Node(
+                                                                content=TextNodeContent(
+                                                                    "The answer is 42."
+                                                                ),
+                                                                info=NodeInfo(
+                                                                    context=generate_context(
+                                                                        5, 0, 5, 17
+                                                                    )
+                                                                ),
+                                                            ),
+                                                        ]
+                                                    },
+                                                )
+                                            ]
+                                        },
                                     ),
                                 ]
                             },
-                            content=ParagraphNodeContent(),
-                            info=NodeInfo(context=generate_context(5, 0, 5, 23)),
-                        ),
-                    ]
+                        )
+                    ],
                 },
             )
         ],

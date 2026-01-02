@@ -1,0 +1,2 @@
+{% if content.level <= 6 %}{% set lev=content.level %}{% else %}{% set lev=6 %}{% endif %}
+<h{{ lev }} id="{{ content.internal_id }}">{{ children.text }}</h{{ lev }}>

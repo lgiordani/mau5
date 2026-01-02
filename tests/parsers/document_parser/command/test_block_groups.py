@@ -2,11 +2,11 @@ import pytest
 
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
-from mau.nodes.block import BlockNodeContent
+from mau.nodes.block import BlockNodeContent, BlockSectionNodeContent
 from mau.nodes.command import BlockGroupNodeContent
 from mau.nodes.inline import TextNodeContent
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.paragraph import ParagraphNodeContent
+from mau.nodes.paragraph import ParagraphNodeContent, ParagraphLineNodeContent
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -42,17 +42,42 @@ def test_group_engine():
         content=BlockNodeContent(engine="default"),
         info=NodeInfo(context=generate_context(2, 0, 4, 4)),
         children={
-            "content": [
+            "content": [],
+            "sections": [
                 Node(
-                    content=ParagraphNodeContent(),
+                    content=BlockSectionNodeContent("content"),
                     info=NodeInfo(context=generate_context(3, 0, 3, 12)),
                     children={
                         "content": [
                             Node(
-                                content=TextNodeContent("Some text 1."),
+                                content=ParagraphNodeContent(),
                                 info=NodeInfo(context=generate_context(3, 0, 3, 12)),
+                                children={
+                                    "content": [
+                                        Node(
+                                            content=ParagraphLineNodeContent(),
+                                            info=NodeInfo(
+                                                context=generate_context(3, 0, 3, 12)
+                                            ),
+                                            children={
+                                                "content": [
+                                                    Node(
+                                                        content=TextNodeContent(
+                                                            "Some text 1."
+                                                        ),
+                                                        info=NodeInfo(
+                                                            context=generate_context(
+                                                                3, 0, 3, 12
+                                                            )
+                                                        ),
+                                                    )
+                                                ]
+                                            },
+                                        )
+                                    ]
+                                },
                             )
-                        ]
+                        ],
                     },
                 )
             ],
@@ -63,17 +88,42 @@ def test_group_engine():
         content=BlockNodeContent(engine="default"),
         info=NodeInfo(context=generate_context(7, 0, 9, 4)),
         children={
-            "content": [
+            "content": [],
+            "sections": [
                 Node(
-                    content=ParagraphNodeContent(),
+                    content=BlockSectionNodeContent("content"),
                     info=NodeInfo(context=generate_context(8, 0, 8, 12)),
                     children={
                         "content": [
                             Node(
-                                content=TextNodeContent("Some text 2."),
+                                content=ParagraphNodeContent(),
                                 info=NodeInfo(context=generate_context(8, 0, 8, 12)),
+                                children={
+                                    "content": [
+                                        Node(
+                                            content=ParagraphLineNodeContent(),
+                                            info=NodeInfo(
+                                                context=generate_context(8, 0, 8, 12)
+                                            ),
+                                            children={
+                                                "content": [
+                                                    Node(
+                                                        content=TextNodeContent(
+                                                            "Some text 2."
+                                                        ),
+                                                        info=NodeInfo(
+                                                            context=generate_context(
+                                                                8, 0, 8, 12
+                                                            )
+                                                        ),
+                                                    )
+                                                ]
+                                            },
+                                        )
+                                    ]
+                                },
                             )
-                        ]
+                        ],
                     },
                 )
             ],
@@ -131,17 +181,42 @@ def test_command_toc_supports_inline_arguments():
         content=BlockNodeContent(engine="default"),
         info=NodeInfo(context=generate_context(2, 0, 4, 4)),
         children={
-            "content": [
+            "content": [],
+            "sections": [
                 Node(
-                    content=ParagraphNodeContent(),
+                    content=BlockSectionNodeContent("content"),
                     info=NodeInfo(context=generate_context(3, 0, 3, 12)),
                     children={
                         "content": [
                             Node(
-                                content=TextNodeContent("Some text 1."),
+                                content=ParagraphNodeContent(),
                                 info=NodeInfo(context=generate_context(3, 0, 3, 12)),
+                                children={
+                                    "content": [
+                                        Node(
+                                            content=ParagraphLineNodeContent(),
+                                            info=NodeInfo(
+                                                context=generate_context(3, 0, 3, 12)
+                                            ),
+                                            children={
+                                                "content": [
+                                                    Node(
+                                                        content=TextNodeContent(
+                                                            "Some text 1."
+                                                        ),
+                                                        info=NodeInfo(
+                                                            context=generate_context(
+                                                                3, 0, 3, 12
+                                                            )
+                                                        ),
+                                                    )
+                                                ]
+                                            },
+                                        )
+                                    ]
+                                },
                             )
-                        ]
+                        ],
                     },
                 )
             ],
@@ -185,17 +260,42 @@ def test_command_toc_supports_boxed_arguments():
         content=BlockNodeContent(engine="default"),
         info=NodeInfo(context=generate_context(2, 0, 4, 4)),
         children={
-            "content": [
+            "content": [],
+            "sections": [
                 Node(
-                    content=ParagraphNodeContent(),
+                    content=BlockSectionNodeContent("content"),
                     info=NodeInfo(context=generate_context(3, 0, 3, 12)),
                     children={
                         "content": [
                             Node(
-                                content=TextNodeContent("Some text 1."),
+                                content=ParagraphNodeContent(),
                                 info=NodeInfo(context=generate_context(3, 0, 3, 12)),
+                                children={
+                                    "content": [
+                                        Node(
+                                            content=ParagraphLineNodeContent(),
+                                            info=NodeInfo(
+                                                context=generate_context(3, 0, 3, 12)
+                                            ),
+                                            children={
+                                                "content": [
+                                                    Node(
+                                                        content=TextNodeContent(
+                                                            "Some text 1."
+                                                        ),
+                                                        info=NodeInfo(
+                                                            context=generate_context(
+                                                                3, 0, 3, 12
+                                                            )
+                                                        ),
+                                                    )
+                                                ]
+                                            },
+                                        )
+                                    ]
+                                },
                             )
-                        ]
+                        ],
                     },
                 )
             ],
@@ -239,17 +339,42 @@ def test_command_toc_supports_labels():
         content=BlockNodeContent(engine="default"),
         info=NodeInfo(context=generate_context(2, 0, 4, 4)),
         children={
-            "content": [
+            "content": [],
+            "sections": [
                 Node(
-                    content=ParagraphNodeContent(),
+                    content=BlockSectionNodeContent("content"),
                     info=NodeInfo(context=generate_context(3, 0, 3, 12)),
                     children={
                         "content": [
                             Node(
-                                content=TextNodeContent("Some text 1."),
+                                content=ParagraphNodeContent(),
                                 info=NodeInfo(context=generate_context(3, 0, 3, 12)),
+                                children={
+                                    "content": [
+                                        Node(
+                                            content=ParagraphLineNodeContent(),
+                                            info=NodeInfo(
+                                                context=generate_context(3, 0, 3, 12)
+                                            ),
+                                            children={
+                                                "content": [
+                                                    Node(
+                                                        content=TextNodeContent(
+                                                            "Some text 1."
+                                                        ),
+                                                        info=NodeInfo(
+                                                            context=generate_context(
+                                                                3, 0, 3, 12
+                                                            )
+                                                        ),
+                                                    )
+                                                ]
+                                            },
+                                        )
+                                    ]
+                                },
                             )
-                        ]
+                        ],
                     },
                 )
             ],

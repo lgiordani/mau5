@@ -28,14 +28,16 @@ def compare_text_lines(left: str, right: str):
 
 
 def compare_node(node_left: Node[NodeContent], node_right: Node[NodeContent]):
-    assert node_left.asdict() == node_right.asdict()
+    assert node_left.asdict(recursive=True) == node_right.asdict(recursive=True)
 
 
 def compare_nodes(
     nodes_left: MutableSequence[Node[NodeContent]],
     nodes_right: MutableSequence[Node[NodeContent]],
 ):
-    assert [i.asdict() for i in nodes_left] == [i.asdict() for i in nodes_right]
+    assert [i.asdict(recursive=True) for i in nodes_left] == [
+        i.asdict(recursive=True) for i in nodes_right
+    ]
 
 
 def generate_context(line: int, column: int, end_line: int, end_column: int):

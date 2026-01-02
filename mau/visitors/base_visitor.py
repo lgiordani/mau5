@@ -7,9 +7,6 @@ class MauVisitorException(ValueError):
         super().__init__(message)
         self.kwargs = kwargs
 
-    # def render(self) -> str:
-    #     return f"{str(self)} HELLOOOOOO!"  # TODO
-
 
 class BaseVisitor:
     format_code = "python"
@@ -46,17 +43,17 @@ class BaseVisitor:
         # It returns the node dictionary (as provided by
         # the node itself) and visits all children.
 
-        # This is the dictionary of visited children.
-        children = {}
+        # This is the dictionary of rendered children.
+        rendered_children = {}
         for key, value in node.children.items():
             # Each entry in the children dictionary
             # is a list of nodes.
-            children[key] = self.visitlist(node, value)
+            rendered_children[key] = self.visitlist(node, value)
 
         # Get the dictionary version of the node.
-        node_dict = node.asdict(recursive=False)
+        node_dict = node.asdict()
 
-        # Add the visited children.
-        node_dict["children"] = children
+        # Add the rendered children.
+        node_dict["children"] = rendered_children
 
-        return {"data": node_dict}
+        return node_dict

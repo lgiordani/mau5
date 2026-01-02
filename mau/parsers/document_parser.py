@@ -178,13 +178,17 @@ class DocumentParser(BaseParser):
         # a list of footnotes.
         self.footnotes_manager.process()
 
+        # Process ToC nodes.
+        # This operation needs to be done before
+        # we process header links, as it creates
+        # the internal IDs for headers that are
+        # used by the header links.
+        self.toc_manager.process()
+
         # This processes all links stored in
         # the manager linking them to the
         # correct headers.
         self.header_links_manager.process()
-
-        # Process ToC nodes.
-        self.toc_manager.process()
 
         # Process block groups.
         self.block_group_manager.process()

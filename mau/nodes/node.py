@@ -41,7 +41,7 @@ class NodeInfo:
 
     def asdict(self):
         return {
-            "context": self.context,
+            "context": self.context.asdict(),
             "unnamed_args": self.unnamed_args,
             "named_args": self.named_args,
             "tags": self.tags,
@@ -157,10 +157,14 @@ class Node(Generic[Content_co]):
 
         return set()
 
-    def asdict(self, recursive=True):
+    def asdict(self, recursive=False, include_children=False):
         children = {}
 
         if recursive:
+            for key, value in self.children.items():
+                children[key] = [i.asdict(recursive=True) for i in value]
+
+        if not recursive and include_children:
             for key, value in self.children.items():
                 children[key] = [i.asdict() for i in value]
 

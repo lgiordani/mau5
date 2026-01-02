@@ -1,4 +1,4 @@
-from mau.nodes.paragraph import ParagraphNodeContent
+from mau.nodes.paragraph import ParagraphNodeContent, ParagraphLineNodeContent
 
 
 def test_paragraph_node_content():
@@ -9,4 +9,15 @@ def test_paragraph_node_content():
 
     assert node_content.asdict() == {
         "type": "paragraph",
+    }
+
+
+def test_paragraph_line_node_content():
+    node_content = ParagraphLineNodeContent()
+
+    assert node_content.type == "paragraph-line"
+    assert list(node_content.allowed_keys.keys()) == ["content"]
+
+    assert node_content.asdict() == {
+        "type": "paragraph-line",
     }

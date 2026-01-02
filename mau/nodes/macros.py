@@ -37,7 +37,7 @@ accepts optional `alt_text`, `width`, and `height`.
 MACRO_HEADER_HELP = """
 Syntax:
 
-[header](header_external_id)
+[header](header_alias)
 
 A macro that inserts a link to a header. The macro requires
 the header exernal ID as a parameter.
@@ -140,15 +140,40 @@ class MacroImageNodeContent(NodeContent):
         return base
 
 
-class MacroHeaderNodeContent(ValueNodeContent):
+class MacroHeaderNodeContent(NodeContent):
     """This node contains a link to a header node."""
 
     type = "macro.header"
-    value_key = "id"
     allowed_keys = {
         "text": "The text linked to the header.",
         "header": "The header node connected with this link.",
     }
+
+    def __init__(
+        self,
+        target_alias: str,
+        target_id: str | None = None,
+    ):
+        # This is the internal name of the
+        # header that we are pointing to.
+        self.target_alias = target_alias
+
+        # This is the ID of the header that
+        # we are pointing to.
+        # It is an automatically generated
+        # unique ID.
+        self.target_id = target_id
+
+    def asdict(self):
+        base = super().asdict()
+        base.update(
+            {
+                "target_alias": self.target_alias,
+                "target_id": self.target_id,
+            }
+        )
+
+        return base
 
 
 class MacroFootnoteNodeContent(NodeContent):

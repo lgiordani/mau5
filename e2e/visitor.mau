@@ -1,4 +1,11 @@
-This is text.
-Same paragraph.
+[enable_sections=true]
+----
+++ section_1
+Some text in section 1.
 
-Another paragraph.
+++ section_2
+Some other text in section 2.
+
+++ details
+A third section.
+----

@@ -44,17 +44,15 @@ def test_unknown_node():
     result = bv.visit(node)
 
     assert result == {
-        "data": {
-            "children": {},
-            "content": {"type": "test", "value": "Some test content"},
-            "info": {
-                "unnamed_args": ["arg1"],
-                "named_args": {"key1": "value1"},
-                "subtype": "subtype1",
-                "tags": ["tag1"],
-                "context": generate_context(1, 2, 3, 4),
-            },
-        }
+        "children": {},
+        "content": {"type": "test", "value": "Some test content"},
+        "info": {
+            "unnamed_args": ["arg1"],
+            "named_args": {"key1": "value1"},
+            "subtype": "subtype1",
+            "tags": ["tag1"],
+            "context": generate_context(1, 2, 3, 4).asdict(),
+        },
     }
 
 
@@ -87,61 +85,53 @@ def test_unknown_node_with_children():
     result = bv.visit(node)
 
     assert result == {
-        "data": {
-            "children": {
-                "group1": [
-                    {
-                        "data": {
-                            "children": {},
-                            "content": {"type": "test", "value": "Child 1 content"},
-                            "info": {
-                                "unnamed_args": [],
-                                "named_args": {},
-                                "subtype": None,
-                                "tags": [],
-                                "context": generate_context(0, 0, 0, 0),
-                            },
-                        }
-                    }
-                ],
-                "group2": [
-                    {
-                        "data": {
-                            "children": {},
-                            "content": {"type": "test", "value": "Child 2 content"},
-                            "info": {
-                                "unnamed_args": [],
-                                "named_args": {},
-                                "subtype": None,
-                                "tags": [],
-                                "context": generate_context(0, 0, 0, 0),
-                            },
-                        }
+        "children": {
+            "group1": [
+                {
+                    "children": {},
+                    "content": {"type": "test", "value": "Child 1 content"},
+                    "info": {
+                        "unnamed_args": [],
+                        "named_args": {},
+                        "subtype": None,
+                        "tags": [],
+                        "context": generate_context(0, 0, 0, 0).asdict(),
                     },
-                    {
-                        "data": {
-                            "children": {},
-                            "content": {"type": "test", "value": "Child 3 content"},
-                            "info": {
-                                "unnamed_args": [],
-                                "named_args": {},
-                                "subtype": None,
-                                "tags": [],
-                                "context": generate_context(0, 0, 0, 0),
-                            },
-                        }
+                }
+            ],
+            "group2": [
+                {
+                    "children": {},
+                    "content": {"type": "test", "value": "Child 2 content"},
+                    "info": {
+                        "unnamed_args": [],
+                        "named_args": {},
+                        "subtype": None,
+                        "tags": [],
+                        "context": generate_context(0, 0, 0, 0).asdict(),
                     },
-                ],
-            },
-            "content": {"type": "test", "value": "Parent content"},
-            "info": {
-                "unnamed_args": [],
-                "named_args": {},
-                "subtype": None,
-                "tags": [],
-                "context": generate_context(0, 0, 0, 0),
-            },
-        }
+                },
+                {
+                    "children": {},
+                    "content": {"type": "test", "value": "Child 3 content"},
+                    "info": {
+                        "unnamed_args": [],
+                        "named_args": {},
+                        "subtype": None,
+                        "tags": [],
+                        "context": generate_context(0, 0, 0, 0).asdict(),
+                    },
+                },
+            ],
+        },
+        "content": {"type": "test", "value": "Parent content"},
+        "info": {
+            "unnamed_args": [],
+            "named_args": {},
+            "subtype": None,
+            "tags": [],
+            "context": generate_context(0, 0, 0, 0).asdict(),
+        },
     }
 
 
@@ -175,46 +165,40 @@ def test_paragraph_node():
     result = bv.visit(node)
 
     assert result == {
-        "data": {
-            "children": {
-                "title": [
-                    {
-                        "data": {
-                            "children": {},
-                            "content": {"type": "text", "value": "Some title"},
-                            "info": {
-                                "unnamed_args": [],
-                                "named_args": {},
-                                "subtype": None,
-                                "tags": [],
-                                "context": generate_context(1, 2, 3, 4),
-                            },
-                        }
-                    }
-                ],
-                "content": [
-                    {
-                        "data": {
-                            "children": {},
-                            "content": {"type": "text", "value": "Just some text"},
-                            "info": {
-                                "unnamed_args": [],
-                                "named_args": {},
-                                "subtype": None,
-                                "tags": [],
-                                "context": generate_context(2, 3, 4, 5),
-                            },
-                        }
+        "children": {
+            "title": [
+                {
+                    "children": {},
+                    "content": {"type": "text", "value": "Some title"},
+                    "info": {
+                        "unnamed_args": [],
+                        "named_args": {},
+                        "subtype": None,
+                        "tags": [],
+                        "context": generate_context(1, 2, 3, 4).asdict(),
                     },
-                ],
-            },
-            "content": {"type": "paragraph"},
-            "info": {
-                "unnamed_args": ["arg1"],
-                "named_args": {"key1": "value1"},
-                "subtype": "subtype1",
-                "tags": ["tag1"],
-                "context": generate_context(3, 4, 5, 6),
-            },
-        }
+                }
+            ],
+            "content": [
+                {
+                    "children": {},
+                    "content": {"type": "text", "value": "Just some text"},
+                    "info": {
+                        "unnamed_args": [],
+                        "named_args": {},
+                        "subtype": None,
+                        "tags": [],
+                        "context": generate_context(2, 3, 4, 5).asdict(),
+                    },
+                },
+            ],
+        },
+        "content": {"type": "paragraph"},
+        "info": {
+            "unnamed_args": ["arg1"],
+            "named_args": {"key1": "value1"},
+            "subtype": "subtype1",
+            "tags": ["tag1"],
+            "context": generate_context(3, 4, 5, 6).asdict(),
+        },
     }

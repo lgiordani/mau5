@@ -224,7 +224,6 @@ def main():
         if document := parser.output["document"]:
             rendered = mau.run_visitor(visitor, document)
 
-            print("Rendered")
             print(rendered)
     except MauVisitorException as exc:
         formatter.print_visitor_exception(exc)

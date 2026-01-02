@@ -15,7 +15,7 @@ def test_info():
     )
 
     assert info.asdict() == {
-        "context": generate_context(0, 0, 0, 0),
+        "context": generate_context(0, 0, 0, 0).asdict(),
         "unnamed_args": ["arg1"],
         "named_args": {"key1": "value1"},
         "tags": ["tag1"],
@@ -37,7 +37,7 @@ def test_node():
         "children": {},
         "content": {"type": "none"},
         "info": {
-            "context": Context.empty(),
+            "context": Context.empty().asdict(),
             "unnamed_args": [],
             "named_args": {},
             "tags": [],
@@ -64,7 +64,7 @@ def test_node_with_info():
         "children": {},
         "content": {"type": "none"},
         "info": {
-            "context": generate_context(0, 0, 0, 0),
+            "context": generate_context(0, 0, 0, 0).asdict(),
             "unnamed_args": ["arg1"],
             "named_args": {"key1": "value1"},
             "tags": ["tag1"],
@@ -80,15 +80,11 @@ def test_node_children():
     node.add_children({"title": [mock_node]})
 
     assert node.parent is None
-    assert node.children == {"title": [mock_node]}
-
-    assert node.content.asdict() == {"type": "none"}
-
-    assert node.asdict() == {
+    assert node.asdict(recursive=True) == {
         "children": {"title": [mock_node.asdict()]},
         "content": {"type": "none"},
         "info": {
-            "context": Context.empty(),
+            "context": Context.empty().asdict(),
             "unnamed_args": [],
             "named_args": {},
             "tags": [],
@@ -100,7 +96,7 @@ def test_node_children():
         "children": {},
         "content": {"type": "none"},
         "info": {
-            "context": Context.empty(),
+            "context": Context.empty().asdict(),
             "unnamed_args": [],
             "named_args": {},
             "tags": [],

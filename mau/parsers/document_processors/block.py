@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import itertools
 from typing import TYPE_CHECKING
 
@@ -9,7 +10,7 @@ if TYPE_CHECKING:
 from enum import Enum
 
 from mau.environment.environment import Environment
-from mau.nodes.block import BlockNodeContent
+from mau.nodes.block import BlockNodeContent, BlockSectionNodeContent
 from mau.nodes.command import FootnotesItemNodeContent
 from mau.nodes.inline import RawNodeContent
 from mau.nodes.node import Node, NodeInfo
@@ -109,8 +110,21 @@ def parse_block_content_sections(content: Token) -> dict[str, Token]:
                     DEFAULT_SECTION_PREFIX, ""
                 )
 
+                # We don't know if the section
+                # contains tokens or not. So,
+                # the only thing we can do is to
+                # create a placeholder with no
+                # content. The context should be
+                # adjusted to be the line after
+                # the section marker, and with
+                # no length.
+                placeholder_context = section_token.context.clone().move_to(1, 0)
+                placeholder_context.end_column = 0
+
+                # Add the placeholder token to
+                # the section tokens.
                 sections[current_section_name] = Token(
-                    TokenType.TEXT, "", section_token.context
+                    TokenType.TEXT, "", placeholder_context
                 )
 
             continue
@@ -158,10 +172,21 @@ def parse_block_content(
     # the external parser or not.
     environment = parser.environment if update else Environment()
 
+    # Prepare the space for sections.
+    children["sections"] = []
+
     # Loop through all sections,
     # parse the content, and add
     # the children to the block node.
     for name, token in raw_sections.items():
+        # Check if the section name is
+        # made of [a-z0-9_]
+        if re.match("[^a-z0-9_]", name):
+            raise MauParserException(
+                f"Section name {name} is not valid. Please use lowercase alphanumeric characters and underscore.",
+                context=token.context,
+            )
+
         content_parser = parser.lex_and_parse(
             token.value,
             environment,
@@ -170,7 +195,14 @@ def parse_block_content(
         )
         content_parser.finalise()
 
-        children[name] = content_parser.nodes
+        node = Node(
+            content=BlockSectionNodeContent(name=name),
+            children={"content": content_parser.nodes},
+            info=NodeInfo(context=token.context),
+        )
+
+        # children[name] = content_parser.nodes
+        children["sections"].append(node)
 
         if update:
             # The footnote mentions and definitions
@@ -485,6 +517,7 @@ def block_processor(parser: DocumentParser):
         node = Node(
             content=FootnotesItemNodeContent(footnote_name),
             info=NodeInfo(context=context, **arguments.asdict()),
+            children={"content": []},
         )
 
         for name, nodes in children.items():
@@ -499,8 +532,11 @@ def block_processor(parser: DocumentParser):
 
     if group_name:
         node = Node(
-            content=BlockNodeContent(engine=engine.value),
+            content=BlockNodeContent(
+                engine=engine.value,
+            ),
             info=NodeInfo(context=context),
+            children={"content": []},
         )
 
         for name, nodes in children.items():
