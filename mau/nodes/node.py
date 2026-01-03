@@ -3,12 +3,9 @@ from __future__ import annotations
 from abc import ABC
 from collections import defaultdict
 from collections.abc import MutableMapping, MutableSequence
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import Generic, TypeVar
 
 from mau.text_buffer import Context
-
-if TYPE_CHECKING:
-    from mau.visitors.base_visitor import BaseVisitor
 
 
 class NodeContentError(ValueError):
@@ -175,26 +172,6 @@ class Node(Generic[Content_co]):
             "content": self.content.asdict(),
             "info": self.info.asdict(),
         }
-
-    def accept(self, visitor: BaseVisitor, *args, **kwargs) -> dict:
-        # Simple implementation of the visitor pattern.
-        # Here, the node accepts a visitor and
-        # calls one of the visitor's methods according
-        # to the node content type.
-
-        # Some node types contain a dot to allow templates
-        # to be created in a hierarchy of directories
-        # but dots are not allowed in function names
-        method_name = f"_visit_{self.content.type.replace('.', '__')}"
-
-        # Try to call the computed method. If not
-        # available, call a default method.
-        try:
-            method = getattr(visitor, method_name)
-        except AttributeError:
-            method = getattr(visitor, "_visit_default")
-
-        return method(self, *args, **kwargs)
 
     @property
     def subtype(self):

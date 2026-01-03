@@ -9,26 +9,17 @@ from mau import (
     __version__,
     load_environment_files,
     load_environment_variables,
-    load_visitors,
 )
 from mau.environment.environment import Environment
 from mau.formatter.raw_formatter import RawFormatter
-from mau.formatter.rich_formatter import RichFormatter
 from mau.lexers.base_lexer import MauLexerException
-from mau.parsers.base_parser import MauParserException
-from mau.visitors.base_visitor import MauVisitorException
 
-default_formatter = RichFormatter.type
-available_formatters = {
-    formatter.type: formatter for formatter in [RawFormatter, RichFormatter]
-}
+default_formatter = RawFormatter.type
+available_formatters = {formatter.type: formatter for formatter in [RawFormatter]}
 
 install(show_locals=True)
 
 logger = logging.getLogger(__name__)
-
-visitor_classes = load_visitors()
-visitors = {i.format_code: i for i in visitor_classes}
 
 
 def parse_args():
@@ -77,15 +68,6 @@ def parse_args():
         default="envfiles",
         required=False,
         help="Optional namespace for environment files (default: envfiles)",
-    )
-
-    parser.add_argument(
-        "-f",
-        "--format",
-        action="store",
-        required=True,
-        choices=visitors.keys(),
-        help="Output format",
     )
 
     parser.add_argument(
@@ -201,32 +183,6 @@ def main():
         # Print the tokens collected by the lexer.
         formatter.print_tokens(lexer.tokens)
         sys.exit(0)
-
-    # Run the parser.
-    try:
-        parser = mau.run_parser(lexer.tokens)
-    except MauParserException as exc:
-        formatter.print_parser_exception(exc)
-        sys.exit(1)
-
-    # The user wants us to run the parser
-    # only, so we print the resulting nodes
-    # and quit.
-    if args.parser_only:
-        # Print the nodes collected by the parser.
-        formatter.print_nodes(parser.nodes)
-        sys.exit(0)
-
-    try:
-        visitor_class = visitors[args.format]
-        visitor = mau.init_visitor(visitor_class)
-
-        if document := parser.output["document"]:
-            rendered = mau.run_visitor(visitor, document)
-
-            print(rendered)
-    except MauVisitorException as exc:
-        formatter.print_visitor_exception(exc)
 
 
 if __name__ == "__main__":

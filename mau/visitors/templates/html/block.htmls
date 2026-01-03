@@ -1,4 +1,0 @@
-<div{% if info.subtype %} class="{{ info.subtype }}{% if content.classes %} {{ content.classes }}{% endif %}"{% endif %}>
-  {% if children.title %}<div class="title">{{ children.title }}</div>{% endif %}
-  <div class="content">{{ children.content }}</div>
-</div>

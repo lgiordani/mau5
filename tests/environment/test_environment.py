@@ -29,6 +29,20 @@ def test_init_with_flat_content_and_namespace():
     assert environment.asdict() == {"parent": {"var1": "value1", "var2": "value2"}}
 
 
+def test_as_flat_dict():
+    # Test that the Environment can be rendered
+    # as a flat dictionary with dotted keys
+
+    environment = Environment.from_dict(
+        {"var1": "value1", "var2": "value2"}, namespace="parent"
+    )
+
+    assert environment.asflatdict() == {
+        "parent.var1": "value1",
+        "parent.var2": "value2",
+    }
+
+
 def test_init_with_nested_content():
     # Test that the Environment can be created
     # with a nested dictionary.
@@ -315,3 +329,24 @@ def test_get_value_key_is_a_namespace_prefix():
 
     assert environment.get("notthere") is None
     assert environment.get("top.mid") is None
+
+
+def test_update_without_namespace():
+    environment = Environment()
+    other = Environment.from_dict({"var1": "value1", "var2": "value2"})
+
+    environment.update(other)
+
+    assert environment.asdict() == other.asdict()
+
+
+def test_update_with_namespace():
+    source_dict = {"var1": "value1", "var2": "value2"}
+    namespace = "somespace"
+
+    environment = Environment()
+    other = Environment.from_dict(source_dict)
+
+    environment.update(other, namespace)
+
+    assert environment.asdict() == {"somespace": source_dict}

@@ -1,4 +1,4 @@
-from mau.nodes.paragraph import ParagraphNodeContent, ParagraphLineNodeContent
+from mau.nodes.paragraph import ParagraphLineNodeContent, ParagraphNodeContent
 
 
 def test_paragraph_node_content():

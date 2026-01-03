@@ -15,8 +15,6 @@ class BlockNodeContent(NodeContent):
     type = "block"
     allowed_keys = {
         "content": "The text contained in this block.",
-        # TODO TODO TOODO
-        # Why didn't this complain when I added the key "sections"?
     }
 
     def __init__(
