@@ -4,7 +4,7 @@ from mau.lexers.base_lexer import MauLexerException, TokenType
 from mau.lexers.document_lexer import DocumentLexer
 from mau.test_helpers import (
     TEST_CONTEXT_SOURCE,
-    compare_tokens,
+    compare_asdict_list,
     dedent,
     generate_context,
     init_lexer_factory,
@@ -21,7 +21,7 @@ runner = lexer_runner_factory(DocumentLexer)
 def test_horizontal_rule():
     lex = runner("---")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.HORIZONTAL_RULE, "---", generate_context(0, 0, 0, 3)),
@@ -33,7 +33,7 @@ def test_horizontal_rule():
 def test_arguments():
     lex = runner("[name]")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.ARGUMENTS, "[", generate_context(0, 0, 0, 1)),
@@ -47,7 +47,7 @@ def test_arguments():
 def test_arguments_no_closing_bracket():
     lex = runner("[name")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "[name", generate_context(0, 0, 0, 5)),
@@ -59,7 +59,7 @@ def test_arguments_no_closing_bracket():
 def test_square_brackets_in_text():
     lex = runner("Not [arguments]")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "Not [arguments]", generate_context(0, 0, 0, 15)),
@@ -71,7 +71,7 @@ def test_square_brackets_in_text():
 def test_square_brackets_at_the_beginning():
     lex = runner("[not] arguments")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "[not] arguments", generate_context(0, 0, 0, 15)),
@@ -83,7 +83,7 @@ def test_square_brackets_at_the_beginning():
 def test_escape_line():
     lex = runner(r"\[name]")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, r"\[name]", generate_context(0, 0, 0, 7)),
@@ -95,7 +95,7 @@ def test_escape_line():
 def test_escape_line_beginning_with_backslash():
     lex = runner(r"\\[name]")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, r"\\[name]", generate_context(0, 0, 0, 8)),
@@ -107,7 +107,7 @@ def test_escape_line_beginning_with_backslash():
 def test_variable_definition():
     lex = runner(":variable:value123")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.VARIABLE, ":", generate_context(0, 0, 0, 1)),
@@ -122,7 +122,7 @@ def test_variable_definition():
 def test_variable_definition_without_arguments():
     lex = runner(":variable")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.VARIABLE, ":", generate_context(0, 0, 0, 1)),
@@ -135,7 +135,7 @@ def test_variable_definition_without_arguments():
 def test_variable_flag_true():
     lex = runner(":+variable")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.VARIABLE, ":", generate_context(0, 0, 0, 1)),
@@ -148,7 +148,7 @@ def test_variable_flag_true():
 def test_variable_flag_false():
     lex = runner(":-variable")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.VARIABLE, ":", generate_context(0, 0, 0, 1)),
@@ -161,7 +161,7 @@ def test_variable_flag_false():
 def test_variable_marker_in_text():
     lex = runner("Not a :variable:")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "Not a :variable:", generate_context(0, 0, 0, 16)),
@@ -173,7 +173,7 @@ def test_variable_marker_in_text():
 def test_variable_marker_with_space():
     lex = runner(": not a variable:")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, ": not a variable:", generate_context(0, 0, 0, 17)),
@@ -185,7 +185,7 @@ def test_variable_marker_with_space():
 def test_variable_definition_accepted_characters():
     lex = runner(":abcAB.C0123-_:value123")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.VARIABLE, ":", generate_context(0, 0, 0, 1)),
@@ -209,7 +209,7 @@ def test_multiple_lines():
         )
     )
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "This is text", generate_context(0, 0, 0, 12)),
@@ -228,7 +228,7 @@ def test_multiple_lines():
 def test_title():
     lex = runner(". A title")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LABEL, ".", generate_context(0, 0, 0, 1)),
@@ -241,7 +241,7 @@ def test_title():
 def test_title_with_space():
     lex = runner(".  A title")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LABEL, ".", generate_context(0, 0, 0, 1)),
@@ -254,7 +254,7 @@ def test_title_with_space():
 def test_label_with_role():
     lex = runner(".some-role A title")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LABEL, ".some-role", generate_context(0, 0, 0, 10)),
@@ -267,7 +267,7 @@ def test_label_with_role():
 def test_command():
     lex = runner("::command:arg0,arg1")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.COMMAND, "::", generate_context(0, 0, 0, 2)),
@@ -282,7 +282,7 @@ def test_command():
 def test_command_without_arguments():
     lex = runner("::command")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.COMMAND, "::", generate_context(0, 0, 0, 2)),
@@ -295,7 +295,7 @@ def test_command_without_arguments():
 def test_command_with_space():
     lex = runner("::  command")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.COMMAND, "::", generate_context(0, 0, 0, 2)),
@@ -308,7 +308,7 @@ def test_command_with_space():
 def test_comment():
     lex = runner("// Some comment")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
@@ -329,7 +329,7 @@ def test_multiline_comment():
         )
     )
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.EOF, "", generate_context(5, 0, 5, 0)),
@@ -345,7 +345,7 @@ def test_multiline_comment_unclosed():
 def test_include_content():
     lex = runner("<<type:/path/to/it.jpg")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.INCLUDE, "<<", generate_context(0, 0, 0, 2)),
@@ -360,7 +360,7 @@ def test_include_content():
 def test_include_content_without_arguments():
     lex = runner("<<type")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.INCLUDE, "<<", generate_context(0, 0, 0, 2)),
@@ -373,7 +373,7 @@ def test_include_content_without_arguments():
 def test_include_content_with_space():
     lex = runner("<<  type:/path/to/it.jpg")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.INCLUDE, "<<", generate_context(0, 0, 0, 2)),
@@ -388,7 +388,7 @@ def test_include_content_with_space():
 def test_include_content_type_can_contain_special_characters():
     lex = runner("<< some.ty_pe#123")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.INCLUDE, "<<", generate_context(0, 0, 0, 2)),
@@ -401,7 +401,7 @@ def test_include_content_type_can_contain_special_characters():
 def test_unordered_list():
     lex = runner("* Item")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LIST, "*", generate_context(0, 0, 0, 1)),
@@ -417,7 +417,7 @@ def test_unordered_list_leading_space():
     lex = init_lexer(text_buffer)
     lex.process()
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LIST, "*", generate_context(0, 2, 0, 3)),
@@ -430,7 +430,7 @@ def test_unordered_list_leading_space():
 def test_unordered_list_trailing_space():
     lex = runner("*  Item")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LIST, "*", generate_context(0, 0, 0, 1)),
@@ -443,7 +443,7 @@ def test_unordered_list_trailing_space():
 def test_unordered_list_multiple_stars():
     lex = runner("*** Item")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LIST, "***", generate_context(0, 0, 0, 3)),
@@ -456,7 +456,7 @@ def test_unordered_list_multiple_stars():
 def test_ordered_list():
     lex = runner("# Item")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LIST, "#", generate_context(0, 0, 0, 1)),
@@ -469,7 +469,7 @@ def test_ordered_list():
 def test_ordered_list_multiple_stars():
     lex = runner("### Item")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LIST, "###", generate_context(0, 0, 0, 3)),
@@ -482,7 +482,7 @@ def test_ordered_list_multiple_stars():
 def test_header():
     lex = runner("=Header")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.HEADER, "=", generate_context(0, 0, 0, 1)),
@@ -495,7 +495,7 @@ def test_header():
 def test_header_with_space():
     lex = runner("=  Header")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.HEADER, "=", generate_context(0, 0, 0, 1)),
@@ -508,7 +508,7 @@ def test_header_with_space():
 def test_empty_header():
     lex = runner("=")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "=", generate_context(0, 0, 0, 1)),
@@ -520,7 +520,7 @@ def test_empty_header():
 def test_multiple_header_markers():
     lex = runner("=== Header")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.HEADER, "===", generate_context(0, 0, 0, 3)),
@@ -533,7 +533,7 @@ def test_multiple_header_markers():
 def test_header_marker_in_header_text():
     lex = runner("= a=b")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.HEADER, "=", generate_context(0, 0, 0, 1)),
@@ -546,7 +546,7 @@ def test_header_marker_in_header_text():
 def test_header_markers_in_text():
     lex = runner("Definitely not a === header")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(
@@ -572,7 +572,7 @@ def test_block():
         )
     )
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.BLOCK, "----", generate_context(0, 0, 0, 4)),
@@ -599,7 +599,7 @@ def test_block_inside_block():
         )
     )
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.BLOCK, "----", generate_context(0, 0, 0, 4)),
@@ -633,7 +633,7 @@ def test_block_with_header():
         )
     )
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.HEADER, "=", generate_context(0, 0, 0, 1)),
@@ -661,7 +661,7 @@ def test_block_four_characters():
         )
     )
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.BLOCK, "####", generate_context(0, 0, 0, 4)),
@@ -683,7 +683,7 @@ def test_block_with_comment():
         )
     )
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.BLOCK, "----", generate_context(0, 0, 0, 4)),
@@ -703,7 +703,7 @@ def test_block_has_to_begin_with_four_identical_characters():
         )
     )
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "abcd", generate_context(0, 0, 0, 4)),
@@ -715,7 +715,7 @@ def test_block_has_to_begin_with_four_identical_characters():
 def test_control():
     lex = runner("@if somevar==value")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.CONTROL, "@", generate_context(0, 0, 0, 1)),
@@ -731,7 +731,7 @@ def test_control():
 def test_control_with_space():
     lex = runner("@if   somevar  !=   value")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.CONTROL, "@", generate_context(0, 0, 0, 1)),

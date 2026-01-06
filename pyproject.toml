@@ -26,6 +26,7 @@ dependencies = [
   "rich",
   "rich-gradient",
   "jinja2",
+  "pyyaml",
 ]
 readme = "README.md"
 

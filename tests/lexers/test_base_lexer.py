@@ -11,7 +11,7 @@ from mau.lexers.base_lexer import (
 )
 from mau.test_helpers import (
     TEST_CONTEXT_SOURCE,
-    compare_tokens,
+    compare_asdict_list,
     dedent,
     generate_context,
     init_lexer_factory,
@@ -99,7 +99,7 @@ def test_process_eof_if_true():
     lex = BaseLexer(text_buffer)
     tokens = lex._process_eof()
 
-    compare_tokens(
+    compare_asdict_list(
         tokens,
         [
             Token(TokenType.EOF, "", generate_context(0, 0, 0, 0)),
@@ -123,7 +123,7 @@ def test_process_empty_line_empty():
     lex = BaseLexer(text_buffer)
     tokens = lex._process_empty_line()
 
-    compare_tokens(
+    compare_asdict_list(
         tokens,
         [
             Token(TokenType.EOL, test_text, generate_context(0, 0, 0, 0)),
@@ -139,7 +139,7 @@ def test_process_empty_line_with_spaces():
     lex = BaseLexer(text_buffer)
     tokens = lex._process_empty_line()
 
-    compare_tokens(
+    compare_asdict_list(
         tokens,
         [
             Token(TokenType.EOL, test_text, generate_context(0, 0, 0, len(test_text))),
@@ -169,7 +169,7 @@ def test_process_trailing_spaces():
     lex = BaseLexer(text_buffer)
     tokens = lex._process_trailing_spaces()
 
-    compare_tokens(tokens, [])
+    compare_asdict_list(tokens, [])
     assert lex._position == (1, 0)
 
 
@@ -183,7 +183,7 @@ def test_process_trailing_spaces_no_spaces():
     lex = BaseLexer(text_buffer)
     tokens = lex._process_trailing_spaces()
 
-    compare_tokens(tokens, [])
+    compare_asdict_list(tokens, [])
     assert lex._position == (1, 0)
 
 
@@ -210,7 +210,7 @@ def test_process_text():
     lex = BaseLexer(text_buffer)
     tokens = lex._process_text()
 
-    compare_tokens(
+    compare_asdict_list(
         tokens,
         [
             Token(TokenType.TEXT, "sometext", generate_context(0, 0, 0, 8)),
@@ -229,7 +229,7 @@ def test_process_text_just_tail():
     lex = BaseLexer(text_buffer)
     tokens = lex._process_text()
 
-    compare_tokens(
+    compare_asdict_list(
         tokens,
         [
             Token(TokenType.TEXT, " and more text", generate_context(0, 8, 0, 22)),
@@ -241,7 +241,7 @@ def test_process_text_just_tail():
 def test_run_empty_text():
     lex = runner("")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.EOF, "", generate_context(0, 0, 0, 0)),
@@ -252,7 +252,7 @@ def test_run_empty_text():
 def test_empty_lines():
     lex = runner("\n")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.EOL, "", generate_context(0, 0, 0, 0)),
@@ -264,7 +264,7 @@ def test_empty_lines():
 def test_lines_with_only_spaces():
     lex = runner("      \n      ")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.EOL, "", generate_context(0, 0, 0, 0)),
@@ -276,7 +276,7 @@ def test_lines_with_only_spaces():
 def test_text():
     lex = runner("Just simple text")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "Just simple text", generate_context(0, 0, 0, 16)),
@@ -296,7 +296,7 @@ def test_multiple_lines():
     )
     lex = runner(text)
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "This is text", generate_context(0, 0, 0, 12)),
@@ -325,7 +325,7 @@ def test_text_buffer_offset():
     lex = init_lexer(text_buffer)
     lex.process()
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "Just simple text", generate_context(11, 22, 11, 38)),

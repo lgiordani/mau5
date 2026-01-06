@@ -1,7 +1,7 @@
 from mau.lexers.arguments_lexer import ArgumentsLexer
 from mau.lexers.base_lexer import TokenType
 from mau.test_helpers import (
-    compare_tokens,
+    compare_asdict_list,
     generate_context,
     init_lexer_factory,
     lexer_runner_factory,
@@ -16,7 +16,7 @@ runner = lexer_runner_factory(ArgumentsLexer)
 def test_single_unnamed_argument():
     lex = runner("value1")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "value1", generate_context(0, 0, 0, 6)),
@@ -28,7 +28,7 @@ def test_single_unnamed_argument():
 def test_single_named_argument():
     lex = runner("argument1=value1")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "argument1", generate_context(0, 0, 0, 9)),
@@ -42,7 +42,7 @@ def test_single_named_argument():
 def test_multiple_unnamed_arguments():
     lex = runner("value1, value2")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "value1", generate_context(0, 0, 0, 6)),
@@ -57,7 +57,7 @@ def test_multiple_unnamed_arguments():
 def test_multiple_named_arguments():
     lex = runner("argument1=value1, argument2=value2")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "argument1", generate_context(0, 0, 0, 9)),
@@ -76,7 +76,7 @@ def test_multiple_named_arguments():
 def test_mixed_arguments():
     lex = runner("value1, value2,argument1=value1, argument2=value2")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "value1", generate_context(0, 0, 0, 6)),
@@ -100,7 +100,7 @@ def test_mixed_arguments():
 def test_quotes():
     lex = runner('argument1="value1,value2"')
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "argument1", generate_context(0, 0, 0, 9)),
@@ -118,7 +118,7 @@ def test_quotes():
 def test_spaces():
     lex = runner("argument1=value1 value2")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "argument1", generate_context(0, 0, 0, 9)),
@@ -134,7 +134,7 @@ def test_spaces():
 def test_escaped_quotes():
     lex = runner(r"argument \"with\" quotes")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "argument", generate_context(0, 0, 0, 8)),

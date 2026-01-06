@@ -1,33 +1,20 @@
-from mau.nodes.command import FootnotesItemNodeContent
+from mau.nodes.footnotes import FootnoteNodeData
 
 
-def test_footnote_node_content():
-    node_content = FootnotesItemNodeContent("somename")
+def test_macro_footnote_node_data_parameters():
+    node_data = FootnoteNodeData("somename")
 
-    assert node_content.type == "footnote"
-    assert node_content.name == "somename"
-    assert node_content.public_id is None
-    assert node_content.private_id is None
-    assert node_content.asdict() == {
+    assert node_data.type == "footnote"
+    assert node_data.name == "somename"
+    assert node_data.public_id is None
+    assert node_data.private_id is None
+
+    assert node_data.asdict() == {
         "type": "footnote",
-        "name": "somename",
-        "public_id": None,
-        "private_id": None,
-    }
-
-
-def test_footnote_node_content_with_id():
-    node_content = FootnotesItemNodeContent(
-        "somename", "some_public_id", "some_private_id"
-    )
-
-    assert node_content.type == "footnote"
-    assert node_content.name == "somename"
-    assert node_content.public_id == "some_public_id"
-    assert node_content.private_id == "some_private_id"
-    assert node_content.asdict() == {
-        "type": "footnote",
-        "name": "somename",
-        "public_id": "some_public_id",
-        "private_id": "some_private_id",
+        "custom": {
+            "name": "somename",
+            "public_id": None,
+            "private_id": None,
+            "content": [],
+        },
     }

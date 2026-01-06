@@ -1,4 +1,4 @@
-from mau.nodes.node import NodeContent
+from mau.nodes.node import Node, NodeData, NodeDataContentMixin
 
 HEADER_HELP = """
 Syntax:
@@ -12,20 +12,19 @@ header on a deeper level.
 """
 
 
-class HeaderNodeContent(NodeContent):
+class HeaderNodeData(NodeData, NodeDataContentMixin):
     """A header."""
 
     type = "header"
-    allowed_keys = {
-        "text": "The text of the header.",
-    }
 
     def __init__(
         self,
         level: int,
         internal_id: str | None = None,
         alias: str | None = None,
+        content: list[Node] | None = None,
     ):
+        super().__init__()
         self.level = level
         self.internal_id = internal_id
 
@@ -35,14 +34,16 @@ class HeaderNodeContent(NodeContent):
         # receive a programmatic ID.
         self.alias = alias
 
+        NodeDataContentMixin.__init__(self, content)
+
     def asdict(self):
         base = super().asdict()
-        base.update(
-            {
-                "level": self.level,
-                "internal_id": self.internal_id,
-                "alias": self.alias,
-            }
-        )
+        base["custom"] = {
+            "level": self.level,
+            "internal_id": self.internal_id,
+            "alias": self.alias,
+        }
+
+        NodeDataContentMixin.content_asdict(self, base)
 
         return base

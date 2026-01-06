@@ -1,4 +1,4 @@
-from mau.test_helpers import TEST_CONTEXT_SOURCE, compare_tokens, generate_context
+from mau.test_helpers import TEST_CONTEXT_SOURCE, compare_asdict_list, generate_context
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
 
@@ -104,7 +104,7 @@ def test_token_to_list():
 
     tokens = token.to_token_list()
 
-    compare_tokens(
+    compare_asdict_list(
         tokens,
         [
             Token(TokenType.TEXT, "This is ", generate_context(0, 0, 0, 8)),
@@ -121,7 +121,7 @@ def test_token_to_list_single_line():
 
     tokens = token.to_token_list()
 
-    compare_tokens(
+    compare_asdict_list(
         tokens,
         [
             Token(
@@ -136,7 +136,7 @@ def test_token_to_list_empty():
 
     tokens = token.to_token_list()
 
-    compare_tokens(
+    compare_asdict_list(
         tokens,
         [
             Token(TokenType.TEXT, "", generate_context(0, 0, 0, 0)),

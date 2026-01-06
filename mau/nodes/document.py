@@ -1,49 +1,49 @@
-# Page nodes can be found at top level in a page
+# # Page nodes can be found at top level in a page
 
-from mau.nodes.node import NodeContent
+# from mau.nodes.node import NodeData
 
-HORIZONTAL_RULE_HELP = """
-Syntax:
+# HORIZONTAL_RULE_HELP = """
+# Syntax:
 
-([ARGS])?
----
+# ([ARGS])?
+# ---
 
-The horizontal rule marks a separation between text sections
-in the same document.
-"""
-
-
-class HorizontalRuleNodeContent(NodeContent):
-    """A horizontal rule."""
-
-    type = "horizontal_rule"
+# The horizontal rule marks a separation between text sections
+# in the same document.
+# """
 
 
-class WrapperNodeContent(NodeContent):
-    type = "wrapper"
-    allowed_keys = {"content": "The nodes inside the wrapper"}
+# class HorizontalRuleNodeData(NodeData):
+#     """A horizontal rule."""
+
+#     type = "horizontal_rule"
 
 
-class DocumentNodeContent(WrapperNodeContent):
-    """A document.
-
-    This node represents the full document.
-
-    Arguments:
-        content: the content of the document
-    """
-
-    type = "document"
+# class WrapperNodeData(NodeData):
+#     type = "wrapper"
+#     allowed_keys = {"content": "The nodes inside the wrapper"}
 
 
-class ContainerNodeContent(WrapperNodeContent):
-    type = "container"
+# class DocumentNodeData(WrapperNodeData):
+#     """A document.
 
-    def __init__(self, label: str):
-        self.label = label
+#     This node represents the full document.
 
-    def asdict(self):
-        base = super().asdict()
-        base.update({"label": self.label})
+#     Arguments:
+#         content: the content of the document
+#     """
 
-        return base
+#     type = "document"
+
+
+# class ContainerNodeData(WrapperNodeData):
+#     type = "container"
+
+#     def __init__(self, label: str):
+#         self.label = label
+
+#     def asdict(self):
+#         base = super().asdict()
+#         base.update({"label": self.label})
+
+#         return base

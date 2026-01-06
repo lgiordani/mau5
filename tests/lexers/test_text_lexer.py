@@ -1,6 +1,6 @@
 from mau.lexers.text_lexer import TextLexer
 from mau.test_helpers import (
-    compare_tokens,
+    compare_asdict_list,
     generate_context,
     init_lexer_factory,
     lexer_runner_factory,
@@ -15,7 +15,7 @@ runner = lexer_runner_factory(TextLexer)
 def test_normal_text():
     lex = runner("Normal text")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "Normal", generate_context(0, 0, 0, 6)),
@@ -29,7 +29,7 @@ def test_normal_text():
 def test_underscore():
     lex = runner("_underscore_")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "_", generate_context(0, 0, 0, 1)),
@@ -43,7 +43,7 @@ def test_underscore():
 def test_star():
     lex = runner("*star*")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "*", generate_context(0, 0, 0, 1)),
@@ -57,7 +57,7 @@ def test_star():
 def test_caret():
     lex = runner("^caret^")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "^", generate_context(0, 0, 0, 1)),
@@ -71,7 +71,7 @@ def test_caret():
 def test_tilde():
     lex = runner("~tilde~")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "~", generate_context(0, 0, 0, 1)),
@@ -85,7 +85,7 @@ def test_tilde():
 def test_backtick():
     lex = runner("`backtick`")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "`", generate_context(0, 0, 0, 1)),
@@ -99,7 +99,7 @@ def test_backtick():
 def test_dollar():
     lex = runner("$dollar$")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "$", generate_context(0, 0, 0, 1)),
@@ -113,7 +113,7 @@ def test_dollar():
 def test_percent():
     lex = runner("%percent%")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "%", generate_context(0, 0, 0, 1)),
@@ -131,7 +131,7 @@ def test_curly_braces():
     # is just the literal text.
     lex = runner("{curly}")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.TEXT, "{curly}", generate_context(0, 0, 0, 7)),
@@ -143,7 +143,7 @@ def test_curly_braces():
 def test_round_brackets():
     lex = runner("(round)")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "(", generate_context(0, 0, 0, 1)),
@@ -157,7 +157,7 @@ def test_round_brackets():
 def test_square_brackets():
     lex = runner("[square]")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "[", generate_context(0, 0, 0, 1)),
@@ -171,7 +171,7 @@ def test_square_brackets():
 def test_macro():
     lex = runner("[macro](value1,value2)")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "[", generate_context(0, 0, 0, 1)),
@@ -188,7 +188,7 @@ def test_macro():
 def test_macro_named_arguments():
     lex = runner("[macro](attr1=value1,attr2=value2)")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "[", generate_context(0, 0, 0, 1)),
@@ -209,7 +209,7 @@ def test_macro_named_arguments():
 def test_escaped_underscore():
     lex = runner(r"\_underscore\_")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
@@ -225,7 +225,7 @@ def test_escaped_underscore():
 def test_escaped_square_brackets():
     lex = runner(r"\[square\]")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
@@ -241,7 +241,7 @@ def test_escaped_square_brackets():
 def test_escaped_round_brackets():
     lex = runner(r"\(round\)")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
@@ -257,7 +257,7 @@ def test_escaped_round_brackets():
 def test_escaped_curly_braces():
     lex = runner(r"\{curly\}")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
@@ -272,7 +272,7 @@ def test_escaped_curly_braces():
 def test_escaped_quotes():
     lex = runner(r"\"quotes\"")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
@@ -288,7 +288,7 @@ def test_escaped_quotes():
 def test_escaped_backticks():
     lex = runner(r"\`backticks\`")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
@@ -304,7 +304,7 @@ def test_escaped_backticks():
 def test_escaped_dollar():
     lex = runner(r"\$dollar\$")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),
@@ -320,7 +320,7 @@ def test_escaped_dollar():
 def test_escaped_percent():
     lex = runner(r"\%percent\%")
 
-    compare_tokens(
+    compare_asdict_list(
         lex.tokens,
         [
             Token(TokenType.LITERAL, "\\", generate_context(0, 0, 0, 1)),

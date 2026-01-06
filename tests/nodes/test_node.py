@@ -1,6 +1,4 @@
-from unittest.mock import Mock
-
-from mau.nodes.node import Node, NodeContent, NodeInfo, ValueNodeContent
+from mau.nodes.node import Node, NodeData, NodeInfo
 from mau.test_helpers import generate_context
 from mau.text_buffer import Context
 
@@ -24,18 +22,15 @@ def test_info():
 
 
 def test_node():
-    node = Node(content=NodeContent())
+    node = Node(data=NodeData())
 
     assert node.parent is None
-    assert node.children == {}
 
-    assert node.content.asdict() == {"type": "none"}
-    assert node.subtype is None
+    assert node.data.asdict() == {"type": "none", "custom": {}}
     assert node.tags == []
 
     assert node.asdict() == {
-        "children": {},
-        "content": {"type": "none"},
+        "content": {"type": "none", "custom": {}},
         "info": {
             "context": Context.empty().asdict(),
             "unnamed_args": [],
@@ -55,14 +50,12 @@ def test_node_with_info():
         subtype="subtype1",
     )
 
-    node = Node(content=NodeContent(), info=info)
+    node = Node(data=NodeData(), info=info)
 
-    assert node.subtype == "subtype1"
     assert node.tags == ["tag1"]
 
     assert node.asdict() == {
-        "children": {},
-        "content": {"type": "none"},
+        "content": {"type": "none", "custom": {}},
         "info": {
             "context": generate_context(0, 0, 0, 0).asdict(),
             "unnamed_args": ["arg1"],
@@ -73,50 +66,16 @@ def test_node_with_info():
     }
 
 
-def test_node_children():
-    mock_node = Mock()
-
-    node = Node(content=NodeContent())
-    node.add_children({"title": [mock_node]})
-
-    assert node.parent is None
-    assert node.asdict(recursive=True) == {
-        "children": {"title": [mock_node.asdict()]},
-        "content": {"type": "none"},
-        "info": {
-            "context": Context.empty().asdict(),
-            "unnamed_args": [],
-            "named_args": {},
-            "tags": [],
-            "subtype": None,
-        },
-    }
-
-    assert node.asdict(recursive=False) == {
-        "children": {},
-        "content": {"type": "none"},
-        "info": {
-            "context": Context.empty().asdict(),
-            "unnamed_args": [],
-            "named_args": {},
-            "tags": [],
-            "subtype": None,
-        },
-    }
-
-    mock_node.set_parent.assert_called_with(node)
-
-
 def test_node_parent():
-    parent = Node(content=NodeContent())
-    node = Node(parent=parent)
+    parent = Node(data=NodeData())
+    node = Node(data=NodeData(), parent=parent)
 
     assert node.parent is parent
 
 
 def test_node_set_parent():
-    parent = Node(content=NodeContent())
-    node = Node(content=NodeContent())
+    parent = Node(data=NodeData())
+    node = Node(data=NodeData())
 
     node.set_parent(parent)
 
@@ -124,90 +83,13 @@ def test_node_set_parent():
 
 
 def test_node_equality():
-    node1 = Node(content=NodeContent())
-    node2 = Node(content=NodeContent())
+    node1 = Node(data=NodeData())
+    node2 = Node(data=NodeData())
 
     assert node1 == node2
 
 
 def test_node_equality_with_non_node():
-    node1 = Node(content=NodeContent())
+    node1 = Node(data=NodeData())
 
-    assert node1 != NodeContent()
-
-
-def test_node_add_children():
-    child1 = Node(content=NodeContent())
-    child2 = Node(content=NodeContent())
-    node = Node(content=NodeContent(), children={"content": [child1]})
-
-    node.add_children({"content": [child2]})
-
-    assert len(node.children["content"]) == 2
-    assert child1.parent is node
-    assert child2.parent is node
-
-
-def test_node_add_children_at_existing_position():
-    child1 = Node(content=NodeContent())
-    child2 = Node(content=NodeContent())
-    node = Node(content=NodeContent(), children={"content": [child1]})
-
-    node.add_children_at_position("content", [child2])
-
-    assert len(node.children["content"]) == 2
-    assert child1.parent is node
-    assert child2.parent is node
-
-
-def test_node_add_children_at_non_existing_position():
-    child1 = Node(content=NodeContent())
-    child2 = Node(content=NodeContent())
-    node = Node(content=NodeContent(), children={"content": [child1]})
-
-    node.add_children_at_position("title", [child2])
-
-    assert len(node.children["content"]) == 1
-    assert len(node.children["title"]) == 1
-    assert child1.parent is node
-    assert child2.parent is node
-
-
-def test_value_node_content():
-    content = ValueNodeContent(value="somevalue")
-
-    assert content.type == "value"
-    assert content.value == "somevalue"
-    assert content.asdict() == {"type": "value", "value": "somevalue"}
-
-
-def test_node_check_children_allowed():
-    class TestNodeContent(NodeContent):
-        type = "test"
-        allowed_keys = {"content": "Some description"}
-
-    node = Node(content=TestNodeContent(), children={"content": []})
-
-    assert node.check_children() == set()
-
-
-def test_node_check_children_not_allowed():
-    class TestNodeContent(NodeContent):
-        type = "test"
-        allowed_keys = {"content": "Some description"}
-
-    node = Node(content=TestNodeContent(), children={"title": []})
-
-    assert node.check_children() == {"title"}
-
-
-def test_node_check_children_allow_all():
-    class TestNodeContent(NodeContent):
-        type = "test"
-        allowed_keys = {}
-
-    node = Node(content=TestNodeContent())
-    node.add_children(children={"content": []}, allow_all=True)
-
-    assert node.check_children() == set()
-    assert node.allowed_keys == {"content": "Dynamically added children"}
+    assert node1 != NodeData()

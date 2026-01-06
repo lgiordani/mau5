@@ -1,15 +1,24 @@
-from mau.nodes.node import NodeContent, ValueNodeContent
+from mau.nodes.node import NodeData
 
 
-class UnnamedArgumentNodeContent(ValueNodeContent):
+class UnnamedArgumentNodeData(NodeData):
     """
     This node contains an unnamed argument.
     """
 
     type = "unnamed_argument"
 
+    def __init__(self, value: str):
+        self.value = value
 
-class NamedArgumentNodeContent(NodeContent):
+    def asdict(self):
+        base = super().asdict()
+        base["custom"] = {"value": self.value}
+
+        return base
+
+
+class NamedArgumentNodeData(NodeData):
     """
     This node contains a named argument.
     """
@@ -22,6 +31,6 @@ class NamedArgumentNodeContent(NodeContent):
 
     def asdict(self):
         base = super().asdict()
-        base.update({"key": self.key, "value": self.value})
+        base["custom"] = {"key": self.key, "value": self.value}
 
         return base

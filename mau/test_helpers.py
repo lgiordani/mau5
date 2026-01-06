@@ -2,9 +2,8 @@ import textwrap
 from collections.abc import MutableSequence
 
 from mau.environment.environment import Environment
-from mau.nodes.node import Node, NodeContent
+from mau.nodes.node import Node
 from mau.text_buffer import Context, TextBuffer
-from mau.token import Token
 
 TEST_CONTEXT_SOURCE = "test.py"
 
@@ -13,35 +12,68 @@ def dedent(text):
     return textwrap.dedent(text).strip()
 
 
-def compare_token(token_left: Token, token_right: Token):
-    assert token_left.asdict() == token_right.asdict()
+def generate_context(line: int, column: int, end_line: int, end_column: int):
+    return Context(line, column, end_line, end_column, TEST_CONTEXT_SOURCE)
 
 
-def compare_tokens(
-    tokens_left: MutableSequence[Token], tokens_right: MutableSequence[Token]
-):
-    assert [i.asdict() for i in tokens_left] == [i.asdict() for i in tokens_right]
+def compare_asdict_object(obj_left, obj_right):
+    assert obj_left.asdict() == obj_right.asdict()
 
 
-def compare_text_lines(left: str, right: str):
-    assert left.split("\n") == right.split("\n")
+def compare_asdict_list(objs_left: MutableSequence, objs_right: MutableSequence):
+    assert [i.asdict() for i in objs_left] == [i.asdict() for i in objs_right]
 
 
-def compare_node(node_left: Node[NodeContent], node_right: Node[NodeContent]):
-    assert node_left.asdict(recursive=True) == node_right.asdict(recursive=True)
+def check_node_data_with_content(node_data_class):
+    nodes: list[Node] = [Node(), Node()]
 
+    node_data = node_data_class(content=nodes)
+    node_data_dict = node_data.asdict()
 
-def compare_nodes(
-    nodes_left: MutableSequence[Node[NodeContent]],
-    nodes_right: MutableSequence[Node[NodeContent]],
-):
-    assert [i.asdict(recursive=True) for i in nodes_left] == [
-        i.asdict(recursive=True) for i in nodes_right
+    assert node_data_dict["custom"]["content"] == [
+        {
+            "content": {
+                "custom": {},
+                "type": "none",
+            },
+            "info": {
+                "context": {
+                    "end_column": 0,
+                    "end_line": 0,
+                    "source": None,
+                    "start_column": 0,
+                    "start_line": 0,
+                },
+                "named_args": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
+            },
+        },
+        {
+            "content": {
+                "custom": {},
+                "type": "none",
+            },
+            "info": {
+                "context": {
+                    "end_column": 0,
+                    "end_line": 0,
+                    "source": None,
+                    "start_column": 0,
+                    "start_line": 0,
+                },
+                "named_args": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
+            },
+        },
     ]
 
 
-def generate_context(line: int, column: int, end_line: int, end_column: int):
-    return Context(line, column, end_line, end_column, TEST_CONTEXT_SOURCE)
+# def compare_text_lines(left: str, right: str):
+#     assert left.split("\n") == right.split("\n")
 
 
 def init_lexer_factory(lexer_class):

@@ -1,24 +1,16 @@
-from mau.nodes.block import BlockNodeContent
-from mau.nodes.command import BlockGroupNodeContent
+from mau.nodes.block import BlockNodeData
 
 
-def test_block_node_content():
-    node_content = BlockNodeContent()
+def test_block_node_data():
+    node_data = BlockNodeData()
 
-    assert node_content.type == "block"
-    assert node_content.asdict() == {
+    assert node_data.type == "block"
+    assert node_data.asdict() == {
         "type": "block",
-        "classes": [],
-        "engine": None,
-        "preprocessor": None,
-    }
-
-
-def test_block_group_node_content():
-    node_content = BlockGroupNodeContent("somename")
-
-    assert node_content.type == "block-group"
-    assert node_content.asdict() == {
-        "type": "block-group",
-        "name": "somename",
+        "custom": {
+            "classes": [],
+            "engine": None,
+            "preprocessor": None,
+            "content": [],
+        },
     }

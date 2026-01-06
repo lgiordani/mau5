@@ -1,148 +1,211 @@
+from functools import partial
+
+from mau.nodes.headers import HeaderNodeData
+from mau.nodes.footnotes import FootnoteNodeData
 from mau.nodes.macros import (
-    MacroClassNodeContent,
-    MacroFootnoteNodeContent,
-    MacroHeaderNodeContent,
-    MacroImageNodeContent,
-    MacroLinkNodeContent,
-    MacroNodeContent,
+    MacroClassNodeData,
+    MacroFootnoteNodeData,
+    MacroHeaderNodeData,
+    MacroImageNodeData,
+    MacroLinkNodeData,
+    MacroNodeData,
 )
+from mau.test_helpers import check_node_data_with_content
 
 
-def test_macro_node_content():
-    node_content = MacroNodeContent("somename")
+def test_macro_node_data():
+    node_data = MacroNodeData("somename")
 
-    assert node_content.type == "macro"
-    assert node_content.name == "somename"
-    assert node_content.unnamed_args == []
-    assert node_content.named_args == {}
-
-    assert node_content.asdict() == {
+    assert node_data.type == "macro"
+    assert node_data.name == "somename"
+    assert node_data.unnamed_args == []
+    assert node_data.named_args == {}
+    assert node_data.asdict() == {
         "type": "macro",
-        "name": "somename",
-        "unnamed_args": [],
-        "named_args": {},
+        "custom": {
+            "name": "somename",
+            "unnamed_args": [],
+            "named_args": {},
+        },
     }
 
 
-def test_macro_node_content_args():
-    node_content = MacroNodeContent(
+def test_macro_node_data_args():
+    node_data = MacroNodeData(
         "somename", unnamed_args=["arg1"], named_args={"key1": "value1"}
     )
 
-    assert node_content.type == "macro"
-    assert node_content.name == "somename"
-    assert node_content.unnamed_args == ["arg1"]
-    assert node_content.named_args == {"key1": "value1"}
-
-    assert node_content.asdict() == {
+    assert node_data.type == "macro"
+    assert node_data.name == "somename"
+    assert node_data.unnamed_args == ["arg1"]
+    assert node_data.named_args == {"key1": "value1"}
+    assert node_data.asdict() == {
         "type": "macro",
-        "name": "somename",
-        "unnamed_args": ["arg1"],
-        "named_args": {"key1": "value1"},
+        "custom": {
+            "name": "somename",
+            "unnamed_args": ["arg1"],
+            "named_args": {"key1": "value1"},
+        },
     }
 
 
-def test_macro_class_node_content():
-    node_content = MacroClassNodeContent(["class1", "class2"])
+def test_macro_class_node_data_without_content():
+    node_data = MacroClassNodeData(["class1", "class2"])
 
-    assert node_content.type == "macro.class"
-    assert list(node_content.allowed_keys.keys()) == ["text"]
-    assert node_content.classes == ["class1", "class2"]
-
-    assert node_content.asdict() == {
+    assert node_data.type == "macro.class"
+    assert node_data.classes == ["class1", "class2"]
+    assert node_data.content == []
+    assert node_data.asdict() == {
         "type": "macro.class",
-        "classes": ["class1", "class2"],
+        "custom": {
+            "classes": ["class1", "class2"],
+            "content": [],
+        },
     }
 
 
-def test_macro_link_node_content():
-    node_content = MacroLinkNodeContent("sometarget")
+def test_macro_class_node_data_with_content():
+    node_data_class = partial(MacroClassNodeData, ["class1", "class2"])
+    check_node_data_with_content(node_data_class)
 
-    assert node_content.type == "macro.link"
-    assert list(node_content.allowed_keys.keys()) == ["text"]
-    assert node_content.value == "sometarget"
 
-    assert node_content.asdict() == {
+def test_macro_link_node_data_without_content():
+    node_data = MacroLinkNodeData("sometarget")
+
+    assert node_data.type == "macro.link"
+    assert node_data.target == "sometarget"
+    assert node_data.asdict() == {
         "type": "macro.link",
-        "target": "sometarget",
+        "custom": {
+            "target": "sometarget",
+            "content": [],
+        },
     }
 
 
-def test_macro_image_node_content():
-    node_content = MacroImageNodeContent("someuri")
+def test_macro_link_node_data_with_content():
+    node_data_class = partial(MacroLinkNodeData, "sometarget")
+    check_node_data_with_content(node_data_class)
 
-    assert node_content.type == "macro.image"
-    assert node_content.uri == "someuri"
-    assert node_content.alt_text is None
-    assert node_content.width is None
-    assert node_content.height is None
 
-    assert node_content.asdict() == {
+def test_macro_image_node_data():
+    node_data = MacroImageNodeData("someuri")
+
+    assert node_data.type == "macro.image"
+    assert node_data.uri == "someuri"
+    assert node_data.alt_text is None
+    assert node_data.width is None
+    assert node_data.height is None
+
+    assert node_data.asdict() == {
         "type": "macro.image",
-        "uri": "someuri",
-        "alt_text": None,
-        "width": None,
-        "height": None,
+        "custom": {
+            "uri": "someuri",
+            "alt_text": None,
+            "width": None,
+            "height": None,
+        },
     }
 
 
-def test_macro_image_node_content_parameters():
-    node_content = MacroImageNodeContent("someuri", "alt_text", "width", "height")
+def test_macro_image_node_data_parameters():
+    node_data = MacroImageNodeData("someuri", "alt_text", "width", "height")
 
-    assert node_content.type == "macro.image"
-    assert node_content.uri == "someuri"
-    assert node_content.alt_text == "alt_text"
-    assert node_content.width == "width"
-    assert node_content.height == "height"
+    assert node_data.type == "macro.image"
+    assert node_data.uri == "someuri"
+    assert node_data.alt_text == "alt_text"
+    assert node_data.width == "width"
+    assert node_data.height == "height"
 
-    assert node_content.asdict() == {
+    assert node_data.asdict() == {
         "type": "macro.image",
-        "uri": "someuri",
-        "alt_text": "alt_text",
-        "width": "width",
-        "height": "height",
+        "custom": {
+            "uri": "someuri",
+            "alt_text": "alt_text",
+            "width": "width",
+            "height": "height",
+        },
     }
 
 
-def test_macro_header_node_content():
-    node_content = MacroHeaderNodeContent("someid")
+def test_macro_header_node_data():
+    node_data = MacroHeaderNodeData("someid")
 
-    assert node_content.type == "macro.header"
-    assert node_content.target_alias == "someid"
-    assert node_content.target_id is None
+    assert node_data.type == "macro.header"
+    assert node_data.target_alias == "someid"
+    assert node_data.target_id is None
 
-    assert node_content.asdict() == {
+    assert node_data.asdict() == {
         "type": "macro.header",
-        "target_alias": "someid",
-        "target_id": None,
+        "custom": {
+            "target_alias": "someid",
+            "target_id": None,
+            "content": [],
+            "header": None,
+        },
     }
 
 
-def test_macro_header_node_content_parameters():
-    node_content = MacroHeaderNodeContent("someid", "targetid")
+def test_macro_header_node_data_with_header():
+    node_data = MacroHeaderNodeData("someid", header=HeaderNodeData(level=1))
 
-    assert node_content.type == "macro.header"
-    assert node_content.target_alias == "someid"
-    assert node_content.target_id == "targetid"
+    assert node_data.type == "macro.header"
+    assert node_data.target_alias == "someid"
+    assert node_data.target_id is None
 
-    assert node_content.asdict() == {
+    assert node_data.asdict() == {
         "type": "macro.header",
-        "target_alias": "someid",
-        "target_id": "targetid",
+        "custom": {
+            "target_alias": "someid",
+            "target_id": None,
+            "content": [],
+            "header": {
+                "type": "header",
+                "custom": {
+                    "alias": None,
+                    "content": [],
+                    "internal_id": None,
+                    "level": 1,
+                },
+            },
+        },
     }
 
 
-def test_macro_footnote_node_content_parameters():
-    node_content = MacroFootnoteNodeContent("somename")
+def test_macro_header_node_data_parameters():
+    node_data = MacroHeaderNodeData("someid", target_id="targetid")
 
-    assert node_content.type == "macro.footnote"
-    assert node_content.name == "somename"
-    assert node_content.public_id is None
-    assert node_content.private_id is None
+    assert node_data.type == "macro.header"
+    assert node_data.target_alias == "someid"
+    assert node_data.target_id == "targetid"
 
-    assert node_content.asdict() == {
+    assert node_data.asdict() == {
+        "type": "macro.header",
+        "custom": {
+            "target_alias": "someid",
+            "target_id": "targetid",
+            "content": [],
+            "header": None,
+        },
+    }
+
+
+def test_macro_footnote_node_data_parameters():
+    node_data = MacroFootnoteNodeData(footnote=FootnoteNodeData(name="somename"))
+
+    assert node_data.type == "macro.footnote"
+
+    assert node_data.asdict() == {
         "type": "macro.footnote",
-        "name": "somename",
-        "public_id": None,
-        "private_id": None,
+        "custom": {
+            "footnote": {
+                "type": "footnote",
+                "custom": {
+                    "name": "somename",
+                    "public_id": None,
+                    "private_id": None,
+                    "content": [],
+                },
+            }
+        },
     }

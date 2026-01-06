@@ -1,25 +1,39 @@
-from mau.nodes.node import NodeContent
+from mau.nodes.node import Node, NodeData, NodeDataContentMixin
 
 
-class ParagraphNodeContent(NodeContent):
+class ParagraphNodeData(NodeData, NodeDataContentMixin):
     """A non-recursive container node.
 
     This node represents the content of a paragraph in a document.
-    Its content is a list of lines (ParagraphLineNodeContent)
+    Its content is a list of lines (ParagraphLineNodeData)
     """
 
     type = "paragraph"
-    allowed_keys = {
-        "content": "The lines contained in this paragraph.",
-    }
+
+    def __init__(self, content: list[Node] | None = None):
+        super().__init__()
+        NodeDataContentMixin.__init__(self, content)
+
+    def asdict(self):
+        base = super().asdict()
+        NodeDataContentMixin.content_asdict(self, base)
+
+        return base
 
 
-class ParagraphLineNodeContent(NodeContent):
+class ParagraphLineNodeData(NodeData, NodeDataContentMixin):
     """
     This node represents the content of a line of a paragraph.
     """
 
     type = "paragraph-line"
-    allowed_keys = {
-        "content": "The text contained in this line.",
-    }
+
+    def __init__(self, content: list[Node] | None = None):
+        super().__init__()
+        NodeDataContentMixin.__init__(self, content)
+
+    def asdict(self):
+        base = super().asdict()
+        NodeDataContentMixin.content_asdict(self, base)
+
+        return base

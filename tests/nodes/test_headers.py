@@ -1,20 +1,33 @@
-from mau.nodes.headers import HeaderNodeContent
+from functools import partial
+
+from mau.nodes.headers import HeaderNodeData
+from mau.test_helpers import check_node_data_with_content
 
 
-def test_header_node_content():
-    node_content = HeaderNodeContent(
+def test_header_node_data_without_content():
+    node_data = HeaderNodeData(
         level=42,
         internal_id="some_internal_id",
         alias="some_alias",
     )
 
-    assert node_content.type == "header"
-    assert node_content.level == 42
-    assert node_content.internal_id == "some_internal_id"
-    assert node_content.alias == "some_alias"
-    assert node_content.asdict() == {
+    assert node_data.type == "header"
+    assert node_data.level == 42
+    assert node_data.internal_id == "some_internal_id"
+    assert node_data.alias == "some_alias"
+    assert node_data.asdict() == {
         "type": "header",
-        "level": 42,
-        "internal_id": "some_internal_id",
-        "alias": "some_alias",
+        "custom": {
+            "level": 42,
+            "internal_id": "some_internal_id",
+            "alias": "some_alias",
+            "content": [],
+        },
     }
+
+
+def test_header_node_data_with_content():
+    node_data_class = partial(
+        HeaderNodeData, level=42, internal_id="some_internal_id", alias="some_alias"
+    )
+    check_node_data_with_content(node_data_class)
