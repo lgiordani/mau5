@@ -24,7 +24,7 @@ from mau.parsers.document_processors.control import control_processor
 from mau.parsers.document_processors.header import header_processor
 from mau.parsers.document_processors.horizontal_rule import horizontal_rule_processor
 
-# from mau.parsers.document_processors.include import include_processor
+from mau.parsers.document_processors.include import include_processor
 from mau.parsers.document_processors.label import label_processor
 
 # from mau.parsers.document_processors.list import list_processor
@@ -124,7 +124,7 @@ class DocumentParser(BaseParser):
             partial(arguments_processor, self),
             partial(header_processor, self),
             #         partial(block_processor, self),
-            #         partial(include_processor, self),
+            partial(include_processor, self),
             #         partial(list_processor, self),
             #         partial(paragraph_processor, self),
         ]

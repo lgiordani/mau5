@@ -31,7 +31,8 @@ def horizontal_rule_processor(parser: DocumentParser):
         ),
     )
 
-    # Retrieve labels.
+    # Extract labels from the buffer and
+    # store them in the node data.
     if labels := parser.label_buffer.pop():
         node.data.labels = labels
 

@@ -95,7 +95,8 @@ def header_processor(parser: DocumentParser):
         info=NodeInfo(context=context, **arguments.asdict()),
     )
 
-    # Extract labels and store them in the buffer.
+    # Extract labels from the buffer and
+    # store them in the node data.
     if labels := parser.label_buffer.pop():
         node.data.labels = labels
 
