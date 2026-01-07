@@ -81,7 +81,7 @@ def test_horizontal_rule_with_labels():
                             ]
                         ),
                         info=NodeInfo(
-                            context=generate_context(1, 0, 1, 8),
+                            context=generate_context(1, 0, 1, 24),
                         ),
                     )
                 }

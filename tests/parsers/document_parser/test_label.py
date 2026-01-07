@@ -33,7 +33,7 @@ def test_label():
                     )
                 ]
             ),
-            info=NodeInfo(context=generate_context(1, 0, 1, 1)),
+            info=NodeInfo(context=generate_context(1, 0, 1, 12)),
         ),
     )
 
@@ -57,7 +57,7 @@ def test_label_with_spaces():
                     )
                 ]
             ),
-            info=NodeInfo(context=generate_context(1, 0, 1, 1)),
+            info=NodeInfo(context=generate_context(1, 0, 1, 14)),
         ),
     )
 
@@ -81,7 +81,7 @@ def test_label_role():
                     )
                 ]
             ),
-            info=NodeInfo(context=generate_context(1, 0, 1, 6)),
+            info=NodeInfo(context=generate_context(1, 0, 1, 17)),
         ),
     )
 
@@ -108,7 +108,7 @@ def test_label_multiple():
                     )
                 ]
             ),
-            info=NodeInfo(context=generate_context(1, 0, 1, 1)),
+            info=NodeInfo(context=generate_context(1, 0, 1, 12)),
         ),
     )
 
@@ -123,7 +123,7 @@ def test_label_multiple():
                     )
                 ]
             ),
-            info=NodeInfo(context=generate_context(2, 0, 2, 6)),
+            info=NodeInfo(context=generate_context(2, 0, 2, 17)),
         ),
     )
 
@@ -161,6 +161,6 @@ def test_label_can_contain_mau_syntax():
                     ),
                 ]
             ),
-            info=NodeInfo(context=generate_context(1, 0, 1, 1)),
+            info=NodeInfo(context=generate_context(1, 0, 1, 14)),
         ),
     )

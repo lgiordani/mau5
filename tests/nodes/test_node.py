@@ -1,4 +1,4 @@
-from mau.nodes.node import Node, NodeData, NodeInfo
+from mau.nodes.node import Node, NodeData, NodeInfo, WrapperNodeData
 from mau.test_helpers import generate_context
 from mau.text_buffer import Context
 
@@ -93,3 +93,15 @@ def test_node_equality_with_non_node():
     node1 = Node(data=NodeData())
 
     assert node1 != NodeData()
+
+
+def test_wrapper_node_content():
+    node_content = WrapperNodeData()
+
+    assert node_content.type == "wrapper"
+    assert node_content.asdict() == {
+        "type": "wrapper",
+        "custom": {
+            "content": [],
+        },
+    }

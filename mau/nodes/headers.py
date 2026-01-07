@@ -1,4 +1,10 @@
-from mau.nodes.node import Node, NodeData, NodeDataContentMixin, WrapperNodeData
+from mau.nodes.node import (
+    Node,
+    NodeData,
+    NodeDataContentMixin,
+    WrapperNodeData,
+    NodeDataLabelsMixin,
+)
 
 HEADER_HELP = """
 Syntax:
@@ -12,7 +18,7 @@ header on a deeper level.
 """
 
 
-class HeaderNodeData(NodeData, NodeDataContentMixin):
+class HeaderNodeData(NodeData, NodeDataLabelsMixin):
     """A header."""
 
     type = "header"
@@ -24,6 +30,7 @@ class HeaderNodeData(NodeData, NodeDataContentMixin):
         alias: str | None = None,
         text: Node[WrapperNodeData] | None = None,
         source_text: str | None = None,
+        labels: dict[str, Node[WrapperNodeData]] | None = None,
     ):
         super().__init__()
         self.level = level
@@ -44,6 +51,8 @@ class HeaderNodeData(NodeData, NodeDataContentMixin):
         # the unique id.
         self.source_text = source_text
 
+        NodeDataLabelsMixin.__init__(self, labels)
+
     def asdict(self):
         base = super().asdict()
         base["custom"] = {
@@ -54,5 +63,7 @@ class HeaderNodeData(NodeData, NodeDataContentMixin):
 
         if self.text:
             base["custom"]["text"] = self.text.asdict()
+
+        NodeDataLabelsMixin.content_asdict(self, base)
 
         return base

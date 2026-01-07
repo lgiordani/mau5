@@ -23,6 +23,7 @@ def test_header_node_data_without_content():
             "level": 42,
             "internal_id": "some_internal_id",
             "alias": "some_alias",
+            "labels": {},
         },
     }
 
@@ -48,6 +49,7 @@ def test_header_node_data_with_content():
             "level": 42,
             "internal_id": "some_internal_id",
             "alias": "some_alias",
+            "labels": {},
             "text": {
                 "data": {
                     "type": "wrapper",

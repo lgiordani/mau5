@@ -96,8 +96,8 @@ def header_processor(parser: DocumentParser):
     )
 
     # Extract labels and store them in the buffer.
-    if label := parser.label_buffer.pop():
-        node.add_children(label, allow_all=True)
+    if labels := parser.label_buffer.pop():
+        node.data.labels = labels
 
     # Check the stored control
     if control := parser.control_buffer.pop():

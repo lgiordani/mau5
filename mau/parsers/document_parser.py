@@ -7,8 +7,8 @@ from functools import partial
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 
-# from mau.nodes.document import ContainerNodeData, DocumentNodeData
-from mau.nodes.node import Node, NodeData, NodeInfo
+from mau.nodes.document import DocumentNodeData
+from mau.nodes.node import Node, NodeData, NodeInfo, WrapperNodeData
 
 from mau.parsers.base_parser import BaseParser
 from mau.parsers.buffers.arguments_buffer import ArgumentsBuffer
@@ -203,35 +203,32 @@ class DocumentParser(BaseParser):
         if not self.nodes:
             return self.output
 
-        # document_content_class = self.environment.get(
-        #     "mau.parser.document_wrapper", DocumentNodeData
-        # )
+        document_content_class = self.environment.get(
+            "mau.parser.document_wrapper", DocumentNodeData
+        )
 
-        # # Find the document context.
-        # context = Context.merge_contexts(
-        #     self.nodes[0].info.context, self.nodes[-1].info.context
-        # )
+        # Find the document context.
+        context = Context.merge_contexts(
+            self.nodes[0].info.context, self.nodes[-1].info.context
+        )
 
-        # nodes_wrapper = self.environment.get(
-        #     "mau.parser.nodes_wrapper", ContainerNodeData
-        # )
+        nodes_wrapper = self.environment.get(
+            "mau.parser.nodes_wrapper", WrapperNodeData
+        )
 
-        # self.output.update(
-        #     {
-        #         "document": Node(
-        #             data=document_content_class(),
-        #             info=NodeInfo(context=context),
-        #             children={"content": self.nodes},
-        #         ),
-        #         "nested_toc": Node(
-        #             data=nodes_wrapper("toc"),
-        #             info=NodeInfo(context=context),
-        #             children={"content": self.toc_manager.nested_headers},
-        #         ),
-        #         "plain_toc": Node(
-        #             data=nodes_wrapper("toc"),
-        #             info=NodeInfo(context=context),
-        #             children={"content": self.toc_manager.headers},
-        #         ),
-        #     }
-        # )
+        self.output.update(
+            {
+                "document": Node(
+                    data=document_content_class(content=self.nodes),
+                    info=NodeInfo(context=context),
+                ),
+                "nested_toc": Node(
+                    data=nodes_wrapper(content=self.toc_manager.nested_headers),
+                    info=NodeInfo(context=context),
+                ),
+                "plain_toc": Node(
+                    data=nodes_wrapper(content=self.toc_manager.headers),
+                    info=NodeInfo(context=context),
+                ),
+            }
+        )

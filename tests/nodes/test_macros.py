@@ -165,6 +165,7 @@ def test_macro_header_node_data_with_header():
                     "alias": None,
                     "internal_id": None,
                     "level": 1,
+                    "labels": {},
                 },
             },
         },

@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 from mau.nodes.node import WrapperNodeData, Node, NodeInfo
 from mau.parsers.text_parser import TextParser
 from mau.token import TokenType
+from mau.text_buffer import Context
 
 
 def label_processor(parser: DocumentParser):
@@ -37,12 +38,14 @@ def label_processor(parser: DocumentParser):
         text_token.context.source,
     )
 
+    label_context = Context.merge_contexts(prefix.context, text_token.context)
+
     # Create the label node.
     label_node = Node(
         data=WrapperNodeData(
             content=text_parser.nodes,
         ),
-        info=NodeInfo(context=prefix.context),
+        info=NodeInfo(context=label_context),
     )
 
     # Store the label node in the buffer.

@@ -32,7 +32,7 @@ def test_header_level_1():
             Node(
                 data=HeaderNodeData(
                     1,
-                    "XXXXXY",
+                    internal_id="XXXXXY",
                     text=Node(
                         data=WrapperNodeData(
                             content=[
@@ -53,190 +53,242 @@ def test_header_level_1():
     )
 
 
-# def test_header_level_3():
-#     environment = Environment()
-#     environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
+def test_header_level_3():
+    environment = Environment()
+    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
 
-#     source = """
-#     === Title of a subsection
-#     """
+    source = """
+    === Title of a subsection
+    """
 
-#     parser = runner(source, environment)
+    parser = runner(source, environment)
 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=HeaderNodeData(3, "XXXXXY"),
-#                 info=NodeInfo(context=generate_context(1, 0, 1, 25)),
-#                 children={
-#                     "text": [
-#                         Node(
-#                             data=TextNodeData("Title of a subsection"),
-#                             info=NodeInfo(context=generate_context(1, 4, 1, 25)),
-#                         )
-#                     ]
-#                 },
-#             )
-#         ],
-#     )
-
-
-# def test_header_attributes():
-#     environment = Environment()
-#     environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
-
-#     source = """
-#     [arg1, #tag1, *subtype1, key1=value1]
-#     = Title of the section
-#     """
-
-#     parser = runner(source, environment)
-
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=HeaderNodeData(1, "XXXXXY"),
-#                 info=NodeInfo(
-#                     context=generate_context(2, 0, 2, 22),
-#                     unnamed_args=["arg1"],
-#                     named_args={"key1": "value1"},
-#                     tags=["tag1"],
-#                     subtype="subtype1",
-#                 ),
-#                 children={
-#                     "text": [
-#                         Node(
-#                             data=TextNodeData("Title of the section"),
-#                             info=NodeInfo(context=generate_context(2, 2, 2, 22)),
-#                         )
-#                     ]
-#                 },
-#             )
-#         ],
-#     )
+    compare_asdict_list(
+        parser.nodes,
+        [
+            Node(
+                data=HeaderNodeData(
+                    3,
+                    internal_id="XXXXXY",
+                    text=Node(
+                        data=WrapperNodeData(
+                            content=[
+                                Node(
+                                    data=TextNodeData("Title of a subsection"),
+                                    info=NodeInfo(
+                                        context=generate_context(1, 4, 1, 25)
+                                    ),
+                                )
+                            ]
+                        ),
+                        info=NodeInfo(context=generate_context(1, 4, 1, 25)),
+                    ),
+                ),
+                info=NodeInfo(context=generate_context(1, 0, 1, 25)),
+            )
+        ],
+    )
 
 
-# def test_header_attributes_can_overwrite_ids():
-#     source = """
-#     [arg1, #tag1, *subtype1, internal_id=some_internal_id, alias=some_alias]
-#     = Header
-#     """
+def test_header_attributes():
+    environment = Environment()
+    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
 
-#     parser = runner(source)
+    source = """
+    [arg1, #tag1, *subtype1, key1=value1]
+    = Title of the section
+    """
 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=HeaderNodeData(
-#                     1, internal_id="some_internal_id", alias="some_alias"
-#                 ),
-#                 info=NodeInfo(
-#                     context=generate_context(2, 0, 2, 8),
-#                     unnamed_args=["arg1"],
-#                     named_args={},
-#                     tags=["tag1"],
-#                     subtype="subtype1",
-#                 ),
-#                 children={
-#                     "text": [
-#                         Node(
-#                             data=TextNodeData("Header"),
-#                             info=NodeInfo(context=generate_context(2, 2, 2, 8)),
-#                         )
-#                     ]
-#                 },
-#             )
-#         ],
-#     )
+    parser = runner(source, environment)
 
-
-# def test_header_usese_labels():
-#     environment = Environment()
-#     environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
-
-#     source = """
-#     . This is a label
-#     = Title of the section
-#     """
-
-#     parser = runner(source, environment)
-
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=HeaderNodeData(1, "XXXXXY"),
-#                 info=NodeInfo(context=generate_context(2, 0, 2, 22)),
-#                 children={
-#                     "text": [
-#                         Node(
-#                             data=TextNodeData("Title of the section"),
-#                             info=NodeInfo(context=generate_context(2, 2, 2, 22)),
-#                         )
-#                     ],
-#                     "title": [
-#                         Node(
-#                             data=TextNodeData("This is a label"),
-#                             info=NodeInfo(context=generate_context(1, 2, 1, 17)),
-#                         )
-#                     ],
-#                 },
-#             )
-#         ],
-#     )
+    compare_asdict_list(
+        parser.nodes,
+        [
+            Node(
+                data=HeaderNodeData(
+                    1,
+                    internal_id="XXXXXY",
+                    text=Node(
+                        data=WrapperNodeData(
+                            content=[
+                                Node(
+                                    data=TextNodeData("Title of the section"),
+                                    info=NodeInfo(
+                                        context=generate_context(2, 2, 2, 22)
+                                    ),
+                                )
+                            ]
+                        ),
+                        info=NodeInfo(
+                            context=generate_context(2, 2, 2, 22),
+                        ),
+                    ),
+                ),
+                info=NodeInfo(
+                    context=generate_context(2, 0, 2, 22),
+                    unnamed_args=["arg1"],
+                    named_args={"key1": "value1"},
+                    tags=["tag1"],
+                    subtype="subtype1",
+                ),
+            )
+        ],
+    )
 
 
-# def test_header_uses_control_positive():
-#     environment = Environment()
-#     environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
-#     environment["answer"] = "42"
+def test_header_attributes_can_overwrite_ids():
+    source = """
+    [arg1, #tag1, *subtype1, internal_id=some_internal_id, alias=some_alias]
+    = Title of the section
+    """
 
-#     source = """
-#     @if answer==42
-#     = Title of the section
-#     """
+    parser = runner(source)
 
-#     parser = runner(source, environment)
+    compare_asdict_list(
+        parser.nodes,
+        [
+            Node(
+                data=HeaderNodeData(
+                    1,
+                    internal_id="some_internal_id",
+                    alias="some_alias",
+                    text=Node(
+                        data=WrapperNodeData(
+                            content=[
+                                Node(
+                                    data=TextNodeData("Title of the section"),
+                                    info=NodeInfo(
+                                        context=generate_context(2, 2, 2, 22)
+                                    ),
+                                )
+                            ]
+                        ),
+                        info=NodeInfo(
+                            context=generate_context(2, 2, 2, 22),
+                        ),
+                    ),
+                ),
+                info=NodeInfo(
+                    context=generate_context(2, 0, 2, 22),
+                    unnamed_args=["arg1"],
+                    named_args={},
+                    tags=["tag1"],
+                    subtype="subtype1",
+                ),
+            )
+        ],
+    )
 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=HeaderNodeData(1, "XXXXXY"),
-#                 info=NodeInfo(context=generate_context(2, 0, 2, 22)),
-#                 children={
-#                     "text": [
-#                         Node(
-#                             data=TextNodeData("Title of the section"),
-#                             info=NodeInfo(context=generate_context(2, 2, 2, 22)),
-#                         )
-#                     ]
-#                 },
-#             )
-#         ],
-#     )
 
-#     assert parser.control_buffer.pop() is None
+def test_header_usese_labels():
+    environment = Environment()
+    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
+
+    source = """
+    . This is a label
+    = Title of the section
+    """
+
+    parser = runner(source, environment)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            Node(
+                data=HeaderNodeData(
+                    1,
+                    internal_id="XXXXXY",
+                    text=Node(
+                        data=WrapperNodeData(
+                            content=[
+                                Node(
+                                    data=TextNodeData("Title of the section"),
+                                    info=NodeInfo(
+                                        context=generate_context(2, 2, 2, 22)
+                                    ),
+                                )
+                            ]
+                        ),
+                        info=NodeInfo(context=generate_context(2, 2, 2, 22)),
+                    ),
+                    labels={
+                        "title": Node(
+                            data=WrapperNodeData(
+                                content=[
+                                    Node(
+                                        data=TextNodeData("This is a label"),
+                                        info=NodeInfo(
+                                            context=generate_context(1, 2, 1, 17)
+                                        ),
+                                    )
+                                ]
+                            ),
+                            info=NodeInfo(context=generate_context(1, 0, 1, 17)),
+                        )
+                    },
+                ),
+                info=NodeInfo(context=generate_context(2, 0, 2, 22)),
+            )
+        ],
+    )
 
 
-# def test_header_uses_control_negative():
-#     environment = Environment()
-#     environment["answer"] = "24"
+def test_header_uses_control_positive():
+    environment = Environment()
+    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
+    environment["answer"] = "42"
 
-#     source = """
-#     @if answer==42
-#     [arg1, arg2]
-#     . Some title
-#     = Title of the section
-#     """
+    source = """
+    @if answer==42
+    = Title of the section
+    """
 
-#     parser = runner(source, environment)
+    parser = runner(source, environment)
 
-#     compare_asdict_list(parser.nodes, [])
+    compare_asdict_list(
+        parser.nodes,
+        [
+            Node(
+                data=HeaderNodeData(
+                    1,
+                    internal_id="XXXXXY",
+                    text=Node(
+                        data=WrapperNodeData(
+                            content=[
+                                Node(
+                                    data=TextNodeData("Title of the section"),
+                                    info=NodeInfo(
+                                        context=generate_context(2, 2, 2, 22)
+                                    ),
+                                )
+                            ]
+                        ),
+                        info=NodeInfo(context=generate_context(2, 2, 2, 22)),
+                    ),
+                ),
+                info=NodeInfo(context=generate_context(2, 0, 2, 22)),
+            )
+        ],
+    )
 
-#     assert parser.arguments_buffer.arguments is None
-#     assert parser.label_buffer.labels == {}
-#     assert parser.control_buffer.control is None
+    assert parser.control_buffer.pop() is None
+
+
+def test_header_uses_control_negative():
+    environment = Environment()
+    environment["answer"] = "24"
+
+    source = """
+    @if answer==42
+    [arg1, arg2]
+    . Some title
+    = Title of the section
+    """
+
+    parser = runner(source, environment)
+
+    compare_asdict_list(parser.nodes, [])
+
+    assert parser.arguments_buffer.arguments is None
+    assert parser.label_buffer.labels == {}
+    assert parser.control_buffer.control is None

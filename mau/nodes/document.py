@@ -32,31 +32,13 @@ class HorizontalRuleNodeData(NodeData, NodeDataLabelsMixin):
         return base
 
 
-# class WrapperNodeData(NodeData):
-#     type = "wrapper"
-#     allowed_keys = {"content": "The nodes inside the wrapper"}
+class DocumentNodeData(WrapperNodeData):
+    """A document.
 
+    This node represents the full document.
 
-# class DocumentNodeData(WrapperNodeData):
-#     """A document.
+    Arguments:
+        content: the content of the document
+    """
 
-#     This node represents the full document.
-
-#     Arguments:
-#         content: the content of the document
-#     """
-
-#     type = "document"
-
-
-# class ContainerNodeData(WrapperNodeData):
-#     type = "container"
-
-#     def __init__(self, label: str):
-#         self.label = label
-
-#     def asdict(self):
-#         base = super().asdict()
-#         base.update({"label": self.label})
-
-#         return base
+    type = "document"

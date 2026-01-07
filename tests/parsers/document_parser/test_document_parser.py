@@ -5,6 +5,8 @@ from mau.test_helpers import (
     init_parser_factory,
     parser_runner_factory,
 )
+from mau.nodes.document import DocumentNodeData
+from mau.nodes.node import Node, NodeData, NodeInfo, WrapperNodeData
 
 init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 
@@ -19,17 +21,18 @@ def test_parse_discards_empty_lines():
     compare_asdict_list(parser.nodes, [])
 
 
-# def test_parse_output():
-#     source = ""
+def test_parse_output():
+    source = ""
 
-#     assert runner(source).output == {
-#         "content": ContainerNode(children=[]),
-#         "toc": ContainerNode(children=[TocNode()]),
-#     }
+    assert runner(source).output == {
+        "document": None,
+        "nested_toc": None,
+        "plain_toc": None,
+    }
 
 
 # def test_parse_output_custom_content_container():
-#     source = ""
+#     source = "text"
 
 #     environment = Environment()
 #     document = DocumentNode()
