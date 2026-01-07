@@ -4,7 +4,7 @@ from mau.parsers.managers.header_links_manager import HeaderLinksManager
 from mau.nodes.headers import HeaderNodeData
 from mau.nodes.inline import TextNodeData
 from mau.nodes.macros import MacroHeaderNodeData
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import Node, NodeInfo, WrapperNodeData
 from mau.parsers.base_parser import MauParserException
 
 from mau.test_helpers import (
@@ -18,11 +18,15 @@ def test_header_links_manager():
     header_data = HeaderNodeData(
         2,
         "XXXXXX",
-        content=[
-            Node(
-                data=TextNodeData("Header"),
+        text=Node(
+            data=WrapperNodeData(
+                content=[
+                    Node(
+                        data=TextNodeData("Header"),
+                    )
+                ]
             )
-        ],
+        ),
     )
 
     link_data = MacroHeaderNodeData("someheader")
@@ -45,11 +49,15 @@ def test_header_links_manager_no_link():
     header_data = HeaderNodeData(
         2,
         "XXXXXX",
-        content=[
-            Node(
-                data=TextNodeData("Header"),
+        text=Node(
+            data=WrapperNodeData(
+                content=[
+                    Node(
+                        data=TextNodeData("Header"),
+                    )
+                ]
             )
-        ],
+        ),
     )
 
     ilm.add_header("someheader", header_data)
@@ -88,11 +96,15 @@ def test_header_links_manager_update():
     header_data = HeaderNodeData(
         2,
         "XXXXXX",
-        content=[
-            Node(
-                data=TextNodeData("Header"),
+        text=Node(
+            data=WrapperNodeData(
+                content=[
+                    Node(
+                        data=TextNodeData("Header"),
+                    )
+                ]
             )
-        ],
+        ),
     )
 
     link_data = MacroHeaderNodeData("someheader")

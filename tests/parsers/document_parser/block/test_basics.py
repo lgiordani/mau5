@@ -1,0 +1,461 @@
+# from mau.environment.environment import Environment
+# from mau.lexers.document_lexer import DocumentLexer
+# from mau.nodes.block import BlockNodeContent, BlockSectionNodeContent
+# from mau.nodes.inline import TextNodeContent
+# from mau.nodes.node import Node, NodeInfo
+# from mau.nodes.paragraph import ParagraphNodeContent, ParagraphLineNodeContent
+# from mau.parsers.document_parser import DocumentParser
+# from mau.parsers.document_processors.block import EngineType
+# from mau.test_helpers import (
+#     compare_asdict_list,
+#     generate_context,
+#     init_parser_factory,
+#     parser_runner_factory,
+# )
+
+# init_parser = init_parser_factory(DocumentLexer, DocumentParser)
+
+# runner = parser_runner_factory(DocumentLexer, DocumentParser)
+
+
+# def test_block_with_empty_body():
+#     source = """
+#     ----
+#     ----
+#     """
+
+#     parser = runner(source)
+
+#     compare_asdict_list(
+#         parser.nodes,
+#         [
+#             Node(
+#                 content=BlockNodeContent(
+#                     classes=[],
+#                     engine=EngineType.DEFAULT.value,
+#                     preprocessor=None,
+#                 ),
+#                 info=NodeInfo(context=generate_context(1, 0, 2, 4)),
+#                 children={"content": []},
+#             )
+#         ],
+#     )
+
+
+# def test_block_content():
+#     source = """
+#     ----
+#     This is a paragraph.
+#     ----
+#     """
+
+#     parser = runner(source)
+
+#     compare_asdict_list(
+#         parser.nodes,
+#         [
+#             Node(
+#                 content=BlockNodeContent(
+#                     classes=[],
+#                     engine=EngineType.DEFAULT.value,
+#                     preprocessor=None,
+#                 ),
+#                 info=NodeInfo(context=generate_context(1, 0, 3, 4)),
+#                 children={
+#                     "content": [],
+#                     "sections": [
+#                         Node(
+#                             content=BlockSectionNodeContent("content"),
+#                             info=NodeInfo(context=generate_context(2, 0, 2, 20)),
+#                             children={
+#                                 "content": [
+#                                     Node(
+#                                         content=ParagraphNodeContent(),
+#                                         info=NodeInfo(
+#                                             context=generate_context(2, 0, 2, 20)
+#                                         ),
+#                                         children={
+#                                             "content": [
+#                                                 Node(
+#                                                     content=ParagraphLineNodeContent(),
+#                                                     info=NodeInfo(
+#                                                         context=generate_context(
+#                                                             2, 0, 2, 20
+#                                                         )
+#                                                     ),
+#                                                     children={
+#                                                         "content": [
+#                                                             Node(
+#                                                                 content=TextNodeContent(
+#                                                                     "This is a paragraph."
+#                                                                 ),
+#                                                                 info=NodeInfo(
+#                                                                     context=generate_context(
+#                                                                         2, 0, 2, 20
+#                                                                     )
+#                                                                 ),
+#                                                             )
+#                                                         ]
+#                                                     },
+#                                                 )
+#                                             ]
+#                                         },
+#                                     )
+#                                 ],
+#                             },
+#                         )
+#                     ],
+#                 },
+#             )
+#         ],
+#     )
+
+
+# def test_block_content_variables():
+#     source = """
+#     ----
+#     :answer:42
+#     The answer is {answer}.
+#     ----
+#     """
+
+#     parser = runner(source)
+
+#     compare_asdict_list(
+#         parser.nodes,
+#         [
+#             Node(
+#                 content=BlockNodeContent(
+#                     classes=[],
+#                     engine=EngineType.DEFAULT.value,
+#                     preprocessor=None,
+#                 ),
+#                 info=NodeInfo(context=generate_context(1, 0, 4, 4)),
+#                 children={
+#                     "content": [],
+#                     "sections": [
+#                         Node(
+#                             content=BlockSectionNodeContent("content"),
+#                             info=NodeInfo(context=generate_context(2, 0, 3, 23)),
+#                             children={
+#                                 "content": [
+#                                     Node(
+#                                         content=ParagraphNodeContent(),
+#                                         info=NodeInfo(
+#                                             context=generate_context(3, 0, 3, 23)
+#                                         ),
+#                                         children={
+#                                             "content": [
+#                                                 Node(
+#                                                     content=ParagraphLineNodeContent(),
+#                                                     info=NodeInfo(
+#                                                         context=generate_context(
+#                                                             3, 0, 3, 23
+#                                                         )
+#                                                     ),
+#                                                     children={
+#                                                         "content": [
+#                                                             Node(
+#                                                                 content=TextNodeContent(
+#                                                                     "The answer is 42."
+#                                                                 ),
+#                                                                 info=NodeInfo(
+#                                                                     context=generate_context(
+#                                                                         3, 0, 3, 17
+#                                                                     )
+#                                                                 ),
+#                                                             )
+#                                                         ]
+#                                                     },
+#                                                 )
+#                                             ]
+#                                         },
+#                                     )
+#                                 ]
+#                             },
+#                         )
+#                     ],
+#                 },
+#             )
+#         ],
+#     )
+
+
+# def test_block_content_external_variables():
+#     source = """
+#     :answer:42
+#     ----
+#     The answer is {answer}.
+#     ----
+#     """
+
+#     parser = runner(source)
+
+#     compare_asdict_list(
+#         parser.nodes,
+#         [
+#             Node(
+#                 content=BlockNodeContent(
+#                     classes=[],
+#                     engine=EngineType.DEFAULT.value,
+#                     preprocessor=None,
+#                 ),
+#                 info=NodeInfo(context=generate_context(2, 0, 4, 4)),
+#                 children={
+#                     "content": [],
+#                     "sections": [
+#                         Node(
+#                             content=BlockSectionNodeContent("content"),
+#                             info=NodeInfo(context=generate_context(3, 0, 3, 23)),
+#                             children={
+#                                 "content": [
+#                                     Node(
+#                                         content=ParagraphNodeContent(),
+#                                         info=NodeInfo(
+#                                             context=generate_context(3, 0, 3, 23)
+#                                         ),
+#                                         children={
+#                                             "content": [
+#                                                 Node(
+#                                                     content=ParagraphLineNodeContent(),
+#                                                     info=NodeInfo(
+#                                                         context=generate_context(
+#                                                             3, 0, 3, 23
+#                                                         )
+#                                                     ),
+#                                                     children={
+#                                                         "content": [
+#                                                             Node(
+#                                                                 content=TextNodeContent(
+#                                                                     "The answer is 42."
+#                                                                 ),
+#                                                                 info=NodeInfo(
+#                                                                     context=generate_context(
+#                                                                         3, 0, 3, 17
+#                                                                     )
+#                                                                 ),
+#                                                             )
+#                                                         ]
+#                                                     },
+#                                                 )
+#                                             ]
+#                                         },
+#                                     )
+#                                 ]
+#                             },
+#                         )
+#                     ],
+#                 },
+#             )
+#         ],
+#     )
+
+
+# def test_block_inside_block():
+#     source = """
+#     ----
+#     ++++
+#     ++++
+#     ----
+#     """
+
+#     parser = runner(source)
+
+#     compare_asdict_list(
+#         parser.nodes,
+#         [
+#             Node(
+#                 content=BlockNodeContent(
+#                     classes=[],
+#                     engine=EngineType.DEFAULT.value,
+#                     preprocessor=None,
+#                 ),
+#                 info=NodeInfo(context=generate_context(1, 0, 4, 4)),
+#                 children={
+#                     "content": [],
+#                     "sections": [
+#                         Node(
+#                             content=BlockSectionNodeContent("content"),
+#                             info=NodeInfo(context=generate_context(2, 0, 3, 4)),
+#                             children={
+#                                 "content": [
+#                                     Node(
+#                                         content=BlockNodeContent(
+#                                             classes=[],
+#                                             engine=EngineType.DEFAULT.value,
+#                                             preprocessor=None,
+#                                         ),
+#                                         info=NodeInfo(
+#                                             context=generate_context(2, 0, 3, 4)
+#                                         ),
+#                                         children={"content": []},
+#                                     )
+#                                 ],
+#                             },
+#                         )
+#                     ],
+#                 },
+#             )
+#         ],
+#     )
+
+
+# def test_block_uses_control_positive():
+#     environment = Environment()
+#     environment["answer"] = "42"
+
+#     source = """
+#     @if answer==42
+#     ----
+#     Some text.
+#     ----
+#     """
+
+#     parser = runner(source, environment)
+
+#     compare_asdict_list(
+#         parser.nodes,
+#         [
+#             Node(
+#                 content=BlockNodeContent(
+#                     classes=[],
+#                     engine=EngineType.DEFAULT.value,
+#                     preprocessor=None,
+#                 ),
+#                 info=NodeInfo(context=generate_context(2, 0, 4, 4)),
+#                 children={
+#                     "content": [],
+#                     "sections": [
+#                         Node(
+#                             content=BlockSectionNodeContent("content"),
+#                             info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+#                             children={
+#                                 "content": [
+#                                     Node(
+#                                         content=ParagraphNodeContent(),
+#                                         info=NodeInfo(
+#                                             context=generate_context(3, 0, 3, 10)
+#                                         ),
+#                                         children={
+#                                             "content": [
+#                                                 Node(
+#                                                     content=ParagraphLineNodeContent(),
+#                                                     info=NodeInfo(
+#                                                         context=generate_context(
+#                                                             3, 0, 3, 10
+#                                                         )
+#                                                     ),
+#                                                     children={
+#                                                         "content": [
+#                                                             Node(
+#                                                                 content=TextNodeContent(
+#                                                                     "Some text."
+#                                                                 ),
+#                                                                 info=NodeInfo(
+#                                                                     context=generate_context(
+#                                                                         3, 0, 3, 10
+#                                                                     )
+#                                                                 ),
+#                                                             ),
+#                                                         ]
+#                                                     },
+#                                                 )
+#                                             ]
+#                                         },
+#                                     ),
+#                                 ]
+#                             },
+#                         )
+#                     ],
+#                 },
+#             )
+#         ],
+#     )
+
+#     assert parser.control_buffer.pop() is None
+
+
+# def test_block_uses_control_positive_when_block_is_empty():
+#     environment = Environment()
+#     environment["answer"] = "42"
+
+#     source = """
+#     @if answer==42
+#     ----
+#     ----
+#     """
+
+#     parser = runner(source, environment)
+
+#     compare_asdict_list(
+#         parser.nodes,
+#         [
+#             Node(
+#                 content=BlockNodeContent(
+#                     classes=[],
+#                     engine=EngineType.DEFAULT.value,
+#                     preprocessor=None,
+#                 ),
+#                 info=NodeInfo(context=generate_context(2, 0, 3, 4)),
+#                 children={"content": []},
+#             )
+#         ],
+#     )
+
+#     assert parser.control_buffer.pop() is None
+
+
+# def test_block_uses_control_negative():
+#     environment = Environment()
+#     environment["answer"] = "24"
+
+#     source = """
+#     @if answer==42
+#     ----
+#     This is a block
+#     ----
+#     """
+
+#     parser = runner(source, environment)
+
+#     compare_asdict_list(parser.nodes, [])
+
+#     assert parser.control_buffer.pop() is None
+
+
+# def test_block_uses_control_negative_when_block_is_empty():
+#     environment = Environment()
+#     environment["answer"] = "24"
+
+#     source = """
+#     @if answer==42
+#     ----
+#     ----
+#     """
+
+#     parser = runner(source, environment)
+
+#     compare_asdict_list(parser.nodes, [])
+
+#     assert parser.control_buffer.pop() is None
+
+
+# def test_block_control():
+#     source = """
+#     :answer:44
+
+#     @if answer==42
+#     [arg1, arg2]
+#     . Some title
+#     ----
+#     This is a block
+#     ----
+#     """
+
+#     parser = runner(source)
+
+#     compare_asdict_list(parser.nodes, [])
+
+#     assert parser.arguments_buffer.arguments is None
+#     assert parser.label_buffer.labels == {}
+#     assert parser.control_buffer.control is None

@@ -1,22 +1,35 @@
-# # Page nodes can be found at top level in a page
+# Page nodes can be found at top level in a page
 
-# from mau.nodes.node import NodeData
+from mau.nodes.node import NodeData, NodeDataLabelsMixin, Node, WrapperNodeData
 
-# HORIZONTAL_RULE_HELP = """
-# Syntax:
+HORIZONTAL_RULE_HELP = """
+Syntax:
 
-# ([ARGS])?
-# ---
+([ARGS])?
+---
 
-# The horizontal rule marks a separation between text sections
-# in the same document.
-# """
+The horizontal rule marks a separation between text sections
+in the same document.
+"""
 
 
-# class HorizontalRuleNodeData(NodeData):
-#     """A horizontal rule."""
+class HorizontalRuleNodeData(NodeData, NodeDataLabelsMixin):
+    """A horizontal rule."""
 
-#     type = "horizontal_rule"
+    type = "horizontal_rule"
+
+    def __init__(
+        self,
+        labels: dict[str, Node[WrapperNodeData]] | None = None,
+    ):
+        super().__init__()
+        NodeDataLabelsMixin.__init__(self, labels)
+
+    def asdict(self):
+        base = super().asdict()
+        NodeDataLabelsMixin.content_asdict(self, base)
+
+        return base
 
 
 # class WrapperNodeData(NodeData):

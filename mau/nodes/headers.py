@@ -1,4 +1,4 @@
-from mau.nodes.node import Node, NodeData, NodeDataContentMixin
+from mau.nodes.node import Node, NodeData, NodeDataContentMixin, WrapperNodeData
 
 HEADER_HELP = """
 Syntax:
@@ -22,7 +22,8 @@ class HeaderNodeData(NodeData, NodeDataContentMixin):
         level: int,
         internal_id: str | None = None,
         alias: str | None = None,
-        content: list[Node] | None = None,
+        text: Node[WrapperNodeData] | None = None,
+        source_text: str | None = None,
     ):
         super().__init__()
         self.level = level
@@ -34,7 +35,14 @@ class HeaderNodeData(NodeData, NodeDataContentMixin):
         # receive a programmatic ID.
         self.alias = alias
 
-        NodeDataContentMixin.__init__(self, content)
+        # The text of the header.
+        self.text = text
+
+        # The source text of the header.
+        # This is the unparsed text
+        # that will be used to generate
+        # the unique id.
+        self.source_text = source_text
 
     def asdict(self):
         base = super().asdict()
@@ -44,6 +52,7 @@ class HeaderNodeData(NodeData, NodeDataContentMixin):
             "alias": self.alias,
         }
 
-        NodeDataContentMixin.content_asdict(self, base)
+        if self.text:
+            base["custom"]["text"] = self.text.asdict()
 
         return base

@@ -136,7 +136,7 @@ class Node(Generic[Data_co]):
 
     def asdict(self):
         return {
-            "content": self.data.asdict(),
+            "data": self.data.asdict(),
             "info": self.info.asdict(),
         }
 
@@ -155,11 +155,25 @@ class Node(Generic[Data_co]):
 
 
 class NodeDataContentMixin:
-    def __init__(self, content: list[Node] | None = None):
+    def __init__(
+        self,
+        content: list[Node] | None = None,
+    ):
         self.content: list[Node] = content or []
 
     def content_asdict(self, base: dict):
         base["custom"]["content"] = [i.asdict() for i in self.content]
+
+
+class NodeDataLabelsMixin:
+    def __init__(
+        self,
+        labels: dict[str, Node[WrapperNodeData]] | None = None,
+    ):
+        self.labels = labels or {}
+
+    def content_asdict(self, base: dict):
+        base["custom"]["labels"] = {k: v.asdict() for k, v in self.labels.items()}
 
 
 class ValueNodeData(NodeData):
@@ -171,6 +185,20 @@ class ValueNodeData(NodeData):
     def asdict(self):
         base = super().asdict()
         base["custom"] = {"value": self.value}
+
+        return base
+
+
+class WrapperNodeData(NodeData, NodeDataContentMixin):
+    type = "wrapper"
+
+    def __init__(self, content: list[Node] | None = None):
+        super().__init__()
+        NodeDataContentMixin.__init__(self, content)
+
+    def asdict(self):
+        base = super().asdict()
+        NodeDataContentMixin.content_asdict(self, base)
 
         return base
 

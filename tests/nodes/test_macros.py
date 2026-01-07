@@ -163,7 +163,6 @@ def test_macro_header_node_data_with_header():
                 "type": "header",
                 "custom": {
                     "alias": None,
-                    "content": [],
                     "internal_id": None,
                     "level": 1,
                 },

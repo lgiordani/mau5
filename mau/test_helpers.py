@@ -32,7 +32,7 @@ def check_node_data_with_content(node_data_class):
 
     assert node_data_dict["custom"]["content"] == [
         {
-            "content": {
+            "data": {
                 "custom": {},
                 "type": "none",
             },
@@ -51,7 +51,7 @@ def check_node_data_with_content(node_data_class):
             },
         },
         {
-            "content": {
+            "data": {
                 "custom": {},
                 "type": "none",
             },

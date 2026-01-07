@@ -30,7 +30,7 @@ def test_node():
     assert node.tags == []
 
     assert node.asdict() == {
-        "content": {"type": "none", "custom": {}},
+        "data": {"type": "none", "custom": {}},
         "info": {
             "context": Context.empty().asdict(),
             "unnamed_args": [],
@@ -55,7 +55,7 @@ def test_node_with_info():
     assert node.tags == ["tag1"]
 
     assert node.asdict() == {
-        "content": {"type": "none", "custom": {}},
+        "data": {"type": "none", "custom": {}},
         "info": {
             "context": generate_context(0, 0, 0, 0).asdict(),
             "unnamed_args": ["arg1"],

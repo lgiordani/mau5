@@ -1,16 +1,21 @@
-# from mau.nodes.document import (
-#     ContainerNodeData,
-#     DocumentNodeData,
-#     HorizontalRuleNodeData,
-#     WrapperNodeData,
-# )
+from mau.nodes.document import (
+    # ContainerNodeData,
+    # DocumentNodeData,
+    HorizontalRuleNodeData,
+    # WrapperNodeData,
+)
 
 
-# def test_horizontal_rule_node_content():
-#     node_content = HorizontalRuleNodeData()
+def test_horizontal_rule_node_content():
+    node_content = HorizontalRuleNodeData()
 
-#     assert node_content.type == "horizontal_rule"
-#     assert node_content.asdict() == {"type": "horizontal_rule"}
+    assert node_content.type == "horizontal_rule"
+    assert node_content.asdict() == {
+        "type": "horizontal_rule",
+        "custom": {
+            "labels": {},
+        },
+    }
 
 
 # def test_wrapper_node_content():
