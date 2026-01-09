@@ -39,6 +39,7 @@ class IncludeNodeData(NodeData, NodeDataLabelsMixin):
         uris: list[str],
         labels: dict[str, Node[WrapperNodeData]] | None = None,
     ):
+        super().__init__()
         self.content_type = content_type
         self.uris = uris
 
@@ -63,7 +64,6 @@ class IncludeImageNodeData(NodeData, NodeDataLabelsMixin):
     """
 
     type = "include-image"
-    allowed_keys = {}
     long_help = INCLUDE_IMAGE_HELP
 
     def __init__(

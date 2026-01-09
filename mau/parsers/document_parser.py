@@ -18,20 +18,18 @@ from mau.parsers.buffers.label_buffer import LabelBuffer
 from mau.parsers.document_processors.arguments import arguments_processor
 
 # from mau.parsers.document_processors.block import block_processor
-# from mau.parsers.document_processors.command import command_processor
+from mau.parsers.document_processors.command import command_processor
 from mau.parsers.document_processors.control import control_processor
-
 from mau.parsers.document_processors.header import header_processor
 from mau.parsers.document_processors.horizontal_rule import horizontal_rule_processor
-
 from mau.parsers.document_processors.include import include_processor
 from mau.parsers.document_processors.label import label_processor
+from mau.parsers.document_processors.list import list_processor
+from mau.parsers.document_processors.paragraph import paragraph_processor
+from mau.parsers.document_processors.variable_definition import (
+    variable_definition_processor,
+)
 
-# from mau.parsers.document_processors.list import list_processor
-# from mau.parsers.document_processors.paragraph import paragraph_processor
-# from mau.parsers.document_processors.variable_definition import (
-#     variable_definition_processor,
-# )
 # from mau.parsers.managers.block_group_manager import BlockGroupManager
 from mau.parsers.managers.footnotes_manager import FootnotesManager
 from mau.parsers.managers.header_links_manager import HeaderLinksManager
@@ -117,57 +115,57 @@ class DocumentParser(BaseParser):
         return [
             self._process_eol,
             partial(horizontal_rule_processor, self),
-            #         partial(variable_definition_processor, self),
-            #         partial(command_processor, self),
+            partial(variable_definition_processor, self),
+            partial(command_processor, self),
             partial(label_processor, self),
             partial(control_processor, self),
             partial(arguments_processor, self),
             partial(header_processor, self),
             #         partial(block_processor, self),
             partial(include_processor, self),
-            #         partial(list_processor, self),
-            #         partial(paragraph_processor, self),
+            partial(list_processor, self),
+            partial(paragraph_processor, self),
         ]
 
-    # def _parse_text(self, text: str, context: Context) -> list[Node[NodeData]]:
-    #     # This parses a piece of text.
-    #     # It runs the text through the preprocessor to
-    #     # replace variables, then parses it storing
-    #     # footnotes and internal links, and finally
-    #     # returns the nodes.
+    def _parse_text(self, text: str, context: Context) -> list[Node[NodeData]]:
+        # This parses a piece of text.
+        # It runs the text through the preprocessor to
+        # replace variables, then parses it storing
+        # footnotes and internal links, and finally
+        # returns the nodes.
 
-    #     # Replace variables
-    #     preprocess_parser = PreprocessVariablesParser.lex_and_parse(
-    #         text,
-    #         self.environment,
-    #         *context.start_position,
-    #         context.source,
-    #     )
+        # Replace variables
+        preprocess_parser = PreprocessVariablesParser.lex_and_parse(
+            text,
+            self.environment,
+            *context.start_position,
+            context.source,
+        )
 
-    #     # If the preprocessor doesn't return any
-    #     # node we can stop here.
-    #     if not preprocess_parser.nodes:  # pragma: no cover
-    #         return []
+        # If the preprocessor doesn't return any
+        # node we can stop here.
+        if not preprocess_parser.nodes:  # pragma: no cover
+            return []
 
-    #     # The preprocess parser outputs a single node.
-    #     text = preprocess_parser.nodes[0].content.value
+        # The preprocess parser outputs a single node.
+        text = preprocess_parser.nodes[0].data.value
 
-    #     # Parse the text
-    #     text_parser = TextParser.lex_and_parse(
-    #         text,
-    #         self.environment,
-    #         *context.start_position,
-    #         context.source,
-    #     )
+        # Parse the text
+        text_parser = TextParser.lex_and_parse(
+            text,
+            self.environment,
+            *context.start_position,
+            context.source,
+        )
 
-    #     # Extract the footnote mentions
-    #     # found in this piece of text.
-    #     self.footnotes_manager.add_mentions(text_parser.footnotes)
+        # Extract the footnote mentions
+        # found in this piece of text.
+        # self.footnotes_manager.add_mentions(text_parser.footnotes)
 
-    #     # Extract the header links found in this piece of text.
-    #     self.header_links_manager.add_links(text_parser.header_links)
+        # Extract the header links found in this piece of text.
+        self.header_links_manager.add_links(text_parser.header_links)
 
-    #     return text_parser.nodes
+        return text_parser.nodes
 
     def _process_eol(self) -> bool:
         # This simply ignores the end of line.

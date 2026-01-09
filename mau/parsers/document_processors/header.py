@@ -33,12 +33,19 @@ def header_processor(parser: DocumentParser):
     # Calculate the level of the header.
     level = len(header.value)
 
+    # Unpack the text initial position.
+    start_line, start_column = text_token.context.start_position
+
+    # Get the text source.
+    source_filename = text_token.context.source
+
     # Replace variables
     preprocess_parser = PreprocessVariablesParser.lex_and_parse(
         text_token.value,
         parser.environment,
-        *text_token.context.start_position,
-        text_token.context.source,
+        start_line=start_line,
+        start_column=start_column,
+        source_filename=source_filename,
     )
 
     # The output of the preprocess parser.
@@ -87,6 +94,7 @@ def header_processor(parser: DocumentParser):
         internal_id=internal_id,
         alias=alias,
         text=header_text_node,
+        source_text=text_token.value,
     )
 
     # The final node created by this parser.
@@ -98,7 +106,7 @@ def header_processor(parser: DocumentParser):
     # Extract labels from the buffer and
     # store them in the node data.
     if labels := parser.label_buffer.pop():
-        node.data.labels = labels
+        header_data.labels = labels
 
     # Check the stored control
     if control := parser.control_buffer.pop():

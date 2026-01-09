@@ -1,66 +1,88 @@
-# from mau.nodes.node import NodeData, ValueNodeData
+from mau.nodes.node import (
+    NodeData,
+    ValueNodeData,
+    Node,
+    NodeDataContentMixin,
+    WrapperNodeData,
+    NodeDataLabelsMixin,
+)
 
-# LIST_HELP = """
-# Syntax:
+LIST_HELP = """
+Syntax:
 
-# ([URI+, ARGS])?
-# (*+|#+) TEXT
+([URI+, ARGS])?
+(*+|#+) TEXT
 
-# The list prefix `*` or `#` creates a list item. The prefix can be
-# specified multiple times to nest items, e.g.
+The list prefix `*` or `#` creates a list item. The prefix can be
+specified multiple times to nest items, e.g.
 
-# * Item 1
-# ** Item 1.1
-# * Item2
+* Item 1
+** Item 1.1
+* Item2
 
-# The symbol `*` creates an unordered list, while the symbol `#`
-# creates an ordered one. The two can be mixed, e.g.
+The symbol `*` creates an unordered list, while the symbol `#`
+creates an ordered one. The two can be mixed, e.g.
 
-# # Numbered item 1
-# ** Bullet point 1
-# ** Bullet point 2
-# ** Bullet point 3
-# # Numbered item 2
+# Numbered item 1
+** Bullet point 1
+** Bullet point 2
+** Bullet point 3
+# Numbered item 2
 
-# Arguments:
+Arguments:
 
-# * `start` - Can be a positive integer or "auto", defaults to "auto".
-#             Controls the starting number for the first item of the list.
-# """
-
-
-# class ListItemNodeData(ValueNodeData):
-#     """An entry in a list."""
-
-#     type = "list_item"
-#     value_key = "level"
-#     allowed_keys = {"text": "The text of this list item"}
+* `start` - Can be a positive integer or "auto", defaults to "auto".
+            Controls the starting number for the first item of the list.
+"""
 
 
-# class ListNodeData(NodeData):
-#     """A list."""
+class ListItemNodeData(WrapperNodeData):
+    """An entry in a list."""
 
-#     type = "list"
-#     allowed_keys = {"nodes": "The item nodes contained in this list. "}
+    type = "list_item"
 
-#     def __init__(
-#         self,
-#         ordered,
-#         main_node=False,
-#         start=1,
-#     ):
-#         self.ordered = ordered
-#         self.main_node = main_node
-#         self.start = start
+    def __init__(self, level: int, content: list[Node] | None = None):
+        super().__init__(content)
 
-#     def asdict(self):
-#         base = super().asdict()
-#         base.update(
-#             {
-#                 "ordered": self.ordered,
-#                 "main_node": self.main_node,
-#                 "start": self.start,
-#             }
-#         )
+        self.level = level
 
-#         return base
+    def asdict(self):
+        base = super().asdict()
+        base["custom"]["level"] = self.level
+
+        return base
+
+
+class ListNodeData(NodeData, NodeDataContentMixin, NodeDataLabelsMixin):
+    """A list."""
+
+    type = "list"
+
+    def __init__(
+        self,
+        ordered,
+        main_node=False,
+        start=1,
+        content: list[Node] | None = None,
+        labels: dict[str, Node[WrapperNodeData]] | None = None,
+    ):
+        super().__init__()
+        self.ordered = ordered
+        self.main_node = main_node
+        self.start = start
+
+        NodeDataContentMixin.__init__(self, content)
+        NodeDataLabelsMixin.__init__(self, labels)
+
+    def asdict(self):
+        base = super().asdict()
+        base["custom"] = {
+            "ordered": self.ordered,
+            "main_node": self.main_node,
+            "start": self.start,
+        }
+
+        NodeDataContentMixin.content_asdict(self, base)
+        NodeDataLabelsMixin.content_asdict(self, base)
+
+        return base

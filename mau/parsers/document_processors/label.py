@@ -30,12 +30,19 @@ def label_processor(parser: DocumentParser):
     # Get the text of the label
     text_token = parser.tm.get_token(TokenType.TEXT)
 
+    # Unpack the text initial position.
+    start_line, start_column = text_token.context.start_position
+
+    # Get the text source.
+    source_filename = text_token.context.source
+
     # Parse the text of the label.
     text_parser = TextParser.lex_and_parse(
         text_token.value,
         parser.environment,
-        *text_token.context.start_position,
-        text_token.context.source,
+        start_line=start_line,
+        start_column=start_column,
+        source_filename=source_filename,
     )
 
     label_context = Context.merge_contexts(prefix.context, text_token.context)

@@ -15,9 +15,7 @@ def test_footnotes_node_content_empty():
 
     assert node_data.asdict() == {
         "type": "footnotes",
-        "custom": {
-            "footnotes": [],
-        },
+        "custom": {"footnotes": [], "labels": {}},
     }
 
 
@@ -54,6 +52,7 @@ def test_footnotes_node_content():
                     },
                 },
             ],
+            "labels": {},
         },
     }
 

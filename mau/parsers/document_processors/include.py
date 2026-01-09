@@ -74,6 +74,8 @@ def include_processor(parser: DocumentParser):
         if not control.process(parser.environment):
             return True
 
+    content: IncludeImageNodeData | IncludeNodeData
+
     if content_type.value == "image":
         content = _parse_image(arguments, context)
     else:
@@ -87,7 +89,7 @@ def include_processor(parser: DocumentParser):
     # Extract labels from the buffer and
     # store them in the node data.
     if labels := parser.label_buffer.pop():
-        node.data.labels = labels
+        content.labels = labels
 
     parser._save(node)
 
@@ -96,7 +98,7 @@ def include_processor(parser: DocumentParser):
 
 def _parse_generic(
     content_type: str, arguments: Arguments, context: Context
-) -> NodeData:
+) -> IncludeNodeData:
     # Get the URIs list and empty the unnamed arguments
     uris = arguments.unnamed_args[:]
     arguments.unnamed_args = []
@@ -111,7 +113,7 @@ def _parse_generic(
     return IncludeNodeData(content_type, uris)
 
 
-def _parse_image(arguments: Arguments, context: Context) -> NodeData:
+def _parse_image(arguments: Arguments, context: Context) -> IncludeImageNodeData:
     arguments.set_names(["uri", "alt_text", "classes"])
 
     uri = arguments.named_args.pop("uri")

@@ -168,7 +168,7 @@ class NodeDataContentMixin:
 class NodeDataLabelsMixin:
     def __init__(
         self,
-        labels: dict[str, WrapperNodeData] | None = None,
+        labels: dict[str, Node[WrapperNodeData]] | None = None,
     ):
         self.labels = labels or {}
 

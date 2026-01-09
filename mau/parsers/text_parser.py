@@ -480,11 +480,19 @@ class TextParser(BaseParser):
         # If the text is not present we use the
         # link as text.
         if text is not None:
+            # Unpack the text initial position.
+            start_line, start_column = text.info.context.start_position
+
+            # Get the text source.
+            source_filename = text.info.context.source
+
+            # Parse the text.
             parser = self.lex_and_parse(
                 text.data.value,
                 self.environment,
-                *text.info.context.start_position,
-                text.info.context.source,
+                start_line=start_line,
+                start_column=start_column,
+                source_filename=source_filename,
             )
             nodes = parser.nodes
         else:
@@ -529,11 +537,19 @@ class TextParser(BaseParser):
         # link as text.
         nodes = []
         if text is not None:
+            # Unpack the text initial position.
+            start_line, start_column = text.info.context.start_position
+
+            # Get the text source.
+            source_filename = text.info.context.source
+
+            # Parse the text
             parser = self.lex_and_parse(
                 text.data.value,
                 self.environment,
-                *text.info.context.start_position,
-                text.info.context.source,
+                start_line=start_line,
+                start_column=start_column,
+                source_filename=source_filename,
             )
             nodes = parser.nodes
 
@@ -572,11 +588,19 @@ class TextParser(BaseParser):
         # If the text is not present we use the
         # link as text.
         if text is not None:
+            # Unpack the text initial position.
+            start_line, start_column = text.info.context.start_position
+
+            # Get the text source.
+            source_filename = text.info.context.source
+
+            # Parse the text
             parser = self.lex_and_parse(
                 text.data.value,
                 self.environment,
-                *text.info.context.start_position,
-                text.info.context.source,
+                start_line=start_line,
+                start_column=start_column,
+                source_filename=source_filename,
             )
             nodes = parser.nodes
         else:
@@ -614,12 +638,19 @@ class TextParser(BaseParser):
                 message="Syntax: [class](TEXT, class1, class2, ...)", context=context
             ) from exc
 
-        # We need to parse the text as it might contain Mau syntax.
+        # Unpack the text initial position.
+        start_line, start_column = text.info.context.start_position
+
+        # Get the text source.
+        source_filename = text.info.context.source
+
+        # Parse the text
         parser = self.lex_and_parse(
             text.data.value,
             self.environment,
-            *text.info.context.start_position,
-            text.info.context.source,
+            start_line=start_line,
+            start_column=start_column,
+            source_filename=source_filename,
         )
 
         node = Node(

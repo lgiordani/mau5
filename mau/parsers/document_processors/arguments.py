@@ -24,12 +24,19 @@ def arguments_processor(parser: DocumentParser):
     # Check that the token is the closing square bracket.
     parser.tm.get_token(TokenType.LITERAL, "]")
 
+    # Unpack the text initial position.
+    start_line, start_column = text_token.context.start_position
+
+    # Get the text source.
+    source_filename = text_token.context.source
+
     # Replace variables in the text.
     preprocess_parser = PreprocessVariablesParser.lex_and_parse(
         text_token.value,
         parser.environment,
-        *text_token.context.start_position,
-        text_token.context.source,
+        start_line=start_line,
+        start_column=start_column,
+        source_filename=source_filename,
     )
 
     # If there are no arguments there is nothing
@@ -40,12 +47,19 @@ def arguments_processor(parser: DocumentParser):
     # The preprocess parser outputs a single node.
     text = preprocess_parser.nodes[0]
 
+    # Unpack the text initial position.
+    start_line, start_column = text.info.context.start_position
+
+    # Get the text source.
+    source_filename = text.info.context.source
+
     # Parse the arguments.
     arguments_parser = ArgumentsParser.lex_and_parse(
-        text.data.value,
-        parser.environment,
-        *text.info.context.start_position,
-        text.info.context.source,
+        text=text.data.value,
+        environment=parser.environment,
+        start_line=start_line,
+        start_column=start_column,
+        source_filename=source_filename,
     )
 
     # Store the arguments.

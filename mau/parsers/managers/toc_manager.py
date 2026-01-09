@@ -11,22 +11,17 @@ from mau.nodes.node import Node
 
 
 def default_header_internal_id(
-    node: HeaderNodeData,
+    data: HeaderNodeData,
 ) -> str:  # pragma: no cover
     """
     Return a unique ID for a header.
     """
 
-    # Lowercase the text of the header.
-    # TODO this is not the full text, only
-    # the first node. What about storing
-    # the original code inside the header
-    # and use that?
-    text_node = node.content[0]
-    text = text_node.content.value.lower()
+    # Get the source text of the header.
+    text = data.source_text
 
     # Find the header level
-    level = node.content.level
+    level = data.level
 
     hashed_value = hashlib.md5(f"{level} {text}".encode("utf-8")).hexdigest()[:8]
 
@@ -95,7 +90,7 @@ class TocManager:
             header_internal_id_function or default_header_internal_id
         )
 
-        self.nested_headers: list[Node[TocItemNodeData]] = []
+        self.nested_headers: list[TocItemNodeData] = []
 
     def add_header(self, data: HeaderNodeData):
         """Add a single header to the list

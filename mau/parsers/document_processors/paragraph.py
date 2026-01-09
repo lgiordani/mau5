@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 from mau.text_buffer import Context
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.paragraph import ParagraphNodeContent, ParagraphLineNodeContent
+from mau.nodes.paragraph import ParagraphNodeData, ParagraphLineNodeData
 from mau.token import Token, TokenType
 
 
@@ -35,16 +35,13 @@ def paragraph_processor(parser: DocumentParser):
         # Process the text of the paragraph.
         text_nodes = parser._parse_text(line_token.value, context=line_token.context)
 
-        node = Node(
-            children={
-                "content": text_nodes,
-            },
-            content=ParagraphLineNodeContent(),
+        line_node = Node(
+            data=ParagraphLineNodeData(content=text_nodes),
             parent=parser.parent_node,
             info=info,
         )
 
-        line_nodes.append(node)
+        line_nodes.append(line_node)
 
     # Get the stored arguments.
     # Paragraphs can receive arguments
@@ -60,17 +57,18 @@ def paragraph_processor(parser: DocumentParser):
         **arguments.asdict(),
     )
 
-    node = Node(
-        children={
-            "content": line_nodes,
-        },
-        content=ParagraphNodeContent(),
+    paragraph_data = ParagraphNodeData(content=line_nodes)
+
+    paragraph_node = Node(
+        data=paragraph_data,
         parent=parser.parent_node,
         info=info,
     )
 
-    if label := parser.label_buffer.pop():
-        node.add_children(label, allow_all=True)
+    # Extract labels from the buffer and
+    # store them in the node data.
+    if labels := parser.label_buffer.pop():
+        paragraph_data.labels = labels
 
     # Check the stored control
     if control := parser.control_buffer.pop():
@@ -80,6 +78,6 @@ def paragraph_processor(parser: DocumentParser):
         if not control.process(parser.environment):
             return True
 
-    parser._save(node)
+    parser._save(paragraph_node)
 
     return True

@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from mau.parsers.document_parser import DocumentParser
 
 
-from mau.nodes.lists import ListItemNodeContent, ListNodeContent
+from mau.nodes.lists import ListItemNodeData, ListNodeData
 from mau.nodes.node import Node, NodeInfo
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
@@ -33,12 +33,11 @@ def _process_list_nodes(parser: DocumentParser):
     # Find the final context.
     context = Context.merge_contexts(header.context, content[-1].info.context)
 
-    nodes = []
+    nodes: list[Node] = []
     nodes.append(
         Node(
-            content=ListItemNodeContent(str(level)),
+            data=ListItemNodeData(level, content=content),
             info=NodeInfo(context=context),
-            children={"text": content},
         )
     )
 
@@ -69,9 +68,8 @@ def _process_list_nodes(parser: DocumentParser):
 
             nodes.append(
                 Node(
-                    content=ListItemNodeContent(str(level)),
+                    data=ListItemNodeData(level, content=content),
                     info=NodeInfo(context=context),
-                    children={"text": content},
                 )
             )
 
@@ -90,9 +88,8 @@ def _process_list_nodes(parser: DocumentParser):
 
             nodes.append(
                 Node(
-                    content=ListNodeContent(ordered=ordered),
+                    data=ListNodeData(ordered=ordered, content=subnodes),
                     info=NodeInfo(context=context),
-                    children={"nodes": subnodes},
                 )
             )
         else:
@@ -155,14 +152,18 @@ def list_processor(parser: DocumentParser):
     # Find the final context.
     context = Context.merge_contexts(nodes[0].info.context, nodes[-1].info.context)
 
+    list_node_data = ListNodeData(
+        ordered=ordered, main_node=True, start=start, content=nodes
+    )
     node = Node(
-        content=ListNodeContent(ordered=ordered, main_node=True, start=start),
+        data=list_node_data,
         info=NodeInfo(context=context, **arguments.asdict()),
-        children={"nodes": nodes},
     )
 
-    if label := parser.label_buffer.pop():
-        node.add_children(label, allow_all=True)
+    # Extract labels from the buffer and
+    # store them in the node data.
+    if labels := parser.label_buffer.pop():
+        list_node_data.labels = labels
 
     # Check the stored control
     if control := parser.control_buffer.pop():

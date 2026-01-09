@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from mau.nodes.headers import HeaderNodeData
 from mau.nodes.footnotes import FootnoteNodeData
-from mau.nodes.node import Node, NodeData, NodeDataContentMixin
+from mau.nodes.node import (
+    Node,
+    NodeData,
+    NodeDataContentMixin,
+    NodeDataLabelsMixin,
+    WrapperNodeData,
+)
 
 COMMAND_HELP = """
 Syntax:
@@ -15,7 +21,7 @@ The command operator `::` runs the requested command passing the optional argume
 """
 
 
-class FootnotesNodeData(NodeData):
+class FootnotesNodeData(NodeData, NodeDataLabelsMixin):
     """The list of footnotes."""
 
     type = "footnotes"
@@ -23,14 +29,19 @@ class FootnotesNodeData(NodeData):
     def __init__(
         self,
         footnotes: list[FootnoteNodeData] | None = None,
+        labels: dict[str, Node[WrapperNodeData]] | None = None,
     ):
         self.footnotes = footnotes or []
+
+        NodeDataLabelsMixin.__init__(self, labels)
 
     def asdict(self):
         base = super().asdict()
         base["custom"] = {
             "footnotes": [i.asdict() for i in self.footnotes],
         }
+
+        NodeDataLabelsMixin.content_asdict(self, base)
 
         return base
 
@@ -61,18 +72,21 @@ class TocItemNodeData(NodeData):
         return base
 
 
-class TocNodeData(NodeData):
+class TocNodeData(NodeData, NodeDataLabelsMixin):
     """The list of footnotes."""
 
-    type = "footnotes"
+    type = "toc"
 
     def __init__(
         self,
         plain_entries: list[HeaderNodeData] | None = None,
         nested_entries: list[TocItemNodeData] | None = None,
+        labels: dict[str, Node[WrapperNodeData]] | None = None,
     ):
         self.plain_entries = plain_entries or []
         self.nested_entries = nested_entries or []
+
+        NodeDataLabelsMixin.__init__(self, labels)
 
     def asdict(self):
         base = super().asdict()
@@ -80,6 +94,8 @@ class TocNodeData(NodeData):
             "plain_entries": [i.asdict() for i in self.plain_entries],
             "nested_entries": [i.asdict() for i in self.nested_entries],
         }
+
+        NodeDataLabelsMixin.content_asdict(self, base)
 
         return base
 

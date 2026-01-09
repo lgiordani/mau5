@@ -6,11 +6,11 @@ if TYPE_CHECKING:
     from mau.parsers.document_parser import DocumentParser
 
 
-from mau.nodes.command import (
+from mau.nodes.commands import (
     COMMAND_HELP,
-    BlockGroupNodeContent,
-    FootnotesNodeContent,
-    TocNodeContent,
+    # BlockGroupNodeData,
+    FootnotesNodeData,
+    TocNodeData,
 )
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.arguments_parser import Arguments, ArgumentsParser
@@ -80,10 +80,13 @@ def command_processor(parser: DocumentParser):
     info = NodeInfo(context=context, **arguments.asdict())
 
     if name.value == "toc":
-        node: Node[TocNodeContent] = Node(content=TocNodeContent(), info=info)
+        toc_node_data = TocNodeData()
+        toc_node: Node[TocNodeData] = Node(data=toc_node_data, info=info)
 
-        if label := parser.label_buffer.pop():
-            node.add_children(label, allow_all=True)
+        # Extract labels from the buffer and
+        # store them in the node data.
+        if labels := parser.label_buffer.pop():
+            toc_node_data.labels = labels
 
         # Check the stored control
         if control := parser.control_buffer.pop():
@@ -93,17 +96,20 @@ def command_processor(parser: DocumentParser):
             if not control.process(parser.environment):
                 return True
 
-        parser._save(node)
+        parser._save(toc_node)
 
-        parser.toc_manager.add_toc_node(node)
+        parser.toc_manager.add_toc_node(toc_node_data)
 
     elif name.value == "footnotes":
-        node: Node[FootnotesNodeContent] = Node(
-            content=FootnotesNodeContent(), info=info
+        footnotes_node_data = FootnotesNodeData()
+        footnotes_node: Node[FootnotesNodeData] = Node(
+            data=footnotes_node_data, info=info
         )
 
-        if label := parser.label_buffer.pop():
-            node.add_children(label, allow_all=True)
+        # Extract labels from the buffer and
+        # store them in the node data.
+        if labels := parser.label_buffer.pop():
+            footnotes_node_data.labels = labels
 
         # Check the stored control
         if control := parser.control_buffer.pop():
@@ -113,33 +119,33 @@ def command_processor(parser: DocumentParser):
             if not control.process(parser.environment):
                 return True
 
-        parser._save(node)
+        parser._save(footnotes_node)
 
-        parser.footnotes_manager.add_footnotes_node(node)
+        parser.footnotes_manager.add_footnotes_list(footnotes_node_data)
 
-    elif name.value == "blockgroup":
-        arguments.set_names(["group"])
-        group_name = arguments.named_args.pop("group")
+    # elif name.value == "blockgroup":
+    #     arguments.set_names(["group"])
+    #     group_name = arguments.named_args.pop("group")
 
-        node = Node(
-            content=BlockGroupNodeContent(group_name),
-            info=info,
-        )
+    #     node = Node(
+    #         data=BlockGroupNodeData(group_name),
+    #         info=info,
+    #     )
 
-        if label := parser.label_buffer.pop():
-            node.add_children(label, allow_all=True)
+    #     if label := parser.label_buffer.pop():
+    #         node.add_children(label, allow_all=True)
 
-        # Check the stored control
-        if control := parser.control_buffer.pop():
-            # If control is False, we need to stop
-            # processing here and return without
-            # saving any node.
-            if not control.process(parser.environment):
-                return True
+    #     # Check the stored control
+    #     if control := parser.control_buffer.pop():
+    #         # If control is False, we need to stop
+    #         # processing here and return without
+    #         # saving any node.
+    #         if not control.process(parser.environment):
+    #             return True
 
-        parser._save(node)
+    #     parser._save(node)
 
-        parser.block_group_manager.add_group_node(node)
+    #     parser.block_group_manager.add_group_node(node)
 
     else:
         parser.label_buffer.pop()

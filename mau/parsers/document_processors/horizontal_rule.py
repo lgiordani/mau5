@@ -23,8 +23,9 @@ def horizontal_rule_processor(parser: DocumentParser):
     arguments = parser.arguments_buffer.pop_or_default()
 
     # Create the node.
+    data = HorizontalRuleNodeData()
     node = Node(
-        data=HorizontalRuleNodeData(),
+        data=data,
         info=NodeInfo(
             context=rule.context,
             **arguments.asdict(),
@@ -34,7 +35,7 @@ def horizontal_rule_processor(parser: DocumentParser):
     # Extract labels from the buffer and
     # store them in the node data.
     if labels := parser.label_buffer.pop():
-        node.data.labels = labels
+        data.labels = labels
 
     # Check the stored control
     if control := parser.control_buffer.pop():

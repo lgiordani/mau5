@@ -1,3 +1,4 @@
+from mau.nodes.node import Node, NodeInfo
 from mau.nodes.paragraph import ParagraphLineNodeData, ParagraphNodeData
 from mau.test_helpers import check_node_data_with_content
 
@@ -11,12 +12,82 @@ def test_paragraph_node_data_without_content():
         "type": "paragraph",
         "custom": {
             "content": [],
+            "labels": {},
         },
     }
 
 
 def test_paragraph_node_data_with_content():
-    check_node_data_with_content(ParagraphNodeData)
+    nodes: list[Node] = [Node(), Node()]
+    labels: dict[str, Node] = {"somelabel": Node()}
+
+    node_data = ParagraphNodeData(content=nodes, labels=labels)
+    assert node_data.asdict() == {
+        "type": "paragraph",
+        "custom": {
+            "content": [
+                {
+                    "data": {
+                        "custom": {},
+                        "type": "none",
+                    },
+                    "info": {
+                        "context": {
+                            "end_column": 0,
+                            "end_line": 0,
+                            "source": None,
+                            "start_column": 0,
+                            "start_line": 0,
+                        },
+                        "named_args": {},
+                        "subtype": None,
+                        "tags": [],
+                        "unnamed_args": [],
+                    },
+                },
+                {
+                    "data": {
+                        "custom": {},
+                        "type": "none",
+                    },
+                    "info": {
+                        "context": {
+                            "end_column": 0,
+                            "end_line": 0,
+                            "source": None,
+                            "start_column": 0,
+                            "start_line": 0,
+                        },
+                        "named_args": {},
+                        "subtype": None,
+                        "tags": [],
+                        "unnamed_args": [],
+                    },
+                },
+            ],
+            "labels": {
+                "somelabel": {
+                    "data": {
+                        "custom": {},
+                        "type": "none",
+                    },
+                    "info": {
+                        "context": {
+                            "end_column": 0,
+                            "end_line": 0,
+                            "source": None,
+                            "start_column": 0,
+                            "start_line": 0,
+                        },
+                        "named_args": {},
+                        "subtype": None,
+                        "tags": [],
+                        "unnamed_args": [],
+                    },
+                },
+            },
+        },
+    }
 
 
 def test_paragraph_line_node_data_without_content():
@@ -28,9 +99,79 @@ def test_paragraph_line_node_data_without_content():
         "type": "paragraph-line",
         "custom": {
             "content": [],
+            "labels": {},
         },
     }
 
 
 def test_paragraph_line_node_data_with_content():
-    check_node_data_with_content(ParagraphLineNodeData)
+    nodes: list[Node] = [Node(), Node()]
+    labels: dict[str, Node] = {"somelabel": Node()}
+
+    node_data = ParagraphLineNodeData(content=nodes, labels=labels)
+    assert node_data.asdict() == {
+        "type": "paragraph-line",
+        "custom": {
+            "content": [
+                {
+                    "data": {
+                        "custom": {},
+                        "type": "none",
+                    },
+                    "info": {
+                        "context": {
+                            "end_column": 0,
+                            "end_line": 0,
+                            "source": None,
+                            "start_column": 0,
+                            "start_line": 0,
+                        },
+                        "named_args": {},
+                        "subtype": None,
+                        "tags": [],
+                        "unnamed_args": [],
+                    },
+                },
+                {
+                    "data": {
+                        "custom": {},
+                        "type": "none",
+                    },
+                    "info": {
+                        "context": {
+                            "end_column": 0,
+                            "end_line": 0,
+                            "source": None,
+                            "start_column": 0,
+                            "start_line": 0,
+                        },
+                        "named_args": {},
+                        "subtype": None,
+                        "tags": [],
+                        "unnamed_args": [],
+                    },
+                },
+            ],
+            "labels": {
+                "somelabel": {
+                    "data": {
+                        "custom": {},
+                        "type": "none",
+                    },
+                    "info": {
+                        "context": {
+                            "end_column": 0,
+                            "end_line": 0,
+                            "source": None,
+                            "start_column": 0,
+                            "start_line": 0,
+                        },
+                        "named_args": {},
+                        "subtype": None,
+                        "tags": [],
+                        "unnamed_args": [],
+                    },
+                },
+            },
+        },
+    }
