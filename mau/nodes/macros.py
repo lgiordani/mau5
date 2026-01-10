@@ -1,5 +1,5 @@
-from mau.nodes.headers import HeaderNodeData
 from mau.nodes.footnotes import FootnoteNodeData
+from mau.nodes.headers import HeaderNodeData
 from mau.nodes.node import Node, NodeData, NodeDataContentMixin
 
 MACRO_HELP = """

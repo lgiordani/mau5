@@ -1,6 +1,5 @@
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import Node
 from mau.nodes.paragraph import ParagraphLineNodeData, ParagraphNodeData
-from mau.test_helpers import check_node_data_with_content
 
 
 def test_paragraph_node_data_without_content():
@@ -19,7 +18,7 @@ def test_paragraph_node_data_without_content():
 
 def test_paragraph_node_data_with_content():
     nodes: list[Node] = [Node(), Node()]
-    labels: dict[str, Node] = {"somelabel": Node()}
+    labels: dict[str, list[Node]] = {"somelabel": [Node()]}
 
     node_data = ParagraphNodeData(content=nodes, labels=labels)
     assert node_data.asdict() == {
@@ -66,25 +65,27 @@ def test_paragraph_node_data_with_content():
                 },
             ],
             "labels": {
-                "somelabel": {
-                    "data": {
-                        "custom": {},
-                        "type": "none",
-                    },
-                    "info": {
-                        "context": {
-                            "end_column": 0,
-                            "end_line": 0,
-                            "source": None,
-                            "start_column": 0,
-                            "start_line": 0,
+                "somelabel": [
+                    {
+                        "data": {
+                            "custom": {},
+                            "type": "none",
                         },
-                        "named_args": {},
-                        "subtype": None,
-                        "tags": [],
-                        "unnamed_args": [],
-                    },
-                },
+                        "info": {
+                            "context": {
+                                "end_column": 0,
+                                "end_line": 0,
+                                "source": None,
+                                "start_column": 0,
+                                "start_line": 0,
+                            },
+                            "named_args": {},
+                            "subtype": None,
+                            "tags": [],
+                            "unnamed_args": [],
+                        },
+                    }
+                ],
             },
         },
     }
@@ -106,7 +107,7 @@ def test_paragraph_line_node_data_without_content():
 
 def test_paragraph_line_node_data_with_content():
     nodes: list[Node] = [Node(), Node()]
-    labels: dict[str, Node] = {"somelabel": Node()}
+    labels: dict[str, list[Node]] = {"somelabel": [Node()]}
 
     node_data = ParagraphLineNodeData(content=nodes, labels=labels)
     assert node_data.asdict() == {
@@ -153,25 +154,27 @@ def test_paragraph_line_node_data_with_content():
                 },
             ],
             "labels": {
-                "somelabel": {
-                    "data": {
-                        "custom": {},
-                        "type": "none",
-                    },
-                    "info": {
-                        "context": {
-                            "end_column": 0,
-                            "end_line": 0,
-                            "source": None,
-                            "start_column": 0,
-                            "start_line": 0,
+                "somelabel": [
+                    {
+                        "data": {
+                            "custom": {},
+                            "type": "none",
                         },
-                        "named_args": {},
-                        "subtype": None,
-                        "tags": [],
-                        "unnamed_args": [],
-                    },
-                },
+                        "info": {
+                            "context": {
+                                "end_column": 0,
+                                "end_line": 0,
+                                "source": None,
+                                "start_column": 0,
+                                "start_line": 0,
+                            },
+                            "named_args": {},
+                            "subtype": None,
+                            "tags": [],
+                            "unnamed_args": [],
+                        },
+                    }
+                ],
             },
         },
     }

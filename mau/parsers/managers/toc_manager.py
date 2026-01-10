@@ -7,7 +7,6 @@ from mau.nodes.commands import (
     TocNodeData,
 )
 from mau.nodes.headers import HeaderNodeData
-from mau.nodes.node import Node
 
 
 def default_header_internal_id(

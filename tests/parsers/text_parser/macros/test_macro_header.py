@@ -1,7 +1,6 @@
 import pytest
 
 from mau.lexers.text_lexer import TextLexer
-from mau.nodes.headers import HeaderNodeData
 from mau.nodes.inline import TextNodeData
 from mau.nodes.macros import MacroHeaderNodeData
 from mau.nodes.node import Node, NodeInfo

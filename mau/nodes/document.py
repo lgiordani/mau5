@@ -1,6 +1,6 @@
 # Page nodes can be found at top level in a page
 
-from mau.nodes.node import NodeData, NodeDataLabelsMixin, Node, WrapperNodeData
+from mau.nodes.node import Node, NodeData, NodeDataLabelsMixin, WrapperNodeData
 
 HORIZONTAL_RULE_HELP = """
 Syntax:
@@ -20,7 +20,7 @@ class HorizontalRuleNodeData(NodeData, NodeDataLabelsMixin):
 
     def __init__(
         self,
-        labels: dict[str, Node[WrapperNodeData]] | None = None,
+        labels: dict[str, list[Node]] | None = None,
     ):
         super().__init__()
         NodeDataLabelsMixin.__init__(self, labels)

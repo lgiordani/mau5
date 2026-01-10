@@ -1,7 +1,7 @@
 from functools import partial
 
-from mau.nodes.headers import HeaderNodeData
 from mau.nodes.footnotes import FootnoteNodeData
+from mau.nodes.headers import HeaderNodeData
 from mau.nodes.macros import (
     MacroClassNodeData,
     MacroFootnoteNodeData,
@@ -166,6 +166,7 @@ def test_macro_header_node_data_with_header():
                     "internal_id": None,
                     "level": 1,
                     "labels": {},
+                    "content": [],
                 },
             },
         },

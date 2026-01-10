@@ -168,12 +168,14 @@ class NodeDataContentMixin:
 class NodeDataLabelsMixin:
     def __init__(
         self,
-        labels: dict[str, Node[WrapperNodeData]] | None = None,
+        labels: dict[str, list[Node]] | None = None,
     ):
         self.labels = labels or {}
 
     def content_asdict(self, base: dict):
-        base["custom"]["labels"] = {k: v.asdict() for k, v in self.labels.items()}
+        base["custom"]["labels"] = {
+            k: [i.asdict() for i in v] for k, v in self.labels.items()
+        }
 
 
 class ValueNodeData(NodeData):

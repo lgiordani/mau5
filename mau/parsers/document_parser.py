@@ -6,18 +6,14 @@ from functools import partial
 
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
-
 from mau.nodes.document import DocumentNodeData
 from mau.nodes.node import Node, NodeData, NodeInfo, WrapperNodeData
-
 from mau.parsers.base_parser import BaseParser
 from mau.parsers.buffers.arguments_buffer import ArgumentsBuffer
 from mau.parsers.buffers.control_buffer import ControlBuffer
 from mau.parsers.buffers.label_buffer import LabelBuffer
-
 from mau.parsers.document_processors.arguments import arguments_processor
-
-# from mau.parsers.document_processors.block import block_processor
+from mau.parsers.document_processors.block import block_processor
 from mau.parsers.document_processors.command import command_processor
 from mau.parsers.document_processors.control import control_processor
 from mau.parsers.document_processors.header import header_processor
@@ -121,7 +117,7 @@ class DocumentParser(BaseParser):
             partial(control_processor, self),
             partial(arguments_processor, self),
             partial(header_processor, self),
-            #         partial(block_processor, self),
+            partial(block_processor, self),
             partial(include_processor, self),
             partial(list_processor, self),
             partial(paragraph_processor, self),

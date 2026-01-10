@@ -2,8 +2,8 @@ from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.inline import StyleNodeData, TextNodeData
 from mau.nodes.macros import MacroLinkNodeData
-from mau.nodes.node import Node, NodeInfo, WrapperNodeData
-from mau.nodes.paragraph import ParagraphNodeData, ParagraphLineNodeData
+from mau.nodes.node import Node, NodeInfo
+from mau.nodes.paragraph import ParagraphLineNodeData, ParagraphNodeData
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     compare_asdict_list,
@@ -379,19 +379,12 @@ def test_paragraph_label():
                         )
                     ],
                     labels={
-                        "title": Node(
-                            data=WrapperNodeData(
-                                content=[
-                                    Node(
-                                        data=TextNodeData("A title"),
-                                        info=NodeInfo(
-                                            context=generate_context(1, 2, 1, 9)
-                                        ),
-                                    )
-                                ]
-                            ),
-                            info=NodeInfo(context=generate_context(1, 0, 1, 9)),
-                        )
+                        "title": [
+                            Node(
+                                data=TextNodeData("A title"),
+                                info=NodeInfo(context=generate_context(1, 2, 1, 9)),
+                            )
+                        ]
                     },
                 ),
                 info=NodeInfo(

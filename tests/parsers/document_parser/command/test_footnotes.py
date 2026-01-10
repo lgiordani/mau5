@@ -2,13 +2,13 @@
 
 # from mau.environment.environment import Environment
 # from mau.lexers.document_lexer import DocumentLexer
-# from mau.nodes.block import BlockSectionNodeContent
-# from mau.nodes.command import FootnotesItemNodeContent, FootnotesNodeContent
-# from mau.nodes.inline import TextNodeContent
-# from mau.nodes.lists import ListItemNodeContent, ListNodeContent
-# from mau.nodes.macros import MacroFootnoteNodeContent
+# from mau.nodes.block import BlockSectionNodeData
+# from mau.nodes.command import FootnotesItemNodeData, FootnotesNodeData
+# from mau.nodes.inline import TextNodeData
+# from mau.nodes.lists import ListItemNodeData, ListNodeData
+# from mau.nodes.macros import MacroFootnoteNodeData
 # from mau.nodes.node import Node, NodeInfo
-# from mau.nodes.paragraph import ParagraphNodeContent, ParagraphLineNodeContent
+# from mau.nodes.paragraph import ParagraphNodeData, ParagraphLineNodeData
 # from mau.parsers.document_parser import DocumentParser
 # from mau.test_helpers import (
 #     compare_node,
@@ -39,7 +39,7 @@
 #     parser = runner(source)
 
 #     footnote_node = Node(
-#         content=FootnotesItemNodeContent("somename", "1", "XXYY"),
+#         data=FootnotesItemNodeData("somename", "1", "XXYY"),
 #         info=NodeInfo(
 #             context=generate_context(4, 0, 6, 4),
 #             named_args={"footnote": "somename"},
@@ -48,26 +48,18 @@
 #             "content": [],
 #             "sections": [
 #                 Node(
-#                     content=BlockSectionNodeContent("content"),
+#                     data=BlockSectionNodeData("content"),
 #                     info=NodeInfo(context=generate_context(5, 0, 5, 10)),
 #                     children={
 #                         "content": [
 #                             Node(
-#                                 content=ParagraphNodeContent(),
-#                                 info=NodeInfo(context=generate_context(5, 0, 5, 10)),
-#                                 children={
-#                                     "content": [
+#                                 data=ParagraphNodeData(
+#                                     content=[
 #                                         Node(
-#                                             content=ParagraphLineNodeContent(),
-#                                             info=NodeInfo(
-#                                                 context=generate_context(5, 0, 5, 10)
-#                                             ),
-#                                             children={
-#                                                 "content": [
+#                                             data=ParagraphLineNodeData(
+#                                                 content=[
 #                                                     Node(
-#                                                         content=TextNodeContent(
-#                                                             "Some text."
-#                                                         ),
+#                                                         data=TextNodeData("Some text."),
 #                                                         info=NodeInfo(
 #                                                             context=generate_context(
 #                                                                 5, 0, 5, 10
@@ -75,10 +67,14 @@
 #                                                         ),
 #                                                     )
 #                                                 ]
-#                                             },
+#                                             ),
+#                                             info=NodeInfo(
+#                                                 context=generate_context(5, 0, 5, 10)
+#                                             ),
 #                                         )
 #                                     ]
-#                                 },
+#                                 ),
+#                                 info=NodeInfo(context=generate_context(5, 0, 5, 10)),
 #                             )
 #                         ],
 #                     },
@@ -91,25 +87,23 @@
 #         parser.nodes,
 #         [
 #             Node(
-#                 content=ParagraphNodeContent(),
+#                 data=ParagraphNodeData(),
 #                 info=NodeInfo(context=generate_context(1, 0, 1, 45)),
 #                 children={
 #                     "content": [
 #                         Node(
-#                             content=ParagraphLineNodeContent(),
+#                             data=ParagraphLineNodeData(),
 #                             info=NodeInfo(context=generate_context(1, 0, 1, 45)),
 #                             children={
 #                                 "content": [
 #                                     Node(
-#                                         content=TextNodeContent(
-#                                             "This contains a footnote"
-#                                         ),
+#                                         data=TextNodeData("This contains a footnote"),
 #                                         info=NodeInfo(
 #                                             context=generate_context(1, 0, 1, 24)
 #                                         ),
 #                                     ),
 #                                     Node(
-#                                         content=MacroFootnoteNodeContent(
+#                                         data=MacroFootnoteNodeData(
 #                                             "somename", "1", "XXYY"
 #                                         ),
 #                                         info=NodeInfo(
@@ -118,7 +112,7 @@
 #                                         children={"footnote": [footnote_node]},
 #                                     ),
 #                                     Node(
-#                                         content=TextNodeContent("."),
+#                                         data=TextNodeData("."),
 #                                         info=NodeInfo(
 #                                             context=generate_context(1, 44, 1, 45)
 #                                         ),
@@ -153,7 +147,7 @@
 #     parser = runner(source)
 
 #     footnote_node = Node(
-#         content=FootnotesItemNodeContent("somename", "1", "XXYY"),
+#         data=FootnotesItemNodeData("somename", "1", "XXYY"),
 #         info=NodeInfo(
 #             context=generate_context(4, 0, 6, 4),
 #             named_args={"footnote": "somename"},
@@ -162,26 +156,24 @@
 #             "content": [],
 #             "sections": [
 #                 Node(
-#                     content=BlockSectionNodeContent("content"),
+#                     data=BlockSectionNodeData("content"),
 #                     info=NodeInfo(context=generate_context(5, 0, 5, 10)),
 #                     children={
 #                         "content": [
 #                             Node(
-#                                 content=ParagraphNodeContent(),
+#                                 data=ParagraphNodeData(),
 #                                 info=NodeInfo(context=generate_context(5, 0, 5, 10)),
 #                                 children={
 #                                     "content": [
 #                                         Node(
-#                                             content=ParagraphLineNodeContent(),
+#                                             data=ParagraphLineNodeData(),
 #                                             info=NodeInfo(
 #                                                 context=generate_context(5, 0, 5, 10)
 #                                             ),
 #                                             children={
 #                                                 "content": [
 #                                                     Node(
-#                                                         content=TextNodeContent(
-#                                                             "Some text."
-#                                                         ),
+#                                                         data=TextNodeData("Some text."),
 #                                                         info=NodeInfo(
 #                                                             context=generate_context(
 #                                                                 5, 0, 5, 10
@@ -205,25 +197,23 @@
 #         parser.nodes,
 #         [
 #             Node(
-#                 content=ListNodeContent(ordered=False, main_node=True),
+#                 data=ListNodeData(ordered=False, main_node=True),
 #                 info=NodeInfo(context=generate_context(1, 0, 1, 47)),
 #                 children={
 #                     "nodes": [
 #                         Node(
-#                             content=ListItemNodeContent("1"),
+#                             data=ListItemNodeData("1"),
 #                             info=NodeInfo(context=generate_context(1, 0, 1, 47)),
 #                             children={
 #                                 "text": [
 #                                     Node(
-#                                         content=TextNodeContent(
-#                                             "This contains a footnote"
-#                                         ),
+#                                         data=TextNodeData("This contains a footnote"),
 #                                         info=NodeInfo(
 #                                             context=generate_context(1, 2, 1, 26)
 #                                         ),
 #                                     ),
 #                                     Node(
-#                                         content=MacroFootnoteNodeContent(
+#                                         data=MacroFootnoteNodeData(
 #                                             "somename", "1", "XXYY"
 #                                         ),
 #                                         info=NodeInfo(
@@ -232,7 +222,7 @@
 #                                         children={"footnote": [footnote_node]},
 #                                     ),
 #                                     Node(
-#                                         content=TextNodeContent("."),
+#                                         data=TextNodeData("."),
 #                                         info=NodeInfo(
 #                                             context=generate_context(1, 46, 1, 47)
 #                                         ),
@@ -269,7 +259,7 @@
 #     parser = runner(source)
 
 #     footnote_node = Node(
-#         content=FootnotesItemNodeContent("somename", "1", "XXYY"),
+#         data=FootnotesItemNodeData("somename", "1", "XXYY"),
 #         info=NodeInfo(
 #             context=generate_context(4, 0, 6, 4),
 #             named_args={"footnote": "somename"},
@@ -278,26 +268,24 @@
 #             "content": [],
 #             "sections": [
 #                 Node(
-#                     content=BlockSectionNodeContent("content"),
+#                     data=BlockSectionNodeData("content"),
 #                     info=NodeInfo(context=generate_context(5, 0, 5, 10)),
 #                     children={
 #                         "content": [
 #                             Node(
-#                                 content=ParagraphNodeContent(),
+#                                 data=ParagraphNodeData(),
 #                                 info=NodeInfo(context=generate_context(5, 0, 5, 10)),
 #                                 children={
 #                                     "content": [
 #                                         Node(
-#                                             content=ParagraphLineNodeContent(),
+#                                             data=ParagraphLineNodeData(),
 #                                             info=NodeInfo(
 #                                                 context=generate_context(5, 0, 5, 10)
 #                                             ),
 #                                             children={
 #                                                 "content": [
 #                                                     Node(
-#                                                         content=TextNodeContent(
-#                                                             "Some text."
-#                                                         ),
+#                                                         data=TextNodeData("Some text."),
 #                                                         info=NodeInfo(
 #                                                             context=generate_context(
 #                                                                 5, 0, 5, 10
@@ -321,25 +309,23 @@
 #         parser.nodes,
 #         [
 #             Node(
-#                 content=ParagraphNodeContent(),
+#                 data=ParagraphNodeData(),
 #                 info=NodeInfo(context=generate_context(1, 0, 1, 45)),
 #                 children={
 #                     "content": [
 #                         Node(
-#                             content=ParagraphLineNodeContent(),
+#                             data=ParagraphLineNodeData(),
 #                             info=NodeInfo(context=generate_context(1, 0, 1, 45)),
 #                             children={
 #                                 "content": [
 #                                     Node(
-#                                         content=TextNodeContent(
-#                                             "This contains a footnote"
-#                                         ),
+#                                         data=TextNodeData("This contains a footnote"),
 #                                         info=NodeInfo(
 #                                             context=generate_context(1, 0, 1, 24)
 #                                         ),
 #                                     ),
 #                                     Node(
-#                                         content=MacroFootnoteNodeContent(
+#                                         data=MacroFootnoteNodeData(
 #                                             "somename", "1", "XXYY"
 #                                         ),
 #                                         info=NodeInfo(
@@ -348,7 +334,7 @@
 #                                         children={"footnote": [footnote_node]},
 #                                     ),
 #                                     Node(
-#                                         content=TextNodeContent("."),
+#                                         data=TextNodeData("."),
 #                                         info=NodeInfo(
 #                                             context=generate_context(1, 44, 1, 45)
 #                                         ),
@@ -360,7 +346,7 @@
 #                 },
 #             ),
 #             Node(
-#                 content=FootnotesNodeContent(),
+#                 data=FootnotesNodeData(),
 #                 info=NodeInfo(context=generate_context(8, 0, 8, 11)),
 #                 children={"entries": [footnote_node]},
 #             ),
@@ -384,7 +370,7 @@
 #         parser.nodes,
 #         [
 #             Node(
-#                 content=FootnotesNodeContent(),
+#                 data=FootnotesNodeData(),
 #                 info=NodeInfo(
 #                     context=generate_context(2, 0, 2, 11),
 #                     named_args={"key1": "value1"},
@@ -411,7 +397,7 @@
 #         parser.nodes,
 #         [
 #             Node(
-#                 content=FootnotesNodeContent(),
+#                 data=FootnotesNodeData(),
 #                 info=NodeInfo(
 #                     context=generate_context(1, 0, 1, 11),
 #                     named_args={"key1": "value1"},
@@ -439,13 +425,13 @@
 #         parser.nodes,
 #         [
 #             Node(
-#                 content=FootnotesNodeContent(),
+#                 data=FootnotesNodeData(),
 #                 info=NodeInfo(context=generate_context(2, 0, 2, 11)),
 #                 children={
 #                     "entries": [],
 #                     "title": [
 #                         Node(
-#                             content=TextNodeContent("Some label"),
+#                             data=TextNodeData("Some label"),
 #                             info=NodeInfo(context=generate_context(1, 2, 1, 12)),
 #                         )
 #                     ],
@@ -493,7 +479,7 @@
 #     parser = runner(source)
 
 #     footnote_node = Node(
-#         content=FootnotesItemNodeContent("somename", "1", "XXYY"),
+#         data=FootnotesItemNodeData("somename", "1", "XXYY"),
 #         info=NodeInfo(
 #             context=generate_context(4, 0, 6, 4),
 #             subtype="footnote",
@@ -503,26 +489,24 @@
 #             "content": [],
 #             "sections": [
 #                 Node(
-#                     content=BlockSectionNodeContent("content"),
+#                     data=BlockSectionNodeData("content"),
 #                     info=NodeInfo(context=generate_context(5, 0, 5, 10)),
 #                     children={
 #                         "content": [
 #                             Node(
-#                                 content=ParagraphNodeContent(),
+#                                 data=ParagraphNodeData(),
 #                                 info=NodeInfo(context=generate_context(5, 0, 5, 10)),
 #                                 children={
 #                                     "content": [
 #                                         Node(
-#                                             content=ParagraphLineNodeContent(),
+#                                             data=ParagraphLineNodeData(),
 #                                             info=NodeInfo(
 #                                                 context=generate_context(5, 0, 5, 10)
 #                                             ),
 #                                             children={
 #                                                 "content": [
 #                                                     Node(
-#                                                         content=TextNodeContent(
-#                                                             "Some text."
-#                                                         ),
+#                                                         data=TextNodeData("Some text."),
 #                                                         info=NodeInfo(
 #                                                             context=generate_context(
 #                                                                 5, 0, 5, 10
@@ -546,25 +530,19 @@
 #         parser.nodes,
 #         [
 #             Node(
-#                 content=ParagraphNodeContent(),
-#                 info=NodeInfo(context=generate_context(1, 0, 1, 45)),
-#                 children={
-#                     "content": [
+#                 data=ParagraphNodeData(
+#                     content=[
 #                         Node(
-#                             content=ParagraphLineNodeContent(),
-#                             info=NodeInfo(context=generate_context(1, 0, 1, 45)),
-#                             children={
-#                                 "content": [
+#                             data=ParagraphLineNodeData(
+#                                 content=[
 #                                     Node(
-#                                         content=TextNodeContent(
-#                                             "This contains a footnote"
-#                                         ),
+#                                         data=TextNodeData("This contains a footnote"),
 #                                         info=NodeInfo(
 #                                             context=generate_context(1, 0, 1, 24)
 #                                         ),
 #                                     ),
 #                                     Node(
-#                                         content=MacroFootnoteNodeContent(
+#                                         data=MacroFootnoteNodeData(
 #                                             "somename", "1", "XXYY"
 #                                         ),
 #                                         info=NodeInfo(
@@ -573,16 +551,18 @@
 #                                         children={"footnote": [footnote_node]},
 #                                     ),
 #                                     Node(
-#                                         content=TextNodeContent("."),
+#                                         data=TextNodeData("."),
 #                                         info=NodeInfo(
 #                                             context=generate_context(1, 44, 1, 45)
 #                                         ),
 #                                     ),
 #                                 ]
-#                             },
+#                             ),
+#                             info=NodeInfo(context=generate_context(1, 0, 1, 45)),
 #                         )
 #                     ]
-#                 },
+#                 ),
+#                 info=NodeInfo(context=generate_context(1, 0, 1, 45)),
 #             )
 #         ],
 #     )

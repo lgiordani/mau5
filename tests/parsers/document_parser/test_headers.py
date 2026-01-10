@@ -2,7 +2,7 @@ from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.headers import HeaderNodeData
 from mau.nodes.inline import TextNodeData
-from mau.nodes.node import Node, NodeInfo, WrapperNodeData
+from mau.nodes.node import Node, NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     compare_asdict_list,
@@ -33,19 +33,12 @@ def test_header_level_1():
                 data=HeaderNodeData(
                     1,
                     internal_id="XXXXXY",
-                    text=Node(
-                        data=WrapperNodeData(
-                            content=[
-                                Node(
-                                    data=TextNodeData("Title of the section"),
-                                    info=NodeInfo(
-                                        context=generate_context(1, 2, 1, 22)
-                                    ),
-                                )
-                            ]
-                        ),
-                        info=NodeInfo(context=generate_context(1, 2, 1, 22)),
-                    ),
+                    content=[
+                        Node(
+                            data=TextNodeData("Title of the section"),
+                            info=NodeInfo(context=generate_context(1, 2, 1, 22)),
+                        )
+                    ],
                 ),
                 info=NodeInfo(context=generate_context(1, 0, 1, 22)),
             )
@@ -70,19 +63,12 @@ def test_header_level_3():
                 data=HeaderNodeData(
                     3,
                     internal_id="XXXXXY",
-                    text=Node(
-                        data=WrapperNodeData(
-                            content=[
-                                Node(
-                                    data=TextNodeData("Title of a subsection"),
-                                    info=NodeInfo(
-                                        context=generate_context(1, 4, 1, 25)
-                                    ),
-                                )
-                            ]
-                        ),
-                        info=NodeInfo(context=generate_context(1, 4, 1, 25)),
-                    ),
+                    content=[
+                        Node(
+                            data=TextNodeData("Title of a subsection"),
+                            info=NodeInfo(context=generate_context(1, 4, 1, 25)),
+                        )
+                    ],
                 ),
                 info=NodeInfo(context=generate_context(1, 0, 1, 25)),
             )
@@ -108,21 +94,12 @@ def test_header_attributes():
                 data=HeaderNodeData(
                     1,
                     internal_id="XXXXXY",
-                    text=Node(
-                        data=WrapperNodeData(
-                            content=[
-                                Node(
-                                    data=TextNodeData("Title of the section"),
-                                    info=NodeInfo(
-                                        context=generate_context(2, 2, 2, 22)
-                                    ),
-                                )
-                            ]
-                        ),
-                        info=NodeInfo(
-                            context=generate_context(2, 2, 2, 22),
-                        ),
-                    ),
+                    content=[
+                        Node(
+                            data=TextNodeData("Title of the section"),
+                            info=NodeInfo(context=generate_context(2, 2, 2, 22)),
+                        )
+                    ],
                 ),
                 info=NodeInfo(
                     context=generate_context(2, 0, 2, 22),
@@ -152,21 +129,12 @@ def test_header_attributes_can_overwrite_ids():
                     1,
                     internal_id="some_internal_id",
                     alias="some_alias",
-                    text=Node(
-                        data=WrapperNodeData(
-                            content=[
-                                Node(
-                                    data=TextNodeData("Title of the section"),
-                                    info=NodeInfo(
-                                        context=generate_context(2, 2, 2, 22)
-                                    ),
-                                )
-                            ]
-                        ),
-                        info=NodeInfo(
-                            context=generate_context(2, 2, 2, 22),
-                        ),
-                    ),
+                    content=[
+                        Node(
+                            data=TextNodeData("Title of the section"),
+                            info=NodeInfo(context=generate_context(2, 2, 2, 22)),
+                        )
+                    ],
                 ),
                 info=NodeInfo(
                     context=generate_context(2, 0, 2, 22),
@@ -198,33 +166,19 @@ def test_header_usese_labels():
                 data=HeaderNodeData(
                     1,
                     internal_id="XXXXXY",
-                    text=Node(
-                        data=WrapperNodeData(
-                            content=[
-                                Node(
-                                    data=TextNodeData("Title of the section"),
-                                    info=NodeInfo(
-                                        context=generate_context(2, 2, 2, 22)
-                                    ),
-                                )
-                            ]
-                        ),
-                        info=NodeInfo(context=generate_context(2, 2, 2, 22)),
-                    ),
-                    labels={
-                        "title": Node(
-                            data=WrapperNodeData(
-                                content=[
-                                    Node(
-                                        data=TextNodeData("This is a label"),
-                                        info=NodeInfo(
-                                            context=generate_context(1, 2, 1, 17)
-                                        ),
-                                    )
-                                ]
-                            ),
-                            info=NodeInfo(context=generate_context(1, 0, 1, 17)),
+                    content=[
+                        Node(
+                            data=TextNodeData("Title of the section"),
+                            info=NodeInfo(context=generate_context(2, 2, 2, 22)),
                         )
+                    ],
+                    labels={
+                        "title": [
+                            Node(
+                                data=TextNodeData("This is a label"),
+                                info=NodeInfo(context=generate_context(1, 2, 1, 17)),
+                            )
+                        ]
                     },
                 ),
                 info=NodeInfo(context=generate_context(2, 0, 2, 22)),
@@ -252,19 +206,12 @@ def test_header_uses_control_positive():
                 data=HeaderNodeData(
                     1,
                     internal_id="XXXXXY",
-                    text=Node(
-                        data=WrapperNodeData(
-                            content=[
-                                Node(
-                                    data=TextNodeData("Title of the section"),
-                                    info=NodeInfo(
-                                        context=generate_context(2, 2, 2, 22)
-                                    ),
-                                )
-                            ]
-                        ),
-                        info=NodeInfo(context=generate_context(2, 2, 2, 22)),
-                    ),
+                    content=[
+                        Node(
+                            data=TextNodeData("Title of the section"),
+                            info=NodeInfo(context=generate_context(2, 2, 2, 22)),
+                        )
+                    ],
                 ),
                 info=NodeInfo(context=generate_context(2, 0, 2, 22)),
             )

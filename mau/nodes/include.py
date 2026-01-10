@@ -1,4 +1,4 @@
-from mau.nodes.node import NodeData, NodeDataLabelsMixin, Node, WrapperNodeData
+from mau.nodes.node import Node, NodeData, NodeDataLabelsMixin
 
 INCLUDE_HELP = """
 Syntax:
@@ -37,7 +37,7 @@ class IncludeNodeData(NodeData, NodeDataLabelsMixin):
         self,
         content_type: str,
         uris: list[str],
-        labels: dict[str, Node[WrapperNodeData]] | None = None,
+        labels: dict[str, list[Node]] | None = None,
     ):
         super().__init__()
         self.content_type = content_type
@@ -71,7 +71,7 @@ class IncludeImageNodeData(NodeData, NodeDataLabelsMixin):
         uri: str,
         alt_text: str | None = None,
         classes: list[str] | None = None,
-        labels: dict[str, Node[WrapperNodeData]] | None = None,
+        labels: dict[str, list[Node]] | None = None,
     ):
         self.uri = uri
         self.alt_text = alt_text

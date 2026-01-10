@@ -2,7 +2,6 @@ from mau.nodes.node import (
     Node,
     NodeData,
     NodeDataContentMixin,
-    WrapperNodeData,
     NodeDataLabelsMixin,
 )
 
@@ -18,7 +17,7 @@ header on a deeper level.
 """
 
 
-class HeaderNodeData(NodeData, NodeDataLabelsMixin):
+class HeaderNodeData(NodeData, NodeDataLabelsMixin, NodeDataContentMixin):
     """A header."""
 
     type = "header"
@@ -28,9 +27,9 @@ class HeaderNodeData(NodeData, NodeDataLabelsMixin):
         level: int,
         internal_id: str | None = None,
         alias: str | None = None,
-        text: Node[WrapperNodeData] | None = None,
+        content: list[Node] | None = None,
+        labels: dict[str, list[Node]] | None = None,
         source_text: str | None = None,
-        labels: dict[str, Node[WrapperNodeData]] | None = None,
     ):
         super().__init__()
         self.level = level
@@ -42,15 +41,13 @@ class HeaderNodeData(NodeData, NodeDataLabelsMixin):
         # receive a programmatic ID.
         self.alias = alias
 
-        # The text of the header.
-        self.text = text
-
         # The source text of the header.
         # This is the unparsed text
         # that will be used to generate
         # the unique id.
         self.source_text = source_text
 
+        NodeDataContentMixin.__init__(self, content)
         NodeDataLabelsMixin.__init__(self, labels)
 
     def asdict(self):
@@ -61,9 +58,7 @@ class HeaderNodeData(NodeData, NodeDataLabelsMixin):
             "alias": self.alias,
         }
 
-        if self.text:
-            base["custom"]["text"] = self.text.asdict()
-
         NodeDataLabelsMixin.content_asdict(self, base)
+        NodeDataContentMixin.content_asdict(self, base)
 
         return base

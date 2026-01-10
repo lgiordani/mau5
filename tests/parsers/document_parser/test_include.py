@@ -4,7 +4,7 @@ from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.include import IncludeImageNodeData, IncludeNodeData
 from mau.nodes.inline import TextNodeData
-from mau.nodes.node import Node, NodeInfo, WrapperNodeData
+from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -124,19 +124,12 @@ def test_include_content_with_label():
                     "ctype1",
                     ["/path/to/it", "/another/path"],
                     labels={
-                        "title": Node(
-                            data=WrapperNodeData(
-                                content=[
-                                    Node(
-                                        data=TextNodeData("A title"),
-                                        info=NodeInfo(
-                                            context=generate_context(1, 2, 1, 9)
-                                        ),
-                                    )
-                                ]
-                            ),
-                            info=NodeInfo(context=generate_context(1, 0, 1, 9)),
-                        )
+                        "title": [
+                            Node(
+                                data=TextNodeData("A title"),
+                                info=NodeInfo(context=generate_context(1, 2, 1, 9)),
+                            )
+                        ]
                     },
                 ),
                 info=NodeInfo(context=generate_context(2, 0, 2, 9)),

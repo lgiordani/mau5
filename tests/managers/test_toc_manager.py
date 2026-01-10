@@ -5,13 +5,11 @@ from mau.nodes.commands import (
     TocNodeData,
 )
 from mau.nodes.headers import HeaderNodeData
-from mau.nodes.inline import TextNodeData
-from mau.nodes.node import Node, NodeInfo
 from mau.parsers.managers.toc_manager import (
     TocManager,
     add_nodes_under_level,
 )
-from mau.test_helpers import generate_context, compare_asdict_list
+from mau.test_helpers import compare_asdict_list
 
 
 def test_toc_manager_init():

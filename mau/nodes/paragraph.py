@@ -2,7 +2,6 @@ from mau.nodes.node import (
     Node,
     NodeData,
     NodeDataContentMixin,
-    WrapperNodeData,
     NodeDataLabelsMixin,
 )
 
@@ -19,7 +18,7 @@ class ParagraphNodeData(NodeData, NodeDataContentMixin, NodeDataLabelsMixin):
     def __init__(
         self,
         content: list[Node] | None = None,
-        labels: dict[str, Node[WrapperNodeData]] | None = None,
+        labels: dict[str, list[Node]] | None = None,
     ):
         super().__init__()
 
@@ -45,7 +44,7 @@ class ParagraphLineNodeData(NodeData, NodeDataContentMixin, NodeDataLabelsMixin)
     def __init__(
         self,
         content: list[Node] | None = None,
-        labels: dict[str, Node[WrapperNodeData]] | None = None,
+        labels: dict[str, list[Node]] | None = None,
     ):
         super().__init__()
 

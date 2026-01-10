@@ -1,9 +1,7 @@
 from mau.nodes.commands import FootnotesNodeData, TocItemNodeData
 from mau.nodes.footnotes import FootnoteNodeData
-from mau.nodes.inline import TextNodeData
-from mau.nodes.block import BlockNodeData
 from mau.nodes.headers import HeaderNodeData
-from mau.nodes.node import NodeInfo, Node
+
 # from mau.nodes.commands import BlockGroupNodeData
 
 
@@ -77,6 +75,7 @@ def test_toc_item_node_data_without_entries():
                     "internal_id": None,
                     "alias": None,
                     "labels": {},
+                    "content": [],
                 },
             },
         },
@@ -112,6 +111,7 @@ def test_toc_item_node_data_with_entries():
                                 "internal_id": None,
                                 "alias": None,
                                 "labels": {},
+                                "content": [],
                             },
                         },
                     },
@@ -124,6 +124,7 @@ def test_toc_item_node_data_with_entries():
                     "internal_id": None,
                     "alias": None,
                     "labels": {},
+                    "content": [],
                 },
             },
         },

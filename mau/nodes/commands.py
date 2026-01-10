@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from mau.nodes.headers import HeaderNodeData
 from mau.nodes.footnotes import FootnoteNodeData
+from mau.nodes.headers import HeaderNodeData
 from mau.nodes.node import (
     Node,
     NodeData,
-    NodeDataContentMixin,
     NodeDataLabelsMixin,
-    WrapperNodeData,
 )
 
 COMMAND_HELP = """
@@ -29,7 +27,7 @@ class FootnotesNodeData(NodeData, NodeDataLabelsMixin):
     def __init__(
         self,
         footnotes: list[FootnoteNodeData] | None = None,
-        labels: dict[str, Node[WrapperNodeData]] | None = None,
+        labels: dict[str, list[Node]] | None = None,
     ):
         self.footnotes = footnotes or []
 
@@ -81,7 +79,7 @@ class TocNodeData(NodeData, NodeDataLabelsMixin):
         self,
         plain_entries: list[HeaderNodeData] | None = None,
         nested_entries: list[TocItemNodeData] | None = None,
-        labels: dict[str, Node[WrapperNodeData]] | None = None,
+        labels: dict[str, list[Node]] | None = None,
     ):
         self.plain_entries = plain_entries or []
         self.nested_entries = nested_entries or []

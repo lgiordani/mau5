@@ -2,7 +2,7 @@ from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.document import HorizontalRuleNodeData
 from mau.nodes.inline import TextNodeData
-from mau.nodes.node import Node, NodeInfo, WrapperNodeData
+from mau.nodes.node import Node, NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     compare_asdict_list,
@@ -69,21 +69,14 @@ def test_horizontal_rule_with_labels():
         Node(
             data=HorizontalRuleNodeData(
                 labels={
-                    "details": Node(
-                        data=WrapperNodeData(
-                            content=[
-                                Node(
-                                    data=TextNodeData("This is a label"),
-                                    info=NodeInfo(
-                                        context=generate_context(1, 9, 1, 24),
-                                    ),
-                                )
-                            ]
-                        ),
-                        info=NodeInfo(
-                            context=generate_context(1, 0, 1, 24),
-                        ),
-                    )
+                    "details": [
+                        Node(
+                            data=TextNodeData("This is a label"),
+                            info=NodeInfo(
+                                context=generate_context(1, 9, 1, 24),
+                            ),
+                        )
+                    ]
                 }
             ),
             info=NodeInfo(

@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 from mau.nodes.headers import HeaderNodeData
-from mau.nodes.node import Node, NodeInfo, WrapperNodeData
+from mau.nodes.node import Node, NodeInfo
 from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.text_buffer import Context
 from mau.token import TokenType
@@ -80,20 +80,12 @@ def header_processor(parser: DocumentParser):
     # Find the context of the whole node.
     context = Context.merge_contexts(header.context, text_context)
 
-    # The node that contains the header text.
-    header_text_node = Node(
-        data=WrapperNodeData(
-            content=text_nodes,
-        ),
-        info=NodeInfo(context=text_context),
-    )
-
     # The header data.
     header_data = HeaderNodeData(
         level,
         internal_id=internal_id,
         alias=alias,
-        text=header_text_node,
+        content=text_nodes,
         source_text=text_token.value,
     )
 

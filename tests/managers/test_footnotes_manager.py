@@ -5,8 +5,6 @@ import pytest
 from mau.nodes.block import BlockNodeData
 from mau.nodes.commands import FootnotesNodeData
 from mau.nodes.footnotes import FootnoteNodeData
-from mau.nodes.node import Node
-from mau.parsers.base_parser import MauParserException
 from mau.parsers.managers.footnotes_manager import FootnotesManager
 from mau.test_helpers import compare_asdict_list
 
@@ -47,7 +45,7 @@ def test_footnotes_manager_add_data():
     fnm = FootnotesManager()
 
     footnote_name = "name"
-    footnote_block_data = BlockNodeData(content=[])
+    footnote_block_data = BlockNodeData()
     footnote_body = footnote_block_data
 
     fnm.add_body(footnote_name, footnote_body)
@@ -62,10 +60,10 @@ def test_footnotes_manager_add_data_duplicate_name():
 
     footnote_name = "name"
 
-    footnote_block_data1 = BlockNodeData(content=[])
+    footnote_block_data1 = BlockNodeData()
     footnote_body1 = footnote_block_data1
 
-    footnote_block_data2 = BlockNodeData(content=[])
+    footnote_block_data2 = BlockNodeData()
     footnote_body2 = footnote_block_data2
 
     fnm.add_body(footnote_name, footnote_body1)

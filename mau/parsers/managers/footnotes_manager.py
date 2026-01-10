@@ -3,8 +3,6 @@ from __future__ import annotations
 from mau.nodes.block import BlockNodeData
 from mau.nodes.commands import FootnotesNodeData
 from mau.nodes.footnotes import FootnoteNodeData
-from mau.nodes.node import Node
-from mau.parsers.base_parser import MauParserException
 
 
 def default_footnote_unique_id(

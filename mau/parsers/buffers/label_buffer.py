@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from mau.nodes.node import Node, NodeData, WrapperNodeData
+from mau.nodes.node import Node
 
 
 class LabelBuffer:
@@ -11,17 +11,17 @@ class LabelBuffer:
     def __init__(self):
         # This is where the buffer keeps the
         # stored children.
-        self.labels: dict[str, Node[WrapperNodeData]] = {}
+        self.labels: dict[str, list[Node]] = {}
 
     def push(
         self,
         role: str,
-        node: Node[WrapperNodeData],
+        nodes: list[Node],
     ):
         # Store the given children.
-        self.labels[role] = node
+        self.labels[role] = nodes
 
-    def pop(self) -> dict[str, Node[WrapperNodeData]]:
+    def pop(self) -> dict[str, list[Node]]:
         # Retrieve the stored arguments
         # and reset the internal slot.
         labels = self.labels

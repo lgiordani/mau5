@@ -1,10 +1,9 @@
 from mau.nodes.node import (
-    NodeData,
-    ValueNodeData,
     Node,
+    NodeData,
     NodeDataContentMixin,
-    WrapperNodeData,
     NodeDataLabelsMixin,
+    WrapperNodeData,
 )
 
 LIST_HELP = """
@@ -64,7 +63,7 @@ class ListNodeData(NodeData, NodeDataContentMixin, NodeDataLabelsMixin):
         main_node=False,
         start=1,
         content: list[Node] | None = None,
-        labels: dict[str, Node[WrapperNodeData]] | None = None,
+        labels: dict[str, list[Node]] | None = None,
     ):
         super().__init__()
         self.ordered = ordered

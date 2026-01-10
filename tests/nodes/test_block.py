@@ -11,6 +11,6 @@ def test_block_node_data():
             "classes": [],
             "engine": None,
             "preprocessor": None,
-            "content": [],
+            "sections": {},
         },
     }

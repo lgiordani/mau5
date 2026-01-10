@@ -1,15 +1,10 @@
 import pytest
-from mau.parsers.managers.header_links_manager import HeaderLinksManager
 
 from mau.nodes.headers import HeaderNodeData
 from mau.nodes.inline import TextNodeData
 from mau.nodes.macros import MacroHeaderNodeData
-from mau.nodes.node import Node, NodeInfo, WrapperNodeData
-from mau.parsers.base_parser import MauParserException
-
-from mau.test_helpers import (
-    generate_context,
-)
+from mau.nodes.node import Node
+from mau.parsers.managers.header_links_manager import HeaderLinksManager
 
 
 def test_header_links_manager():
@@ -18,15 +13,11 @@ def test_header_links_manager():
     header_data = HeaderNodeData(
         2,
         "XXXXXX",
-        text=Node(
-            data=WrapperNodeData(
-                content=[
-                    Node(
-                        data=TextNodeData("Header"),
-                    )
-                ]
+        content=[
+            Node(
+                data=TextNodeData("Header"),
             )
-        ),
+        ],
     )
 
     link_data = MacroHeaderNodeData("someheader")
@@ -49,15 +40,11 @@ def test_header_links_manager_no_link():
     header_data = HeaderNodeData(
         2,
         "XXXXXX",
-        text=Node(
-            data=WrapperNodeData(
-                content=[
-                    Node(
-                        data=TextNodeData("Header"),
-                    )
-                ]
+        content=[
+            Node(
+                data=TextNodeData("Header"),
             )
-        ),
+        ],
     )
 
     ilm.add_header("someheader", header_data)
@@ -96,15 +83,11 @@ def test_header_links_manager_update():
     header_data = HeaderNodeData(
         2,
         "XXXXXX",
-        text=Node(
-            data=WrapperNodeData(
-                content=[
-                    Node(
-                        data=TextNodeData("Header"),
-                    )
-                ]
+        content=[
+            Node(
+                data=TextNodeData("Header"),
             )
-        ),
+        ],
     )
 
     link_data = MacroHeaderNodeData("someheader")

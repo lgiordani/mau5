@@ -3,7 +3,7 @@ from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.commands import TocItemNodeData, TocNodeData
 from mau.nodes.headers import HeaderNodeData
 from mau.nodes.inline import TextNodeData
-from mau.nodes.node import Node, NodeInfo, WrapperNodeData
+from mau.nodes.node import Node, NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     compare_asdict_list,
@@ -109,19 +109,12 @@ def test_command_toc_supports_labels():
                     nested_entries=[],
                     plain_entries=[],
                     labels={
-                        "title": Node(
-                            data=WrapperNodeData(
-                                content=[
-                                    Node(
-                                        data=TextNodeData("Some label"),
-                                        info=NodeInfo(
-                                            context=generate_context(1, 2, 1, 12)
-                                        ),
-                                    )
-                                ]
-                            ),
-                            info=NodeInfo(context=generate_context(1, 0, 1, 12)),
-                        )
+                        "title": [
+                            Node(
+                                data=TextNodeData("Some label"),
+                                info=NodeInfo(context=generate_context(1, 2, 1, 12)),
+                            )
+                        ]
                     },
                 ),
                 info=NodeInfo(context=generate_context(2, 0, 2, 5)),
@@ -174,18 +167,14 @@ def test_command_toc_with_entries():
         level=2,
         internal_id="Header 1.1-XXXXXX",
         source_text="Header 1.1",
-        text=Node(
-            data=WrapperNodeData(
-                content=[
-                    Node(
-                        data=TextNodeData("Header 1.1"),
-                        info=NodeInfo(context=generate_context(2, 3, 2, 13)),
-                    )
-                ]
-            ),
-            info=NodeInfo(context=generate_context(2, 3, 2, 13)),
-        ),
+        content=[
+            Node(
+                data=TextNodeData("Header 1.1"),
+                info=NodeInfo(context=generate_context(2, 3, 2, 13)),
+            )
+        ],
     )
+
     node_header_1_1 = Node(
         data=header_1_1,
         info=NodeInfo(context=generate_context(2, 0, 2, 13)),
@@ -195,18 +184,14 @@ def test_command_toc_with_entries():
         level=1,
         internal_id="Header 1-XXXXXX",
         source_text="Header 1",
-        text=Node(
-            data=WrapperNodeData(
-                content=[
-                    Node(
-                        data=TextNodeData("Header 1"),
-                        info=NodeInfo(context=generate_context(1, 2, 1, 10)),
-                    )
-                ]
-            ),
-            info=NodeInfo(context=generate_context(1, 2, 1, 10)),
-        ),
+        content=[
+            Node(
+                data=TextNodeData("Header 1"),
+                info=NodeInfo(context=generate_context(1, 2, 1, 10)),
+            )
+        ],
     )
+
     node_header_1 = Node(
         data=header_1,
         info=NodeInfo(context=generate_context(1, 0, 1, 10)),
@@ -216,18 +201,14 @@ def test_command_toc_with_entries():
         level=1,
         internal_id="Header 2-XXXXXX",
         source_text="Header 2",
-        text=Node(
-            data=WrapperNodeData(
-                content=[
-                    Node(
-                        data=TextNodeData("Header 2"),
-                        info=NodeInfo(context=generate_context(3, 2, 3, 10)),
-                    )
-                ]
-            ),
-            info=NodeInfo(context=generate_context(3, 2, 3, 10)),
-        ),
+        content=[
+            Node(
+                data=TextNodeData("Header 2"),
+                info=NodeInfo(context=generate_context(3, 2, 3, 10)),
+            )
+        ],
     )
+
     node_header_2 = Node(
         data=header_2,
         info=NodeInfo(context=generate_context(3, 0, 3, 10)),
