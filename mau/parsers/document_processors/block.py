@@ -14,7 +14,8 @@ from mau.nodes.block import BlockNodeData
 
 # , BlockSectionNodeData
 # from mau.nodes.commands import FootnotesItemNodeData
-# from mau.nodes.inline import RawNodeData
+
+from mau.nodes.inline import RawNodeData
 from mau.nodes.node import Node, NodeInfo, WrapperNodeData
 
 # from mau.nodes.source import (
@@ -226,35 +227,35 @@ def parse_default_engine(
     return parse_block_content(parser, content, arguments)
 
 
-# def parse_raw_engine(
-#     parser: DocumentParser,
-#     content: Token,
-#     arguments: Arguments,
-# ) -> dict[str, list[Node]]:
-#     # Engine "raw" doesn't process the content,
-#     # so we just pass it untouched in the form of
-#     # a RawNode per line.
+def parse_raw_engine(
+    parser: DocumentParser,
+    content: Token,
+    arguments: Arguments,
+) -> dict[str, list[Node]]:
+    # Engine "raw" doesn't process the content,
+    # so we just pass it untouched in the form of
+    # a RawNode per line.
 
-#     # A list of content lines (raw).
-#     content_lines = content.value.split("\n")
+    # A list of content lines (raw).
+    content_lines = content.value.split("\n")
 
-#     # A list of raw content lines.
-#     raw_content: list[Node[RawNodeData]] = []
+    # A list of raw content lines.
+    raw_content: list[Node[RawNodeData]] = []
 
-#     for number, line_content in enumerate(content_lines, start=1):
-#         line_context = content.context.clone()
-#         line_context.start_line += number - 1
-#         line_context.end_line = line_context.start_line
-#         line_context.end_column = line_context.start_column + len(line_content)
+    for number, line_content in enumerate(content_lines, start=1):
+        line_context = content.context.clone()
+        line_context.start_line += number - 1
+        line_context.end_line = line_context.start_line
+        line_context.end_column = line_context.start_column + len(line_content)
 
-#         raw_content.append(
-#             Node(
-#                 data=RawNodeData(line_content),
-#                 info=NodeInfo(context=line_context),
-#             )
-#         )
+        raw_content.append(
+            Node(
+                data=RawNodeData(line_content),
+                info=NodeInfo(context=line_context),
+            )
+        )
 
-#     return {"content": raw_content}
+    return {"content": raw_content}
 
 
 # def parse_source_engine(
@@ -500,8 +501,8 @@ def block_processor(parser: DocumentParser):
         case EngineType.DEFAULT:
             node_data.sections = parse_default_engine(parser, content, arguments)
 
-    #         case EngineType.RAW:  # Real engine: decides how the content is processed
-    #             children = parse_raw_engine(parser, content, arguments)
+        case EngineType.RAW:  # Real engine: decides how the content is processed
+            node_data.sections = parse_raw_engine(parser, content, arguments)
 
     #         case EngineType.SOURCE:  # Real engine: decides how the content is processed
     #             children = parse_source_engine(parser, content, arguments)
@@ -513,21 +514,12 @@ def block_processor(parser: DocumentParser):
     #                 f"Engine {engine} is not available", context=context
     #             )
 
-    #     footnote_name = arguments.named_args.get("footnote")
+    footnote_name = arguments.named_args.get("footnote")
 
-    #     if footnote_name:
-    #         node = Node(
-    #             data=FootnotesItemNodeData(footnote_name),
-    #             info=NodeInfo(context=context, **arguments.asdict()),
-    #             children={"content": []},
-    #         )
+    if footnote_name:
+        parser.footnotes_manager.add_body(footnote_name, node_data)
 
-    #         for name, nodes in children.items():
-    #             node.add_children_at_position(name, nodes, allow_all=True)
-
-    #         parser.footnotes_manager.add_data(node)
-
-    #         return True
+        return True
 
     #     group_name = arguments.named_args.get("group")
     #     position = arguments.named_args.get("position")

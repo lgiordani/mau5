@@ -1,62 +1,69 @@
-# from mau.nodes.node import NodeData, ValueNodeData
+from mau.nodes.node import NodeData, ValueNodeData, NodeDataContentMixin, Node
 
 
-# class SourceNodeData(NodeData):
-#     """A block of verbatim text or source code.
+class SourceMarkerNodeData(ValueNodeData):
+    # This is a marker near a source code line
 
-#     This node contains verbatim text or source code.
-#     """
-
-#     type = "source"
-#     allowed_keys = {"code": "A list of code lines"}
-
-#     def __init__(
-#         self,
-#         language: str,
-#     ):
-#         self.language = language
-
-#     def asdict(self):
-#         base = super().asdict()
-#         base.update(
-#             {
-#                 "language": self.language,
-#             }
-#         )
-
-#         return base
+    type = "source-marker"
 
 
-# class SourceLineNodeData(NodeData):
-#     """A line of verbatim text or source code."""
+class SourceLineNodeData(NodeData):
+    """A line of verbatim text or source code."""
 
-#     type = "source-line"
-#     allowed_keys = {"marker": "The marker attached to this line"}
+    type = "source-line"
 
-#     def __init__(
-#         self,
-#         line_number: str,
-#         line_content: str,
-#         highlight_style: str | None = None,
-#     ):
-#         self.line_number = line_number
-#         self.line_content = line_content
-#         self.highlight_style = highlight_style
+    def __init__(
+        self,
+        line_number: str,
+        line_content: str,
+        highlight_style: str | None = None,
+        marker: SourceMarkerNodeData | None = None,
+    ):
+        super().__init__()
 
-#     def asdict(self):
-#         base = super().asdict()
-#         base.update(
-#             {
-#                 "line_number": self.line_number,
-#                 "line_content": self.line_content,
-#                 "highlight_style": self.highlight_style,
-#             }
-#         )
+        self.line_number = line_number
+        self.line_content = line_content
+        self.highlight_style = highlight_style
+        self.marker = marker
 
-#         return base
+    def asdict(self):
+        base = super().asdict()
+        base["custom"] = {
+            "line_number": self.line_number,
+            "line_content": self.line_content,
+            "highlight_style": self.highlight_style,
+        }
+
+        if self.marker:
+            base["custom"]["marker"] = self.marker.asdict()
+
+        return base
 
 
-# class SourceMarkerNodeContext(ValueNodeData):
-#     # This is a marker near a source code line
+class SourceNodeData(NodeData, NodeDataContentMixin):
+    """A block of verbatim text or source code.
 
-#     type = "source-marker"
+    This node contains verbatim text or source code.
+    """
+
+    type = "source"
+
+    def __init__(
+        self,
+        language: str,
+        content: list[Node] | None = None,
+    ):
+        super().__init__()
+        self.language = language
+
+        NodeDataContentMixin.__init__(self, content)
+
+    def asdict(self):
+        base = super().asdict()
+        base["custom"] = {
+            "language": self.language,
+        }
+
+        NodeDataContentMixin.content_asdict(self, base)
+
+        return base

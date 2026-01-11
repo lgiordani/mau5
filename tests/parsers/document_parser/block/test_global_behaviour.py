@@ -1,134 +1,127 @@
-# import pytest
+import pytest
 
-# from mau.lexers.document_lexer import DocumentLexer
-# from mau.nodes.block import BlockNodeContent
-# from mau.nodes.inline import TextNodeContent
-# from mau.nodes.node import Node, NodeInfo
-# from mau.parsers.base_parser import MauParserException
-# from mau.parsers.document_parser import DocumentParser
-# from mau.parsers.document_processors.block import (
-#     EngineType,
-# )
-# from mau.test_helpers import (
-#     compare_asdict_list,
-#     generate_context,
-#     init_parser_factory,
-#     parser_runner_factory,
-# )
+from mau.lexers.document_lexer import DocumentLexer
+from mau.nodes.block import BlockNodeData
+from mau.nodes.inline import TextNodeData
+from mau.nodes.node import Node, NodeInfo
+from mau.parsers.base_parser import MauParserException
+from mau.parsers.document_parser import DocumentParser
+from mau.parsers.document_processors.block import (
+    EngineType,
+)
+from mau.test_helpers import (
+    compare_asdict_list,
+    generate_context,
+    init_parser_factory,
+    parser_runner_factory,
+)
 
-# init_parser = init_parser_factory(DocumentLexer, DocumentParser)
+init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 
-# runner = parser_runner_factory(DocumentLexer, DocumentParser)
-
-
-# def test_parse_block_title_and_arguments():
-#     source = """
-#     . Just a title
-#     [arg1, *subtype1, #tag1, key1=value1]
-#     ----
-#     ----
-#     """
-
-#     parser = runner(source)
-
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 content=BlockNodeContent(
-#                     classes=[],
-#                     engine=EngineType.DEFAULT.value,
-#                     preprocessor=None,
-#                 ),
-#                 info=NodeInfo(
-#                     context=generate_context(3, 0, 4, 4),
-#                     unnamed_args=["arg1"],
-#                     named_args={"key1": "value1"},
-#                     tags=["tag1"],
-#                     subtype="subtype1",
-#                 ),
-#                 children={
-#                     "content": [],
-#                     "title": [
-#                         Node(
-#                             content=TextNodeContent("Just a title"),
-#                             info=NodeInfo(context=generate_context(1, 2, 1, 14)),
-#                         )
-#                     ],
-#                 },
-#             ),
-#         ],
-#     )
+runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-# def test_block_classes_single_class():
-#     source = """
-#     [*subtype1,classes=cls1]
-#     ----
-#     ----
-#     """
+def test_parse_block_title_and_arguments():
+    source = """
+    . Just a title
+    [arg1, *subtype1, #tag1, key1=value1]
+    ----
+    ----
+    """
 
-#     parser = runner(source)
+    parser = runner(source)
 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 content=BlockNodeContent(
-#                     classes=["cls1"],
-#                     engine=EngineType.DEFAULT.value,
-#                     preprocessor=None,
-#                 ),
-#                 info=NodeInfo(
-#                     context=generate_context(2, 0, 3, 4),
-#                     subtype="subtype1",
-#                 ),
-#                 children={
-#                     "content": [],
-#                 },
-#             )
-#         ],
-#     )
-
-
-# def test_block_classes_multiple_classes():
-#     source = """
-#     [*subtype1,classes="cls1,cls2"]
-#     ----
-#     ----
-#     """
-
-#     parser = runner(source)
-
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 content=BlockNodeContent(
-#                     classes=["cls1", "cls2"],
-#                     engine=EngineType.DEFAULT.value,
-#                     preprocessor=None,
-#                 ),
-#                 info=NodeInfo(
-#                     context=generate_context(2, 0, 3, 4),
-#                     subtype="subtype1",
-#                 ),
-#                 children={
-#                     "content": [],
-#                 },
-#             )
-#         ],
-#     )
+    compare_asdict_list(
+        parser.nodes,
+        [
+            Node(
+                data=BlockNodeData(
+                    classes=[],
+                    engine=EngineType.DEFAULT.value,
+                    preprocessor=None,
+                    labels={
+                        "title": [
+                            Node(
+                                data=TextNodeData("Just a title"),
+                                info=NodeInfo(context=generate_context(1, 2, 1, 14)),
+                            )
+                        ]
+                    },
+                ),
+                info=NodeInfo(
+                    context=generate_context(3, 0, 4, 4),
+                    unnamed_args=["arg1"],
+                    named_args={"key1": "value1"},
+                    tags=["tag1"],
+                    subtype="subtype1",
+                ),
+            ),
+        ],
+    )
 
 
-# def test_block_engine():
-#     source = """
-#     [*subtype,engine=doesnotexist]
-#     ----
-#     ----
-#     """
+def test_block_classes_single_class():
+    source = """
+    [*subtype1,classes=cls1]
+    ----
+    ----
+    """
 
-#     with pytest.raises(MauParserException) as exc:
-#         runner(source)
+    parser = runner(source)
 
-#     assert exc.value.context == generate_context(2, 0, 3, 4)
+    compare_asdict_list(
+        parser.nodes,
+        [
+            Node(
+                data=BlockNodeData(
+                    classes=["cls1"],
+                    engine=EngineType.DEFAULT.value,
+                    preprocessor=None,
+                ),
+                info=NodeInfo(
+                    context=generate_context(2, 0, 3, 4),
+                    subtype="subtype1",
+                ),
+            )
+        ],
+    )
+
+
+def test_block_classes_multiple_classes():
+    source = """
+    [*subtype1,classes="cls1,cls2"]
+    ----
+    ----
+    """
+
+    parser = runner(source)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            Node(
+                data=BlockNodeData(
+                    classes=["cls1", "cls2"],
+                    engine=EngineType.DEFAULT.value,
+                    preprocessor=None,
+                ),
+                info=NodeInfo(
+                    context=generate_context(2, 0, 3, 4),
+                    subtype="subtype1",
+                ),
+            )
+        ],
+    )
+
+
+def test_block_engine():
+    source = """
+    [*subtype,engine=doesnotexist]
+    ----
+    ----
+    """
+
+    with pytest.raises(MauParserException) as exc:
+        runner(source)
+
+    assert exc.value.context == generate_context(2, 0, 3, 4)

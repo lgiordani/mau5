@@ -130,12 +130,19 @@ class DocumentParser(BaseParser):
         # footnotes and internal links, and finally
         # returns the nodes.
 
+        # Unpack the token initial position.
+        start_line, start_column = context.start_position
+
+        # Get the token source.
+        source_filename = context.source
+
         # Replace variables
         preprocess_parser = PreprocessVariablesParser.lex_and_parse(
             text,
             self.environment,
-            *context.start_position,
-            context.source,
+            start_line=start_line,
+            start_column=start_column,
+            source_filename=source_filename,
         )
 
         # If the preprocessor doesn't return any
@@ -150,13 +157,14 @@ class DocumentParser(BaseParser):
         text_parser = TextParser.lex_and_parse(
             text,
             self.environment,
-            *context.start_position,
-            context.source,
+            start_line=start_line,
+            start_column=start_column,
+            source_filename=source_filename,
         )
 
         # Extract the footnote mentions
         # found in this piece of text.
-        # self.footnotes_manager.add_mentions(text_parser.footnotes)
+        self.footnotes_manager.add_footnotes(text_parser.footnotes)
 
         # Extract the header links found in this piece of text.
         self.header_links_manager.add_links(text_parser.header_links)

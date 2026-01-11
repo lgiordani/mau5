@@ -1,7 +1,7 @@
-from mau.nodes.node import Node, NodeData, NodeDataContentMixin
+from mau.nodes.node import Node, NodeData, NodeDataContentMixin, NodeDataLabelsMixin
 
 
-class BlockNodeData(NodeData, NodeDataContentMixin):
+class BlockNodeData(NodeData, NodeDataLabelsMixin):
     """A block.
 
     This node contains a generic block.
@@ -19,6 +19,7 @@ class BlockNodeData(NodeData, NodeDataContentMixin):
         classes=None,
         engine=None,
         preprocessor=None,
+        labels: dict[str, list[Node]] | None = None,
         sections: dict[str, list[Node]] | None = None,
     ):
         super().__init__()
@@ -27,6 +28,8 @@ class BlockNodeData(NodeData, NodeDataContentMixin):
         self.engine = engine
         self.preprocessor = preprocessor
         self.sections = sections or {}
+
+        NodeDataLabelsMixin.__init__(self, labels)
 
     def asdict(self):
         base = super().asdict()
@@ -37,13 +40,6 @@ class BlockNodeData(NodeData, NodeDataContentMixin):
             "sections": {k: [i.asdict() for i in v] for k, v in self.sections.items()},
         }
 
+        NodeDataLabelsMixin.content_asdict(self, base)
+
         return base
-
-
-# class BlockSectionNodeData(WrapperNodeData):
-#     """A section.
-
-#     This node contains a section of a block.
-#     """
-
-#     type = "block-section"
