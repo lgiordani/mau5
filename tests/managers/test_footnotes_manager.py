@@ -110,41 +110,41 @@ def test_footnotes_manager_update():
     assert other_fnm.footnotes_lists == [footnote_list]
 
 
-# @patch("mau.parsers.managers.footnotes_manager.default_footnote_unique_id")
-# def test_footnotes_manager_process(mock_footnote_unique_id):
-#     mock_footnote_unique_id.return_value = "XXYY"
+@patch("mau.parsers.managers.footnotes_manager.default_footnote_unique_id")
+def test_footnotes_manager_process(mock_footnote_unique_id):
+    mock_footnote_unique_id.return_value = "XXYY"
 
-#     fnm = FootnotesManager()
+    fnm = FootnotesManager()
 
-#     footnote_name1 = "footnote_name1"
-#     footnote_name2 = "footnote_name2"
+    footnote_name1 = "footnote_name1"
+    footnote_name2 = "footnote_name2"
 
-#     footnote_data1 = FootnoteNodeData(footnote_name1)
-#     fnm.add_footnote(footnote_data1)
+    footnote_data1 = FootnoteNodeData(footnote_name1)
+    fnm.add_footnote(footnote_data1)
 
-#     footnote_data2 = FootnoteNodeData(footnote_name2)
-#     fnm.add_footnote(footnote_data2)
+    footnote_data2 = FootnoteNodeData(footnote_name2)
+    fnm.add_footnote(footnote_data2)
 
-#     footnote_block_data1 = BlockNodeData()
-#     footnote_body1 = footnote_block_data1
-#     fnm.add_body(footnote_name1, footnote_body1)
+    footnote_block_data1 = BlockNodeData()
+    footnote_body1 = footnote_block_data1
+    fnm.add_body(footnote_name1, footnote_body1)
 
-#     footnote_block_data2 = BlockNodeData()
-#     footnote_body2 = footnote_block_data2
-#     fnm.add_body(footnote_name2, footnote_body2)
+    footnote_block_data2 = BlockNodeData()
+    footnote_body2 = footnote_block_data2
+    fnm.add_body(footnote_name2, footnote_body2)
 
-#     footnote_list = FootnotesNodeData()
-#     fnm.add_footnotes_list(footnote_list)
+    footnote_list = FootnotesNodeData()
+    fnm.add_footnotes_list(footnote_list)
 
-#     fnm.process()
+    fnm.process()
 
-#     assert footnote_data1.public_id == "1"
-#     assert footnote_data1.private_id == "XXYY"
+    assert footnote_data1.public_id == "1"
+    assert footnote_data1.private_id == "XXYY"
 
-#     assert footnote_data2.public_id == "2"
-#     assert footnote_data2.private_id == "XXYY"
+    assert footnote_data2.public_id == "2"
+    assert footnote_data2.private_id == "XXYY"
 
-#     compare_asdict_list(
-#         footnote_list.footnotes,
-#         [footnote_data1, footnote_data2],
-#     )
+    compare_asdict_list(
+        footnote_list.footnotes,
+        [footnote_data1, footnote_data2],
+    )

@@ -58,36 +58,34 @@ def test_block_content():
                     classes=[],
                     engine=EngineType.DEFAULT.value,
                     preprocessor=None,
-                    sections={
-                        "content": [
-                            Node(
-                                data=ParagraphNodeData(
-                                    content=[
-                                        Node(
-                                            data=ParagraphLineNodeData(
-                                                content=[
-                                                    Node(
-                                                        data=TextNodeData(
-                                                            "This is a paragraph."
-                                                        ),
-                                                        info=NodeInfo(
-                                                            context=generate_context(
-                                                                2, 0, 2, 20
-                                                            )
-                                                        ),
-                                                    )
-                                                ]
-                                            ),
-                                            info=NodeInfo(
-                                                context=generate_context(2, 0, 2, 20)
-                                            ),
-                                        )
-                                    ]
-                                ),
-                                info=NodeInfo(context=generate_context(2, 0, 2, 20)),
-                            )
-                        ]
-                    },
+                    content=[
+                        Node(
+                            data=ParagraphNodeData(
+                                content=[
+                                    Node(
+                                        data=ParagraphLineNodeData(
+                                            content=[
+                                                Node(
+                                                    data=TextNodeData(
+                                                        "This is a paragraph."
+                                                    ),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            2, 0, 2, 20
+                                                        )
+                                                    ),
+                                                )
+                                            ]
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(2, 0, 2, 20)
+                                        ),
+                                    )
+                                ]
+                            ),
+                            info=NodeInfo(context=generate_context(2, 0, 2, 20)),
+                        )
+                    ],
                 ),
                 info=NodeInfo(context=generate_context(1, 0, 3, 4)),
             )
@@ -113,36 +111,34 @@ def test_block_content_variables():
                     classes=[],
                     engine=EngineType.DEFAULT.value,
                     preprocessor=None,
-                    sections={
-                        "content": [
-                            Node(
-                                data=ParagraphNodeData(
-                                    content=[
-                                        Node(
-                                            data=ParagraphLineNodeData(
-                                                content=[
-                                                    Node(
-                                                        data=TextNodeData(
-                                                            "The answer is 42."
-                                                        ),
-                                                        info=NodeInfo(
-                                                            context=generate_context(
-                                                                3, 0, 3, 17
-                                                            )
-                                                        ),
-                                                    )
-                                                ]
-                                            ),
-                                            info=NodeInfo(
-                                                context=generate_context(3, 0, 3, 23)
-                                            ),
-                                        )
-                                    ]
-                                ),
-                                info=NodeInfo(context=generate_context(3, 0, 3, 23)),
-                            )
-                        ]
-                    },
+                    content=[
+                        Node(
+                            data=ParagraphNodeData(
+                                content=[
+                                    Node(
+                                        data=ParagraphLineNodeData(
+                                            content=[
+                                                Node(
+                                                    data=TextNodeData(
+                                                        "The answer is 42."
+                                                    ),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            3, 0, 3, 17
+                                                        )
+                                                    ),
+                                                )
+                                            ]
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 23)
+                                        ),
+                                    )
+                                ]
+                            ),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 23)),
+                        )
+                    ],
                 ),
                 info=NodeInfo(context=generate_context(1, 0, 4, 4)),
             )
@@ -168,36 +164,34 @@ def test_block_content_external_variables():
                     classes=[],
                     engine=EngineType.DEFAULT.value,
                     preprocessor=None,
-                    sections={
-                        "content": [
-                            Node(
-                                data=ParagraphNodeData(
-                                    content=[
-                                        Node(
-                                            data=ParagraphLineNodeData(
-                                                content=[
-                                                    Node(
-                                                        data=TextNodeData(
-                                                            "The answer is 42."
-                                                        ),
-                                                        info=NodeInfo(
-                                                            context=generate_context(
-                                                                3, 0, 3, 17
-                                                            )
-                                                        ),
-                                                    )
-                                                ]
-                                            ),
-                                            info=NodeInfo(
-                                                context=generate_context(3, 0, 3, 23)
-                                            ),
-                                        )
-                                    ]
-                                ),
-                                info=NodeInfo(context=generate_context(3, 0, 3, 23)),
-                            )
-                        ]
-                    },
+                    content=[
+                        Node(
+                            data=ParagraphNodeData(
+                                content=[
+                                    Node(
+                                        data=ParagraphLineNodeData(
+                                            content=[
+                                                Node(
+                                                    data=TextNodeData(
+                                                        "The answer is 42."
+                                                    ),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            3, 0, 3, 17
+                                                        )
+                                                    ),
+                                                )
+                                            ]
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 23)
+                                        ),
+                                    )
+                                ]
+                            ),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 23)),
+                        )
+                    ],
                 ),
                 info=NodeInfo(context=generate_context(2, 0, 4, 4)),
             )
@@ -223,18 +217,16 @@ def test_block_inside_block():
                     classes=[],
                     engine=EngineType.DEFAULT.value,
                     preprocessor=None,
-                    sections={
-                        "content": [
-                            Node(
-                                data=BlockNodeData(
-                                    classes=[],
-                                    engine=EngineType.DEFAULT.value,
-                                    preprocessor=None,
-                                ),
-                                info=NodeInfo(context=generate_context(2, 0, 3, 4)),
-                            )
-                        ]
-                    },
+                    content=[
+                        Node(
+                            data=BlockNodeData(
+                                classes=[],
+                                engine=EngineType.DEFAULT.value,
+                                preprocessor=None,
+                            ),
+                            info=NodeInfo(context=generate_context(2, 0, 3, 4)),
+                        )
+                    ],
                 ),
                 info=NodeInfo(context=generate_context(1, 0, 4, 4)),
             )
@@ -263,34 +255,32 @@ def test_block_uses_control_positive():
                     classes=[],
                     engine=EngineType.DEFAULT.value,
                     preprocessor=None,
-                    sections={
-                        "content": [
-                            Node(
-                                data=ParagraphNodeData(
-                                    content=[
-                                        Node(
-                                            data=ParagraphLineNodeData(
-                                                content=[
-                                                    Node(
-                                                        data=TextNodeData("Some text."),
-                                                        info=NodeInfo(
-                                                            context=generate_context(
-                                                                3, 0, 3, 10
-                                                            )
-                                                        ),
+                    content=[
+                        Node(
+                            data=ParagraphNodeData(
+                                content=[
+                                    Node(
+                                        data=ParagraphLineNodeData(
+                                            content=[
+                                                Node(
+                                                    data=TextNodeData("Some text."),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            3, 0, 3, 10
+                                                        )
                                                     ),
-                                                ]
-                                            ),
-                                            info=NodeInfo(
-                                                context=generate_context(3, 0, 3, 10)
-                                            ),
-                                        )
-                                    ]
-                                ),
-                                info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+                                                ),
+                                            ]
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(3, 0, 3, 10)
+                                        ),
+                                    )
+                                ]
                             ),
-                        ],
-                    },
+                            info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+                        ),
+                    ],
                 ),
                 info=NodeInfo(context=generate_context(2, 0, 4, 4)),
             )

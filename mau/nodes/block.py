@@ -1,7 +1,7 @@
 from mau.nodes.node import Node, NodeData, NodeDataContentMixin, NodeDataLabelsMixin
 
 
-class BlockNodeData(NodeData, NodeDataLabelsMixin):
+class BlockNodeData(NodeData, NodeDataLabelsMixin, NodeDataContentMixin):
     """A block.
 
     This node contains a generic block.
@@ -20,15 +20,15 @@ class BlockNodeData(NodeData, NodeDataLabelsMixin):
         engine=None,
         preprocessor=None,
         labels: dict[str, list[Node]] | None = None,
-        sections: dict[str, list[Node]] | None = None,
+        content: list[Node] | None = None,
     ):
         super().__init__()
 
         self.classes = classes or []
         self.engine = engine
         self.preprocessor = preprocessor
-        self.sections = sections or {}
 
+        NodeDataContentMixin.__init__(self, content)
         NodeDataLabelsMixin.__init__(self, labels)
 
     def asdict(self):
@@ -37,9 +37,9 @@ class BlockNodeData(NodeData, NodeDataLabelsMixin):
             "classes": self.classes,
             "engine": self.engine,
             "preprocessor": self.preprocessor,
-            "sections": {k: [i.asdict() for i in v] for k, v in self.sections.items()},
         }
 
+        NodeDataContentMixin.content_asdict(self, base)
         NodeDataLabelsMixin.content_asdict(self, base)
 
         return base

@@ -59,25 +59,23 @@ def test_block_isolation_doesnt_add_headers_to_the_global_toc(mock_header_intern
                     classes=[],
                     engine="default",
                     preprocessor=None,
-                    sections={
-                        "content": [
-                            Node(
-                                data=HeaderNodeData(
-                                    1,
-                                    "XXYY",
-                                    content=[
-                                        Node(
-                                            data=TextNodeData("Block header"),
-                                            info=NodeInfo(
-                                                context=generate_context(5, 2, 5, 14)
-                                            ),
-                                        )
-                                    ],
-                                ),
-                                info=NodeInfo(context=generate_context(5, 0, 5, 14)),
+                    content=[
+                        Node(
+                            data=HeaderNodeData(
+                                1,
+                                "XXYY",
+                                content=[
+                                    Node(
+                                        data=TextNodeData("Block header"),
+                                        info=NodeInfo(
+                                            context=generate_context(5, 2, 5, 14)
+                                        ),
+                                    )
+                                ],
                             ),
-                        ]
-                    },
+                            info=NodeInfo(context=generate_context(5, 0, 5, 14)),
+                        ),
+                    ],
                 ),
                 info=NodeInfo(
                     context=generate_context(4, 0, 6, 4),
@@ -145,25 +143,23 @@ def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id
                     classes=[],
                     engine="default",
                     preprocessor=None,
-                    sections={
-                        "content": [
-                            Node(
-                                data=HeaderNodeData(
-                                    1,
-                                    "XXYY",
-                                    content=[
-                                        Node(
-                                            data=TextNodeData("Block header 1"),
-                                            info=NodeInfo(
-                                                context=generate_context(5, 2, 5, 16)
-                                            ),
-                                        )
-                                    ],
-                                ),
-                                info=NodeInfo(context=generate_context(5, 0, 5, 16)),
+                    content=[
+                        Node(
+                            data=HeaderNodeData(
+                                1,
+                                "XXYY",
+                                content=[
+                                    Node(
+                                        data=TextNodeData("Block header 1"),
+                                        info=NodeInfo(
+                                            context=generate_context(5, 2, 5, 16)
+                                        ),
+                                    )
+                                ],
                             ),
-                        ]
-                    },
+                            info=NodeInfo(context=generate_context(5, 0, 5, 16)),
+                        ),
+                    ],
                 ),
                 info=NodeInfo(
                     context=generate_context(4, 0, 6, 4),
@@ -175,25 +171,23 @@ def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id
                     classes=[],
                     engine="default",
                     preprocessor=None,
-                    sections={
-                        "content": [
-                            Node(
-                                data=HeaderNodeData(
-                                    1,
-                                    "XXYY",
-                                    content=[
-                                        Node(
-                                            data=TextNodeData("Block header 2"),
-                                            info=NodeInfo(
-                                                context=generate_context(10, 2, 10, 16)
-                                            ),
-                                        )
-                                    ],
-                                ),
-                                info=NodeInfo(context=generate_context(10, 0, 10, 16)),
+                    content=[
+                        Node(
+                            data=HeaderNodeData(
+                                1,
+                                "XXYY",
+                                content=[
+                                    Node(
+                                        data=TextNodeData("Block header 2"),
+                                        info=NodeInfo(
+                                            context=generate_context(10, 2, 10, 16)
+                                        ),
+                                    )
+                                ],
                             ),
-                        ]
-                    },
+                            info=NodeInfo(context=generate_context(10, 0, 10, 16)),
+                        ),
+                    ],
                 ),
                 info=NodeInfo(
                     context=generate_context(9, 0, 11, 4),
@@ -292,20 +286,18 @@ def test_block_isolation_toc(mock_header_internal_id):
                     classes=[],
                     engine="default",
                     preprocessor=None,
-                    sections={
-                        "content": [
-                            # This is the block header.
-                            block_header_node,
-                            # # This is the block ToC.
-                            Node(
-                                data=TocNodeData(
-                                    nested_entries=[block_header_toc_item_data],
-                                    plain_entries=[block_header_data],
-                                ),
-                                info=NodeInfo(context=generate_context(7, 0, 7, 5)),
+                    content=[
+                        # This is the block header.
+                        block_header_node,
+                        # # This is the block ToC.
+                        Node(
+                            data=TocNodeData(
+                                nested_entries=[block_header_toc_item_data],
+                                plain_entries=[block_header_data],
                             ),
-                        ]
-                    },
+                            info=NodeInfo(context=generate_context(7, 0, 7, 5)),
+                        ),
+                    ],
                 ),
                 info=NodeInfo(
                     context=generate_context(4, 0, 8, 4),
@@ -358,36 +350,34 @@ def test_block_isolation_can_see_internal_variables():
                     classes=[],
                     engine="default",
                     preprocessor=None,
-                    sections={
-                        "content": [
-                            Node(
-                                data=ParagraphNodeData(
-                                    content=[
-                                        Node(
-                                            data=ParagraphLineNodeData(
-                                                content=[
-                                                    Node(
-                                                        data=TextNodeData(
-                                                            "The answer is 42."
-                                                        ),
-                                                        info=NodeInfo(
-                                                            context=generate_context(
-                                                                5, 0, 5, 17
-                                                            )
-                                                        ),
+                    content=[
+                        Node(
+                            data=ParagraphNodeData(
+                                content=[
+                                    Node(
+                                        data=ParagraphLineNodeData(
+                                            content=[
+                                                Node(
+                                                    data=TextNodeData(
+                                                        "The answer is 42."
                                                     ),
-                                                ]
-                                            ),
-                                            info=NodeInfo(
-                                                context=generate_context(5, 0, 5, 23)
-                                            ),
-                                        )
-                                    ]
-                                ),
-                                info=NodeInfo(context=generate_context(5, 0, 5, 23)),
+                                                    info=NodeInfo(
+                                                        context=generate_context(
+                                                            5, 0, 5, 17
+                                                        )
+                                                    ),
+                                                ),
+                                            ]
+                                        ),
+                                        info=NodeInfo(
+                                            context=generate_context(5, 0, 5, 23)
+                                        ),
+                                    )
+                                ]
                             ),
-                        ]
-                    },
+                            info=NodeInfo(context=generate_context(5, 0, 5, 23)),
+                        ),
+                    ],
                 ),
                 info=NodeInfo(
                     context=generate_context(2, 0, 6, 4),

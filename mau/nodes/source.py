@@ -17,7 +17,7 @@ class SourceLineNodeData(NodeData):
         line_number: str,
         line_content: str,
         highlight_style: str | None = None,
-        marker: SourceMarkerNodeData | None = None,
+        marker: Node[SourceMarkerNodeData] | None = None,
     ):
         super().__init__()
 

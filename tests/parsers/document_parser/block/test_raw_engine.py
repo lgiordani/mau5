@@ -34,18 +34,16 @@ def test_raw_engine():
                     classes=[],
                     engine="raw",
                     preprocessor=None,
-                    sections={
-                        "content": [
-                            Node(
-                                data=RawNodeData("Raw content"),
-                                info=NodeInfo(context=generate_context(3, 0, 3, 11)),
-                            ),
-                            Node(
-                                data=RawNodeData("on multiple lines"),
-                                info=NodeInfo(context=generate_context(4, 0, 4, 17)),
-                            ),
-                        ]
-                    },
+                    content=[
+                        Node(
+                            data=RawNodeData("Raw content"),
+                            info=NodeInfo(context=generate_context(3, 0, 3, 11)),
+                        ),
+                        Node(
+                            data=RawNodeData("on multiple lines"),
+                            info=NodeInfo(context=generate_context(4, 0, 4, 17)),
+                        ),
+                    ],
                 ),
                 info=NodeInfo(context=generate_context(2, 0, 5, 4)),
             ),

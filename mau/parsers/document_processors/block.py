@@ -18,11 +18,11 @@ from mau.nodes.block import BlockNodeData
 from mau.nodes.inline import RawNodeData
 from mau.nodes.node import Node, NodeInfo, WrapperNodeData
 
-# from mau.nodes.source import (
-#     SourceLineNodeData,
-#     SourceMarkerNodeContext,
-#     SourceNodeData,
-# )
+from mau.nodes.source import (
+    SourceLineNodeData,
+    SourceMarkerNodeData,
+    SourceNodeData,
+)
 from mau.parsers.arguments_parser import Arguments
 from mau.parsers.base_parser import MauParserException
 from mau.text_buffer import Context
@@ -37,135 +37,11 @@ class EngineType(Enum):
     SOURCE = "source"
 
 
-def _get_section_name(line: str, prefix: str) -> str | None:
-    if not line.startswith(prefix):
-        return None
-
-    return line.replace(prefix, "")
-
-
-def parse_block_content_sections(content: Token) -> dict[str, Token]:
-    # Convert the text token to a list of text tokens.
-
-    # Create a list of TEXT tokens from
-    # the single token.
-    tokens = content.to_token_list()
-
-    # This function is run only when
-    # the user turns on sections.
-    # This means that the first line
-    # must contain a section, otherwise
-    # there is an error.
-    first_section_name = _get_section_name(tokens[0].value, DEFAULT_SECTION_PREFIX)
-    if not first_section_name:
-        raise MauParserException(
-            "The first line of the block must contain a section declaration.",
-            context=tokens[0].context,
-        )
-
-    # This splits the list of tokens into
-    # groups of normal lines or section lines.
-    # E.g.
-    #
-    # ++ Section 1
-    # Some text.
-    # ++ Section 2
-    # Some text 2a.
-    # Some text 2b.
-    # ++ Section 3
-    # ++ Section 4
-    # Some text 4.
-    #
-    # becomes
-    #
-    # True [Token("++ Section 1")]
-    # False [Token("Some text.")]
-    # True [Token("++ Section 2")]
-    # False [Token("Some text 2a."), Token("Some text 2b.")]
-    # True [Token("++ Section 3"), Token("++ Section 4")]
-    # False [Token("Some text 4."2)]
-    section_groups = itertools.groupby(tokens, lambda x: x.value.startswith("++ "))
-
-    # This is the final dictionary
-    # of sections.
-    sections: dict[str, Token] = {}
-
-    # This is the current section name.
-    current_section_name: str = ""
-
-    # Loop through all groups.
-    # If they are a group of sections
-    # create all of them. If they
-    # are a group of lines merge
-    # them into a single token
-    # and add that to the section.
-    for section_flag, tokens in section_groups:
-        # The list of tokens contains
-        # a list of section lines.
-        if section_flag:
-            # Loop through all sections
-            # and create each one of them
-            # in the sections dictionary.
-            # Store the name so that
-            # the next batch of normal
-            # line tokens can be added to it.
-            for section_token in tokens:
-                current_section_name = section_token.value.replace(
-                    DEFAULT_SECTION_PREFIX, ""
-                )
-
-                # We don't know if the section
-                # contains tokens or not. So,
-                # the only thing we can do is to
-                # create a placeholder with no
-                # content. The context should be
-                # adjusted to be the line after
-                # the section marker, and with
-                # no length.
-                placeholder_context = section_token.context.clone().move_to(1, 0)
-                placeholder_context.end_column = 0
-
-                # Add the placeholder token to
-                # the section tokens.
-                sections[current_section_name] = Token(
-                    TokenType.TEXT, "", placeholder_context
-                )
-
-            continue
-
-        # We reach this line if the group
-        # contains normal lines. We need
-        # to store them all under the
-        # last section.
-        sections[current_section_name] = Token.from_token_list(
-            list(tokens), join_with="\n"
-        )
-
-    return sections
-
-
 def parse_block_content(
     parser: DocumentParser,
     content: Token,
     arguments: Arguments,
-) -> dict[str, list[Node]]:
-    sections: dict[str, list[Node]] = {}
-    raw_sections: dict[str, Token]
-
-    # Sections are disabled by default.
-    # The option `enable_sections` set to
-    # "true" turns them on.
-    if arguments.named_args.get("enable_sections", "false") == "true":
-        raw_sections = parse_block_content_sections(content)
-    else:
-        # If there are no sections, we
-        # fake a single section called
-        # "content" so that the next code
-        # results in the standard block
-        # setup with children under
-        # that kay.
-        raw_sections = {"content": content}
-
+) -> list[Node]:
     update = arguments.named_args.get("isolate", "false") == "false"
 
     # The parsing environment
@@ -176,54 +52,40 @@ def parse_block_content(
     # the external parser or not.
     environment = parser.environment if update else Environment()
 
-    # Loop through all sections,
-    # parse the content, and add
-    # the children to the block node.
-    for name, token in raw_sections.items():
-        # Check if the section name is
-        # made of [a-z0-9_]
-        if re.match("[^a-z0-9_]", name):
-            raise MauParserException(
-                f"Section name {name} is not valid. Please use lowercase alphanumeric characters and underscore.",
-                context=token.context,
-            )
+    # Unpack the token initial position.
+    start_line, start_column = content.context.start_position
 
-        # Unpack the token initial position.
-        start_line, start_column = token.context.start_position
+    # Get the token source.
+    source_filename = content.context.source
 
-        # Get the token source.
-        source_filename = token.context.source
+    content_parser = parser.lex_and_parse(
+        content.value,
+        environment,
+        start_line=start_line,
+        start_column=start_column,
+        source_filename=source_filename,
+    )
+    content_parser.finalise()
 
-        content_parser = parser.lex_and_parse(
-            token.value,
-            environment,
-            start_line=start_line,
-            start_column=start_column,
-            source_filename=source_filename,
-        )
-        content_parser.finalise()
+    if update:
+        # The footnote mentions and definitions
+        # found in this block are part of the
+        # main document. Import them.
+        parser.footnotes_manager.update(content_parser.footnotes_manager)
 
-        sections[name] = content_parser.nodes
+        # The internal links and headers
+        # found in this block are part of the
+        # main document. Import them.
+        parser.toc_manager.update(content_parser.toc_manager)
 
-        if update:
-            # The footnote mentions and definitions
-            # found in this block are part of the
-            # main document. Import them.
-            parser.footnotes_manager.update(content_parser.footnotes_manager)
-
-            # The internal links and headers
-            # found in this block are part of the
-            # main document. Import them.
-            parser.toc_manager.update(content_parser.toc_manager)
-
-    return sections
+    return content_parser.nodes
 
 
 def parse_default_engine(
     parser: DocumentParser,
     content: Token,
     arguments: Arguments,
-) -> dict[str, list[Node]]:
+) -> list[Node]:
     return parse_block_content(parser, content, arguments)
 
 
@@ -231,7 +93,7 @@ def parse_raw_engine(
     parser: DocumentParser,
     content: Token,
     arguments: Arguments,
-) -> dict[str, list[Node]]:
+) -> list[Node]:
     # Engine "raw" doesn't process the content,
     # so we just pass it untouched in the form of
     # a RawNode per line.
@@ -255,165 +117,162 @@ def parse_raw_engine(
             )
         )
 
-    return {"content": raw_content}
+    return raw_content
 
 
-# def parse_source_engine(
-#     parser: DocumentParser,
-#     content: Token,
-#     arguments: Arguments,
-# ) -> dict[str, list[Node]]:
-#     # Parse a source block in the form
-#     #
-#     # [engine=source]
-#     # ----
-#     # content
-#     # ----
-#     #
-#     # Source blocks support the following attributes
-#     #
-#     # language The language used to highlight the syntax.
-#     # marker_delimiter=":" The separator used by marker.
-#     # highlight_prefix="@" The special character to turn on highlight.
-#     #
-#     # Since Mau uses Pygments, the attribute language
-#     # is one of the languages supported by that tool.
+def parse_source_engine(
+    parser: DocumentParser,
+    content: Token,
+    arguments: Arguments,
+) -> list[Node]:
+    # Parse a source block in the form
+    #
+    # [engine=source]
+    # ----
+    # content
+    # ----
+    #
+    # Source blocks support the following attributes
+    #
+    # language The language used to highlight the syntax.
+    # marker_delimiter=":" The separator used by marker.
+    # highlight_prefix="@" The special character to turn on highlight.
+    #
+    # Since Mau uses Pygments, the attribute language
+    # is one of the languages supported by that tool.
 
-#     # Get the delimiter for markers
-#     marker_delimiter = arguments.named_args.pop("marker_delimiter", ":")
+    # Get the delimiter for markers
+    marker_delimiter = arguments.named_args.pop("marker_delimiter", ":")
 
-#     # Get the highlight prefix
-#     highlight_prefix = arguments.named_args.pop("highlight_marker", "@")
+    # Get the highlight prefix
+    highlight_prefix = arguments.named_args.pop("highlight_marker", "@")
 
-#     # Get the default highlight style
-#     highlight_default_style = arguments.named_args.pop(
-#         "highlight_default_style", "default"
-#     )
+    # Get the default highlight style
+    highlight_default_style = arguments.named_args.pop(
+        "highlight_default_style", "default"
+    )
 
-#     # Get the language
-#     arguments.set_names(["language"])
-#     language = arguments.named_args.pop("language", "text")
+    # Get the language
+    arguments.set_names(["language"])
+    language = arguments.named_args.pop("language", "text")
 
-#     # Source blocks must preserve the content literally.
-#     # However, there might be code that looks like a Mau directive,
-#     # and thus the user needs to escape it.
-#     # Which means that here we need to remove escaped characters
-#     # from directive-like code only.
-#     # Escape characters are preserved by source blocks as anything
-#     # else, but in this case the character should be removed.
+    # Source blocks must preserve the content literally.
+    # However, there might be code that looks like a Mau directive,
+    # and thus the user needs to escape it.
+    # Which means that here we need to remove escaped characters
+    # from directive-like code only.
+    # Escape characters are preserved by source blocks as anything
+    # else, but in this case the character should be removed.
 
-#     # A list of content lines (raw).
-#     content_lines = content.value.split("\n")
+    # A list of content lines (raw).
+    content_lines = content.value.split("\n")
 
-#     # A list of code lines (after processing).
-#     code: list[Node[SourceLineNodeData]] = []
+    # A list of code lines (after processing).
+    code: list[Node[SourceLineNodeData]] = []
 
-#     for number, line_content in enumerate(content_lines, start=1):
-#         line_number = str(number)
+    for number, line_content in enumerate(content_lines, start=1):
+        line_number = str(number)
 
-#         line_context = content.context.clone()
-#         line_context.start_line += number - 1
-#         line_context.end_line = line_context.start_line
-#         line_context.end_column = line_context.start_column + len(line_content)
+        line_context = content.context.clone()
+        line_context.start_line += number - 1
+        line_context.end_line = line_context.start_line
+        line_context.end_column = line_context.start_column + len(line_content)
 
-#         # A simple way to remove escapes from
-#         # directive-like code.
-#         if line_content.startswith(r"\::#"):
-#             line_content = line_content[1:]
+        # A simple way to remove escapes from
+        # directive-like code.
+        if line_content.startswith(r"\::#"):
+            line_content = line_content[1:]
 
-#         marker: str | None = None
-#         highlight_style: str | None = None
+        marker: str | None = None
+        highlight_style: str | None = None
 
-#         if not line_content.endswith(marker_delimiter):
-#             create_source_line(code, line_number, line_content, line_context)
-#             continue
+        if not line_content.endswith(marker_delimiter):
+            create_source_line(code, line_number, line_content, line_context)
+            continue
 
-#         # Split without the final delimiter
-#         splits = line_content[:-1].split(marker_delimiter)
+        # Split without the final delimiter
+        splits = line_content[:-1].split(marker_delimiter)
 
-#         if len(splits) < 2:
-#             # It's a trap! There are no separators left.
-#             # Just add the line as it is.
-#             create_source_line(code, line_number, line_content, line_context)
-#             continue
+        if len(splits) < 2:
+            # It's a trap! There are no separators left.
+            # Just add the line as it is.
+            create_source_line(code, line_number, line_content, line_context)
+            continue
 
-#         # Get the callout and the line
-#         marker = splits[-1]
-#         line_content = marker_delimiter.join(splits[:-1])
+        # Get the callout and the line
+        marker = splits[-1]
+        line_content = marker_delimiter.join(splits[:-1])
 
-#         if marker.startswith(highlight_prefix):
-#             highlight_style = marker[1:] or highlight_default_style
-#             marker = None
+        if marker.startswith(highlight_prefix):
+            highlight_style = marker[1:] or highlight_default_style
+            marker = None
 
-#         marker_node: Node[SourceMarkerNodeContext] | None = None
+        marker_node: Node[SourceMarkerNodeData] | None = None
 
-#         # If there is a marker, change the line
-#         # context to remove the marker.
-#         if marker:
-#             # Take into account the two colons.
-#             marker_length = len(marker) + 2
+        # If there is a marker, change the line
+        # context to remove the marker.
+        if marker:
+            # Take into account the two colons.
+            marker_length = len(marker) + 2
 
-#             # Calculate the line length.
-#             line_length = len(line_content)
+            # Calculate the line length.
+            line_length = len(line_content)
 
-#             # Clone the line context.
-#             marker_context = line_context.clone()
+            # Clone the line context.
+            marker_context = line_context.clone()
 
-#             # Remove the marker from the end
-#             # of the line context.
-#             line_context.end_column -= marker_length
+            # Remove the marker from the end
+            # of the line context.
+            line_context.end_column -= marker_length
 
-#             # Remove the line from the
-#             # marker context.
-#             marker_context.start_column += line_length
+            # Remove the line from the
+            # marker context.
+            marker_context.start_column += line_length
 
-#             marker_node = Node(
-#                 data=SourceMarkerNodeContext(marker),
-#                 info=NodeInfo(context=marker_context),
-#             )
+            marker_node = Node(
+                data=SourceMarkerNodeData(marker),
+                info=NodeInfo(context=marker_context),
+            )
 
-#         create_source_line(
-#             code,
-#             line_number,
-#             line_content,
-#             line_context,
-#             marker_node=marker_node,
-#             highlight_style=highlight_style,
-#         )
+        create_source_line(
+            code,
+            line_number,
+            line_content,
+            line_context,
+            marker_node=marker_node,
+            highlight_style=highlight_style,
+        )
 
-#     return {
-#         "content": [
-#             Node(
-#                 data=SourceNodeData(language),
-#                 children={"code": code},
-#                 info=NodeInfo(context=content.context),
-#             )
-#         ]
-#     }
+    return [
+        Node(
+            data=SourceNodeData(language, content=code),
+            info=NodeInfo(context=content.context),
+        )
+    ]
 
 
-# def create_source_line(
-#     code: list[Node[SourceLineNodeData]],
-#     line_number: str,
-#     line_content: str,
-#     line_context: Context,
-#     marker_node: Node[SourceMarkerNodeContext] | None = None,
-#     highlight_style: str | None = None,
-# ):
-#     # Prepare the source line
-#     source_line_node = Node(
-#         data=SourceLineNodeData(
-#             line_number,
-#             line_data=line_content,
-#             highlight_style=highlight_style,
-#         ),
-#         info=NodeInfo(context=line_context),
-#     )
+def create_source_line(
+    code: list[Node[SourceLineNodeData]],
+    line_number: str,
+    line_content: str,
+    line_context: Context,
+    marker_node: Node[SourceMarkerNodeData] | None = None,
+    highlight_style: str | None = None,
+):
+    # Prepare the source line
+    source_line_node = Node(
+        data=SourceLineNodeData(
+            line_number,
+            line_content=line_content,
+            highlight_style=highlight_style,
+        ),
+        info=NodeInfo(context=line_context),
+    )
 
-#     if marker_node:
-#         source_line_node.add_children({"marker": [marker_node]})
+    if marker_node:
+        source_line_node.data.marker = marker_node
 
-#     code.append(source_line_node)
+    code.append(source_line_node)
 
 
 def block_processor(parser: DocumentParser):
@@ -449,8 +308,8 @@ def block_processor(parser: DocumentParser):
     arguments = parser.arguments_buffer.pop_or_default()
 
     # Extract classes and convert them into a list
-    if classes := arguments.named_args.pop("classes", []):
-        classes = classes.split(",")
+    classes_str = arguments.named_args.pop("classes", "")
+    classes = classes_str.split(",") if classes_str else []
 
     # Extract the preprocessor
     preprocessor = arguments.named_args.pop("preprocessor", None)
@@ -499,13 +358,13 @@ def block_processor(parser: DocumentParser):
     match engine:
         # Real engine: decides how the content is processed
         case EngineType.DEFAULT:
-            node_data.sections = parse_default_engine(parser, content, arguments)
+            node_data.content = parse_default_engine(parser, content, arguments)
 
         case EngineType.RAW:  # Real engine: decides how the content is processed
-            node_data.sections = parse_raw_engine(parser, content, arguments)
+            node_data.content = parse_raw_engine(parser, content, arguments)
 
-    #         case EngineType.SOURCE:  # Real engine: decides how the content is processed
-    #             children = parse_source_engine(parser, content, arguments)
+        case EngineType.SOURCE:  # Real engine: decides how the content is processed
+            node_data.content = parse_source_engine(parser, content, arguments)
 
     #         # This has been checked before but is required to
     #         # check the full type value space.
