@@ -1,8 +1,8 @@
-from mau.lexers.document_lexer import DocumentLexer
 from mau.environment.environment import Environment
+from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNodeData
 from mau.nodes.inline import TextNodeData
-from mau.nodes.node import Node, NodeInfo, WrapperNodeData
+from mau.nodes.node import Node, NodeInfo
 from mau.nodes.paragraph import ParagraphLineNodeData, ParagraphNodeData
 from mau.parsers.document_parser import DocumentParser
 from mau.parsers.document_processors.block import EngineType
@@ -33,7 +33,6 @@ def test_block_with_empty_body():
                 data=BlockNodeData(
                     classes=[],
                     engine=EngineType.DEFAULT.value,
-                    preprocessor=None,
                 ),
                 info=NodeInfo(context=generate_context(1, 0, 2, 4)),
             )
@@ -57,7 +56,6 @@ def test_block_content():
                 data=BlockNodeData(
                     classes=[],
                     engine=EngineType.DEFAULT.value,
-                    preprocessor=None,
                     content=[
                         Node(
                             data=ParagraphNodeData(
@@ -110,7 +108,6 @@ def test_block_content_variables():
                 data=BlockNodeData(
                     classes=[],
                     engine=EngineType.DEFAULT.value,
-                    preprocessor=None,
                     content=[
                         Node(
                             data=ParagraphNodeData(
@@ -163,7 +160,6 @@ def test_block_content_external_variables():
                 data=BlockNodeData(
                     classes=[],
                     engine=EngineType.DEFAULT.value,
-                    preprocessor=None,
                     content=[
                         Node(
                             data=ParagraphNodeData(
@@ -216,13 +212,11 @@ def test_block_inside_block():
                 data=BlockNodeData(
                     classes=[],
                     engine=EngineType.DEFAULT.value,
-                    preprocessor=None,
                     content=[
                         Node(
                             data=BlockNodeData(
                                 classes=[],
                                 engine=EngineType.DEFAULT.value,
-                                preprocessor=None,
                             ),
                             info=NodeInfo(context=generate_context(2, 0, 3, 4)),
                         )
@@ -254,7 +248,6 @@ def test_block_uses_control_positive():
                 data=BlockNodeData(
                     classes=[],
                     engine=EngineType.DEFAULT.value,
-                    preprocessor=None,
                     content=[
                         Node(
                             data=ParagraphNodeData(
@@ -309,7 +302,6 @@ def test_block_uses_control_positive_when_block_is_empty():
                 data=BlockNodeData(
                     classes=[],
                     engine=EngineType.DEFAULT.value,
-                    preprocessor=None,
                 ),
                 info=NodeInfo(context=generate_context(2, 0, 3, 4)),
             )

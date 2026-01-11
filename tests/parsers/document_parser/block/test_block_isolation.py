@@ -8,7 +8,7 @@ from mau.nodes.commands import TocItemNodeData, TocNodeData
 from mau.nodes.headers import HeaderNodeData
 from mau.nodes.inline import TextNodeData
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.paragraph import ParagraphNodeData, ParagraphLineNodeData
+from mau.nodes.paragraph import ParagraphLineNodeData, ParagraphNodeData
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -58,7 +58,6 @@ def test_block_isolation_doesnt_add_headers_to_the_global_toc(mock_header_intern
                 data=BlockNodeData(
                     classes=[],
                     engine="default",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=HeaderNodeData(
@@ -142,7 +141,6 @@ def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id
                 data=BlockNodeData(
                     classes=[],
                     engine="default",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=HeaderNodeData(
@@ -170,7 +168,6 @@ def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id
                 data=BlockNodeData(
                     classes=[],
                     engine="default",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=HeaderNodeData(
@@ -285,7 +282,6 @@ def test_block_isolation_toc(mock_header_internal_id):
                 data=BlockNodeData(
                     classes=[],
                     engine="default",
-                    preprocessor=None,
                     content=[
                         # This is the block header.
                         block_header_node,
@@ -349,7 +345,6 @@ def test_block_isolation_can_see_internal_variables():
                 data=BlockNodeData(
                     classes=[],
                     engine="default",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=ParagraphNodeData(

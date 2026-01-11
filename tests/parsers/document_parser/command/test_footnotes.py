@@ -3,17 +3,17 @@ from unittest.mock import patch
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNodeData
-from mau.nodes.footnotes import FootnoteNodeData
 from mau.nodes.commands import FootnotesNodeData
+from mau.nodes.footnotes import FootnoteNodeData
 from mau.nodes.inline import TextNodeData
 from mau.nodes.lists import ListItemNodeData, ListNodeData
 from mau.nodes.macros import MacroFootnoteNodeData
 from mau.nodes.node import Node, NodeInfo
-from mau.nodes.paragraph import ParagraphNodeData, ParagraphLineNodeData
+from mau.nodes.paragraph import ParagraphLineNodeData, ParagraphNodeData
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
-    compare_asdict_object,
     compare_asdict_list,
+    compare_asdict_object,
     generate_context,
     init_parser_factory,
     parser_runner_factory,

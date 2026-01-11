@@ -18,7 +18,6 @@ class BlockNodeData(NodeData, NodeDataLabelsMixin, NodeDataContentMixin):
         self,
         classes=None,
         engine=None,
-        preprocessor=None,
         labels: dict[str, list[Node]] | None = None,
         content: list[Node] | None = None,
     ):
@@ -26,7 +25,6 @@ class BlockNodeData(NodeData, NodeDataLabelsMixin, NodeDataContentMixin):
 
         self.classes = classes or []
         self.engine = engine
-        self.preprocessor = preprocessor
 
         NodeDataContentMixin.__init__(self, content)
         NodeDataLabelsMixin.__init__(self, labels)
@@ -36,7 +34,6 @@ class BlockNodeData(NodeData, NodeDataLabelsMixin, NodeDataContentMixin):
         base["custom"] = {
             "classes": self.classes,
             "engine": self.engine,
-            "preprocessor": self.preprocessor,
         }
 
         NodeDataContentMixin.content_asdict(self, base)

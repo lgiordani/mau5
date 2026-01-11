@@ -38,7 +38,6 @@ def test_parse_block_title_and_arguments():
                 data=BlockNodeData(
                     classes=[],
                     engine=EngineType.DEFAULT.value,
-                    preprocessor=None,
                     labels={
                         "title": [
                             Node(
@@ -76,7 +75,6 @@ def test_block_classes_single_class():
                 data=BlockNodeData(
                     classes=["cls1"],
                     engine=EngineType.DEFAULT.value,
-                    preprocessor=None,
                 ),
                 info=NodeInfo(
                     context=generate_context(2, 0, 3, 4),
@@ -103,7 +101,6 @@ def test_block_classes_multiple_classes():
                 data=BlockNodeData(
                     classes=["cls1", "cls2"],
                     engine=EngineType.DEFAULT.value,
-                    preprocessor=None,
                 ),
                 info=NodeInfo(
                     context=generate_context(2, 0, 3, 4),

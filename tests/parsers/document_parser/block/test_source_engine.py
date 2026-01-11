@@ -35,7 +35,6 @@ def test_source_engine_empty_block():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                 ),
                 info=NodeInfo(context=generate_context(2, 0, 3, 4)),
             ),
@@ -59,7 +58,6 @@ def test_source_engine_empty_block_language():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                 ),
                 info=NodeInfo(
                     context=generate_context(2, 0, 3, 4), unnamed_args=["python"]
@@ -89,7 +87,6 @@ def test_source_engine_contains_mau_code():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=SourceNodeData(
@@ -157,7 +154,6 @@ def test_source_engine_removes_escape_from_directive_like_text():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=SourceNodeData(
@@ -203,7 +199,6 @@ def test_source_engine_with_code():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=SourceNodeData(
@@ -264,7 +259,6 @@ def test_source_engine_ignores_mau_syntax():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=SourceNodeData(
@@ -316,7 +310,6 @@ def test_source_engine_respects_spaces_and_indentation():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=SourceNodeData(
@@ -362,7 +355,6 @@ def test_source_engine_callouts_default_delimiter():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=SourceNodeData(
@@ -440,7 +432,6 @@ def test_source_engine_callouts_potential_clash():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=SourceNodeData(
@@ -492,7 +483,6 @@ def test_source_engine_callouts_one_single_marker_is_skipped():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=SourceNodeData(
@@ -538,7 +528,6 @@ def test_source_engine_marker_custom_delimiter():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=SourceNodeData(
@@ -609,7 +598,6 @@ def test_source_engine_highlight_marker_with_default_style():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=SourceNodeData(
@@ -664,7 +652,6 @@ def test_source_engine_highlight_custom_marker():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=SourceNodeData(
@@ -719,7 +706,6 @@ def test_source_engine_highlight_marker_change_default_highlight_style():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=SourceNodeData(
@@ -775,7 +761,6 @@ def test_source_engine_highlight_marker_custom_highlight_style():
                 data=BlockNodeData(
                     classes=[],
                     engine="source",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=SourceNodeData(

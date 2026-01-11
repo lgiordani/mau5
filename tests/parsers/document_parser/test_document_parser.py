@@ -1,7 +1,14 @@
+from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
+from mau.nodes.document import DocumentNodeData
+from mau.nodes.inline import TextNodeData
+from mau.nodes.node import Node, NodeInfo
+from mau.nodes.paragraph import ParagraphLineNodeData, ParagraphNodeData
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     compare_asdict_list,
+    compare_asdict_object,
+    generate_context,
     init_parser_factory,
     parser_runner_factory,
 )
@@ -29,107 +36,42 @@ def test_parse_output():
     }
 
 
-# def test_parse_output_custom_content_container():
-#     source = "text"
+def test_parse_output_custom_content_container():
+    source = "text"
 
-#     environment = Environment()
-#     document = DocumentNode()
-#     environment.setvar("mau.parser.content_wrapper", document)
+    class CustomDocumentNodeData(DocumentNodeData):
+        type = "custom-document"
 
-#     assert runner(source, environment).output == {
-#         "content": document,
-#         "toc": ContainerNode(children=[TocNode()]),
-#     }
+    environment = Environment()
+    environment["mau.parser.document_wrapper"] = CustomDocumentNodeData
 
-
-# def test_parse_output_custom_toc_container():
-#     source = ""
-
-#     environment = Environment()
-#     document = DocumentNode(children=[TocNode()])
-#     environment.setvar("mau.parser.toc_wrapper", document)
-
-#     assert runner(source, environment).output == {
-#         "content": ContainerNode(children=[]),
-#         "toc": document,
-#     }
-
-
-# def test_command():
-#     source = "::somecommand:arg1, arg2, name1=value1, name2=value2"
-
-#     assert runner(source).nodes == []
-
-
-# def test_command_without_arguments():
-#     source = "::somecommand:"
-
-#     assert runner(source).nodes == []
-
-
-# def test_style_underscore():
-#     source = """
-#     This is _underscore_ text
-#     """
-
-#     assert runner(source).nodes == [
-#         ParagraphNode(
-#             children=[
-#                 TextNode("This is "),
-#                 StyleNode(
-#                     value="underscore",
-#                     children=[
-#                         TextNode("underscore"),
-#                     ],
-#                 ),
-#                 TextNode(" text"),
-#             ],
-#         )
-#     ]
-
-
-# def test_style_at_beginning():
-#     source = """
-#     *This is star text*
-#     """
-
-#     assert runner(source).nodes == [
-#         ParagraphNode(
-#             children=[
-#                 StyleNode(
-#                     value="star",
-#                     children=[
-#                         TextNode("This is star text"),
-#                     ],
-#                 ),
-#             ],
-#         )
-#     ]
-
-
-# def test_style_not_closed():
-#     source = r"""
-#     This ` is a backtick and this _an underscore
-#     """
-
-#     assert runner(source).nodes == [
-#         ParagraphNode(
-#             children=[
-#                 TextNode("This ` is a backtick and this _an underscore"),
-#             ],
-#         )
-#     ]
-
-
-# def test_style_escape_markers():
-#     source = r"""
-#     This is \_underscore\_ and this is \`verbatim\`
-#     """
-
-#     assert runner(source).nodes == [
-#         ParagraphNode(
-#             children=[
-#                 TextNode("This is _underscore_ and this is `verbatim`"),
-#             ],
-#         )
-#     ]
+    compare_asdict_object(
+        runner(source, environment).output["document"],
+        Node(
+            data=CustomDocumentNodeData(
+                content=[
+                    Node(
+                        data=ParagraphNodeData(
+                            content=[
+                                Node(
+                                    data=ParagraphLineNodeData(
+                                        content=[
+                                            Node(
+                                                data=TextNodeData("text"),
+                                                info=NodeInfo(
+                                                    context=generate_context(0, 0, 0, 4)
+                                                ),
+                                            )
+                                        ]
+                                    ),
+                                    info=NodeInfo(context=generate_context(0, 0, 0, 4)),
+                                )
+                            ]
+                        ),
+                        info=NodeInfo(context=generate_context(0, 0, 0, 4)),
+                    )
+                ]
+            ),
+            info=NodeInfo(context=generate_context(0, 0, 0, 4)),
+        ),
+    )

@@ -10,7 +10,6 @@ def test_block_node_data():
         "custom": {
             "classes": [],
             "engine": None,
-            "preprocessor": None,
             "labels": {},
             "content": [],
         },

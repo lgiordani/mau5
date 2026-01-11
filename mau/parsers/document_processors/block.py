@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import itertools
-import re
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -14,10 +12,8 @@ from mau.nodes.block import BlockNodeData
 
 # , BlockSectionNodeData
 # from mau.nodes.commands import FootnotesItemNodeData
-
 from mau.nodes.inline import RawNodeData
-from mau.nodes.node import Node, NodeInfo, WrapperNodeData
-
+from mau.nodes.node import Node, NodeInfo
 from mau.nodes.source import (
     SourceLineNodeData,
     SourceMarkerNodeData,

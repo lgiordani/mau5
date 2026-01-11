@@ -33,7 +33,6 @@ def test_raw_engine():
                 data=BlockNodeData(
                     classes=[],
                     engine="raw",
-                    preprocessor=None,
                     content=[
                         Node(
                             data=RawNodeData("Raw content"),
