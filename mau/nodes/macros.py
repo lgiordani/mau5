@@ -1,210 +1,210 @@
-from mau.nodes.footnotes import FootnoteNodeData
-from mau.nodes.headers import HeaderNodeData
-from mau.nodes.node import Node, NodeData, NodeDataContentMixin
-
-MACRO_HELP = """
-Syntax:
-
-[NAME](ARGS)
-
-A generic macro named NAME that contains the given ARGS.
-"""
-
-MACRO_CLASS_HELP = """
-Syntax:
-
-[class](class1, class2, ...)
-
-A macro to assign classes to text.
-"""
-
-MACRO_LINK_HELP = """
-Syntax:
-
-[link](target[, text])
-
-A macro that creates a link. The text of the link is the target itself
-unless the option `text` is gien a value.
-"""
-
-MACRO_IMAGE_HELP = """
-Syntax:
-
-[image](uri[, alt_text, width, height])
-
-A macro that inserts an image. The macro requires the `uri` and
-accepts optional `alt_text`, `width`, and `height`.
-"""
-
-MACRO_HEADER_HELP = """
-Syntax:
-
-[header](header_alias)
-
-A macro that inserts a link to a header. The macro requires
-the header exernal ID as a parameter.
-"""
-
-MACRO_FOOTNOTE_HELP = """
-Syntax:
-
-[footnote](footnote_name)
-
-A macro that inserts a link to a footnote. The macro requires
-the footnote name associated with the relative data block.
-"""
-
-
-class MacroNodeData(NodeData):
-    """This node contains a macro, with a name and arguments."""
-
-    type = "macro"
-
-    def __init__(
-        self,
-        name: str,
-        unnamed_args: list[str] | None = None,
-        named_args: dict[str, str] | None = None,
-    ):
-        super().__init__()
-        self.name = name
-        self.unnamed_args = unnamed_args or []
-        self.named_args = named_args or {}
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "name": self.name,
-            "unnamed_args": self.unnamed_args,
-            "named_args": self.named_args,
-        }
-
-        return base
-
-
-class MacroClassNodeData(NodeData, NodeDataContentMixin):
-    """Text with one or more classes."""
-
-    type = "macro.class"
-
-    def __init__(self, classes: list[str], content: list[Node] | None = None):
-        super().__init__()
-        self.classes = classes
-        NodeDataContentMixin.__init__(self, content)
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "classes": self.classes,
-        }
-        NodeDataContentMixin.content_asdict(self, base)
-
-        return base
-
-
-class MacroLinkNodeData(NodeData, NodeDataContentMixin):
-    """This node contains a link."""
-
-    type = "macro.link"
-
-    def __init__(self, target: str, content: list[Node] | None = None):
-        super().__init__()
-        self.target = target
-        NodeDataContentMixin.__init__(self, content)
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "target": self.target,
-        }
-        NodeDataContentMixin.content_asdict(self, base)
-
-        return base
-
-
-class MacroImageNodeData(NodeData):
-    """This node contains an inline image."""
-
-    type = "macro.image"
-
-    def __init__(
-        self,
-        uri: str,
-        alt_text: str | None = None,
-        width: str | None = None,
-        height: str | None = None,
-    ):
-        super().__init__()
-        self.uri = uri
-        self.alt_text = alt_text
-        self.width = width
-        self.height = height
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "uri": self.uri,
-            "alt_text": self.alt_text,
-            "width": self.width,
-            "height": self.height,
-        }
-
-        return base
-
-
-class MacroHeaderNodeData(NodeData, NodeDataContentMixin):
-    """This node contains a link to a header node."""
-
-    type = "macro.header"
-
-    def __init__(
-        self,
-        target_alias: str,
-        header: HeaderNodeData | None = None,
-        target_id: str | None = None,
-        content: list[Node] | None = None,
-    ):
-        # This is the internal name of the
-        # header that we are pointing to.
-        self.target_alias = target_alias
-
-        # This is the ID of the header that
-        # we are pointing to.
-        # It is an automatically generated
-        # unique ID.
-        self.target_id = target_id
-
-        # The header linked by this macro.
-        self.header = header
-
-        NodeDataContentMixin.__init__(self, content)
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "target_alias": self.target_alias,
-            "target_id": self.target_id,
-        }
-
-        base["custom"]["header"] = self.header.asdict() if self.header else None
-
-        NodeDataContentMixin.content_asdict(self, base)
-
-        return base
-
-
-class MacroFootnoteNodeData(NodeData):
-    """This node contains a link to a footnote node."""
-
-    type = "macro.footnote"
-
-    def __init__(self, footnote: FootnoteNodeData):
-        self.footnote = footnote
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "footnote": self.footnote.asdict(),
-        }
-
-        return base
+# from mau.nodes.footnotes import FootnoteNodeData
+# from mau.nodes.headers import HeaderNodeData
+# from mau.nodes.node import Node, NodeData, NodeDataContentMixin
+# 
+# MACRO_HELP = """
+# Syntax:
+# 
+# [NAME](ARGS)
+# 
+# A generic macro named NAME that contains the given ARGS.
+# """
+# 
+# MACRO_CLASS_HELP = """
+# Syntax:
+# 
+# [class](class1, class2, ...)
+# 
+# A macro to assign classes to text.
+# """
+# 
+# MACRO_LINK_HELP = """
+# Syntax:
+# 
+# [link](target[, text])
+# 
+# A macro that creates a link. The text of the link is the target itself
+# unless the option `text` is gien a value.
+# """
+# 
+# MACRO_IMAGE_HELP = """
+# Syntax:
+# 
+# [image](uri[, alt_text, width, height])
+# 
+# A macro that inserts an image. The macro requires the `uri` and
+# accepts optional `alt_text`, `width`, and `height`.
+# """
+# 
+# MACRO_HEADER_HELP = """
+# Syntax:
+# 
+# [header](header_alias)
+# 
+# A macro that inserts a link to a header. The macro requires
+# the header exernal ID as a parameter.
+# """
+# 
+# MACRO_FOOTNOTE_HELP = """
+# Syntax:
+# 
+# [footnote](footnote_name)
+# 
+# A macro that inserts a link to a footnote. The macro requires
+# the footnote name associated with the relative data block.
+# """
+# 
+# 
+# class MacroNodeData(NodeData):
+#     """This node contains a macro, with a name and arguments."""
+# 
+#     type = "macro"
+# 
+#     def __init__(
+#         self,
+#         name: str,
+#         unnamed_args: list[str] | None = None,
+#         named_args: dict[str, str] | None = None,
+#     ):
+#         super().__init__()
+#         self.name = name
+#         self.unnamed_args = unnamed_args or []
+#         self.named_args = named_args or {}
+# 
+#     def asdict(self):
+#         base = super().asdict()
+#         base["custom"] = {
+#             "name": self.name,
+#             "unnamed_args": self.unnamed_args,
+#             "named_args": self.named_args,
+#         }
+# 
+#         return base
+# 
+# 
+# class MacroClassNodeData(NodeData, NodeDataContentMixin):
+#     """Text with one or more classes."""
+# 
+#     type = "macro.class"
+# 
+#     def __init__(self, classes: list[str], content: list[Node] | None = None):
+#         super().__init__()
+#         self.classes = classes
+#         NodeDataContentMixin.__init__(self, content)
+# 
+#     def asdict(self):
+#         base = super().asdict()
+#         base["custom"] = {
+#             "classes": self.classes,
+#         }
+#         NodeDataContentMixin.content_asdict(self, base)
+# 
+#         return base
+# 
+# 
+# class MacroLinkNodeData(NodeData, NodeDataContentMixin):
+#     """This node contains a link."""
+# 
+#     type = "macro.link"
+# 
+#     def __init__(self, target: str, content: list[Node] | None = None):
+#         super().__init__()
+#         self.target = target
+#         NodeDataContentMixin.__init__(self, content)
+# 
+#     def asdict(self):
+#         base = super().asdict()
+#         base["custom"] = {
+#             "target": self.target,
+#         }
+#         NodeDataContentMixin.content_asdict(self, base)
+# 
+#         return base
+# 
+# 
+# class MacroImageNodeData(NodeData):
+#     """This node contains an inline image."""
+# 
+#     type = "macro.image"
+# 
+#     def __init__(
+#         self,
+#         uri: str,
+#         alt_text: str | None = None,
+#         width: str | None = None,
+#         height: str | None = None,
+#     ):
+#         super().__init__()
+#         self.uri = uri
+#         self.alt_text = alt_text
+#         self.width = width
+#         self.height = height
+# 
+#     def asdict(self):
+#         base = super().asdict()
+#         base["custom"] = {
+#             "uri": self.uri,
+#             "alt_text": self.alt_text,
+#             "width": self.width,
+#             "height": self.height,
+#         }
+# 
+#         return base
+# 
+# 
+# class MacroHeaderNodeData(NodeData, NodeDataContentMixin):
+#     """This node contains a link to a header node."""
+# 
+#     type = "macro.header"
+# 
+#     def __init__(
+#         self,
+#         target_alias: str,
+#         header: HeaderNodeData | None = None,
+#         target_id: str | None = None,
+#         content: list[Node] | None = None,
+#     ):
+#         # This is the internal name of the
+#         # header that we are pointing to.
+#         self.target_alias = target_alias
+# 
+#         # This is the ID of the header that
+#         # we are pointing to.
+#         # It is an automatically generated
+#         # unique ID.
+#         self.target_id = target_id
+# 
+#         # The header linked by this macro.
+#         self.header = header
+# 
+#         NodeDataContentMixin.__init__(self, content)
+# 
+#     def asdict(self):
+#         base = super().asdict()
+#         base["custom"] = {
+#             "target_alias": self.target_alias,
+#             "target_id": self.target_id,
+#         }
+# 
+#         base["custom"]["header"] = self.header.asdict() if self.header else None
+# 
+#         NodeDataContentMixin.content_asdict(self, base)
+# 
+#         return base
+# 
+# 
+# class MacroFootnoteNodeData(NodeData):
+#     """This node contains a link to a footnote node."""
+# 
+#     type = "macro.footnote"
+# 
+#     def __init__(self, footnote: FootnoteNodeData):
+#         self.footnote = footnote
+# 
+#     def asdict(self):
+#         base = super().asdict()
+#         base["custom"] = {
+#             "footnote": self.footnote.asdict(),
+#         }
+# 
+#         return base
