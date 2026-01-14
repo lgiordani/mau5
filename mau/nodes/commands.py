@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from mau.nodes.footnotes import FootnoteNodeData
 from mau.nodes.headers import HeaderNodeData
+from mau.nodes.block import BlockNodeData
 from mau.nodes.node import (
     Node,
     NodeData,
@@ -98,19 +99,29 @@ class TocNodeData(NodeData, NodeDataLabelsMixin):
         return base
 
 
-# class BlockGroupNodeData(NodeData):
-#     type = "block-group"
+class BlockGroupNodeData(NodeData, NodeDataLabelsMixin):
+    type = "block-group"
 
-#     def __init__(self, name: str, groups: dict[str, Node] | None = None):
-#         super().__init__()
-#         self.name = name
-#         self.groups = groups or {}
+    def __init__(
+        self,
+        name: str,
+        blocks: dict[str, Node[BlockNodeData]] | None = None,
+        labels: dict[str, list[Node]] | None = None,
+    ):
+        super().__init__()
+        self.name = name
+        self.blocks = blocks or {}
 
-#     def asdict(self):
-#         base = super().asdict()
-#         base["custom"] = {
-#             "name": self.name,
-#             "groups": {k: v.asdict() for k, v in self.groups.items()},
-#         }
+        NodeDataLabelsMixin.__init__(self, labels)
 
-#         return base
+    def asdict(self):
+        base = super().asdict()
+
+        base["custom"] = {
+            "name": self.name,
+            "blocks": {k: v.asdict() for k, v in self.blocks.items()},
+        }
+
+        NodeDataLabelsMixin.content_asdict(self, base)
+
+        return base

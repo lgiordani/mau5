@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 from mau.nodes.commands import (
     COMMAND_HELP,
-    # BlockGroupNodeData,
+    BlockGroupNodeData,
     FootnotesNodeData,
     TocNodeData,
 )
@@ -123,29 +123,33 @@ def command_processor(parser: DocumentParser):
 
         parser.footnotes_manager.add_footnotes_list(footnotes_node_data)
 
-    # elif name.value == "blockgroup":
-    #     arguments.set_names(["group"])
-    #     group_name = arguments.named_args.pop("group")
+    elif name.value == "blockgroup":
+        arguments.set_names(["group"])
+        group_name = arguments.named_args.pop("group")
 
-    #     node = Node(
-    #         data=BlockGroupNodeData(group_name),
-    #         info=info,
-    #     )
+        node_data = BlockGroupNodeData(group_name)
 
-    #     if label := parser.label_buffer.pop():
-    #         node.add_children(label, allow_all=True)
+        node: Node[BlockGroupNodeData] = Node(
+            data=node_data,
+            info=info,
+        )
 
-    #     # Check the stored control
-    #     if control := parser.control_buffer.pop():
-    #         # If control is False, we need to stop
-    #         # processing here and return without
-    #         # saving any node.
-    #         if not control.process(parser.environment):
-    #             return True
+        # Extract labels from the buffer and
+        # store them in the node data.
+        if labels := parser.label_buffer.pop():
+            node_data.labels = labels
 
-    #     parser._save(node)
+        # Check the stored control
+        if control := parser.control_buffer.pop():
+            # If control is False, we need to stop
+            # processing here and return without
+            # saving any node.
+            if not control.process(parser.environment):
+                return True
 
-    #     parser.block_group_manager.add_group_node(node)
+        parser._save(node)
+
+        parser.block_group_manager.add_group(node_data)
 
     else:
         parser.label_buffer.pop()

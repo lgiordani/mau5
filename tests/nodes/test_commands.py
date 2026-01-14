@@ -1,8 +1,9 @@
+from mau.nodes.node import Node
+from mau.nodes.block import BlockNodeData
 from mau.nodes.commands import FootnotesNodeData, TocItemNodeData
 from mau.nodes.footnotes import FootnoteNodeData
 from mau.nodes.headers import HeaderNodeData
-
-# from mau.nodes.commands import BlockGroupNodeData
+from mau.nodes.commands import BlockGroupNodeData
 
 
 def test_footnotes_node_content_empty():
@@ -131,81 +132,85 @@ def test_toc_item_node_data_with_entries():
     }
 
 
-# def test_block_group_node_data_empty():
-#     node_data = BlockGroupNodeData("somename")
+def test_block_group_node_data_empty():
+    node_data = BlockGroupNodeData("somename")
 
-#     assert node_data.type == "block-group"
-#     assert node_data.asdict() == {
-#         "type": "block-group",
-#         "custom": {
-#             "name": "somename",
-#             "groups": {},
-#         },
-#     }
+    assert node_data.type == "block-group"
+    assert node_data.asdict() == {
+        "type": "block-group",
+        "custom": {
+            "name": "somename",
+            "blocks": {},
+            "labels": {},
+        },
+    }
 
 
-# def test_block_group_node_data_with_groups():
-#     block_node1 = Node(data=BlockNodeData())
-#     block_node2 = Node(data=BlockNodeData())
+def test_block_group_node_data_with_blocks():
+    block_data1 = BlockNodeData()
+    block_node1 = Node(data=block_data1)
+    block_data2 = BlockNodeData()
+    block_node2 = Node(data=block_data2)
 
-#     node_data = BlockGroupNodeData(
-#         "somename", groups={"position1": block_node1, "position2": block_node2}
-#     )
+    node_data = BlockGroupNodeData(
+        "somename", blocks={"position1": block_node1, "position2": block_node2}
+    )
 
-#     assert node_data.type == "block-group"
-#     assert node_data.asdict() == {
-#         "type": "block-group",
-#         "custom": {
-#             "name": "somename",
-#             "groups": {
-#                 "position1": {
-#                     "content": {
-#                         "custom": {
-#                             "classes": [],
-#                             "content": [],
-#                             "engine": None,
-#                             "preprocessor": None,
-#                         },
-#                         "type": "block",
-#                     },
-#                     "info": {
-#                         "context": {
-#                             "end_column": 0,
-#                             "end_line": 0,
-#                             "source": None,
-#                             "start_column": 0,
-#                             "start_line": 0,
-#                         },
-#                         "named_args": {},
-#                         "subtype": None,
-#                         "tags": [],
-#                         "unnamed_args": [],
-#                     },
-#                 },
-#                 "position2": {
-#                     "content": {
-#                         "custom": {
-#                             "classes": [],
-#                             "content": [],
-#                             "engine": None,
-#                             "preprocessor": None,
-#                         },
-#                         "type": "block",
-#                     },
-#                     "info": {
-#                         "context": {
-#                             "end_column": 0,
-#                             "end_line": 0,
-#                             "source": None,
-#                             "start_column": 0,
-#                             "start_line": 0,
-#                         },
-#                         "named_args": {},
-#                         "subtype": None,
-#                         "tags": [],
-#                         "unnamed_args": [],
-#                     },
-#                 },
-#             },
-#         },
-#     }
+    assert node_data.type == "block-group"
+    assert node_data.asdict() == {
+        "type": "block-group",
+        "custom": {
+            "name": "somename",
+            "labels": {},
+            "blocks": {
+                "position1": {
+                    "data": {
+                        "custom": {
+                            "classes": [],
+                            "content": [],
+                            "engine": None,
+                            "labels": {},
+                        },
+                        "type": "block",
+                    },
+                    "info": {
+                        "context": {
+                            "end_column": 0,
+                            "end_line": 0,
+                            "source": None,
+                            "start_column": 0,
+                            "start_line": 0,
+                        },
+                        "named_args": {},
+                        "subtype": None,
+                        "tags": [],
+                        "unnamed_args": [],
+                    },
+                },
+                "position2": {
+                    "data": {
+                        "custom": {
+                            "classes": [],
+                            "content": [],
+                            "engine": None,
+                            "labels": {},
+                        },
+                        "type": "block",
+                    },
+                    "info": {
+                        "context": {
+                            "end_column": 0,
+                            "end_line": 0,
+                            "source": None,
+                            "start_column": 0,
+                            "start_line": 0,
+                        },
+                        "named_args": {},
+                        "subtype": None,
+                        "tags": [],
+                        "unnamed_args": [],
+                    },
+                },
+            },
+        },
+    }

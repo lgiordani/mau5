@@ -26,7 +26,7 @@ from mau.parsers.document_processors.variable_definition import (
     variable_definition_processor,
 )
 
-# from mau.parsers.managers.block_group_manager import BlockGroupManager
+from mau.parsers.managers.block_group_manager import BlockGroupManager
 from mau.parsers.managers.footnotes_manager import FootnotesManager
 from mau.parsers.managers.header_links_manager import HeaderLinksManager
 from mau.parsers.managers.toc_manager import TocManager
@@ -85,7 +85,7 @@ class DocumentParser(BaseParser):
         )
 
         self.header_links_manager: HeaderLinksManager = HeaderLinksManager()
-        # self.block_group_manager = BlockGroupManager()
+        self.block_group_manager = BlockGroupManager()
         self.footnotes_manager = FootnotesManager(self.footnote_unique_id_function)
         self.toc_manager: TocManager = TocManager(self.header_internal_id_function)
 
@@ -199,8 +199,8 @@ class DocumentParser(BaseParser):
         # correct headers.
         self.header_links_manager.process()
 
-        # # Process block groups.
-        # self.block_group_manager.process()
+        # Process block groups.
+        self.block_group_manager.process()
 
         if not self.nodes:
             return self.output

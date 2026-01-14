@@ -307,9 +307,6 @@ def block_processor(parser: DocumentParser):
     classes_str = arguments.named_args.pop("classes", "")
     classes = classes_str.split(",") if classes_str else []
 
-    # Extract the preprocessor
-    preprocessor = arguments.named_args.pop("preprocessor", None)
-
     # Extract the engine
     engine_name = arguments.named_args.pop("engine", "default")
     try:
@@ -376,29 +373,18 @@ def block_processor(parser: DocumentParser):
 
         return True
 
-    #     group_name = arguments.named_args.get("group")
-    #     position = arguments.named_args.get("position")
-
-    #     if group_name:
-    #         node = Node(
-    #             data=BlockNodeData(
-    #                 engine=engine.value,
-    #             ),
-    #             info=NodeInfo(context=context),
-    #             children={"content": []},
-    #         )
-
-    #         for name, nodes in children.items():
-    #             node.add_children_at_position(name, nodes, allow_all=True)
-
-    #         parser.block_group_manager.add_block(group_name, position, node)
-
-    #         return True
-
-    #     for name, nodes in children.items():
-    #         node.add_children_at_position(name, nodes, allow_all=True)
+    group_name = arguments.named_args.get("group")
+    position = arguments.named_args.get("position")
 
     node.info = NodeInfo(context=context, **arguments.asdict())
+
+    if group_name:
+        parser.block_group_manager.add_block(group_name, position, node)
+
+        return True
+
+    # for name, nodes in children.items():
+    #     node.add_children_at_position(name, nodes, allow_all=True)
 
     # Check the stored control
     if control := parser.control_buffer.pop():
