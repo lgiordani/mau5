@@ -2,8 +2,7 @@ import textwrap
 from collections.abc import MutableSequence
 
 from mau.environment.environment import Environment
-
-# from mau.nodes.node import Node
+from mau.nodes.node import Node
 from mau.text_buffer import Context, TextBuffer
 
 TEST_CONTEXT_SOURCE = "test.py"
@@ -25,52 +24,46 @@ def compare_asdict_list(objs_left: MutableSequence, objs_right: MutableSequence)
     assert [i.asdict() for i in objs_left] == [i.asdict() for i in objs_right]
 
 
-# def check_node_data_with_content(node_data_class):
-#     nodes: list[Node] = [Node(), Node()]
+def check_node_with_content(node):
+    node.content = [Node(), Node()]
+    node_dict = node.asdict()
 
-#     node_data = node_data_class(content=nodes)
-#     node_data_dict = node_data.asdict()
-
-#     assert node_data_dict["custom"]["content"] == [
-#         {
-#             "data": {
-#                 "custom": {},
-#                 "type": "none",
-#             },
-#             "info": {
-#                 "context": {
-#                     "end_column": 0,
-#                     "end_line": 0,
-#                     "source": None,
-#                     "start_column": 0,
-#                     "start_line": 0,
-#                 },
-#                 "named_args": {},
-#                 "subtype": None,
-#                 "tags": [],
-#                 "unnamed_args": [],
-#             },
-#         },
-#         {
-#             "data": {
-#                 "custom": {},
-#                 "type": "none",
-#             },
-#             "info": {
-#                 "context": {
-#                     "end_column": 0,
-#                     "end_line": 0,
-#                     "source": None,
-#                     "start_column": 0,
-#                     "start_line": 0,
-#                 },
-#                 "named_args": {},
-#                 "subtype": None,
-#                 "tags": [],
-#                 "unnamed_args": [],
-#             },
-#         },
-#     ]
+    assert node_dict["custom"]["content"] == [
+        {
+            "type": "none",
+            "custom": {},
+            "info": {
+                "context": {
+                    "end_column": 0,
+                    "end_line": 0,
+                    "source": None,
+                    "start_column": 0,
+                    "start_line": 0,
+                },
+                "named_args": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
+            },
+        },
+        {
+            "custom": {},
+            "type": "none",
+            "info": {
+                "context": {
+                    "end_column": 0,
+                    "end_line": 0,
+                    "source": None,
+                    "start_column": 0,
+                    "start_line": 0,
+                },
+                "named_args": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
+            },
+        },
+    ]
 
 
 # def compare_text_lines(left: str, right: str):
