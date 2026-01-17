@@ -3,7 +3,7 @@ import pytest
 from mau.environment.environment import Environment
 from mau.lexers.preprocess_variables_lexer import PreprocessVariablesLexer
 from mau.nodes.inline import TextNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.test_helpers import (

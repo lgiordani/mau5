@@ -12,7 +12,7 @@ from mau.nodes.commands import (
     FootnotesNode,
     TocNode,
 )
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.parsers.arguments_parser import Arguments, ArgumentsParser
 from mau.parsers.base_parser import MauParserException
 from mau.text_buffer import Context

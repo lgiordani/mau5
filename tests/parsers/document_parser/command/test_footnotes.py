@@ -8,7 +8,7 @@ from mau.nodes.footnotes import FootnoteNode
 from mau.nodes.inline import TextNode
 from mau.nodes.lists import ListItemNode, ListNode
 from mau.nodes.macros import MacroFootnoteNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -41,7 +41,7 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
 
     footnote_body_nodes = [
         ParagraphNode(
-            content=[
+            lines=[
                 ParagraphLineNode(
                     content=[
                         TextNode(
@@ -69,7 +69,7 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -121,7 +121,7 @@ def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
 
     footnote_body_nodes = [
         ParagraphNode(
-            content=[
+            lines=[
                 ParagraphLineNode(
                     content=[
                         TextNode(
@@ -206,7 +206,7 @@ def test_command_footnotes(mock_footnote_unique_id):
 
     footnote_body_nodes = [
         ParagraphNode(
-            content=[
+            lines=[
                 ParagraphLineNode(
                     content=[
                         TextNode(
@@ -221,8 +221,6 @@ def test_command_footnotes(mock_footnote_unique_id):
         )
     ]
 
-    footnote_block_data = BlockNode(content=footnote_body_nodes, engine="default")
-
     footnote_data = FootnoteNode(
         name="somename",
         public_id="1",
@@ -234,7 +232,7 @@ def test_command_footnotes(mock_footnote_unique_id):
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -373,7 +371,7 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
 
     footnote_body_nodes = [
         ParagraphNode(
-            content=[
+            lines=[
                 ParagraphLineNode(
                     content=[
                         TextNode(
@@ -401,7 +399,7 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(

@@ -14,7 +14,7 @@ in the same document.
 class HorizontalRuleNode(Node, NodeLabelsMixin):
     """A horizontal rule."""
 
-    type = "horizontal_rule"
+    type = "horizontal-rule"
 
     def __init__(
         self,

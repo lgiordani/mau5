@@ -5,7 +5,7 @@ from typing import Any
 
 from mau.environment.environment import Environment
 from mau.lexers.arguments_lexer import ArgumentsLexer
-from mau.nodes.node import Node, NodeInfo, ValueNode
+from mau.nodes.node import NodeInfo, ValueNode
 from mau.parsers.base_parser import BaseParser, MauParserException
 from mau.token import Token, TokenType
 

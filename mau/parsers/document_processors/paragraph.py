@@ -58,7 +58,7 @@ def paragraph_processor(parser: DocumentParser):
     )
 
     paragraph_node = ParagraphNode(
-        content=line_nodes,
+        lines=line_nodes,
         parent=parser.parent_node,
         info=info,
     )

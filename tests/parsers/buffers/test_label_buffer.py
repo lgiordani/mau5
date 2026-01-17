@@ -1,5 +1,5 @@
 from mau.nodes.inline import TextNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.parsers.buffers.label_buffer import LabelBuffer
 from mau.test_helpers import (
     compare_asdict_list,

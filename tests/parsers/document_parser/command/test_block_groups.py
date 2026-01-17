@@ -5,9 +5,8 @@ from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNode
 from mau.nodes.commands import BlockGroupNode
 from mau.nodes.inline import TextNode
-from mau.nodes.node import Node, NodeInfo
-from mau.nodes.paragraph import ParagraphNode, ParagraphLineNode
-from mau.parsers.base_parser import MauParserException
+from mau.nodes.node import NodeInfo
+from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     compare_asdict_list,
@@ -42,7 +41,7 @@ def test_group_engine():
         engine="default",
         content=[
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -66,7 +65,7 @@ def test_group_engine():
         engine="default",
         content=[
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -135,7 +134,7 @@ def test_command_toc_supports_inline_arguments():
         engine="default",
         content=[
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -190,7 +189,7 @@ def test_command_toc_supports_boxed_arguments():
         engine="default",
         content=[
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -245,7 +244,7 @@ def test_command_toc_supports_labels():
         engine="default",
         content=[
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(

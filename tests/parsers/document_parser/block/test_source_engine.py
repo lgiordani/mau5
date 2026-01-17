@@ -1,6 +1,6 @@
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.nodes.source import (
     SourceLineNode,
     SourceMarkerNode,

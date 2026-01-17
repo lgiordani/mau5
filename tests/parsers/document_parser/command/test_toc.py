@@ -3,7 +3,7 @@ from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.commands import TocItemNode, TocNode
 from mau.nodes.headers import HeaderNode
 from mau.nodes.inline import TextNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     compare_asdict_list,

@@ -2,7 +2,7 @@ from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNode
 from mau.nodes.inline import TextNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.parsers.document_processors.block import EngineType
@@ -55,7 +55,7 @@ def test_block_content():
                 engine=EngineType.DEFAULT.value,
                 content=[
                     ParagraphNode(
-                        content=[
+                        lines=[
                             ParagraphLineNode(
                                 content=[
                                     TextNode(
@@ -95,7 +95,7 @@ def test_block_content_variables():
                 engine=EngineType.DEFAULT.value,
                 content=[
                     ParagraphNode(
-                        content=[
+                        lines=[
                             ParagraphLineNode(
                                 content=[
                                     TextNode(
@@ -135,7 +135,7 @@ def test_block_content_external_variables():
                 engine=EngineType.DEFAULT.value,
                 content=[
                     ParagraphNode(
-                        content=[
+                        lines=[
                             ParagraphLineNode(
                                 content=[
                                     TextNode(
@@ -207,7 +207,7 @@ def test_block_uses_control_positive():
                 engine=EngineType.DEFAULT.value,
                 content=[
                     ParagraphNode(
-                        content=[
+                        lines=[
                             ParagraphLineNode(
                                 content=[
                                     TextNode(

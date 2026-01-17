@@ -4,7 +4,7 @@ import pytest
 
 from mau.environment.environment import Environment
 from mau.lexers.arguments_lexer import ArgumentsLexer
-from mau.nodes.node import Node, NodeInfo, ValueNode
+from mau.nodes.node import NodeInfo, ValueNode
 from mau.parsers.arguments_parser import Arguments, ArgumentsParser, set_names
 from mau.parsers.base_parser import MauParserException
 from mau.test_helpers import generate_context, parser_runner_factory

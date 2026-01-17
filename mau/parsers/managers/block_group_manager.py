@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import NewType
 
 from mau.nodes.block import BlockNode
 from mau.nodes.commands import BlockGroupNode
-from mau.nodes.node import Node
 
 
 class BlockGroupManager:

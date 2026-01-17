@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from mau.nodes.block import BlockNode
 from mau.nodes.footnotes import FootnoteNode
 from mau.nodes.headers import HeaderNode
-from mau.nodes.block import BlockNode
 from mau.nodes.node import (
     Node,
     NodeInfo,
@@ -54,7 +54,7 @@ class TocItemNode(Node):
     This node contains the headers that go into the ToC.
     """
 
-    type = "toc.item"
+    type = "toc-item"
 
     def __init__(
         self,

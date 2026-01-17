@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 from mau.nodes.include import IncludeImageNode, IncludeNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.parsers.arguments_parser import Arguments, ArgumentsParser
 from mau.parsers.base_parser import MauParserException
 from mau.text_buffer import Context

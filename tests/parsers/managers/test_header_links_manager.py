@@ -3,7 +3,6 @@ import pytest
 from mau.nodes.headers import HeaderNode
 from mau.nodes.inline import TextNode
 from mau.nodes.macros import MacroHeaderNode
-from mau.nodes.node import Node
 from mau.parsers.managers.header_links_manager import HeaderLinksManager
 
 

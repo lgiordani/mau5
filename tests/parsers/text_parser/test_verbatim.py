@@ -1,6 +1,6 @@
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.inline import TextNode, VerbatimNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
     generate_context,

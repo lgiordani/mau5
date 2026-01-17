@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 from mau.nodes.document import HorizontalRuleNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.token import TokenType
 
 

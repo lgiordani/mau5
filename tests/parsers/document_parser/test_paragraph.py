@@ -2,7 +2,7 @@ from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.inline import StyleNode, TextNode
 from mau.nodes.macros import MacroLinkNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -31,7 +31,7 @@ def test_paragraph():
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -54,7 +54,7 @@ def test_paragraph():
                 info=NodeInfo(context=generate_context(1, 0, 2, 35)),
             ),
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -85,7 +85,7 @@ def test_paragraph_with_style():
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -124,7 +124,7 @@ def test_paragraph_with_style():
                 info=NodeInfo(context=generate_context(1, 0, 2, 35)),
             ),
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -155,7 +155,7 @@ def test_paragraph_with_style_on_multiple_lines():
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -178,7 +178,7 @@ def test_paragraph_with_style_on_multiple_lines():
                 info=NodeInfo(context=generate_context(1, 0, 2, 48)),
             ),
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -206,7 +206,7 @@ def test_paragraph_starting_with_a_macro():
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             MacroLinkNode(
@@ -247,7 +247,7 @@ def test_attributes_paragraph():
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -282,7 +282,7 @@ def test_paragraph_label():
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -321,7 +321,7 @@ def test_paragraph_with_variable():
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -350,7 +350,7 @@ def test_paragraph_with_namespaced_variable():
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -378,7 +378,7 @@ def test_paragraph_with_escaped_mau_syntax():
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -407,7 +407,7 @@ def test_paragraph_with_escaped_variable():
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -436,7 +436,7 @@ def test_paragraph_with_variable_containing_syntax():
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -479,7 +479,7 @@ def test_paragraph_with_nested_variables():
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -512,7 +512,7 @@ def test_paragraph_uses_control_positive():
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -526,7 +526,7 @@ def test_paragraph_uses_control_positive():
                 info=NodeInfo(context=generate_context(2, 0, 2, 20)),
             ),
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(
@@ -561,7 +561,7 @@ def test_paragraph_uses_control_negative():
         parser.nodes,
         [
             ParagraphNode(
-                content=[
+                lines=[
                     ParagraphLineNode(
                         content=[
                             TextNode(

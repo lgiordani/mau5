@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from mau.text_buffer import Context
+
+if TYPE_CHECKING:
+    from mau.visitors.base_visitor import BaseVisitor
 
 
 class NodeInfo:
@@ -37,6 +42,7 @@ class NodeInfo:
 
 class Node:
     type: str = "none"
+    custom_attributes: list[str] = []
 
     def __init__(
         self,
@@ -60,6 +66,26 @@ class Node:
             "custom": {},
             "info": self.info.asdict(),
         }
+
+    def accept(self, visitor: BaseVisitor, *args, **kwargs) -> dict:
+        # Simple implementation of the visitor pattern.
+        # Here, the node accepts a visitor and
+        # calls one of the visitor's methods according
+        # to the node content type.
+
+        # Some node types contain a dot to allow templates
+        # to be created in a hierarchy of directories
+        # but dots are not allowed in function names
+        method_name = f"_visit_{self.type.replace('.', '__').replace('-', '_')}"
+
+        # Try to call the computed method. If not
+        # available, call a default method.
+        try:
+            method = getattr(visitor, method_name)
+        except AttributeError:
+            method = getattr(visitor, "_visit_default")
+
+        return method(self, *args, **kwargs)
 
     def __eq__(self, other):
         if not isinstance(other, Node):

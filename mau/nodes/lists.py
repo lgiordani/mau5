@@ -38,7 +38,7 @@ Arguments:
 class ListItemNode(WrapperNode):
     """An entry in a list."""
 
-    type = "list_item"
+    type = "list-item"
 
     def __init__(
         self,

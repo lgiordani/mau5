@@ -1,4 +1,4 @@
-from mau.nodes.node import Node, NodeInfo, NodeContentMixin, ValueNode, NodeLabelsMixin
+from mau.nodes.node import Node, NodeContentMixin, NodeInfo, NodeLabelsMixin, ValueNode
 
 
 class SourceMarkerNode(ValueNode):

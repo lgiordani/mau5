@@ -2,7 +2,7 @@ from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.document import HorizontalRuleNode
 from mau.nodes.inline import TextNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     compare_asdict_list,

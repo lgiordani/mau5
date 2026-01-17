@@ -2,7 +2,7 @@ from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.document import DocumentNode
 from mau.nodes.inline import TextNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -50,7 +50,7 @@ def test_parse_output_custom_content_container():
         CustomDocumentNode(
             content=[
                 ParagraphNode(
-                    content=[
+                    lines=[
                         ParagraphLineNode(
                             content=[
                                 TextNode(

@@ -3,7 +3,7 @@ import pytest
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNode
 from mau.nodes.inline import TextNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
 from mau.parsers.document_processors.block import (

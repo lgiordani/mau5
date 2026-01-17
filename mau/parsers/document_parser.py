@@ -7,7 +7,7 @@ from functools import partial
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.document import DocumentNode
-from mau.nodes.node import Node, Node, NodeInfo
+from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser import BaseParser
 from mau.parsers.buffers.arguments_buffer import ArgumentsBuffer
 from mau.parsers.buffers.control_buffer import ControlBuffer
@@ -25,7 +25,6 @@ from mau.parsers.document_processors.paragraph import paragraph_processor
 from mau.parsers.document_processors.variable_definition import (
     variable_definition_processor,
 )
-
 from mau.parsers.managers.block_group_manager import BlockGroupManager
 from mau.parsers.managers.footnotes_manager import FootnotesManager
 from mau.parsers.managers.header_links_manager import HeaderLinksManager
