@@ -1,751 +1,599 @@
-# from mau.environment.environment import Environment
-# from mau.lexers.document_lexer import DocumentLexer
-# from mau.nodes.inline import StyleNodeData, TextNodeData
-# from mau.nodes.macros import MacroLinkNodeData
-# from mau.nodes.node import Node, NodeInfo
-# from mau.nodes.paragraph import ParagraphLineNodeData, ParagraphNodeData
-# from mau.parsers.document_parser import DocumentParser
-# from mau.test_helpers import (
-#     compare_asdict_list,
-#     generate_context,
-#     init_parser_factory,
-#     parser_runner_factory,
-# )
-# 
-# init_parser = init_parser_factory(DocumentLexer, DocumentParser)
-# 
-# runner = parser_runner_factory(DocumentLexer, DocumentParser)
-# 
-# 
-# def test_paragraph():
-#     source = """
-#     This is a paragraph.
-#     This is part of the same paragraph.
-# 
-#     This is another paragraph.
-#     """
-# 
-#     parser = runner(source)
-# 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData("This is a paragraph."),
-#                                         info=NodeInfo(
-#                                             context=generate_context(1, 0, 1, 20)
-#                                         ),
-#                                     ),
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(1, 0, 1, 20)),
-#                         ),
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData(
-#                                             "This is part of the same paragraph."
-#                                         ),
-#                                         info=NodeInfo(
-#                                             context=generate_context(2, 0, 2, 35)
-#                                         ),
-#                                     ),
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(2, 0, 2, 35)),
-#                         ),
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(1, 0, 2, 35)),
-#             ),
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData("This is another paragraph."),
-#                                         info=NodeInfo(
-#                                             context=generate_context(4, 0, 4, 26)
-#                                         ),
-#                                     ),
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(4, 0, 4, 26)),
-#                         )
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(4, 0, 4, 26)),
-#             ),
-#         ],
-#     )
-# 
-# 
-# def test_paragraph_with_style():
-#     source = """
-#     This is a *paragraph*.
-#     This is part of the same paragraph.
-# 
-#     This is another paragraph.
-#     """
-# 
-#     parser = runner(source)
-# 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData("This is a "),
-#                                         info=NodeInfo(
-#                                             context=generate_context(1, 0, 1, 10)
-#                                         ),
-#                                     ),
-#                                     Node(
-#                                         data=StyleNodeData(
-#                                             "star",
-#                                             content=[
-#                                                 Node(
-#                                                     data=TextNodeData("paragraph"),
-#                                                     info=NodeInfo(
-#                                                         context=generate_context(
-#                                                             1, 11, 1, 20
-#                                                         )
-#                                                     ),
-#                                                 )
-#                                             ],
-#                                         ),
-#                                         info=NodeInfo(
-#                                             context=generate_context(1, 10, 1, 21)
-#                                         ),
-#                                     ),
-#                                     Node(
-#                                         data=TextNodeData("."),
-#                                         info=NodeInfo(
-#                                             context=generate_context(1, 21, 1, 22)
-#                                         ),
-#                                     ),
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(1, 0, 1, 22)),
-#                         ),
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData(
-#                                             "This is part of the same paragraph."
-#                                         ),
-#                                         info=NodeInfo(
-#                                             context=generate_context(2, 0, 2, 35)
-#                                         ),
-#                                     ),
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(2, 0, 2, 35)),
-#                         ),
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(1, 0, 2, 35)),
-#             ),
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData("This is another paragraph."),
-#                                         info=NodeInfo(
-#                                             context=generate_context(4, 0, 4, 26)
-#                                         ),
-#                                     )
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(4, 0, 4, 26)),
-#                         )
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(4, 0, 4, 26)),
-#             ),
-#         ],
-#     )
-# 
-# 
-# def test_paragraph_with_style_on_multiple_lines():
-#     source = """
-#     This is a *paragraph
-#     with style*. This is part of the same paragraph.
-# 
-#     This is another paragraph.
-#     """
-# 
-#     parser = runner(source)
-# 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData("This is a *paragraph"),
-#                                         info=NodeInfo(
-#                                             context=generate_context(1, 0, 1, 20)
-#                                         ),
-#                                     ),
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(1, 0, 1, 20)),
-#                         ),
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData(
-#                                             "with style*. This is part of the same paragraph."
-#                                         ),
-#                                         info=NodeInfo(
-#                                             context=generate_context(2, 0, 2, 48)
-#                                         ),
-#                                     ),
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(2, 0, 2, 48)),
-#                         ),
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(1, 0, 2, 48)),
-#             ),
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData("This is another paragraph."),
-#                                         info=NodeInfo(
-#                                             context=generate_context(4, 0, 4, 26)
-#                                         ),
-#                                     ),
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(4, 0, 4, 26)),
-#                         )
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(4, 0, 4, 26)),
-#             ),
-#         ],
-#     )
-# 
-# 
-# def test_paragraph_starting_with_a_macro():
-#     source = """
-#     [link](http://some.where,This) is the link I want
-#     """
-# 
-#     parser = runner(source)
-# 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=MacroLinkNodeData(
-#                                             "http://some.where",
-#                                             content=[
-#                                                 Node(
-#                                                     data=TextNodeData("This"),
-#                                                     info=NodeInfo(
-#                                                         context=generate_context(
-#                                                             1, 25, 1, 29
-#                                                         )
-#                                                     ),
-#                                                 ),
-#                                             ],
-#                                         ),
-#                                         info=NodeInfo(
-#                                             context=generate_context(1, 0, 1, 30)
-#                                         ),
-#                                     ),
-#                                     Node(
-#                                         data=TextNodeData(" is the link I want"),
-#                                         info=NodeInfo(
-#                                             context=generate_context(1, 30, 1, 49)
-#                                         ),
-#                                     ),
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(1, 0, 1, 49)),
-#                         )
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(1, 0, 1, 49)),
-#             ),
-#         ],
-#     )
-# 
-# 
-# def test_attributes_paragraph():
-#     source = """
-#     [arg1, #tag1, *subtype1, key1=value1]
-#     This is text
-#     """
-# 
-#     parser = runner(source)
-# 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData("This is text"),
-#                                         info=NodeInfo(
-#                                             context=generate_context(2, 0, 2, 12)
-#                                         ),
-#                                     ),
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(2, 0, 2, 12)),
-#                         )
-#                     ]
-#                 ),
-#                 info=NodeInfo(
-#                     context=generate_context(2, 0, 2, 12),
-#                     unnamed_args=["arg1"],
-#                     named_args={"key1": "value1"},
-#                     tags=["tag1"],
-#                     subtype="subtype1",
-#                 ),
-#             ),
-#         ],
-#     )
-# 
-# 
-# def test_paragraph_label():
-#     source = """
-#     . A title
-#     This is text
-#     """
-# 
-#     parser = runner(source)
-# 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData("This is text"),
-#                                         info=NodeInfo(
-#                                             context=generate_context(2, 0, 2, 12)
-#                                         ),
-#                                     ),
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(2, 0, 2, 12)),
-#                         )
-#                     ],
-#                     labels={
-#                         "title": [
-#                             Node(
-#                                 data=TextNodeData("A title"),
-#                                 info=NodeInfo(context=generate_context(1, 2, 1, 9)),
-#                             )
-#                         ]
-#                     },
-#                 ),
-#                 info=NodeInfo(
-#                     context=generate_context(2, 0, 2, 12),
-#                 ),
-#             ),
-#         ],
-#     )
-# 
-# 
-# def test_paragraph_with_variable():
-#     source = """
-#     :variable:cat
-#     This is a paragraph with a {variable}.
-#     """
-# 
-#     parser = runner(source)
-# 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData(
-#                                             "This is a paragraph with a cat."
-#                                         ),
-#                                         info=NodeInfo(
-#                                             context=generate_context(2, 0, 2, 31)
-#                                         ),
-#                                     )
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(2, 0, 2, 38)),
-#                         )
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(2, 0, 2, 38)),
-#             )
-#         ],
-#     )
-# 
-# 
-# def test_paragraph_with_namespaced_variable():
-#     environment = Environment.from_dict({"content": {"animal": "cat"}})
-#     source = """
-#     This is a paragraph with a {content.animal}.
-#     """
-# 
-#     parser = runner(source, environment)
-# 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData(
-#                                             "This is a paragraph with a cat."
-#                                         ),
-#                                         info=NodeInfo(
-#                                             context=generate_context(1, 0, 1, 31)
-#                                         ),
-#                                     )
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(1, 0, 1, 44)),
-#                         )
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(1, 0, 1, 44)),
-#             )
-#         ],
-#     )
-# 
-# 
-# def test_paragraph_with_escaped_mau_syntax():
-#     source = r"""
-#     \:answer:42
-#     """
-# 
-#     parser = runner(source)
-# 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData(":answer:42"),
-#                                         info=NodeInfo(
-#                                             context=generate_context(1, 0, 1, 11)
-#                                         ),
-#                                     )
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(1, 0, 1, 11)),
-#                         )
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(1, 0, 1, 11)),
-#             )
-#         ],
-#     )
-# 
-# 
-# def test_paragraph_with_escaped_variable():
-#     environment = Environment.from_dict({"variable": "cat"})
-#     source = r"""
-#     This is a paragraph with a \{variable\}.
-#     """
-# 
-#     parser = runner(source, environment)
-# 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData(
-#                                             "This is a paragraph with a {variable}."
-#                                         ),
-#                                         info=NodeInfo(
-#                                             context=generate_context(1, 0, 1, 38)
-#                                         ),
-#                                     )
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(1, 0, 1, 40)),
-#                         )
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(1, 0, 1, 40)),
-#             )
-#         ],
-#     )
-# 
-# 
-# def test_paragraph_with_variable_containing_syntax():
-#     environment = Environment.from_dict({"important": "*IMPORTANT*"})
-#     source = """
-#     This is {important}
-#     """
-# 
-#     parser = runner(source, environment)
-# 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData("This is "),
-#                                         info=NodeInfo(
-#                                             context=generate_context(1, 0, 1, 8)
-#                                         ),
-#                                     ),
-#                                     Node(
-#                                         data=StyleNodeData(
-#                                             "star",
-#                                             content=[
-#                                                 Node(
-#                                                     data=TextNodeData("IMPORTANT"),
-#                                                     info=NodeInfo(
-#                                                         context=generate_context(
-#                                                             1, 9, 1, 18
-#                                                         )
-#                                                     ),
-#                                                 ),
-#                                             ],
-#                                         ),
-#                                         info=NodeInfo(
-#                                             context=generate_context(1, 8, 1, 19)
-#                                         ),
-#                                     ),
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(1, 0, 1, 19)),
-#                         )
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(1, 0, 1, 19)),
-#             )
-#         ],
-#     )
-# 
-# 
-# def test_paragraph_with_nested_variables():
-#     source = """
-#     :answer:42
-#     :sentence:The answer is {answer}
-# 
-#     {sentence}
-#     """
-# 
-#     parser = runner(source)
-# 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData("The answer is 42"),
-#                                         info=NodeInfo(
-#                                             context=generate_context(4, 0, 4, 16)
-#                                         ),
-#                                     )
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(4, 0, 4, 10)),
-#                         )
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(4, 0, 4, 10)),
-#             )
-#         ],
-#     )
-# 
-# 
-# def test_paragraph_uses_control_positive():
-#     environment = Environment.from_dict({"answer": "42"})
-# 
-#     source = """
-#     @if answer==42
-#     This is a paragraph.
-# 
-#     This is another paragraph.
-#     """
-# 
-#     parser = runner(source, environment)
-# 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData("This is a paragraph."),
-#                                         info=NodeInfo(
-#                                             context=generate_context(2, 0, 2, 20)
-#                                         ),
-#                                     )
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(2, 0, 2, 20)),
-#                         )
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(2, 0, 2, 20)),
-#             ),
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData("This is another paragraph."),
-#                                         info=NodeInfo(
-#                                             context=generate_context(4, 0, 4, 26)
-#                                         ),
-#                                     )
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(4, 0, 4, 26)),
-#                         )
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(4, 0, 4, 26)),
-#             ),
-#         ],
-#     )
-# 
-#     assert parser.control_buffer.pop() is None
-# 
-# 
-# def test_paragraph_uses_control_negative():
-#     environment = Environment.from_dict({"answer": "24"})
-# 
-#     source = """
-#     @if answer==42
-#     This is a paragraph.
-# 
-#     This is another paragraph.
-#     """
-# 
-#     parser: DocumentParser = runner(source, environment)
-# 
-#     compare_asdict_list(
-#         parser.nodes,
-#         [
-#             Node(
-#                 data=ParagraphNodeData(
-#                     content=[
-#                         Node(
-#                             data=ParagraphLineNodeData(
-#                                 content=[
-#                                     Node(
-#                                         data=TextNodeData("This is another paragraph."),
-#                                         info=NodeInfo(
-#                                             context=generate_context(4, 0, 4, 26)
-#                                         ),
-#                                     )
-#                                 ]
-#                             ),
-#                             info=NodeInfo(context=generate_context(4, 0, 4, 26)),
-#                         )
-#                     ]
-#                 ),
-#                 info=NodeInfo(context=generate_context(4, 0, 4, 26)),
-#             ),
-#         ],
-#     )
-# 
-#     assert parser.control_buffer.pop() is None
-# 
-# 
-# def test_paragraph_control():
-#     source = """
-#     :answer:44
-# 
-#     @if answer==42
-#     [arg1, arg2]
-#     . Some title
-#     This paragraph won't be rendered
-#     """
-# 
-#     parser = runner(source)
-# 
-#     compare_asdict_list(parser.nodes, [])
-# 
-#     assert parser.arguments_buffer.arguments is None
-#     assert parser.label_buffer.labels == {}
-#     assert parser.control_buffer.control is None
+from mau.environment.environment import Environment
+from mau.lexers.document_lexer import DocumentLexer
+from mau.nodes.inline import StyleNode, TextNode
+from mau.nodes.macros import MacroLinkNode
+from mau.nodes.node import Node, NodeInfo
+from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
+from mau.parsers.document_parser import DocumentParser
+from mau.test_helpers import (
+    compare_asdict_list,
+    generate_context,
+    init_parser_factory,
+    parser_runner_factory,
+)
+
+init_parser = init_parser_factory(DocumentLexer, DocumentParser)
+
+runner = parser_runner_factory(DocumentLexer, DocumentParser)
+
+
+def test_paragraph():
+    source = """
+    This is a paragraph.
+    This is part of the same paragraph.
+
+    This is another paragraph.
+    """
+
+    parser = runner(source)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is a paragraph.",
+                                info=NodeInfo(context=generate_context(1, 0, 1, 20)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(1, 0, 1, 20)),
+                    ),
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is part of the same paragraph.",
+                                info=NodeInfo(context=generate_context(2, 0, 2, 35)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(2, 0, 2, 35)),
+                    ),
+                ],
+                info=NodeInfo(context=generate_context(1, 0, 2, 35)),
+            ),
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is another paragraph.",
+                                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+            ),
+        ],
+    )
+
+
+def test_paragraph_with_style():
+    source = """
+    This is a *paragraph*.
+    This is part of the same paragraph.
+
+    This is another paragraph.
+    """
+
+    parser = runner(source)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is a ",
+                                info=NodeInfo(context=generate_context(1, 0, 1, 10)),
+                            ),
+                            StyleNode(
+                                "star",
+                                content=[
+                                    TextNode(
+                                        "paragraph",
+                                        info=NodeInfo(
+                                            context=generate_context(1, 11, 1, 20)
+                                        ),
+                                    )
+                                ],
+                                info=NodeInfo(context=generate_context(1, 10, 1, 21)),
+                            ),
+                            TextNode(
+                                ".",
+                                info=NodeInfo(context=generate_context(1, 21, 1, 22)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(1, 0, 1, 22)),
+                    ),
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is part of the same paragraph.",
+                                info=NodeInfo(context=generate_context(2, 0, 2, 35)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(2, 0, 2, 35)),
+                    ),
+                ],
+                info=NodeInfo(context=generate_context(1, 0, 2, 35)),
+            ),
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is another paragraph.",
+                                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                            )
+                        ],
+                        info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+            ),
+        ],
+    )
+
+
+def test_paragraph_with_style_on_multiple_lines():
+    source = """
+    This is a *paragraph
+    with style*. This is part of the same paragraph.
+
+    This is another paragraph.
+    """
+
+    parser = runner(source)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is a *paragraph",
+                                info=NodeInfo(context=generate_context(1, 0, 1, 20)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(1, 0, 1, 20)),
+                    ),
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "with style*. This is part of the same paragraph.",
+                                info=NodeInfo(context=generate_context(2, 0, 2, 48)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(2, 0, 2, 48)),
+                    ),
+                ],
+                info=NodeInfo(context=generate_context(1, 0, 2, 48)),
+            ),
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is another paragraph.",
+                                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+            ),
+        ],
+    )
+
+
+def test_paragraph_starting_with_a_macro():
+    source = """
+    [link](http://some.where,This) is the link I want
+    """
+
+    parser = runner(source)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            MacroLinkNode(
+                                "http://some.where",
+                                content=[
+                                    TextNode(
+                                        "This",
+                                        info=NodeInfo(
+                                            context=generate_context(1, 25, 1, 29)
+                                        ),
+                                    ),
+                                ],
+                                info=NodeInfo(context=generate_context(1, 0, 1, 30)),
+                            ),
+                            TextNode(
+                                " is the link I want",
+                                info=NodeInfo(context=generate_context(1, 30, 1, 49)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(1, 0, 1, 49)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(1, 0, 1, 49)),
+            ),
+        ],
+    )
+
+
+def test_attributes_paragraph():
+    source = """
+    [arg1, #tag1, *subtype1, key1=value1]
+    This is text
+    """
+
+    parser = runner(source)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is text",
+                                info=NodeInfo(context=generate_context(2, 0, 2, 12)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(2, 0, 2, 12)),
+                    )
+                ],
+                info=NodeInfo(
+                    context=generate_context(2, 0, 2, 12),
+                    unnamed_args=["arg1"],
+                    named_args={"key1": "value1"},
+                    tags=["tag1"],
+                    subtype="subtype1",
+                ),
+            ),
+        ],
+    )
+
+
+def test_paragraph_label():
+    source = """
+    . A title
+    This is text
+    """
+
+    parser = runner(source)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is text",
+                                info=NodeInfo(context=generate_context(2, 0, 2, 12)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(2, 0, 2, 12)),
+                    )
+                ],
+                labels={
+                    "title": [
+                        TextNode(
+                            "A title",
+                            info=NodeInfo(context=generate_context(1, 2, 1, 9)),
+                        )
+                    ],
+                },
+                info=NodeInfo(
+                    context=generate_context(2, 0, 2, 12),
+                ),
+            ),
+        ],
+    )
+
+
+def test_paragraph_with_variable():
+    source = """
+    :variable:cat
+    This is a paragraph with a {variable}.
+    """
+
+    parser = runner(source)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is a paragraph with a cat.",
+                                info=NodeInfo(context=generate_context(2, 0, 2, 31)),
+                            )
+                        ],
+                        info=NodeInfo(context=generate_context(2, 0, 2, 38)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(2, 0, 2, 38)),
+            )
+        ],
+    )
+
+
+def test_paragraph_with_namespaced_variable():
+    environment = Environment.from_dict({"content": {"animal": "cat"}})
+    source = """
+    This is a paragraph with a {content.animal}.
+    """
+
+    parser = runner(source, environment)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is a paragraph with a cat.",
+                                info=NodeInfo(context=generate_context(1, 0, 1, 31)),
+                            )
+                        ],
+                        info=NodeInfo(context=generate_context(1, 0, 1, 44)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(1, 0, 1, 44)),
+            )
+        ],
+    )
+
+
+def test_paragraph_with_escaped_mau_syntax():
+    source = r"""
+    \:answer:42
+    """
+
+    parser = runner(source)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                ":answer:42",
+                                info=NodeInfo(context=generate_context(1, 0, 1, 11)),
+                            )
+                        ],
+                        info=NodeInfo(context=generate_context(1, 0, 1, 11)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(1, 0, 1, 11)),
+            )
+        ],
+    )
+
+
+def test_paragraph_with_escaped_variable():
+    environment = Environment.from_dict({"variable": "cat"})
+    source = r"""
+    This is a paragraph with a \{variable\}.
+    """
+
+    parser = runner(source, environment)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is a paragraph with a {variable}.",
+                                info=NodeInfo(context=generate_context(1, 0, 1, 38)),
+                            )
+                        ],
+                        info=NodeInfo(context=generate_context(1, 0, 1, 40)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(1, 0, 1, 40)),
+            )
+        ],
+    )
+
+
+def test_paragraph_with_variable_containing_syntax():
+    environment = Environment.from_dict({"important": "*IMPORTANT*"})
+    source = """
+    This is {important}
+    """
+
+    parser = runner(source, environment)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is ",
+                                info=NodeInfo(context=generate_context(1, 0, 1, 8)),
+                            ),
+                            StyleNode(
+                                "star",
+                                content=[
+                                    TextNode(
+                                        "IMPORTANT",
+                                        info=NodeInfo(
+                                            context=generate_context(1, 9, 1, 18)
+                                        ),
+                                    ),
+                                ],
+                                info=NodeInfo(context=generate_context(1, 8, 1, 19)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(1, 0, 1, 19)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(1, 0, 1, 19)),
+            )
+        ],
+    )
+
+
+def test_paragraph_with_nested_variables():
+    source = """
+    :answer:42
+    :sentence:The answer is {answer}
+
+    {sentence}
+    """
+
+    parser = runner(source)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "The answer is 42",
+                                info=NodeInfo(context=generate_context(4, 0, 4, 16)),
+                            )
+                        ],
+                        info=NodeInfo(context=generate_context(4, 0, 4, 10)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(4, 0, 4, 10)),
+            )
+        ],
+    )
+
+
+def test_paragraph_uses_control_positive():
+    environment = Environment.from_dict({"answer": "42"})
+
+    source = """
+    @if answer==42
+    This is a paragraph.
+
+    This is another paragraph.
+    """
+
+    parser = runner(source, environment)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is a paragraph.",
+                                info=NodeInfo(context=generate_context(2, 0, 2, 20)),
+                            )
+                        ],
+                        info=NodeInfo(context=generate_context(2, 0, 2, 20)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(2, 0, 2, 20)),
+            ),
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is another paragraph.",
+                                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                            )
+                        ],
+                        info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+            ),
+        ],
+    )
+
+    assert parser.control_buffer.pop() is None
+
+
+def test_paragraph_uses_control_negative():
+    environment = Environment.from_dict({"answer": "24"})
+
+    source = """
+    @if answer==42
+    This is a paragraph.
+
+    This is another paragraph.
+    """
+
+    parser: DocumentParser = runner(source, environment)
+
+    compare_asdict_list(
+        parser.nodes,
+        [
+            ParagraphNode(
+                content=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is another paragraph.",
+                                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                            )
+                        ],
+                        info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(4, 0, 4, 26)),
+            ),
+        ],
+    )
+
+    assert parser.control_buffer.pop() is None
+
+
+def test_paragraph_control():
+    source = """
+    :answer:44
+
+    @if answer==42
+    [arg1, arg2]
+    . Some title
+    This paragraph won't be rendered
+    """
+
+    parser = runner(source)
+
+    compare_asdict_list(parser.nodes, [])
+
+    assert parser.arguments_buffer.arguments is None
+    assert parser.label_buffer.labels == {}
+    assert parser.control_buffer.control is None

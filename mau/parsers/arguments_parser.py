@@ -90,16 +90,16 @@ class ArgumentsParser(BaseParser):
         self._named_arguments_on = False
 
         # This is the list of unnamed argument nodes.
-        self.unnamed_argument_nodes: list[Node[ValueNode]] = []
+        self.unnamed_argument_nodes: list[ValueNode] = []
 
         # This is the list of named argument nodes.
-        self.named_argument_nodes: dict[str, Node[ValueNode]] = {}
+        self.named_argument_nodes: dict[str, ValueNode] = {}
 
         # This is the list of tag nodes.
-        self.tag_nodes: list[Node[ValueNode]] = []
+        self.tag_nodes: list[ValueNode] = []
 
         # This is the subtype node.
-        self.subtype: Node[ValueNode] | None = None
+        self.subtype: ValueNode | None = None
 
     def _process_functions(self):
         return [

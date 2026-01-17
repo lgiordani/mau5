@@ -1,0 +1,93 @@
+import pytest
+
+from mau.nodes.block import BlockNode
+from mau.nodes.commands import BlockGroupNode
+from mau.nodes.node import Node, NodeInfo
+from mau.parsers.base_parser import MauParserException
+from mau.parsers.managers.block_group_manager import (
+    BlockGroupManager,
+)
+from mau.test_helpers import (
+    compare_asdict_list,
+    compare_asdict_object,
+    generate_context,
+)
+
+
+def test_block_group_manager():
+    bgm = BlockGroupManager()
+
+    block_node1 = BlockNode()
+    block_node2 = BlockNode()
+    block_node3 = BlockNode()
+
+    bgm.add_block("group1", "position1", block_node1)
+    bgm.add_block("group1", "position2", block_node2)
+    bgm.add_block("group2", "position1", block_node3)
+
+    assert bgm.blocks == {
+        "group1": {
+            "position1": block_node1,
+            "position2": block_node2,
+        },
+        "group2": {
+            "position1": block_node3,
+        },
+    }
+
+
+def test_block_group_manager_same_position():
+    bgm = BlockGroupManager()
+
+    block_node1 = BlockNode()
+    block_node2 = BlockNode()
+
+    bgm.add_block("group1", "position1", block_node1)
+
+    with pytest.raises(ValueError):
+        bgm.add_block("group1", "position1", block_node2)
+
+
+def test_block_group_manager_add_group_node():
+    bgm = BlockGroupManager()
+
+    group_node = BlockGroupNode("somename")
+
+    bgm.add_group(group_node)
+
+    assert bgm.groups == [group_node]
+
+
+def test_block_group_manager_process():
+    bgm = BlockGroupManager()
+
+    block_node1 = BlockNode()
+    block_node2 = BlockNode()
+    block_node3 = BlockNode()
+
+    bgm.add_block("group1", "position1", block_node1)
+    bgm.add_block("group1", "position2", block_node2)
+    bgm.add_block("group2", "position1", block_node3)
+
+    group_node = BlockGroupNode("group1")
+
+    bgm.add_group(group_node)
+
+    expected_node = BlockGroupNode(
+        "group1", blocks={"position1": block_node1, "position2": block_node2}
+    )
+
+    bgm.process()
+
+    compare_asdict_object(group_node, expected_node)
+
+
+def test_block_group_manager_process_group_does_not_exist():
+    bgm = BlockGroupManager()
+
+    group_node = BlockGroupNode("group1")
+
+    bgm.add_group(group_node)
+
+    with pytest.raises(ValueError):
+        bgm.process()

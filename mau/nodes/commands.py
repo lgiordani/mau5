@@ -115,7 +115,7 @@ class BlockGroupNode(Node, NodeLabelsMixin):
     def __init__(
         self,
         name: str,
-        blocks: dict[str, Node[BlockNode]] | None = None,
+        blocks: dict[str, BlockNode] | None = None,
         labels: dict[str, list[Node]] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,

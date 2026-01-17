@@ -676,14 +676,14 @@ class TextParser(BaseParser):
             ) from exc
 
         # Get the remaining parameters
-        alt_text = parser.named_argument_nodes.get("alt_text")
-        width = parser.named_argument_nodes.get("width")
-        height = parser.named_argument_nodes.get("height")
+        alt_text_node = parser.named_argument_nodes.get("alt_text")
+        width_node = parser.named_argument_nodes.get("width")
+        height_node = parser.named_argument_nodes.get("height")
 
         # Extract the value if the parameter is not None.
-        alt_text = alt_text.value if alt_text else None
-        width = width.value if width else None
-        height = height.value if height else None
+        alt_text = alt_text_node.value if alt_text_node else None
+        width = width_node.value if width_node else None
+        height = height_node.value if height_node else None
 
         node = MacroImageNode(
             uri=uri.value,
