@@ -8,11 +8,7 @@ if TYPE_CHECKING:
 from enum import Enum
 
 from mau.environment.environment import Environment
-from mau.nodes.block import BlockNode
-
-# , BlockSectionNode
-# from mau.nodes.commands import FootnotesItemNode
-from mau.nodes.inline import RawNode
+from mau.nodes.block import BlockNode, RawContentLineNode, RawContentNode
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.source import (
     SourceLineNode,
@@ -89,7 +85,7 @@ def parse_raw_engine(
     parser: DocumentParser,
     content: Token,
     arguments: Arguments,
-) -> list[RawNode]:
+) -> RawContentNode:
     # Engine "raw" doesn't process the content,
     # so we just pass it untouched in the form of
     # a RawNode per line.
@@ -98,7 +94,7 @@ def parse_raw_engine(
     content_lines = content.value.split("\n")
 
     # A list of raw content lines.
-    raw_content: list[RawNode] = []
+    raw_lines: list[RawContentLineNode] = []
 
     for number, line_content in enumerate(content_lines, start=1):
         line_context = content.context.clone()
@@ -106,14 +102,19 @@ def parse_raw_engine(
         line_context.end_line = line_context.start_line
         line_context.end_column = line_context.start_column + len(line_content)
 
-        raw_content.append(
-            RawNode(
+        raw_lines.append(
+            RawContentLineNode(
                 line_content,
                 info=NodeInfo(context=line_context),
             )
         )
 
-    return raw_content
+    return [
+        RawContentNode(
+            raw_lines,
+            info=NodeInfo(context=content.context),
+        )
+    ]
 
 
 def parse_source_engine(
@@ -349,6 +350,7 @@ def block_processor(parser: DocumentParser):
             node.content = parse_default_engine(parser, content, arguments)
 
         case EngineType.RAW:  # Real engine: decides how the content is processed
+            node.type = "raw"
             node.content = parse_raw_engine(parser, content, arguments)
 
         case EngineType.SOURCE:  # Real engine: decides how the content is processed

@@ -20,8 +20,17 @@ class TemplateNotFound(ValueError):
 
 
 class MissingTemplateException(MauVisitorException):
-    def __init__(self, message: str, templates: list[str], node: Node, data: dict):
-        super().__init__(message, templates=templates, node=node, data=data)
+    def __init__(
+        self,
+        node: Node,
+        data: dict,
+        environment: Environment,
+        templates: list[str],
+    ):
+        message = "Cannot find a suitable template."
+        additional_info = f"Accepted teplates: {templates}"
+
+        super().__init__(message, node, data, environment, additional_info)
 
 
 def _create_templates(
@@ -316,6 +325,8 @@ class JinjaVisitor(BaseVisitor):
 
     join_with = {
         "document": "\n",
+        "raw-content": "\n",
+        "source": "\n",
         "paragraph": " ",
     }
     join_with_default = ""
@@ -368,7 +379,9 @@ class JinjaVisitor(BaseVisitor):
             **self.jinja_environment_options,
         )
 
-    def _render(self, template_full_name, **kwargs) -> str:
+    def _render(
+        self, node: Node, environment: Environment, template_full_name, **kwargs
+    ) -> str:
         # This renders a template using the current
         # environment and the given parameters
         try:
@@ -376,7 +389,21 @@ class JinjaVisitor(BaseVisitor):
         except jinja2.exceptions.TemplateNotFound as exception:
             raise TemplateNotFound(exception) from exception
 
-        return template.render(config=self.environment.asdict(), **kwargs)
+        try:
+            rendered_template = template.render(
+                config=self.environment.asdict(), **kwargs
+            )
+        except jinja2.exceptions.UndefinedError as exception:
+            raise MauVisitorException(
+                message=f"Error rendering node with template {template_full_name}: {str(exception)}",
+                node=node,
+                data=kwargs,
+                environment=environment,
+            ) from exception
+
+        # print(f"NODE {node} RENDERED TO #{rendered_template}#")
+
+        return rendered_template
 
     def visit(self, node, *args, **kwargs):
         # The visitor has to define functions for each node type
@@ -401,6 +428,9 @@ class JinjaVisitor(BaseVisitor):
         # Visit the node.
         result = super().visit(node, *args, **kwargs)
 
+        if not result:
+            return
+
         # Create the template names for the
         # current node.
         templates = _create_templates(
@@ -412,7 +442,7 @@ class JinjaVisitor(BaseVisitor):
             self.template_prefixes,
         )
 
-        # print(f"#### Node {node.asdict()}")
+        # print(f"#### Node {node}")
         # print(f"#### Result {result}")
         # print(f"#### Templates: {templates}")
 
@@ -422,13 +452,16 @@ class JinjaVisitor(BaseVisitor):
         for template in templates:
             try:
                 # print(f"RENDERING {template} WITH {result}")
-                return self._render(template, **result)
+                return self._render(node, self.environment, template, **result)
             except TemplateNotFound:
                 continue
 
         # No templates were found, stop with an error.
         raise MissingTemplateException(
-            "Cannot find templates for this node", templates, node, result
+            node=node,
+            data=result,
+            environment=self.environment,
+            templates=templates,
         )
 
     def visitlist(

@@ -8,8 +8,13 @@ __version__ = metadata.version("mau")
 from mau.environment.environment import Environment
 from mau.lexers.base_lexer import BaseLexer
 from mau.lexers.document_lexer import DocumentLexer
+from mau.parsers.base_parser import BaseParser
+from mau.parsers.document_parser import DocumentParser
 from mau.text_buffer import TextBuffer
 from mau.token import Token
+from mau.visitors.base_visitor import BaseVisitor
+from mau.visitors.jinja_visitor import JinjaVisitor
+from mau.visitors.html_visitor import HtmlVisitor
 
 BASE_NAMESPACE = "mau"
 
@@ -19,6 +24,32 @@ DEFAULT_ENVIRONMENT_VARIABLES_NAMESPACE = "envvars"
 
 class ConfigurationError(ValueError):
     """Used to signal an error in the configuration"""
+
+
+def load_visitors():
+    """
+    This function loads all the visitors belonging to
+    the group "mau.visitors". This code has been isolated
+    in a function to allow visitor modules to import the
+    Mau package without creating a cycle.
+    """
+
+    import sys
+
+    if sys.version_info < (3, 10):
+        from importlib_metadata import entry_points
+    else:
+        from importlib.metadata import entry_points
+
+    discovered_plugins = entry_points(group="mau.visitors")
+
+    # Load the available visitors
+    visitors = [i.load() for i in discovered_plugins]
+    visitors.append(BaseVisitor)
+    visitors.append(JinjaVisitor)
+    visitors.append(HtmlVisitor)
+
+    return visitors
 
 
 def load_environment_files(
@@ -121,15 +152,34 @@ class Mau:  # pragma: no cover
         # The text buffer that manages the input file.
         return TextBuffer(text, source_filename=source_filename)
 
-    def run_lexer(self, text_buffer: TextBuffer) -> BaseLexer:
+    def run_lexer(self, text_buffer: TextBuffer) -> DocumentLexer:
         lexer = DocumentLexer(text_buffer, self.environment)
         lexer.process()
 
         return lexer
+
+    def run_parser(self, tokens: list[Token]) -> DocumentParser:
+        parser = DocumentParser(tokens, self.environment)
+        parser.parse()
+        parser.finalise()
+
+        return parser
+
+    def init_visitor(self, visitor_class) -> BaseVisitor:
+        return visitor_class(
+            environment=self.environment,
+        )
+
+    def run_visitor(self, visitor, node) -> dict:
+        # Visit the given node and all its children.
+        return visitor.visit(node)
 
     def process(self, text: str, source_filename: str):
         # The text buffer that manages the input file.
         text_buffer = self.init_text_buffer(text, source_filename)
 
         # Run the lexer on the text buffer.
-        self.run_lexer(text_buffer)
+        lexer = self.run_lexer(text_buffer)
+
+        # Parse the lexer tokens.
+        parser = self.run_parser(lexer.tokens)

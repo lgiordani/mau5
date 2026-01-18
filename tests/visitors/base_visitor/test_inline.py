@@ -1,5 +1,4 @@
 from mau.nodes.inline import (
-    RawNode,
     StyleNode,
     TextNode,
     VerbatimNode,
@@ -26,18 +25,6 @@ def test_text_node():
 
     expected = {
         "_type": "text",
-        "value": "somevalue",
-        "_info": NodeInfo.empty().asdict(),
-    }
-
-    check_visit_node(node, expected)
-
-
-def test_raw_node():
-    node = RawNode("somevalue")
-
-    expected = {
-        "_type": "raw",
         "value": "somevalue",
         "_info": NodeInfo.empty().asdict(),
     }

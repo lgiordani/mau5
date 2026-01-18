@@ -1,7 +1,7 @@
 from collections.abc import Sequence, Mapping
 from mau.nodes.footnotes import FootnoteNode
 from mau.nodes.headers import HeaderNode
-from mau.nodes.node import Node, NodeContentMixin, NodeInfo
+from mau.nodes.node import Node, NodeContentMixin, NodeInfo, ValueNode
 
 MACRO_HELP = """
 Syntax:
@@ -178,3 +178,15 @@ class MacroFootnoteNode(Node):
         super().__init__(parent=parent, info=info)
 
         self.footnote = footnote
+
+
+class MacroUnicodeNode(ValueNode):
+    """This node contains a unicode code point."""
+
+    type = "macro.unicode"
+
+
+class MacroRawNode(ValueNode):
+    """This node contains a unicode code point."""
+
+    type = "macro.raw"

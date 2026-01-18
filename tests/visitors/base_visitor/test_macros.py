@@ -6,6 +6,8 @@ from mau.nodes.macros import (
     MacroHeaderNode,
     MacroImageNode,
     MacroLinkNode,
+    MacroUnicodeNode,
+    MacroRawNode,
     MacroNode,
 )
 from mau.nodes.node import NodeInfo
@@ -179,6 +181,30 @@ def test_macro_footnote_node_parameters():
             "content": [],
             "_info": NodeInfo.empty().asdict(),
         },
+        "_info": NodeInfo.empty().asdict(),
+    }
+
+    check_visit_node(node, expected)
+
+
+def test_macro_unicode():
+    node = MacroUnicodeNode("1F30B")
+
+    expected = {
+        "_type": "macro.unicode",
+        "value": "1F30B",
+        "_info": NodeInfo.empty().asdict(),
+    }
+
+    check_visit_node(node, expected)
+
+
+def test_macro_raw():
+    node = MacroRawNode("somevalue")
+
+    expected = {
+        "_type": "macro.raw",
+        "value": "somevalue",
         "_info": NodeInfo.empty().asdict(),
     }
 

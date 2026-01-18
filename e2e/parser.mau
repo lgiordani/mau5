@@ -7,6 +7,52 @@ It also serves as a showcase of the main Mau features.
 This is a multiline comment. When processed, it doesn't generate any nodes.
 ////
 
+//- BASIC TEXT ------------------------------------
+
+// Paragraphs are blocks of text on a single line.
+Standard text on a single line.
+
+// Multiple adjacent lines are collapsed into a
+// single paragraph.
+This is still
+a single paragraph.
+
+// Paragraphs can contain 4 different text styles.
+// Surround text with `*`, `_`, `^`, or `~`.
+Text line with styles: *star*, _underscore_, ^caret^, ~tilde~.
+
+// Verbatim text is a special style that escapes Mau syntax.
+Text line with `verbatim` text. `*this is not styled text*`.
+
+// You can escape without giving the text a specific
+// style using `$` and `%`. You can always escape a single
+// special character with a backslash `\`.
+Text line with escapes: verbatim escapes dollar and percent `$%`, dollar escapes percent $%$, and percent escapes dollar %$%.
+
+Text line with escaped Mau syntax: $[not](a macro)$, \`not verbatim\`.
+
+// Text can contain macros. They come in the form
+// [macro_name](macro_arguments).
+// Mau contains the predefined macros `link`, `class`, `header`,
+// `mailto`, `image`, `footnote`, and `@control`.
+A link without text: [link](www.wikipedia.org)
+
+A link with text: [link](www.wikipedia.org, "the free encyclopedia")
+
+Text with classes: [class]("piece of text", class1, class2).
+
+// Text can contain special characters
+HTML Characters like < and >, e.g. <p> are accepted.
+
+// Unicode characters can be added directly
+Volcano: 🌋 (direct)
+
+// Unicode characters can also be added with the
+// macro `unicode`
+Volcano: [unicode](1F30B) (macro)
+
+//- VARIABLES -------------------------------------
+
 // Variables can be declared with `:NAME:VALUE`.
 // Variable names can contain letters, numbers,
 // and the symbols `_+-`, but cannot start with
@@ -42,43 +88,6 @@ Value of `namespace.var`: {namespace.var}
 // between the next two lines.
 :+somevar:
 :somevar:true
-
-
-
-//- VARIABLES -------------------------------------
-
-// Paragraphs are blocks of text on a single line.
-Standard text on a single line.
-
-// Multiple adjacent lines are collapsed into a
-// single paragraph.
-This is still
-a single paragraph.
-
-// Paragraphs can contain 4 different text styles.
-// Surround text with `*`, `_`, `^`, or `~`.
-Text line with styles: *star*, _underscore_, ^caret^, ~tilde~.
-
-// Verbatim text is a special style that escapes Mau syntax.
-Text line with `verbatim` text. `*this is not styled text*`.
-
-// You can escape without giving the text a specific
-// style using `$` and `%`. You can always escape a single
-// special character with a backslash `\`.
-Text line with escapes: verbatim escapes dollar and percent `$%`, dollar escapes percent $%$, and percent escapes dollar %$%.
-
-Text line with escaped Mau syntax: $[not](a macro)$, \`not verbatim\`.
-
-// Text can contain macros. They come in the form
-// [macro_name](macro_arguments).
-// Mau contains the predefined macros `link`, `class`, `header`,
-// `mailto`, `image`, `footnote`, and `@control`.
-A link without text: [link](www.wikipedia.org)
-
-A link with text: [link](www.wikipedia.org, "the free encyclopedia")
-
-Text with classes: [class]("piece of text", class1, class2).
-
 
 
 //- ARGUMENTS -------------------------------------
@@ -146,6 +155,11 @@ This paragraph will be rendered.
 // `==` and `!=`.
 :answer:42
 @if answer!=42
+This paragraph will not be rendered.
+
+// The operator can be surrounded by spaces
+:answer:42
+@if answer != 42
 This paragraph will not be rendered.
 
 // Control stops the resource from being rendered,
@@ -251,6 +265,13 @@ This paragraph will not receive the title.
 * Unordered list item 2
 ** Unordered list item 2.1
 *** Unordered list item 2.1.1
+
+// Spaces before the prefix are ignored.
+* Unordered list item 1
+  ** Unordered list item 1.1
+* Unordered list item 2
+  ** Unordered list item 2.1
+     *** Unordered list item 2.1.1
 
 // Both unordered and ordered lists can be nested.
 # Ordered list item 1
@@ -415,65 +436,6 @@ This block behaves normally.
 
 
 
-//- BLOCKS: SECTIONS ------------------------------
-
-// The engine `default` supports sections that assign
-// different parts of the block content to a different
-// label. Sections must be enabled with
-// `enable_sections=true`. Each section is identified
-// by a line in the form `++ SECTION NAME`.
-// The section name can be made of multiple words.
-[enable_sections=true]
-----
-++ Section 1
-Some text in section 1.
-
-++ Section 2
-Some other text in section 2.
-
-++ Details
-A third section.
-----
-
-////
-// Section names are not processed, so they are
-// case sensitive and spaces are not stripped.
-[enable_sections=true]
-----
-++ Section 1
-Some text in section 1.
-
-++ Section1
-This is a different section.
-
-++ section 1
-Even this is a different section.
-----
-
-// If sections are enabled, the first line
-// of the block content must be a section label.
-// If sections are not enabled, the whole
-// content belongs to a section called `content`
-[enable_sections=false]
-----
-All this belongs
-to the section `content`.
-----
-
-// Sections are just a way to separate the
-// content of blocks. Each section can
-// contain Mau syntax.
-[enable_sections=true]
-----
-++ Section 1
-== Header section 1
-
-++ Section 2
-== Header section 2
-----
-
-
-
 //- BLOCKS: RAW -----------------------------------
 
 // The engine `raw` preserves the content of
@@ -484,17 +446,9 @@ to the section `content`.
 // In case the closing delimiter must be added
 // to the block, the first character needs
 // to be escaped.
-[engine=raw]
+[*bubba, engine=raw]
 ----
-= Not a header
-
-// Not a comment and not a command
-::footnotes
-
-####
-Not a block
-####
-\----
+<p>An HTML paragraph</p>
 ----
 
 
@@ -561,9 +515,9 @@ def sum(a, b):
 ----
 answer: int = 42
 ----
-////
 
 ////
+
 //- BLOCKS: FOOTNOTES -----------------------------
 
 // Footnotes in Mau are created with a macro

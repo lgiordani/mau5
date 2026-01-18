@@ -1,6 +1,5 @@
 from mau.lexers.document_lexer import DocumentLexer
-from mau.nodes.block import BlockNode
-from mau.nodes.inline import RawNode
+from mau.nodes.block import BlockNode, RawContentNode, RawContentLineNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -33,13 +32,18 @@ def test_raw_engine():
                 classes=[],
                 engine="raw",
                 content=[
-                    RawNode(
-                        "Raw content",
-                        info=NodeInfo(context=generate_context(3, 0, 3, 11)),
-                    ),
-                    RawNode(
-                        "on multiple lines",
-                        info=NodeInfo(context=generate_context(4, 0, 4, 17)),
+                    RawContentNode(
+                        lines=[
+                            RawContentLineNode(
+                                "Raw content",
+                                info=NodeInfo(context=generate_context(3, 0, 3, 11)),
+                            ),
+                            RawContentLineNode(
+                                "on multiple lines",
+                                info=NodeInfo(context=generate_context(4, 0, 4, 17)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(3, 0, 4, 17)),
                     ),
                 ],
                 info=NodeInfo(context=generate_context(2, 0, 5, 4)),

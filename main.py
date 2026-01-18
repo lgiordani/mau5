@@ -1,189 +1,289 @@
-# import argparse
-# import logging
-# import sys
-# 
-# from rich.traceback import install
-# 
-# from mau import (
-#     Mau,
-#     __version__,
-#     load_environment_files,
-#     load_environment_variables,
-# )
-# from mau.environment.environment import Environment
-# from mau.formatter.raw_formatter import RawFormatter
-# from mau.lexers.base_lexer import MauLexerException
-# 
-# default_formatter = RawFormatter.type
-# available_formatters = {formatter.type: formatter for formatter in [RawFormatter]}
-# 
-# install(show_locals=True)
-# 
-# logger = logging.getLogger(__name__)
-# 
-# 
-# def parse_args():
-#     parser = argparse.ArgumentParser(
-#         formatter_class=argparse.ArgumentDefaultsHelpFormatter
-#     )
-# 
-#     parser.add_argument(
-#         "-i",
-#         "--input-file",
-#         action="store",
-#         required=True,
-#         help="Input file",
-#     )
-# 
-#     parser.add_argument(
-#         "--verbose",
-#         dest="loglevel",
-#         help="set loglevel to INFO",
-#         action="store_const",
-#         const=logging.INFO,
-#     )
-# 
-#     parser.add_argument(
-#         "--debug",
-#         dest="loglevel",
-#         help="set loglevel to DEBUG",
-#         action="store_const",
-#         const=logging.DEBUG,
-#     )
-# 
-#     parser.add_argument(
-#         "-e",
-#         "--environment-file",
-#         action="append",
-#         required=False,
-#         help=(
-#             "Optional text/YAML file in the form key=path (can be specified "
-#             "multiple times). The key can be dotted to add namespaces."
-#         ),
-#     )
-# 
-#     parser.add_argument(
-#         "--environment-files-namespace",
-#         action="store",
-#         default="envfiles",
-#         required=False,
-#         help="Optional namespace for environment files (default: envfiles)",
-#     )
-# 
-#     parser.add_argument(
-#         "-v",
-#         "--environment-variable",
-#         action="append",
-#         required=False,
-#         help=(
-#             "Optional environment variable in the form key=value (can be specified "
-#             "multiple times). The key can be dotted to add namespaces."
-#         ),
-#     )
-# 
-#     parser.add_argument(
-#         "--environment-variables-namespace",
-#         action="store",
-#         default="envvars",
-#         required=False,
-#         help="Optional namespace for environment variables (default: envvars)",
-#     )
-# 
-#     parser.add_argument(
-#         "--formatter",
-#         action="store",
-#         choices=available_formatters.keys(),
-#         default=default_formatter,
-#         help="Formatter object to use",
-#     )
-# 
-#     parser.add_argument(
-#         "--lexer-only",
-#         dest="lexer_only",
-#         help="stop after lexing",
-#         action="store_true",
-#     )
-# 
-#     parser.add_argument(
-#         "--parser-only",
-#         dest="parser_only",
-#         help="stop after parsing",
-#         action="store_true",
-#     )
-# 
-#     parser.add_argument(
-#         "--version", action="version", version=f"Mau version {__version__}"
-#     )
-# 
-#     return parser.parse_args()
-# 
-# 
-# def setup_logging(loglevel):
-#     logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
-#     logging.basicConfig(
-#         level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
-#     )
-# 
-# 
-# def main():
-#     # Get arguments and logging set up.
-#     args = parse_args()
-#     setup_logging(args.loglevel)
-# 
-#     # Initialise the formatter.
-#     formatter = available_formatters[args.formatter]
-# 
-#     # Read the input file
-#     with open(args.input_file, "r", encoding="utf-8") as input_file:
-#         text = input_file.read()
-# 
-#     # Start with a clean environment.
-#     environment = Environment()
-# 
-#     # The list of environment files passed on the command line.
-#     environment_files = args.environment_file or []
-# 
-#     # Load the files inside the environment.
-#     load_environment_files(
-#         environment,
-#         environment_files,
-#         namespace=args.environment_files_namespace,
-#     )
-# 
-#     # The list of environment variables passed on the command line.
-#     environment_variables = args.environment_variable or []
-# 
-#     # Load the variables inside the environment.
-#     load_environment_variables(
-#         environment,
-#         environment_variables,
-#         namespace=args.environment_variables_namespace,
-#     )
-# 
-#     # The Mau object configured with what we figured out above.
-#     mau = Mau()
-# 
-#     # Initialise the Text Buffer.
-#     text_buffer = mau.init_text_buffer(text, args.input_file)
-# 
-#     # Run the lexer on the input data.
-#     logger.info("* Lexing %s", args.input_file)
-# 
-#     # Run the lexer.
-#     try:
-#         lexer = mau.run_lexer(text_buffer)
-#     except MauLexerException as exc:
-#         formatter.print_lexer_exception(exc)
-#         sys.exit(1)
-# 
-#     # The user wants us to run the lexer
-#     # only, so we print the resulting tokens
-#     # and quit.
-#     if args.lexer_only:
-#         # Print the tokens collected by the lexer.
-#         formatter.print_tokens(lexer.tokens)
-#         sys.exit(0)
-# 
-# 
-# if __name__ == "__main__":
-#     main()
+import argparse
+import logging
+import sys
+
+from rich.traceback import install
+
+from mau import (
+    Mau,
+    __version__,
+    load_environment_files,
+    load_environment_variables,
+    load_visitors,
+)
+from mau.environment.environment import Environment
+from mau.formatter.raw_formatter import RawFormatter
+from mau.lexers.base_lexer import MauLexerException
+from mau.parsers.base_parser import MauParserException
+from mau.visitors.base_visitor import MauVisitorException
+
+default_formatter = RawFormatter.type
+available_formatters = {formatter.type: formatter for formatter in [RawFormatter]}
+
+install(show_locals=True)
+
+logger = logging.getLogger(__name__)
+
+visitor_classes = load_visitors()
+visitors = {i.format_code: i for i in visitor_classes}
+
+
+def write_output(output, output_file, transform=None):
+    if transform:
+        output = transform(output)
+
+    # The output file can be "-" which means
+    # the standard output
+    if output_file == "-":
+        print(output)
+
+        return
+
+    # We need to write on an actual file
+    with open(output_file, "w", encoding="utf-8") as out:
+        out.write(output)
+        out.write("\n")
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+
+    parser.add_argument(
+        "-i",
+        "--input-file",
+        action="store",
+        required=True,
+        help="Input file",
+    )
+
+    parser.add_argument(
+        "-o",
+        "--output-file",
+        action="store",
+        required=False,
+        help="Optional output file ('-' for standard output)",
+    )
+
+    parser.add_argument(
+        "--verbose",
+        dest="loglevel",
+        help="set loglevel to INFO",
+        action="store_const",
+        const=logging.INFO,
+    )
+
+    parser.add_argument(
+        "--debug",
+        dest="loglevel",
+        help="set loglevel to DEBUG",
+        action="store_const",
+        const=logging.DEBUG,
+    )
+
+    parser.add_argument(
+        "-e",
+        "--environment-file",
+        action="append",
+        required=False,
+        help=(
+            "Optional text/YAML file in the form key=path (can be specified "
+            "multiple times). The key can be dotted to add namespaces."
+        ),
+    )
+
+    parser.add_argument(
+        "--environment-files-namespace",
+        action="store",
+        default="envfiles",
+        required=False,
+        help="Optional namespace for environment files (default: envfiles)",
+    )
+
+    parser.add_argument(
+        "-v",
+        "--environment-variable",
+        action="append",
+        required=False,
+        help=(
+            "Optional environment variable in the form key=value (can be specified "
+            "multiple times). The key can be dotted to add namespaces."
+        ),
+    )
+
+    parser.add_argument(
+        "--environment-variables-namespace",
+        action="store",
+        default="envvars",
+        required=False,
+        help="Optional namespace for environment variables (default: envvars)",
+    )
+
+    parser.add_argument(
+        "-f",
+        "--output-format",
+        action="store",
+        dest="visitor_output_format",
+        default=list(visitors.keys())[0],
+        choices=visitors.keys(),
+        help="Output format",
+    )
+
+    parser.add_argument(
+        "--formatter",
+        action="store",
+        choices=available_formatters.keys(),
+        default=default_formatter,
+        help="Formatter object to use",
+    )
+
+    parser.add_argument(
+        "--lexer-print-output",
+        dest="lexer_print_output",
+        help="print the output of the lexer",
+        action="store_true",
+    )
+
+    parser.add_argument(
+        "--lexer-only",
+        dest="lexer_only",
+        help="stop after lexing",
+        action="store_true",
+    )
+
+    parser.add_argument(
+        "--parser-print-output",
+        dest="parser_print_output",
+        help="print the output of the parser",
+        action="store_true",
+    )
+
+    parser.add_argument(
+        "--parser-only",
+        dest="parser_only",
+        help="stop after parsing",
+        action="store_true",
+    )
+
+    parser.add_argument(
+        "--version", action="version", version=f"Mau version {__version__}"
+    )
+
+    return parser.parse_args()
+
+
+def setup_logging(loglevel):
+    logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
+    logging.basicConfig(
+        level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
+    )
+
+
+def main():
+    # Get arguments and logging set up.
+    args = parse_args()
+    setup_logging(args.loglevel)
+
+    # Initialise the formatter.
+    formatter = available_formatters[args.formatter]
+
+    # Read the input file
+    with open(args.input_file, "r", encoding="utf-8") as input_file:
+        text = input_file.read()
+
+    # Start with a clean environment.
+    environment = Environment()
+
+    # The list of environment files passed on the command line.
+    environment_files = args.environment_file or []
+
+    # Load the files inside the environment.
+    load_environment_files(
+        environment,
+        environment_files,
+        namespace=args.environment_files_namespace,
+    )
+
+    # The list of environment variables passed on the command line.
+    environment_variables = args.environment_variable or []
+
+    # Load the variables inside the environment.
+    load_environment_variables(
+        environment,
+        environment_variables,
+        namespace=args.environment_variables_namespace,
+    )
+
+    # The Mau object configured with what we figured out above.
+    mau = Mau()
+
+    # Initialise the Text Buffer.
+    text_buffer = mau.init_text_buffer(text, args.input_file)
+
+    ###############################################
+    # LEXER
+    ###############################################
+
+    # Run the lexer.
+    try:
+        lexer = mau.run_lexer(text_buffer)
+    except MauLexerException as exc:
+        formatter.print_lexer_exception(exc)
+        sys.exit(1)
+
+    # The user wants us print the resulting tokens.
+    if args.lexer_print_output:
+        # Print the tokens collected by the lexer.
+        formatter.print_tokens(lexer.tokens)
+
+    # The user wants us to run the lexer only.
+    if args.lexer_only:
+        sys.exit(0)
+
+    ###############################################
+    # PARSER
+    ###############################################
+
+    # Run the parser.
+    try:
+        parser = mau.run_parser(lexer.tokens)
+    except MauParserException as exc:
+        formatter.print_parser_exception(exc)
+        sys.exit(1)
+
+    # The user wants us print the resulting nodes.
+    if args.parser_print_output:
+        # Print the nodes collected by the parser.
+        formatter.print_nodes(parser.nodes)
+
+    # The user wants us to run the parser only.
+    if args.parser_only:
+        sys.exit(0)
+
+    ###############################################
+    # VISITOR
+    ###############################################
+
+    # Run the visitor.
+    try:
+        visitor_class = visitors[args.visitor_output_format]
+        visitor = mau.init_visitor(visitor_class)
+
+        if document := parser.output.document:
+            rendered = mau.run_visitor(visitor, document)
+    except MauVisitorException as exc:
+        formatter.print_visitor_exception(exc)
+        sys.exit(1)
+
+    # Find out the name of the output file
+    output_file = args.output_file or args.input_file.replace(
+        ".mau", f".{visitor_class.extension}"
+    )
+
+    # TODO check transform`
+    write_output(rendered, output_file, transform=None)
+
+
+if __name__ == "__main__":
+    main()

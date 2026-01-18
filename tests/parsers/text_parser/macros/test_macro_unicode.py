@@ -1,0 +1,42 @@
+import pytest
+
+from mau.lexers.text_lexer import TextLexer
+from mau.nodes.inline import TextNode
+from mau.nodes.macros import MacroUnicodeNode
+from mau.nodes.node import NodeInfo
+from mau.parsers.base_parser import MauParserException
+from mau.parsers.text_parser import TextParser
+from mau.test_helpers import (
+    compare_nodes_sequence,
+    generate_context,
+    init_parser_factory,
+    parser_runner_factory,
+)
+
+init_parser = init_parser_factory(TextLexer, TextParser)
+
+runner = parser_runner_factory(TextLexer, TextParser)
+
+
+def test_macro_unicode():
+    source = "[unicode](1F30B)"
+
+    expected = [
+        MacroUnicodeNode(
+            "1F30B",
+            info=NodeInfo(context=generate_context(0, 0, 0, 16)),
+        )
+    ]
+
+    parser = runner(source)
+
+    compare_nodes_sequence(parser.nodes, expected)
+
+
+def test_macro_unicode_without_value():
+    source = "[unicode]()"
+
+    with pytest.raises(MauParserException) as exc:
+        runner(source)
+
+    assert exc.value.context == generate_context(0, 0, 0, 11)

@@ -4,9 +4,19 @@ from mau.nodes.node import Node
 
 
 class MauVisitorException(ValueError):
-    def __init__(self, message: str, **kwargs):
-        super().__init__(message)
-        self.kwargs = kwargs
+    def __init__(
+        self,
+        message: str,
+        node: Node | None = None,
+        data: dict | None = None,
+        environment: Environment | None = None,
+        additional_info: str | None = None,
+    ):
+        self.message = message
+        self.node = node
+        self.data = data
+        self.environment = environment
+        self.additional_info = additional_info
 
 
 class BaseVisitor:
@@ -99,9 +109,6 @@ class BaseVisitor:
     def _visit_verbatim(self, node: Node, *args, **kwargs) -> dict:
         return self._visit_value(node, *args, **kwargs)
 
-    def _visit_raw(self, node: Node, *args, **kwargs) -> dict:
-        return self._visit_value(node, *args, **kwargs)
-
     def _visit_word(self, node: Node, *args, **kwargs) -> dict:
         return self._visit_value(node, *args, **kwargs)
 
@@ -170,6 +177,28 @@ class BaseVisitor:
         )
 
         self._add_visit_content(result, node, *args, **kwargs)
+
+        return result
+
+    def _visit_macro__unicode(self, node: Node, *args, **kwargs) -> dict:
+        result = self._visit_default(node, *args, **kwargs)
+
+        result.update(
+            {
+                "value": node.value,
+            }
+        )
+
+        return result
+
+    def _visit_macro__raw(self, node: Node, *args, **kwargs) -> dict:
+        result = self._visit_default(node, *args, **kwargs)
+
+        result.update(
+            {
+                "value": node.value,
+            }
+        )
 
         return result
 
@@ -420,5 +449,33 @@ class BaseVisitor:
 
         self._add_visit_content(result, node, *args, **kwargs)
         self._add_visit_labels(result, node, *args, **kwargs)
+
+        return result
+
+    def _visit_raw(self, node: Node, *args, **kwargs) -> dict:
+        result = self._visit_default(node, *args, **kwargs)
+
+        self._add_visit_content(result, node, *args, **kwargs)
+        self._add_visit_labels(result, node, *args, **kwargs)
+
+        return result
+
+    def _visit_raw_content_line(self, node: Node, *args, **kwargs) -> dict:
+        result = self._visit_default(node, *args, **kwargs)
+        result.update(
+            {
+                "value": node.value,
+            }
+        )
+
+        return result
+
+    def _visit_raw_content(self, node: Node, *args, **kwargs) -> dict:
+        result = self._visit_default(node, *args, **kwargs)
+        result.update(
+            {
+                "lines": self.visitlist(node, node.lines, *args, **kwargs),
+            }
+        )
 
         return result

@@ -18,6 +18,8 @@ from mau.nodes.macros import (
     MacroHeaderNode,
     MacroImageNode,
     MacroLinkNode,
+    MacroUnicodeNode,
+    MacroRawNode,
     MacroNode,
 )
 from mau.nodes.node import Node, NodeInfo
@@ -330,6 +332,12 @@ class TextParser(BaseParser):
 
         if macro_name == "class":
             return self._parse_macro_class(parser, context)
+
+        if macro_name == "unicode":
+            return self._parse_macro_unicode(parser, context)
+
+        if macro_name == "raw":
+            return self._parse_macro_raw(parser, context)
 
         # This is a generic macro, there is no
         # special code for it.
@@ -653,6 +661,52 @@ class TextParser(BaseParser):
         node = MacroClassNode(
             classes,
             content=parser.nodes,
+            parent=self.parent_node,
+            info=NodeInfo(context=context),
+        )
+
+        return [node]
+
+    def _parse_macro_unicode(
+        self, parser: ArgumentsParser, context: Context
+    ) -> list[Node]:
+        # Parse a unicode macro in the form [unicode](value).
+
+        # Assign names to arguments.
+        parser.set_names(["value"])
+
+        # Extract the value.
+        try:
+            value = parser.named_argument_nodes["value"]
+        except KeyError as exc:
+            raise MauParserException(
+                message="Syntax: [unicode](VALUE)", context=context
+            ) from exc
+
+        node = MacroUnicodeNode(
+            value.value,
+            parent=self.parent_node,
+            info=NodeInfo(context=context),
+        )
+
+        return [node]
+
+    def _parse_macro_raw(self, parser: ArgumentsParser, context: Context) -> list[Node]:
+        # Parse a raw macro in the form [raw](value).
+
+        # Assign names to arguments.
+        parser.set_names(["value"])
+
+        # Extract the value.
+        try:
+            value = parser.named_argument_nodes["value"]
+        except KeyError as exc:
+            raise MauParserException(
+                message="Syntax: [raw](VALUE)", context=context
+            ) from exc
+
+        node = MacroRawNode(
+            value.value,
             parent=self.parent_node,
             info=NodeInfo(context=context),
         )

@@ -19,15 +19,6 @@ class TextNode(ValueNode):
     type = "text"
 
 
-class RawNode(ValueNode):
-    """This contains plain text but the content
-    should be treated as raw data and left untouched.
-    E.g. it shouldn't be escaped.
-    """
-
-    type = "raw"
-
-
 class VerbatimNode(ValueNode):
     """This node contains verbatim text."""
 
@@ -50,3 +41,7 @@ class StyleNode(Node, NodeContentMixin):
         NodeContentMixin.__init__(self, content)
 
         self.style = style
+
+    @property
+    def custom_attributes(self) -> list[str]:
+        return [self.style]
