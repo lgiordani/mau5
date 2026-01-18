@@ -20,7 +20,7 @@ init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-def test_group_engine():
+def test_group():
     source = """
     [group=group1, position=position1]
     ----
@@ -38,7 +38,6 @@ def test_group_engine():
     parser = runner(source)
 
     block_node1 = BlockNode(
-        engine="default",
         content=[
             ParagraphNode(
                 lines=[
@@ -62,7 +61,6 @@ def test_group_engine():
     )
 
     block_node2 = BlockNode(
-        engine="default",
         content=[
             ParagraphNode(
                 lines=[
@@ -99,7 +97,7 @@ def test_group_engine():
     )
 
 
-def test_group_engine_wrong_group():
+def test_group_wrong_group():
     source = """
     [group=group1, position=position1]
     ----
@@ -131,7 +129,6 @@ def test_command_toc_supports_inline_arguments():
     parser = runner(source)
 
     block_node1 = BlockNode(
-        engine="default",
         content=[
             ParagraphNode(
                 lines=[
@@ -186,7 +183,6 @@ def test_command_toc_supports_boxed_arguments():
     parser = runner(source)
 
     block_node1 = BlockNode(
-        engine="default",
         content=[
             ParagraphNode(
                 lines=[
@@ -241,7 +237,6 @@ def test_command_toc_supports_labels():
     parser = runner(source)
 
     block_node1 = BlockNode(
-        engine="default",
         content=[
             ParagraphNode(
                 lines=[

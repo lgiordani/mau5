@@ -320,7 +320,6 @@ class BaseVisitor:
         result.update(
             {
                 "classes": node.classes,
-                "engine": node.engine,
             }
         )
 
@@ -444,6 +443,7 @@ class BaseVisitor:
         result.update(
             {
                 "language": node.language,
+                "classes": node.classes,
             }
         )
 
@@ -452,16 +452,9 @@ class BaseVisitor:
 
         return result
 
-    def _visit_raw(self, node: Node, *args, **kwargs) -> dict:
+    def _visit_raw_line(self, node: Node, *args, **kwargs) -> dict:
         result = self._visit_default(node, *args, **kwargs)
 
-        self._add_visit_content(result, node, *args, **kwargs)
-        self._add_visit_labels(result, node, *args, **kwargs)
-
-        return result
-
-    def _visit_raw_content_line(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
         result.update(
             {
                 "value": node.value,
@@ -470,12 +463,16 @@ class BaseVisitor:
 
         return result
 
-    def _visit_raw_content(self, node: Node, *args, **kwargs) -> dict:
+    def _visit_raw(self, node: Node, *args, **kwargs) -> dict:
         result = self._visit_default(node, *args, **kwargs)
+
         result.update(
             {
-                "lines": self.visitlist(node, node.lines, *args, **kwargs),
+                "classes": node.classes,
             }
         )
+
+        self._add_visit_content(result, node, *args, **kwargs)
+        self._add_visit_labels(result, node, *args, **kwargs)
 
         return result

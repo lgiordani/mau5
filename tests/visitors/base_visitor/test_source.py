@@ -60,6 +60,7 @@ def test_source_node():
     expected = {
         "_type": "source",
         "language": "somelanguage",
+        "classes": [],
         "content": [],
         "labels": {},
         "_info": NodeInfo.empty().asdict(),

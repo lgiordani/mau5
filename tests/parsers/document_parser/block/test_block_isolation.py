@@ -54,7 +54,6 @@ def test_block_isolation_doesnt_add_headers_to_the_global_toc(mock_header_intern
             ),
             BlockNode(
                 classes=[],
-                engine="default",
                 content=[
                     HeaderNode(
                         1,
@@ -132,7 +131,6 @@ def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id
             ),
             BlockNode(
                 classes=[],
-                engine="default",
                 content=[
                     HeaderNode(
                         1,
@@ -153,7 +151,6 @@ def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id
             ),
             BlockNode(
                 classes=[],
-                engine="default",
                 content=[
                     HeaderNode(
                         1,
@@ -254,7 +251,6 @@ def test_block_isolation_toc(mock_header_internal_id):
             # This is the content of the block.
             BlockNode(
                 classes=[],
-                engine="default",
                 content=[
                     # This is the block header.
                     block_header_node,
@@ -311,7 +307,6 @@ def test_block_isolation_can_see_internal_variables():
         [
             BlockNode(
                 classes=[],
-                engine="default",
                 content=[
                     ParagraphNode(
                         lines=[

@@ -30,7 +30,7 @@ class SourceLineNode(Node):
         self.marker = marker
 
 
-class SourceNode(Node, NodeContentMixin, NodeLabelsMixin):
+class SourceNode(Node, NodeLabelsMixin):
     """A block of verbatim text or source code.
 
     This node contains verbatim text or source code.
@@ -40,15 +40,17 @@ class SourceNode(Node, NodeContentMixin, NodeLabelsMixin):
 
     def __init__(
         self,
-        language: str,
-        content: Sequence[Node] | None = None,
+        language: str | None = None,
+        classes: Sequence[str] | None = None,
+        content: Sequence[SourceLineNode] | None = None,
         labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
         super().__init__(parent=parent, info=info)
 
-        NodeContentMixin.__init__(self, content)
         NodeLabelsMixin.__init__(self, labels)
 
         self.language = language
+        self.classes = classes or []
+        self.content = content or []

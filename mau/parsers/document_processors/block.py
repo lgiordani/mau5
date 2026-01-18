@@ -7,8 +7,10 @@ if TYPE_CHECKING:
 
 from enum import Enum
 
+from collections.abc import Sequence, Mapping
 from mau.environment.environment import Environment
-from mau.nodes.block import BlockNode, RawContentLineNode, RawContentNode
+from mau.nodes.block import BlockNode
+from mau.nodes.raw import RawLineNode, RawNode
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.source import (
     SourceLineNode,
@@ -75,26 +77,35 @@ def parse_block_content(
 
 def parse_default_engine(
     parser: DocumentParser,
-    content: Token,
+    content: Token | None,
     arguments: Arguments,
 ) -> list[Node]:
-    return parse_block_content(parser, content, arguments)
+    if not content:
+        return BlockNode()
+
+    # Parse the content of the block.
+    nodes = parse_block_content(parser, content, arguments)
+
+    return BlockNode(content=nodes)
 
 
 def parse_raw_engine(
     parser: DocumentParser,
-    content: Token,
+    content: Token | None,
     arguments: Arguments,
-) -> RawContentNode:
+) -> Node:
     # Engine "raw" doesn't process the content,
     # so we just pass it untouched in the form of
     # a RawNode per line.
+
+    if not content:
+        return RawNode()
 
     # A list of content lines (raw).
     content_lines = content.value.split("\n")
 
     # A list of raw content lines.
-    raw_lines: list[RawContentLineNode] = []
+    raw_lines: list[RawLineNode] = []
 
     for number, line_content in enumerate(content_lines, start=1):
         line_context = content.context.clone()
@@ -103,25 +114,20 @@ def parse_raw_engine(
         line_context.end_column = line_context.start_column + len(line_content)
 
         raw_lines.append(
-            RawContentLineNode(
+            RawLineNode(
                 line_content,
                 info=NodeInfo(context=line_context),
             )
         )
 
-    return [
-        RawContentNode(
-            raw_lines,
-            info=NodeInfo(context=content.context),
-        )
-    ]
+    return RawNode(content=raw_lines)
 
 
 def parse_source_engine(
     parser: DocumentParser,
     content: Token,
     arguments: Arguments,
-) -> list[Node]:
+) -> Node:
     # Parse a source block in the form
     #
     # [engine=source]
@@ -137,6 +143,9 @@ def parse_source_engine(
     #
     # Since Mau uses Pygments, the attribute language
     # is one of the languages supported by that tool.
+
+    if not content:
+        return SourceNode()
 
     # Get the delimiter for markers
     marker_delimiter = arguments.named_args.pop("marker_delimiter", ":")
@@ -240,13 +249,11 @@ def parse_source_engine(
             highlight_style=highlight_style,
         )
 
-    return [
-        SourceNode(
-            language,
-            content=code,
-            info=NodeInfo(context=content.context),
-        )
-    ]
+    return SourceNode(
+        language,
+        content=code,
+        info=NodeInfo(context=content.context),
+    )
 
 
 def create_source_line(
@@ -316,52 +323,23 @@ def block_processor(parser: DocumentParser):
             f"Engine {engine_name} is not available", context=context
         ) from exc
 
-    # Create the block
-    node = BlockNode(
-        classes=classes,
-        engine=engine.value,
-    )
-
     # Extract labels from the buffer and
     # store them in the node.
-    if labels := parser.label_buffer.pop():
-        node.labels = labels
-
-    if not content:
-        node.info = NodeInfo(context=context, **arguments.asdict())
-
-        # Check the stored control
-        if control := parser.control_buffer.pop():
-            # If control is False, we need to stop
-            # processing here and return without
-            # saving any node.
-            if not control.process(parser.environment):
-                return True
-
-        parser._save(node)
-
-        return True
-
-    save_node: bool = True
+    labels = parser.label_buffer.pop()
 
     match engine:
         # Real engine: decides how the content is processed
         case EngineType.DEFAULT:
-            node.content = parse_default_engine(parser, content, arguments)
+            node = parse_default_engine(parser, content, arguments)
 
         case EngineType.RAW:  # Real engine: decides how the content is processed
-            node.type = "raw"
-            node.content = parse_raw_engine(parser, content, arguments)
+            node = parse_raw_engine(parser, content, arguments)
 
         case EngineType.SOURCE:  # Real engine: decides how the content is processed
-            node.content = parse_source_engine(parser, content, arguments)
+            node = parse_source_engine(parser, content, arguments)
 
-    #         # This has been checked before but is required to
-    #         # check the full type value space.
-    #         case _:  # pragma: no cover
-    #             raise MauParserException(
-    #                 f"Engine {engine} is not available", context=context
-    #             )
+    node.classes = classes
+    node.labels = labels
 
     footnote_name = arguments.named_args.get("footnote")
 
@@ -388,7 +366,6 @@ def block_processor(parser: DocumentParser):
         if not control.process(parser.environment):
             return True
 
-    if save_node:
-        parser._save(node)
+    parser._save(node)
 
     return True

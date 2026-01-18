@@ -31,9 +31,8 @@ def test_source_engine_empty_block():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
                 classes=[],
-                engine="source",
                 info=NodeInfo(context=generate_context(2, 0, 3, 4)),
             ),
         ],
@@ -52,9 +51,8 @@ def test_source_engine_empty_block_language():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
                 classes=[],
-                engine="source",
                 info=NodeInfo(
                     context=generate_context(2, 0, 3, 4), unnamed_args=["python"]
                 ),
@@ -79,39 +77,33 @@ def test_source_engine_contains_mau_code():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
+                "text",
                 classes=[],
-                engine="source",
                 content=[
-                    SourceNode(
-                        "text",
-                        content=[
-                            SourceLineNode(
-                                line_number="1",
-                                line_content="// A comment",
-                                info=NodeInfo(context=generate_context(3, 0, 3, 12)),
-                            ),
-                            SourceLineNode(
-                                line_number="2",
-                                line_content="@@@@",
-                                info=NodeInfo(context=generate_context(4, 0, 4, 4)),
-                            ),
-                            SourceLineNode(
-                                line_number="3",
-                                line_content="A block",
-                                info=NodeInfo(context=generate_context(5, 0, 5, 7)),
-                            ),
-                            SourceLineNode(
-                                line_number="4",
-                                line_content="@@@@",
-                                info=NodeInfo(context=generate_context(6, 0, 6, 4)),
-                            ),
-                        ],
-                        info=NodeInfo(context=generate_context(3, 0, 6, 4)),
-                    )
+                    SourceLineNode(
+                        line_number="1",
+                        line_content="// A comment",
+                        info=NodeInfo(context=generate_context(3, 0, 3, 12)),
+                    ),
+                    SourceLineNode(
+                        line_number="2",
+                        line_content="@@@@",
+                        info=NodeInfo(context=generate_context(4, 0, 4, 4)),
+                    ),
+                    SourceLineNode(
+                        line_number="3",
+                        line_content="A block",
+                        info=NodeInfo(context=generate_context(5, 0, 5, 7)),
+                    ),
+                    SourceLineNode(
+                        line_number="4",
+                        line_content="@@@@",
+                        info=NodeInfo(context=generate_context(6, 0, 6, 4)),
+                    ),
                 ],
                 info=NodeInfo(context=generate_context(2, 0, 7, 4)),
-            ),
+            )
         ],
     )
 
@@ -129,24 +121,18 @@ def test_source_engine_removes_escape_from_directive_like_text():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
+                "text",
                 classes=[],
-                engine="source",
                 content=[
-                    SourceNode(
-                        "text",
-                        content=[
-                            SourceLineNode(
-                                line_number="1",
-                                line_content="::#looks like a directive",
-                                info=NodeInfo(context=generate_context(3, 0, 3, 26)),
-                            ),
-                        ],
+                    SourceLineNode(
+                        line_number="1",
+                        line_content="::#looks like a directive",
                         info=NodeInfo(context=generate_context(3, 0, 3, 26)),
-                    )
+                    ),
                 ],
                 info=NodeInfo(context=generate_context(2, 0, 4, 4)),
-            ),
+            )
         ],
     )
 
@@ -166,31 +152,25 @@ def test_source_engine_with_code():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
+                "python",
                 classes=[],
-                engine="source",
                 content=[
-                    SourceNode(
-                        "python",
-                        content=[
-                            SourceLineNode(
-                                line_number="1",
-                                line_content="import os",
-                                info=NodeInfo(context=generate_context(3, 0, 3, 9)),
-                            ),
-                            SourceLineNode(
-                                line_number="2",
-                                line_content="",
-                                info=NodeInfo(context=generate_context(4, 0, 4, 0)),
-                            ),
-                            SourceLineNode(
-                                line_number="3",
-                                line_content='print(os.environ["HOME"])',
-                                info=NodeInfo(context=generate_context(5, 0, 5, 25)),
-                            ),
-                        ],
-                        info=NodeInfo(context=generate_context(3, 0, 5, 25)),
-                    )
+                    SourceLineNode(
+                        line_number="1",
+                        line_content="import os",
+                        info=NodeInfo(context=generate_context(3, 0, 3, 9)),
+                    ),
+                    SourceLineNode(
+                        line_number="2",
+                        line_content="",
+                        info=NodeInfo(context=generate_context(4, 0, 4, 0)),
+                    ),
+                    SourceLineNode(
+                        line_number="3",
+                        line_content='print(os.environ["HOME"])',
+                        info=NodeInfo(context=generate_context(5, 0, 5, 25)),
+                    ),
                 ],
                 info=NodeInfo(context=generate_context(2, 0, 6, 4)),
             ),
@@ -212,26 +192,20 @@ def test_source_engine_ignores_mau_syntax():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
+                "text",
                 classes=[],
-                engine="source",
                 content=[
-                    SourceNode(
-                        "text",
-                        content=[
-                            SourceLineNode(
-                                line_number="1",
-                                line_content=":answer:42",
-                                info=NodeInfo(context=generate_context(3, 0, 3, 10)),
-                            ),
-                            SourceLineNode(
-                                line_number="2",
-                                line_content="The answer is {answer}",
-                                info=NodeInfo(context=generate_context(4, 0, 4, 22)),
-                            ),
-                        ],
-                        info=NodeInfo(context=generate_context(3, 0, 4, 22)),
-                    )
+                    SourceLineNode(
+                        line_number="1",
+                        line_content=":answer:42",
+                        info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+                    ),
+                    SourceLineNode(
+                        line_number="2",
+                        line_content="The answer is {answer}",
+                        info=NodeInfo(context=generate_context(4, 0, 4, 22)),
+                    ),
                 ],
                 info=NodeInfo(context=generate_context(2, 0, 5, 4)),
             ),
@@ -252,21 +226,15 @@ def test_source_engine_respects_spaces_and_indentation():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
+                "text",
                 classes=[],
-                engine="source",
                 content=[
-                    SourceNode(
-                        "text",
-                        content=[
-                            SourceLineNode(
-                                line_number="1",
-                                line_content="  //    This is a comment",
-                                info=NodeInfo(context=generate_context(3, 0, 3, 25)),
-                            ),
-                        ],
+                    SourceLineNode(
+                        line_number="1",
+                        line_content="  //    This is a comment",
                         info=NodeInfo(context=generate_context(3, 0, 3, 25)),
-                    )
+                    ),
                 ],
                 info=NodeInfo(context=generate_context(2, 0, 4, 4)),
             ),
@@ -289,43 +257,33 @@ def test_source_engine_callouts_default_delimiter():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
+                "text",
                 classes=[],
-                engine="source",
                 content=[
-                    SourceNode(
-                        "text",
-                        content=[
-                            SourceLineNode(
-                                line_number="1",
-                                line_content="import sys",
-                                info=NodeInfo(context=generate_context(3, 0, 3, 10)),
-                            ),
-                            SourceLineNode(
-                                line_number="2",
-                                line_content="import os",
-                                marker=SourceMarkerNode(
-                                    "mark1",
-                                    info=NodeInfo(
-                                        context=generate_context(4, 9, 4, 16)
-                                    ),
-                                ),
-                                info=NodeInfo(context=generate_context(4, 0, 4, 9)),
-                            ),
-                            SourceLineNode(
-                                line_number="3",
-                                line_content="import enum",
-                                marker=SourceMarkerNode(
-                                    "mark2",
-                                    info=NodeInfo(
-                                        context=generate_context(5, 11, 5, 18)
-                                    ),
-                                ),
-                                info=NodeInfo(context=generate_context(5, 0, 5, 11)),
-                            ),
-                        ],
-                        info=NodeInfo(context=generate_context(3, 0, 5, 18)),
-                    )
+                    SourceLineNode(
+                        line_number="1",
+                        line_content="import sys",
+                        info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+                    ),
+                    SourceLineNode(
+                        line_number="2",
+                        line_content="import os",
+                        marker=SourceMarkerNode(
+                            "mark1",
+                            info=NodeInfo(context=generate_context(4, 9, 4, 16)),
+                        ),
+                        info=NodeInfo(context=generate_context(4, 0, 4, 9)),
+                    ),
+                    SourceLineNode(
+                        line_number="3",
+                        line_content="import enum",
+                        marker=SourceMarkerNode(
+                            "mark2",
+                            info=NodeInfo(context=generate_context(5, 11, 5, 18)),
+                        ),
+                        info=NodeInfo(context=generate_context(5, 0, 5, 11)),
+                    ),
                 ],
                 info=NodeInfo(context=generate_context(2, 0, 6, 4)),
             ),
@@ -346,27 +304,19 @@ def test_source_engine_callouts_potential_clash():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
+                "text",
                 classes=[],
-                engine="source",
                 content=[
-                    SourceNode(
-                        "text",
-                        content=[
-                            SourceLineNode(
-                                line_number="1",
-                                line_content="import: os",
-                                marker=SourceMarkerNode(
-                                    "mark1",
-                                    info=NodeInfo(
-                                        context=generate_context(3, 10, 3, 17)
-                                    ),
-                                ),
-                                info=NodeInfo(context=generate_context(3, 0, 3, 10)),
-                            ),
-                        ],
-                        info=NodeInfo(context=generate_context(3, 0, 3, 17)),
-                    )
+                    SourceLineNode(
+                        line_number="1",
+                        line_content="import: os",
+                        marker=SourceMarkerNode(
+                            "mark1",
+                            info=NodeInfo(context=generate_context(3, 10, 3, 17)),
+                        ),
+                        info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+                    ),
                 ],
                 info=NodeInfo(context=generate_context(2, 0, 4, 4)),
             ),
@@ -387,21 +337,15 @@ def test_source_engine_callouts_one_single_marker_is_skipped():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
+                "text",
                 classes=[],
-                engine="source",
                 content=[
-                    SourceNode(
-                        "text",
-                        content=[
-                            SourceLineNode(
-                                line_number="1",
-                                line_content="import:",
-                                info=NodeInfo(context=generate_context(3, 0, 3, 7)),
-                            ),
-                        ],
+                    SourceLineNode(
+                        line_number="1",
+                        line_content="import:",
                         info=NodeInfo(context=generate_context(3, 0, 3, 7)),
-                    )
+                    ),
                 ],
                 info=NodeInfo(context=generate_context(2, 0, 4, 4)),
             ),
@@ -424,37 +368,29 @@ def test_source_engine_marker_custom_delimiter():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
+                "text",
                 classes=[],
-                engine="source",
                 content=[
-                    SourceNode(
-                        "text",
-                        content=[
-                            SourceLineNode(
-                                line_number="1",
-                                line_content="import sys",
-                                info=NodeInfo(context=generate_context(3, 0, 3, 10)),
-                            ),
-                            SourceLineNode(
-                                line_number="2",
-                                line_content="import os:mark1:",
-                                info=NodeInfo(context=generate_context(4, 0, 4, 16)),
-                            ),
-                            SourceLineNode(
-                                line_number="3",
-                                line_content="import enum",
-                                marker=SourceMarkerNode(
-                                    "mark2",
-                                    info=NodeInfo(
-                                        context=generate_context(5, 11, 5, 18)
-                                    ),
-                                ),
-                                info=NodeInfo(context=generate_context(5, 0, 5, 11)),
-                            ),
-                        ],
-                        info=NodeInfo(context=generate_context(3, 0, 5, 18)),
-                    )
+                    SourceLineNode(
+                        line_number="1",
+                        line_content="import sys",
+                        info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+                    ),
+                    SourceLineNode(
+                        line_number="2",
+                        line_content="import os:mark1:",
+                        info=NodeInfo(context=generate_context(4, 0, 4, 16)),
+                    ),
+                    SourceLineNode(
+                        line_number="3",
+                        line_content="import enum",
+                        marker=SourceMarkerNode(
+                            "mark2",
+                            info=NodeInfo(context=generate_context(5, 11, 5, 18)),
+                        ),
+                        info=NodeInfo(context=generate_context(5, 0, 5, 11)),
+                    ),
                 ],
                 info=NodeInfo(context=generate_context(2, 0, 6, 4)),
             ),
@@ -476,27 +412,21 @@ def test_source_engine_highlight_marker_with_default_style():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
+                "text",
                 classes=[],
-                engine="source",
                 content=[
-                    SourceNode(
-                        "text",
-                        content=[
-                            SourceLineNode(
-                                line_number="1",
-                                line_content="import sys",
-                                info=NodeInfo(context=generate_context(3, 0, 3, 10)),
-                            ),
-                            SourceLineNode(
-                                line_number="2",
-                                line_content="import os",
-                                highlight_style="default",
-                                info=NodeInfo(context=generate_context(4, 0, 4, 12)),
-                            ),
-                        ],
-                        info=NodeInfo(context=generate_context(3, 0, 4, 12)),
-                    )
+                    SourceLineNode(
+                        line_number="1",
+                        line_content="import sys",
+                        info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+                    ),
+                    SourceLineNode(
+                        line_number="2",
+                        line_content="import os",
+                        highlight_style="default",
+                        info=NodeInfo(context=generate_context(4, 0, 4, 12)),
+                    ),
                 ],
                 info=NodeInfo(context=generate_context(2, 0, 5, 4)),
             ),
@@ -518,27 +448,21 @@ def test_source_engine_highlight_custom_marker():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
+                "text",
                 classes=[],
-                engine="source",
                 content=[
-                    SourceNode(
-                        "text",
-                        content=[
-                            SourceLineNode(
-                                line_number="1",
-                                line_content="import sys",
-                                info=NodeInfo(context=generate_context(3, 0, 3, 10)),
-                            ),
-                            SourceLineNode(
-                                line_number="2",
-                                line_content="import os",
-                                highlight_style="default",
-                                info=NodeInfo(context=generate_context(4, 0, 4, 12)),
-                            ),
-                        ],
-                        info=NodeInfo(context=generate_context(3, 0, 4, 12)),
-                    )
+                    SourceLineNode(
+                        line_number="1",
+                        line_content="import sys",
+                        info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+                    ),
+                    SourceLineNode(
+                        line_number="2",
+                        line_content="import os",
+                        highlight_style="default",
+                        info=NodeInfo(context=generate_context(4, 0, 4, 12)),
+                    ),
                 ],
                 info=NodeInfo(context=generate_context(2, 0, 5, 4)),
             ),
@@ -560,27 +484,21 @@ def test_source_engine_highlight_marker_change_default_highlight_style():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
+                "text",
                 classes=[],
-                engine="source",
                 content=[
-                    SourceNode(
-                        "text",
-                        content=[
-                            SourceLineNode(
-                                line_number="1",
-                                line_content="import sys",
-                                info=NodeInfo(context=generate_context(3, 0, 3, 10)),
-                            ),
-                            SourceLineNode(
-                                line_number="2",
-                                line_content="import os",
-                                highlight_style="another",
-                                info=NodeInfo(context=generate_context(4, 0, 4, 12)),
-                            ),
-                        ],
-                        info=NodeInfo(context=generate_context(3, 0, 4, 12)),
-                    )
+                    SourceLineNode(
+                        line_number="1",
+                        line_content="import sys",
+                        info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+                    ),
+                    SourceLineNode(
+                        line_number="2",
+                        line_content="import os",
+                        highlight_style="another",
+                        info=NodeInfo(context=generate_context(4, 0, 4, 12)),
+                    ),
                 ],
                 info=NodeInfo(context=generate_context(2, 0, 5, 4)),
             ),
@@ -603,33 +521,27 @@ def test_source_engine_highlight_marker_custom_highlight_style():
     compare_nodes_sequence(
         parser.nodes,
         [
-            BlockNode(
+            SourceNode(
+                "text",
                 classes=[],
-                engine="source",
                 content=[
-                    SourceNode(
-                        "text",
-                        content=[
-                            SourceLineNode(
-                                line_number="1",
-                                line_content="import sys",
-                                info=NodeInfo(context=generate_context(3, 0, 3, 10)),
-                            ),
-                            SourceLineNode(
-                                line_number="2",
-                                line_content="import os",
-                                highlight_style="green",
-                                info=NodeInfo(context=generate_context(4, 0, 4, 17)),
-                            ),
-                            SourceLineNode(
-                                line_number="3",
-                                line_content="import enum",
-                                highlight_style="+",
-                                info=NodeInfo(context=generate_context(5, 0, 5, 15)),
-                            ),
-                        ],
-                        info=NodeInfo(context=generate_context(3, 0, 5, 15)),
-                    )
+                    SourceLineNode(
+                        line_number="1",
+                        line_content="import sys",
+                        info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+                    ),
+                    SourceLineNode(
+                        line_number="2",
+                        line_content="import os",
+                        highlight_style="green",
+                        info=NodeInfo(context=generate_context(4, 0, 4, 17)),
+                    ),
+                    SourceLineNode(
+                        line_number="3",
+                        line_content="import enum",
+                        highlight_style="+",
+                        info=NodeInfo(context=generate_context(5, 0, 5, 15)),
+                    ),
                 ],
                 info=NodeInfo(context=generate_context(2, 0, 6, 4)),
             ),

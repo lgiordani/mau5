@@ -56,7 +56,7 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
         )
     ]
 
-    footnote_block_data = BlockNode(content=footnote_body_nodes, engine="default")
+    footnote_block_data = BlockNode(content=footnote_body_nodes)
 
     footnote_data = FootnoteNode(
         name="somename",
@@ -136,7 +136,7 @@ def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
         )
     ]
 
-    footnote_block_data = BlockNode(content=footnote_body_nodes, engine="default")
+    footnote_block_data = BlockNode(content=footnote_body_nodes)
 
     footnote_data = FootnoteNode(
         name="somename",
@@ -386,7 +386,7 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
         )
     ]
 
-    footnote_block_data = BlockNode(content=footnote_body_nodes, engine="default")
+    footnote_block_data = BlockNode(content=footnote_body_nodes)
 
     footnote_data = FootnoteNode(
         name="somename",

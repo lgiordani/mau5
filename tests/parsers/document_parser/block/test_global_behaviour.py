@@ -36,7 +36,6 @@ def test_parse_block_title_and_arguments():
         [
             BlockNode(
                 classes=[],
-                engine=EngineType.DEFAULT.value,
                 labels={
                     "title": [
                         TextNode(
@@ -71,7 +70,6 @@ def test_block_classes_single_class():
         [
             BlockNode(
                 classes=["cls1"],
-                engine=EngineType.DEFAULT.value,
                 info=NodeInfo(
                     context=generate_context(2, 0, 3, 4),
                     subtype="subtype1",
@@ -95,7 +93,6 @@ def test_block_classes_multiple_classes():
         [
             BlockNode(
                 classes=["cls1", "cls2"],
-                engine=EngineType.DEFAULT.value,
                 info=NodeInfo(
                     context=generate_context(2, 0, 3, 4),
                     subtype="subtype1",

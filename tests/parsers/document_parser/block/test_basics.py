@@ -5,7 +5,6 @@ from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
-from mau.parsers.document_processors.block import EngineType
 from mau.test_helpers import (
     compare_nodes_sequence,
     generate_context,
@@ -31,7 +30,6 @@ def test_block_with_empty_body():
         [
             BlockNode(
                 classes=[],
-                engine=EngineType.DEFAULT.value,
                 info=NodeInfo(context=generate_context(1, 0, 2, 4)),
             )
         ],
@@ -52,7 +50,6 @@ def test_block_content():
         [
             BlockNode(
                 classes=[],
-                engine=EngineType.DEFAULT.value,
                 content=[
                     ParagraphNode(
                         lines=[
@@ -92,7 +89,6 @@ def test_block_content_variables():
         [
             BlockNode(
                 classes=[],
-                engine=EngineType.DEFAULT.value,
                 content=[
                     ParagraphNode(
                         lines=[
@@ -132,7 +128,6 @@ def test_block_content_external_variables():
         [
             BlockNode(
                 classes=[],
-                engine=EngineType.DEFAULT.value,
                 content=[
                     ParagraphNode(
                         lines=[
@@ -172,11 +167,9 @@ def test_block_inside_block():
         [
             BlockNode(
                 classes=[],
-                engine=EngineType.DEFAULT.value,
                 content=[
                     BlockNode(
                         classes=[],
-                        engine=EngineType.DEFAULT.value,
                         info=NodeInfo(context=generate_context(2, 0, 3, 4)),
                     )
                 ],
@@ -204,7 +197,6 @@ def test_block_uses_control_positive():
         [
             BlockNode(
                 classes=[],
-                engine=EngineType.DEFAULT.value,
                 content=[
                     ParagraphNode(
                         lines=[
@@ -248,7 +240,6 @@ def test_block_uses_control_positive_when_block_is_empty():
         [
             BlockNode(
                 classes=[],
-                engine=EngineType.DEFAULT.value,
                 info=NodeInfo(context=generate_context(2, 0, 3, 4)),
             )
         ],
