@@ -6,7 +6,7 @@ from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -27,7 +27,7 @@ def test_paragraph():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -81,7 +81,7 @@ def test_paragraph_with_style():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -151,7 +151,7 @@ def test_paragraph_with_style_on_multiple_lines():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -202,7 +202,7 @@ def test_paragraph_starting_with_a_macro():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -243,7 +243,7 @@ def test_attributes_paragraph():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -278,7 +278,7 @@ def test_paragraph_label():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -317,7 +317,7 @@ def test_paragraph_with_variable():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -346,7 +346,7 @@ def test_paragraph_with_namespaced_variable():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -374,7 +374,7 @@ def test_paragraph_with_escaped_mau_syntax():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -403,7 +403,7 @@ def test_paragraph_with_escaped_variable():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -432,7 +432,7 @@ def test_paragraph_with_variable_containing_syntax():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -475,7 +475,7 @@ def test_paragraph_with_nested_variables():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -508,7 +508,7 @@ def test_paragraph_uses_control_positive():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -557,7 +557,7 @@ def test_paragraph_uses_control_negative():
 
     parser: DocumentParser = runner(source, environment)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -592,7 +592,7 @@ def test_paragraph_control():
 
     parser = runner(source)
 
-    compare_asdict_list(parser.nodes, [])
+    compare_nodes_sequence(parser.nodes, [])
 
     assert parser.arguments_buffer.arguments is None
     assert parser.label_buffer.labels == {}

@@ -18,12 +18,6 @@ class UnnamedArgumentNode(Node):
         super().__init__(parent=parent, info=info)
         self.value = value
 
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {"value": self.value}
-
-        return base
-
 
 class NamedArgumentNode(Node):
     """
@@ -43,9 +37,3 @@ class NamedArgumentNode(Node):
         super().__init__(parent=parent, info=info)
         self.key = key
         self.value = value
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {"key": self.key, "value": self.value}
-
-        return base

@@ -7,7 +7,13 @@ from mau.lexers.arguments_lexer import ArgumentsLexer
 from mau.nodes.node import NodeInfo, ValueNode
 from mau.parsers.arguments_parser import Arguments, ArgumentsParser, set_names
 from mau.parsers.base_parser import MauParserException
-from mau.test_helpers import generate_context, parser_runner_factory
+from mau.test_helpers import (
+    compare_nodes,
+    compare_nodes_map,
+    compare_nodes_sequence,
+    generate_context,
+    parser_runner_factory,
+)
 
 runner = parser_runner_factory(ArgumentsLexer, ArgumentsParser)
 
@@ -15,7 +21,7 @@ runner = parser_runner_factory(ArgumentsLexer, ArgumentsParser)
 def test_single_unnamed_argument_no_spaces():
     source = "value1"
 
-    expected_nodes = [
+    expected = [
         ValueNode(
             "value1",
             info=NodeInfo(
@@ -26,16 +32,16 @@ def test_single_unnamed_argument_no_spaces():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_single_unnamed_argument_with_spaces():
     source = "value with spaces"
 
-    expected_nodes = [
+    expected = [
         ValueNode(
             "value with spaces",
             info=NodeInfo(context=generate_context(0, 0, 0, 17)),
@@ -44,16 +50,16 @@ def test_single_unnamed_argument_with_spaces():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_multiple_unnamed_arguments_no_spaces():
     source = "value1,value2"
 
-    expected_nodes = [
+    expected = [
         ValueNode(
             "value1",
             info=NodeInfo(context=generate_context(0, 0, 0, 6)),
@@ -66,16 +72,16 @@ def test_multiple_unnamed_arguments_no_spaces():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_multiple_unnamed_arguments_with_spaces():
     source = "value1 with spaces,value2 with more spaces"
 
-    expected_nodes = [
+    expected = [
         ValueNode(
             "value1 with spaces",
             info=NodeInfo(context=generate_context(0, 0, 0, 18)),
@@ -88,16 +94,16 @@ def test_multiple_unnamed_arguments_with_spaces():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_multiple_unnamed_arguments_space_after_comma_is_removed():
     source = "value1 with spaces, value2 with more spaces"
 
-    expected_nodes = [
+    expected = [
         ValueNode(
             "value1 with spaces",
             info=NodeInfo(context=generate_context(0, 0, 0, 18)),
@@ -110,16 +116,16 @@ def test_multiple_unnamed_arguments_space_after_comma_is_removed():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_multiple_unnamed_arguments_multiple_spaces_after_comma_is_removed():
     source = "value1 with spaces,    value2 with more spaces"
 
-    expected_nodes = [
+    expected = [
         ValueNode(
             "value1 with spaces",
             info=NodeInfo(context=generate_context(0, 0, 0, 18)),
@@ -132,16 +138,16 @@ def test_multiple_unnamed_arguments_multiple_spaces_after_comma_is_removed():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_single_unnamed_argument_with_quotes_no_spaces():
     source = '"value1"'
 
-    expected_nodes = [
+    expected = [
         ValueNode(
             "value1",
             info=NodeInfo(context=generate_context(0, 1, 0, 7)),
@@ -150,16 +156,16 @@ def test_single_unnamed_argument_with_quotes_no_spaces():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_single_unnamed_argument_with_quotes_with_spaces():
     source = '"value with spaces"'
 
-    expected_nodes = [
+    expected = [
         ValueNode(
             "value with spaces",
             info=NodeInfo(context=generate_context(0, 1, 0, 18)),
@@ -168,16 +174,16 @@ def test_single_unnamed_argument_with_quotes_with_spaces():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_single_unnamed_argument_comma_is_ignored_between_quotes():
     source = '"value1,value2"'
 
-    expected_nodes = [
+    expected = [
         ValueNode(
             "value1,value2",
             info=NodeInfo(context=generate_context(0, 1, 0, 14)),
@@ -186,16 +192,16 @@ def test_single_unnamed_argument_comma_is_ignored_between_quotes():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_multiple_unnamed_arguments_with_quotes_no_spaces():
     source = '"value1","value2"'
 
-    expected_nodes = [
+    expected = [
         ValueNode(
             "value1",
             info=NodeInfo(context=generate_context(0, 1, 0, 7)),
@@ -208,16 +214,16 @@ def test_multiple_unnamed_arguments_with_quotes_no_spaces():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_multiple_unnamed_arguments_with_quotes_with_spaces():
     source = '"value1 with spaces","value2 with more spaces"'
 
-    expected_nodes = [
+    expected = [
         ValueNode(
             "value1 with spaces",
             info=NodeInfo(context=generate_context(0, 1, 0, 19)),
@@ -230,16 +236,16 @@ def test_multiple_unnamed_arguments_with_quotes_with_spaces():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_single_unnamed_argument_with_non_delimiting_quotes():
     source = r'value "with quotes"'
 
-    expected_nodes = [
+    expected = [
         ValueNode(
             'value "with quotes"',
             info=NodeInfo(context=generate_context(0, 0, 0, 19)),
@@ -248,16 +254,16 @@ def test_single_unnamed_argument_with_non_delimiting_quotes():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_single_unnamed_argument_with_escaped_quotes():
     source = r'"value \"with escaped quotes\""'
 
-    expected_nodes = [
+    expected = [
         ValueNode(
             'value "with escaped quotes"',
             info=NodeInfo(context=generate_context(0, 1, 0, 30)),
@@ -266,16 +272,16 @@ def test_single_unnamed_argument_with_escaped_quotes():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_single_named_argument():
     source = "name=value1"
 
-    expected_nodes = {
+    expected = {
         "name": ValueNode(
             "value1",
             info=NodeInfo(context=generate_context(0, 5, 0, 11)),
@@ -284,16 +290,16 @@ def test_single_named_argument():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == []
-    assert parser.named_argument_nodes == expected_nodes
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, [])
+    compare_nodes_map(parser.named_argument_nodes, expected)
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_single_named_argument_with_spaces():
     source = "name=value with spaces"
 
-    expected_nodes = {
+    expected = {
         "name": ValueNode(
             "value with spaces",
             info=NodeInfo(context=generate_context(0, 5, 0, 22)),
@@ -302,16 +308,16 @@ def test_single_named_argument_with_spaces():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == []
-    assert parser.named_argument_nodes == expected_nodes
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, [])
+    compare_nodes_map(parser.named_argument_nodes, expected)
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_multiple_named_arguments():
     source = "name1=value1,name2=value2"
 
-    expected_nodes = {
+    expected = {
         "name1": ValueNode(
             "value1",
             info=NodeInfo(context=generate_context(0, 6, 0, 12)),
@@ -324,16 +330,16 @@ def test_multiple_named_arguments():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == []
-    assert parser.named_argument_nodes == expected_nodes
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, [])
+    compare_nodes_map(parser.named_argument_nodes, expected)
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_multiple_named_arguments_with_spaces():
     source = "name1=value1 with spaces,name2=value2 with spaces"
 
-    expected_nodes = {
+    expected = {
         "name1": ValueNode(
             "value1 with spaces",
             info=NodeInfo(context=generate_context(0, 6, 0, 24)),
@@ -346,16 +352,16 @@ def test_multiple_named_arguments_with_spaces():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == []
-    assert parser.named_argument_nodes == expected_nodes
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, [])
+    compare_nodes_map(parser.named_argument_nodes, expected)
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_multiple_named_arguments_space_after_comma_is_removed():
     source = "name1=value1, name2=value2"
 
-    expected_nodes = {
+    expected = {
         "name1": ValueNode(
             "value1",
             info=NodeInfo(context=generate_context(0, 6, 0, 12)),
@@ -368,16 +374,16 @@ def test_multiple_named_arguments_space_after_comma_is_removed():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == []
-    assert parser.named_argument_nodes == expected_nodes
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, [])
+    compare_nodes_map(parser.named_argument_nodes, expected)
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_multiple_named_arguments_multiple_spaces_after_comma_is_removed():
     source = "name1=value1,    name2=value2"
 
-    expected_nodes = {
+    expected = {
         "name1": ValueNode(
             "value1",
             info=NodeInfo(context=generate_context(0, 6, 0, 12)),
@@ -390,16 +396,16 @@ def test_multiple_named_arguments_multiple_spaces_after_comma_is_removed():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == []
-    assert parser.named_argument_nodes == expected_nodes
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, [])
+    compare_nodes_map(parser.named_argument_nodes, expected)
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_single_named_argument_with_quotes_no_spaces():
     source = 'name="value1"'
 
-    expected_nodes = {
+    expected = {
         "name": ValueNode(
             "value1",
             info=NodeInfo(context=generate_context(0, 6, 0, 12)),
@@ -408,16 +414,16 @@ def test_single_named_argument_with_quotes_no_spaces():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == []
-    assert parser.named_argument_nodes == expected_nodes
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, [])
+    compare_nodes_map(parser.named_argument_nodes, expected)
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_single_named_argument_with_quotes_with_spaces():
     source = 'name="value with spaces"'
 
-    expected_nodes = {
+    expected = {
         "name": ValueNode(
             "value with spaces",
             info=NodeInfo(context=generate_context(0, 6, 0, 23)),
@@ -426,16 +432,16 @@ def test_single_named_argument_with_quotes_with_spaces():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == []
-    assert parser.named_argument_nodes == expected_nodes
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, [])
+    compare_nodes_map(parser.named_argument_nodes, expected)
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_single_named_argument_comma_is_ignored_between_quotes():
     source = 'name="value1,value2"'
 
-    expected_nodes = {
+    expected = {
         "name": ValueNode(
             "value1,value2",
             info=NodeInfo(context=generate_context(0, 6, 0, 19)),
@@ -444,16 +450,16 @@ def test_single_named_argument_comma_is_ignored_between_quotes():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == []
-    assert parser.named_argument_nodes == expected_nodes
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, [])
+    compare_nodes_map(parser.named_argument_nodes, expected)
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_multiple_named_arguments_with_quotes_no_spaces():
     source = 'name1="value1",name2="value2"'
 
-    expected_nodes = {
+    expected = {
         "name1": ValueNode(
             "value1",
             info=NodeInfo(context=generate_context(0, 7, 0, 13)),
@@ -466,16 +472,16 @@ def test_multiple_named_arguments_with_quotes_no_spaces():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == []
-    assert parser.named_argument_nodes == expected_nodes
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, [])
+    compare_nodes_map(parser.named_argument_nodes, expected)
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_multiple_named_arguments_with_quotes_with_spaces():
     source = 'name1="value1 with spaces",name2="value2 with more spaces"'
 
-    expected_nodes = {
+    expected = {
         "name1": ValueNode(
             "value1 with spaces",
             info=NodeInfo(context=generate_context(0, 7, 0, 25)),
@@ -488,15 +494,15 @@ def test_multiple_named_arguments_with_quotes_with_spaces():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == []
-    assert parser.named_argument_nodes == expected_nodes
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, [])
+    compare_nodes_map(parser.named_argument_nodes, expected)
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_single_named_argument_with_non_delimiting_quotes():
     source = r'name=value "with quotes"'
-    expected_nodes = {
+    expected = {
         "name": ValueNode(
             'value "with quotes"',
             info=NodeInfo(context=generate_context(0, 5, 0, 24)),
@@ -505,16 +511,16 @@ def test_single_named_argument_with_non_delimiting_quotes():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == []
-    assert parser.named_argument_nodes == expected_nodes
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, [])
+    compare_nodes_map(parser.named_argument_nodes, expected)
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
 def test_single_named_argument_with_escaped_quotes():
     source = r'name="value \"with escaped quotes\""'
 
-    expected_nodes = {
+    expected = {
         "name": ValueNode(
             'value "with escaped quotes"',
             info=NodeInfo(context=generate_context(0, 6, 0, 35)),
@@ -523,9 +529,9 @@ def test_single_named_argument_with_escaped_quotes():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == []
-    assert parser.named_argument_nodes == expected_nodes
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, [])
+    compare_nodes_map(parser.named_argument_nodes, expected)
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
@@ -548,9 +554,9 @@ def test_unnamed_and_named_arguments():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_unnamed_nodes
-    assert parser.named_argument_nodes == expected_named_nodes
-    assert parser.tag_nodes == []
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected_unnamed_nodes)
+    compare_nodes_map(parser.named_argument_nodes, expected_named_nodes)
+    compare_nodes_sequence(parser.tag_nodes, [])
     assert parser.subtype is None
 
 
@@ -578,10 +584,10 @@ def test_process_arguments_subtype():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_unnamed_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == []
-    assert parser.subtype == expected_subtype
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected_unnamed_nodes)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
+    compare_nodes(parser.subtype, expected_subtype)
 
 
 def test_process_arguments_tags():
@@ -610,9 +616,9 @@ def test_process_arguments_tags():
 
     parser = runner(source)
 
-    assert parser.unnamed_argument_nodes == expected_unnamed_nodes
-    assert parser.named_argument_nodes == {}
-    assert parser.tag_nodes == expected_tag_nodes
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected_unnamed_nodes)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, expected_tag_nodes)
     assert parser.subtype is None
 
 
@@ -666,10 +672,10 @@ def test_process_arguments_subtype_as_alias():
 
     parser = runner(source, environment)
 
-    assert parser.unnamed_argument_nodes == expected_unnamed_nodes
-    assert parser.named_argument_nodes == expected_named_nodes
-    assert parser.tag_nodes == []
-    assert parser.subtype == expected_subtype
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected_unnamed_nodes)
+    compare_nodes_map(parser.named_argument_nodes, expected_named_nodes)
+    compare_nodes_sequence(parser.tag_nodes, [])
+    compare_nodes(parser.subtype, expected_subtype)
 
 
 def test_process_arguments_subtype_does_not_overwrite_arguments():
@@ -705,10 +711,10 @@ def test_process_arguments_subtype_does_not_overwrite_arguments():
 
     parser = runner(source, environment)
 
-    assert parser.unnamed_argument_nodes == expected_unnamed_nodes
-    assert parser.named_argument_nodes == expected_named_nodes
-    assert parser.tag_nodes == []
-    assert parser.subtype == expected_subtype
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected_unnamed_nodes)
+    compare_nodes_map(parser.named_argument_nodes, expected_named_nodes)
+    compare_nodes_sequence(parser.tag_nodes, [])
+    compare_nodes(parser.subtype, expected_subtype)
 
 
 def test_process_arguments_subtype_as_alias_supports_names():
@@ -744,10 +750,10 @@ def test_process_arguments_subtype_as_alias_supports_names():
 
     parser = runner(source, environment)
 
-    assert parser.unnamed_argument_nodes == []
-    assert parser.named_argument_nodes == expected_named_nodes
-    assert parser.tag_nodes == []
-    assert parser.subtype == expected_subtype
+    compare_nodes_sequence(parser.unnamed_argument_nodes, [])
+    compare_nodes_map(parser.named_argument_nodes, expected_named_nodes)
+    compare_nodes_sequence(parser.tag_nodes, [])
+    compare_nodes(parser.subtype, expected_subtype)
 
 
 def test_process_arguments_subtype_as_alias_names_do_not_override():
@@ -790,10 +796,10 @@ def test_process_arguments_subtype_as_alias_names_do_not_override():
 
     parser = runner(source, environment)
 
-    assert parser.unnamed_argument_nodes == expected_unnamed_nodes
-    assert parser.named_argument_nodes == expected_named_nodes
-    assert parser.tag_nodes == []
-    assert parser.subtype == expected_subtype
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected_unnamed_nodes)
+    compare_nodes_map(parser.named_argument_nodes, expected_named_nodes)
+    compare_nodes_sequence(parser.tag_nodes, [])
+    compare_nodes(parser.subtype, expected_subtype)
 
 
 def test_arguments_empty():
@@ -896,7 +902,8 @@ def test_parser_set_names(mock_set_names):
     parser = runner(source)
     parser.set_names(["attr1", "attr2"])
 
-    mock_set_names.assert_called_with(
+    compare_nodes_sequence(
+        mock_set_names.call_args[0][0],
         [
             ValueNode(
                 "value1",
@@ -907,11 +914,16 @@ def test_parser_set_names(mock_set_names):
                 info=NodeInfo(context=generate_context(0, 8, 0, 14)),
             ),
         ],
+    )
+
+    compare_nodes_map(
+        mock_set_names.call_args[0][1],
         {
             "key3": ValueNode(
                 "value3",
                 info=NodeInfo(context=generate_context(0, 21, 0, 27)),
             ),
         },
-        ["attr1", "attr2"],
     )
+
+    assert mock_set_names.call_args[0][2] == ["attr1", "attr2"]

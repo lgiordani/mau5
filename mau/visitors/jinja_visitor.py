@@ -1,3 +1,4 @@
+from collections.abc import Sequence, Mapping
 import itertools
 import sys
 from pathlib import Path
@@ -430,13 +431,15 @@ class JinjaVisitor(BaseVisitor):
             "Cannot find templates for this node", templates, node, result
         )
 
-    def visitlist(self, node, nodes, *args, **kwargs):
+    def visitlist(
+        self, current_node: Node, nodes_list: Sequence[Node], *args, **kwargs
+    ):
         # Find the string this visitor uses to join
         # children according to the current node type.
-        join_with = self.join_with.get(node.content.type, self.join_with_default)
+        join_with = self.join_with.get(current_node.type, self.join_with_default)
 
         # Visit all nodes in the list.
-        visited_nodes = [self.visit(node, *args, **kwargs) for node in nodes]
+        visited_nodes = [self.visit(node, *args, **kwargs) for node in nodes_list]
 
         # Join the results if needed.
         if join_with is not None:

@@ -6,6 +6,7 @@ from mau.nodes.node import NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -26,7 +27,7 @@ def test_macro_image():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_macro_image_with_alt_text():
@@ -40,7 +41,7 @@ def test_macro_image_with_alt_text():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_macro_image_with_width_and_height():
@@ -56,7 +57,7 @@ def test_macro_image_with_width_and_height():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_macro_image_without_uri():

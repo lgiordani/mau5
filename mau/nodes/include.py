@@ -1,3 +1,4 @@
+from collections.abc import Sequence, Mapping
 from mau.nodes.node import Node, NodeInfo, NodeLabelsMixin
 
 INCLUDE_HELP = """
@@ -36,8 +37,8 @@ class IncludeNode(Node, NodeLabelsMixin):
     def __init__(
         self,
         content_type: str,
-        uris: list[str],
-        labels: dict[str, list[Node]] | None = None,
+        uris: Sequence[str],
+        labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
@@ -46,17 +47,6 @@ class IncludeNode(Node, NodeLabelsMixin):
 
         self.content_type = content_type
         self.uris = uris
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "content_type": self.content_type,
-            "uris": self.uris,
-        }
-
-        NodeLabelsMixin.content_asdict(self, base)
-
-        return base
 
 
 class IncludeImageNode(Node, NodeLabelsMixin):
@@ -72,8 +62,8 @@ class IncludeImageNode(Node, NodeLabelsMixin):
         self,
         uri: str,
         alt_text: str | None = None,
-        classes: list[str] | None = None,
-        labels: dict[str, list[Node]] | None = None,
+        classes: Sequence[str] | None = None,
+        labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
@@ -83,15 +73,3 @@ class IncludeImageNode(Node, NodeLabelsMixin):
         self.uri = uri
         self.alt_text = alt_text
         self.classes = classes or []
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "uri": self.uri,
-            "alt_text": self.alt_text,
-            "classes": self.classes,
-        }
-
-        NodeLabelsMixin.content_asdict(self, base)
-
-        return base

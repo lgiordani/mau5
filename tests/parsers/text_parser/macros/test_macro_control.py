@@ -7,7 +7,7 @@ from mau.nodes.node import NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -32,7 +32,7 @@ def test_macro_control_if_true():
 
     parser = runner(source, environment=environment)
 
-    compare_asdict_list(parser.nodes, expected)
+    compare_nodes_sequence(parser.nodes, expected)
 
 
 def test_macro_control_if_false():
@@ -49,7 +49,7 @@ def test_macro_control_if_false():
 
     parser = runner(source, environment=environment)
 
-    compare_asdict_list(parser.nodes, expected)
+    compare_nodes_sequence(parser.nodes, expected)
 
 
 def test_macro_control_if_equal():
@@ -66,7 +66,7 @@ def test_macro_control_if_equal():
 
     parser = runner(source, environment=environment)
 
-    compare_asdict_list(parser.nodes, expected)
+    compare_nodes_sequence(parser.nodes, expected)
 
 
 def test_macro_control_if_not_equal():
@@ -83,7 +83,7 @@ def test_macro_control_if_not_equal():
 
     parser = runner(source, environment=environment)
 
-    compare_asdict_list(parser.nodes, expected)
+    compare_nodes_sequence(parser.nodes, expected)
 
 
 def test_macro_control_wrong_name_format():
@@ -155,7 +155,7 @@ def test_macro_control_ifeval_true():
 
     parser = runner(source, environment=environment)
 
-    compare_asdict_list(parser.nodes, expected)
+    compare_nodes_sequence(parser.nodes, expected)
 
 
 def test_macro_control_ifeval_false():
@@ -184,7 +184,7 @@ def test_macro_control_ifeval_false():
 
     parser = runner(source, environment=environment)
 
-    compare_asdict_list(parser.nodes, expected)
+    compare_nodes_sequence(parser.nodes, expected)
 
 
 def test_macro_control_ifeval_false_is_not_evaluated():
@@ -213,7 +213,7 @@ def test_macro_control_ifeval_false_is_not_evaluated():
 
     parser = runner(source, environment=environment)
 
-    compare_asdict_list(parser.nodes, expected)
+    compare_nodes_sequence(parser.nodes, expected)
 
 
 def test_macro_control_ifeval_true_is_not_evaluated():
@@ -242,7 +242,7 @@ def test_macro_control_ifeval_true_is_not_evaluated():
 
     parser = runner(source, environment=environment)
 
-    compare_asdict_list(parser.nodes, expected)
+    compare_nodes_sequence(parser.nodes, expected)
 
 
 def test_macro_control_ifeval_undefined_variable():

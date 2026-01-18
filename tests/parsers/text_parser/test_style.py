@@ -3,6 +3,7 @@ from mau.nodes.inline import StyleNode, TextNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -16,92 +17,102 @@ runner = parser_runner_factory(TextLexer, TextParser)
 def test_underscore():
     source = "_Some text_"
 
-    expected_node = StyleNode(
-        "underscore",
-        content=[
-            TextNode(
-                "Some text",
-                info=NodeInfo(context=generate_context(0, 1, 0, 10)),
-            )
-        ],
-        info=NodeInfo(context=generate_context(0, 0, 0, 11)),
-    )
+    expected = [
+        StyleNode(
+            "underscore",
+            content=[
+                TextNode(
+                    "Some text",
+                    info=NodeInfo(context=generate_context(0, 1, 0, 10)),
+                )
+            ],
+            info=NodeInfo(context=generate_context(0, 0, 0, 11)),
+        )
+    ]
 
-    assert runner(source).nodes == [expected_node]
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_star():
     source = "*Some text*"
 
-    expected_node = StyleNode(
-        "star",
-        content=[
-            TextNode(
-                "Some text",
-                info=NodeInfo(context=generate_context(0, 1, 0, 10)),
-            )
-        ],
-        info=NodeInfo(context=generate_context(0, 0, 0, 11)),
-    )
+    expected = [
+        StyleNode(
+            "star",
+            content=[
+                TextNode(
+                    "Some text",
+                    info=NodeInfo(context=generate_context(0, 1, 0, 10)),
+                )
+            ],
+            info=NodeInfo(context=generate_context(0, 0, 0, 11)),
+        )
+    ]
 
-    assert runner(source).nodes == [expected_node]
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_caret():
     source = "^Some text^"
 
-    expected_node = StyleNode(
-        "caret",
-        content=[
-            TextNode(
-                "Some text",
-                info=NodeInfo(context=generate_context(0, 1, 0, 10)),
-            )
-        ],
-        info=NodeInfo(context=generate_context(0, 0, 0, 11)),
-    )
+    expected = [
+        StyleNode(
+            "caret",
+            content=[
+                TextNode(
+                    "Some text",
+                    info=NodeInfo(context=generate_context(0, 1, 0, 10)),
+                )
+            ],
+            info=NodeInfo(context=generate_context(0, 0, 0, 11)),
+        )
+    ]
 
-    assert runner(source).nodes == [expected_node]
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_tilde():
     source = "~Some text~"
 
-    expected_node = StyleNode(
-        "tilde",
-        content=[
-            TextNode(
-                "Some text",
-                info=NodeInfo(context=generate_context(0, 1, 0, 10)),
-            )
-        ],
-        info=NodeInfo(context=generate_context(0, 0, 0, 11)),
-    )
+    expected = [
+        StyleNode(
+            "tilde",
+            content=[
+                TextNode(
+                    "Some text",
+                    info=NodeInfo(context=generate_context(0, 1, 0, 10)),
+                )
+            ],
+            info=NodeInfo(context=generate_context(0, 0, 0, 11)),
+        )
+    ]
 
-    assert runner(source).nodes == [expected_node]
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_style_within_style():
     source = "_*Words with two styles*_"
 
-    expected_node = StyleNode(
-        "underscore",
-        content=[
-            StyleNode(
-                "star",
-                content=[
-                    TextNode(
-                        "Words with two styles",
-                        info=NodeInfo(context=generate_context(0, 2, 0, 23)),
-                    )
-                ],
-                info=NodeInfo(context=generate_context(0, 1, 0, 24)),
-            )
-        ],
-        info=NodeInfo(context=generate_context(0, 0, 0, 25)),
-    )
+    expected = [
+        StyleNode(
+            "underscore",
+            content=[
+                StyleNode(
+                    "star",
+                    content=[
+                        TextNode(
+                            "Words with two styles",
+                            info=NodeInfo(context=generate_context(0, 2, 0, 23)),
+                        )
+                    ],
+                    info=NodeInfo(context=generate_context(0, 1, 0, 24)),
+                )
+            ],
+            info=NodeInfo(context=generate_context(0, 0, 0, 25)),
+        )
+    ]
 
-    assert runner(source).nodes == [expected_node]
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_double_style_cancels_itself():
@@ -122,7 +133,7 @@ def test_double_style_cancels_itself():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_mix_text_and_styles():
@@ -163,7 +174,7 @@ def test_mix_text_and_styles():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_unclosed_style():
@@ -176,4 +187,4 @@ def test_unclosed_style():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)

@@ -6,7 +6,7 @@ from mau.nodes.block import BlockNode
 from mau.nodes.commands import FootnotesNode
 from mau.nodes.footnotes import FootnoteNode
 from mau.parsers.managers.footnotes_manager import FootnotesManager
-from mau.test_helpers import compare_asdict_list
+from mau.test_helpers import compare_nodes_sequence
 
 
 def test_footnotes_manager_init():
@@ -144,7 +144,7 @@ def test_footnotes_manager_process(mock_footnote_unique_id):
     assert footnote_node2.public_id == "2"
     assert footnote_node2.private_id == "XXYY"
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         footnote_list.footnotes,
         [footnote_node1, footnote_node2],
     )

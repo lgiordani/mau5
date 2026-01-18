@@ -1,3 +1,4 @@
+from collections.abc import Sequence, Mapping
 from mau.nodes.node import Node, NodeContentMixin, NodeInfo, ValueNode
 
 
@@ -41,7 +42,7 @@ class StyleNode(Node, NodeContentMixin):
     def __init__(
         self,
         style: str,
-        content: list[Node] | None = None,
+        content: Sequence[Node] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
@@ -49,13 +50,3 @@ class StyleNode(Node, NodeContentMixin):
         NodeContentMixin.__init__(self, content)
 
         self.style = style
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "style": self.style,
-        }
-
-        NodeContentMixin.content_asdict(self, base)
-
-        return base

@@ -8,7 +8,7 @@ from mau.nodes.source import (
 )
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -28,7 +28,7 @@ def test_source_engine_empty_block():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -49,7 +49,7 @@ def test_source_engine_empty_block_language():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -76,7 +76,7 @@ def test_source_engine_contains_mau_code():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -126,7 +126,7 @@ def test_source_engine_removes_escape_from_directive_like_text():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -163,7 +163,7 @@ def test_source_engine_with_code():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -209,7 +209,7 @@ def test_source_engine_ignores_mau_syntax():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -249,7 +249,7 @@ def test_source_engine_respects_spaces_and_indentation():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -286,7 +286,7 @@ def test_source_engine_callouts_default_delimiter():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -343,7 +343,7 @@ def test_source_engine_callouts_potential_clash():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -384,7 +384,7 @@ def test_source_engine_callouts_one_single_marker_is_skipped():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -421,7 +421,7 @@ def test_source_engine_marker_custom_delimiter():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -473,7 +473,7 @@ def test_source_engine_highlight_marker_with_default_style():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -515,7 +515,7 @@ def test_source_engine_highlight_custom_marker():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -557,7 +557,7 @@ def test_source_engine_highlight_marker_change_default_highlight_style():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -600,7 +600,7 @@ def test_source_engine_highlight_marker_custom_highlight_style():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(

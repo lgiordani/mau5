@@ -12,8 +12,8 @@ from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
-    compare_asdict_list,
-    compare_asdict_object,
+    compare_nodes,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -65,7 +65,7 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
         content=footnote_body_nodes,
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -93,12 +93,12 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
         ],
     )
 
-    compare_asdict_object(
+    compare_nodes(
         parser.footnotes_manager.bodies["somename"],
         footnote_block_data,
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.footnotes_manager.footnotes,
         [footnote_data],
     )
@@ -145,7 +145,7 @@ def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
         content=footnote_body_nodes,
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ListNode(
@@ -176,12 +176,12 @@ def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
         ],
     )
 
-    compare_asdict_object(
+    compare_nodes(
         parser.footnotes_manager.bodies["somename"],
         footnote_block_data,
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.footnotes_manager.footnotes,
         [footnote_data],
     )
@@ -228,7 +228,7 @@ def test_command_footnotes(mock_footnote_unique_id):
         content=footnote_body_nodes,
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -269,7 +269,7 @@ def test_command_footnotes_supports_boxed_arguments():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             FootnotesNode(
@@ -292,7 +292,7 @@ def test_command_footnotes_supports_inline_arguments():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             FootnotesNode(
@@ -316,7 +316,7 @@ def test_command_footnotes_supports_labels():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             FootnotesNode(
@@ -347,7 +347,7 @@ def test_command_footnotes_supports_control():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(parser.nodes, [])
+    compare_nodes_sequence(parser.nodes, [])
 
     assert parser.arguments_buffer.arguments is None
     assert parser.label_buffer.labels == {}
@@ -395,7 +395,7 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
         content=footnote_body_nodes,
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ParagraphNode(
@@ -423,12 +423,12 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
         ],
     )
 
-    compare_asdict_object(
+    compare_nodes(
         parser.footnotes_manager.bodies["somename"],
         footnote_block_data,
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.footnotes_manager.footnotes,
         [footnote_data],
     )

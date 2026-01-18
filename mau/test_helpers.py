@@ -1,5 +1,5 @@
 import textwrap
-from collections.abc import MutableSequence
+from collections.abc import MutableMapping, MutableSequence, Sequence
 
 from mau.environment.environment import Environment
 from mau.nodes.node import (
@@ -144,6 +144,35 @@ def check_node_with_labels(node):
     }
 
 
+def compare_nodes(node: Node, expected: Node):
+    bv = BaseVisitor()
+
+    visit_node = bv.visit(node)
+    visit_expected = bv.visit(node)
+
+    assert visit_node == visit_expected
+
+
+def compare_nodes_sequence(nodes: Sequence[Node], expected: Sequence[Node]):
+    bv = BaseVisitor()
+
+    visit_nodes = [bv.visit(node) for node in nodes]
+    visit_expected = [bv.visit(node) for node in expected]
+
+    assert visit_nodes == visit_expected
+
+
+def compare_nodes_map(
+    nodes: MutableMapping[str, Node], expected: MutableMapping[str, Node]
+):
+    bv = BaseVisitor()
+
+    visit_nodes = {k: bv.visit(node) for k, node in nodes.items()}
+    visit_expected = {k: bv.visit(node) for k, node in expected.items()}
+
+    assert visit_nodes == visit_expected
+
+
 # def compare_text_lines(left: str, right: str):
 #     assert left.split("\n") == right.split("\n")
 
@@ -263,14 +292,3 @@ class ATestNode(Node, NodeLabelsMixin, NodeContentMixin):
 
         NodeContentMixin.__init__(self, content)
         NodeLabelsMixin.__init__(self, labels)
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "value": self.value,
-        }
-
-        NodeLabelsMixin.content_asdict(self, base)
-        NodeContentMixin.content_asdict(self, base)
-
-        return base

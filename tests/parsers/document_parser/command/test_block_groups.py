@@ -9,7 +9,7 @@ from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -85,7 +85,7 @@ def test_group_engine():
         ),
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockGroupNode(
@@ -154,7 +154,7 @@ def test_command_toc_supports_inline_arguments():
         ),
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockGroupNode(
@@ -209,7 +209,7 @@ def test_command_toc_supports_boxed_arguments():
         ),
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockGroupNode(
@@ -264,7 +264,7 @@ def test_command_toc_supports_labels():
         ),
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockGroupNode(
@@ -305,7 +305,7 @@ def test_command_toc_supports_control():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(parser.nodes, [])
+    compare_nodes_sequence(parser.nodes, [])
 
     assert parser.arguments_buffer.arguments is None
     assert parser.label_buffer.labels == {}

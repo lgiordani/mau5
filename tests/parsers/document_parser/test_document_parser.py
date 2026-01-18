@@ -4,10 +4,10 @@ from mau.nodes.document import DocumentNode
 from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
-from mau.parsers.document_parser import DocumentParser
+from mau.parsers.document_parser import DocumentParser, DocumentParserOutput
 from mau.test_helpers import (
-    compare_asdict_list,
-    compare_asdict_object,
+    compare_nodes,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -23,17 +23,13 @@ def test_parse_discards_empty_lines():
 
     parser = runner(source)
 
-    compare_asdict_list(parser.nodes, [])
+    compare_nodes_sequence(parser.nodes, [])
 
 
 def test_parse_output():
     source = ""
 
-    assert runner(source).output == {
-        "document": None,
-        "nested_toc": None,
-        "plain_toc": None,
-    }
+    assert runner(source).output == DocumentParserOutput()
 
 
 def test_parse_output_custom_content_container():
@@ -45,8 +41,8 @@ def test_parse_output_custom_content_container():
     environment = Environment()
     environment["mau.parser.document_wrapper"] = CustomDocumentNode
 
-    compare_asdict_object(
-        runner(source, environment).output["document"],
+    compare_nodes(
+        runner(source, environment).output.document,
         CustomDocumentNode(
             content=[
                 ParagraphNode(

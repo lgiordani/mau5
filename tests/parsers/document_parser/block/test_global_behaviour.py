@@ -10,7 +10,7 @@ from mau.parsers.document_processors.block import (
     EngineType,
 )
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -31,7 +31,7 @@ def test_parse_block_title_and_arguments():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -66,7 +66,7 @@ def test_block_classes_single_class():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -90,7 +90,7 @@ def test_block_classes_multiple_classes():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(

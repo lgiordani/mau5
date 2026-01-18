@@ -3,7 +3,7 @@ from mau.nodes.inline import StyleNode, TextNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -22,7 +22,7 @@ def test_label():
     parser = runner(source)
     labels = parser.label_buffer.pop()
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         labels["title"],
         [
             TextNode(
@@ -41,7 +41,7 @@ def test_label_with_spaces():
     parser = runner(source)
     labels = parser.label_buffer.pop()
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         labels["title"],
         [
             TextNode(
@@ -60,7 +60,7 @@ def test_label_role():
     parser = runner(source)
     labels = parser.label_buffer.pop()
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         labels["arole"],
         [
             TextNode(
@@ -82,7 +82,7 @@ def test_label_multiple():
 
     assert set(labels.keys()) == set(["title", "arole"])
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         labels["title"],
         [
             TextNode(
@@ -92,7 +92,7 @@ def test_label_multiple():
         ],
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         labels["arole"],
         [
             TextNode(
@@ -111,7 +111,7 @@ def test_label_can_contain_mau_syntax():
     parser = runner(source)
     labels = parser.label_buffer.pop()
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         labels["title"],
         [
             TextNode(

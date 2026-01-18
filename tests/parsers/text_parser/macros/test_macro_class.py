@@ -7,7 +7,7 @@ from mau.nodes.node import NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -21,7 +21,7 @@ runner = parser_runner_factory(TextLexer, TextParser)
 def test_macro_class_with_single_class():
     source = '[class]("text with that class", classname)'
 
-    expected_nodes = [
+    expected = [
         MacroClassNode(
             ["classname"],
             content=[
@@ -34,15 +34,13 @@ def test_macro_class_with_single_class():
         ),
     ]
 
-    parser = runner(source)
-
-    compare_asdict_list(parser.nodes, expected_nodes)
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_macro_class_with_multiple_classes():
     source = '[class]("text with that class", classname1, classname2)'
 
-    expected_nodes = [
+    expected = [
         MacroClassNode(
             ["classname1", "classname2"],
             content=[
@@ -55,15 +53,13 @@ def test_macro_class_with_multiple_classes():
         ),
     ]
 
-    parser = runner(source)
-
-    compare_asdict_list(parser.nodes, expected_nodes)
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_macro_class_with_rich_text():
     source = '[class]("Some text with `verbatim words` and _styled ones_", classname)'
 
-    expected_nodes = [
+    expected = [
         MacroClassNode(
             ["classname"],
             content=[
@@ -94,15 +90,13 @@ def test_macro_class_with_rich_text():
         ),
     ]
 
-    parser = runner(source)
-
-    compare_asdict_list(parser.nodes, expected_nodes)
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_macro_class_without_classes():
     source = '[class]("text with that class")'
 
-    expected_nodes = [
+    expected = [
         MacroClassNode(
             [],
             content=[
@@ -115,9 +109,7 @@ def test_macro_class_without_classes():
         ),
     ]
 
-    parser = runner(source)
-
-    compare_asdict_list(parser.nodes, expected_nodes)
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_macro_class_without_text():

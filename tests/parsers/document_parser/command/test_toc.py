@@ -6,7 +6,7 @@ from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -24,7 +24,7 @@ def test_command_toc_empty():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             TocNode(
@@ -43,7 +43,7 @@ def test_command_toc_supports_inline_arguments():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             TocNode(
@@ -69,7 +69,7 @@ def test_command_toc_supports_boxed_arguments():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             TocNode(
@@ -95,7 +95,7 @@ def test_command_toc_supports_labels():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             TocNode(
@@ -128,7 +128,7 @@ def test_command_toc_supports_control():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(parser.nodes, [])
+    compare_nodes_sequence(parser.nodes, [])
 
     assert parser.arguments_buffer.arguments is None
     assert parser.label_buffer.labels == {}
@@ -213,7 +213,7 @@ def test_command_toc_with_entries():
         info=NodeInfo(context=generate_context(5, 0, 5, 5)),
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             header_1,

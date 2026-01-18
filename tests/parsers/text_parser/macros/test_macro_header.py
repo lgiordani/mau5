@@ -7,6 +7,7 @@ from mau.nodes.node import NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -20,33 +21,39 @@ runner = parser_runner_factory(TextLexer, TextParser)
 def test_macro_header():
     source = '[header](id, "link text")'
 
-    expected_node = MacroHeaderNode(
-        "id",
-        content=[
-            TextNode(
-                "link text",
-                info=NodeInfo(context=generate_context(0, 14, 0, 23)),
-            )
-        ],
-        info=NodeInfo(context=generate_context(0, 0, 0, 25)),
-    )
+    expected = [
+        MacroHeaderNode(
+            "id",
+            content=[
+                TextNode(
+                    "link text",
+                    info=NodeInfo(context=generate_context(0, 14, 0, 23)),
+                )
+            ],
+            info=NodeInfo(context=generate_context(0, 0, 0, 25)),
+        )
+    ]
 
     parser = runner(source)
-    assert parser.nodes == [expected_node]
-    assert parser.header_links == [expected_node]
+
+    compare_nodes_sequence(parser.nodes, expected)
+    compare_nodes_sequence(parser.header_links, expected)
 
 
 def test_macro_header_without_text():
     source = "[header](id)"
 
-    expected_node = MacroHeaderNode(
-        "id",
-        info=NodeInfo(context=generate_context(0, 0, 0, 12)),
-    )
+    expected = [
+        MacroHeaderNode(
+            "id",
+            info=NodeInfo(context=generate_context(0, 0, 0, 12)),
+        )
+    ]
 
     parser = runner(source)
-    assert parser.nodes == [expected_node]
-    assert parser.header_links == [expected_node]
+
+    compare_nodes_sequence(parser.nodes, expected)
+    compare_nodes_sequence(parser.header_links, expected)
 
 
 def test_macro_header_without_target():

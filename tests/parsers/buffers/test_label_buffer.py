@@ -2,7 +2,7 @@ from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.buffers.label_buffer import LabelBuffer
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
 )
 
@@ -29,7 +29,7 @@ def test_title_buffer_push_and_pop():
 
     assert list(children.keys()) == ["title"]
 
-    compare_asdict_list(children["title"], test_nodes)
+    compare_nodes_sequence(children["title"], test_nodes)
 
     assert tb.pop() == {}
 
@@ -58,8 +58,8 @@ def test_title_buffer_push_multiple_children():
 
     assert list(children.keys()) == ["title", "source"]
 
-    compare_asdict_list(children["title"], title_nodes)
-    compare_asdict_list(children["source"], source_nodes)
+    compare_nodes_sequence(children["title"], title_nodes)
+    compare_nodes_sequence(children["source"], source_nodes)
 
     assert tb.pop() == {}
 
@@ -88,6 +88,6 @@ def test_title_buffer_push_twice_the_same_position():
 
     assert list(children.keys()) == ["title"]
 
-    compare_asdict_list(children["title"], title_nodes2)
+    compare_nodes_sequence(children["title"], title_nodes2)
 
     assert tb.pop() == {}

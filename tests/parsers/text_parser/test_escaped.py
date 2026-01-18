@@ -3,6 +3,7 @@ from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -23,7 +24,7 @@ def test_dollar():
         )
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_percent():
@@ -36,7 +37,7 @@ def test_percent():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_dollar_can_escape_percent():
@@ -49,7 +50,7 @@ def test_dollar_can_escape_percent():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_dollar_can_escape_backtick():
@@ -62,7 +63,7 @@ def test_dollar_can_escape_backtick():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_percent_can_escape_dollar():
@@ -75,7 +76,7 @@ def test_percent_can_escape_dollar():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_percent_can_escape_backtick():
@@ -88,7 +89,7 @@ def test_percent_can_escape_backtick():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_dollar_escapes_style():
@@ -101,7 +102,7 @@ def test_dollar_escapes_style():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_percent_escapes_style():
@@ -114,7 +115,7 @@ def test_percent_escapes_style():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_escaped_dollar():
@@ -127,7 +128,7 @@ def test_escaped_dollar():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_escaped_percent():
@@ -140,7 +141,7 @@ def test_escaped_percent():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_open_dollar():
@@ -153,7 +154,7 @@ def test_open_dollar():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_open_percent():
@@ -166,4 +167,4 @@ def test_open_percent():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)

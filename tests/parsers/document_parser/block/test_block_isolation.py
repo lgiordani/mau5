@@ -12,7 +12,7 @@ from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -38,7 +38,7 @@ def test_block_isolation_doesnt_add_headers_to_the_global_toc(mock_header_intern
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             HeaderNode(
@@ -76,7 +76,7 @@ def test_block_isolation_doesnt_add_headers_to_the_global_toc(mock_header_intern
         ],
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.toc_manager.headers,
         [
             HeaderNode(
@@ -116,7 +116,7 @@ def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             HeaderNode(
@@ -175,7 +175,7 @@ def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id
         ],
     )
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.toc_manager.headers,
         [
             HeaderNode(
@@ -246,7 +246,7 @@ def test_block_isolation_toc(mock_header_internal_id):
     # This is the block header ToC item data.
     block_header_toc_item_node = TocItemNode(header=block_header_node)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             # This is the global header.
@@ -306,7 +306,7 @@ def test_block_isolation_can_see_internal_variables():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(

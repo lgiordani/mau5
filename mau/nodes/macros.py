@@ -1,3 +1,4 @@
+from collections.abc import Sequence, Mapping
 from mau.nodes.footnotes import FootnoteNode
 from mau.nodes.headers import HeaderNode
 from mau.nodes.node import Node, NodeContentMixin, NodeInfo
@@ -63,8 +64,8 @@ class MacroNode(Node):
     def __init__(
         self,
         name: str,
-        unnamed_args: list[str] | None = None,
-        named_args: dict[str, str] | None = None,
+        unnamed_args: Sequence[str] | None = None,
+        named_args: Mapping[str, str] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
@@ -72,16 +73,6 @@ class MacroNode(Node):
         self.name = name
         self.unnamed_args = unnamed_args or []
         self.named_args = named_args or {}
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "name": self.name,
-            "unnamed_args": self.unnamed_args,
-            "named_args": self.named_args,
-        }
-
-        return base
 
 
 class MacroClassNode(Node, NodeContentMixin):
@@ -91,23 +82,14 @@ class MacroClassNode(Node, NodeContentMixin):
 
     def __init__(
         self,
-        classes: list[str],
-        content: list[Node] | None = None,
+        classes: Sequence[str],
+        content: Sequence[Node] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
         super().__init__(parent=parent, info=info)
         self.classes = classes
         NodeContentMixin.__init__(self, content)
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "classes": self.classes,
-        }
-        NodeContentMixin.content_asdict(self, base)
-
-        return base
 
 
 class MacroLinkNode(Node, NodeContentMixin):
@@ -118,7 +100,7 @@ class MacroLinkNode(Node, NodeContentMixin):
     def __init__(
         self,
         target: str,
-        content: list[Node] | None = None,
+        content: Sequence[Node] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
@@ -126,15 +108,6 @@ class MacroLinkNode(Node, NodeContentMixin):
 
         self.target = target
         NodeContentMixin.__init__(self, content)
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "target": self.target,
-        }
-        NodeContentMixin.content_asdict(self, base)
-
-        return base
 
 
 class MacroImageNode(Node):
@@ -158,17 +131,6 @@ class MacroImageNode(Node):
         self.width = width
         self.height = height
 
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "uri": self.uri,
-            "alt_text": self.alt_text,
-            "width": self.width,
-            "height": self.height,
-        }
-
-        return base
-
 
 class MacroHeaderNode(Node, NodeContentMixin):
     """This node contains a link to a header node."""
@@ -180,7 +142,7 @@ class MacroHeaderNode(Node, NodeContentMixin):
         target_alias: str,
         header: HeaderNode | None = None,
         target_id: str | None = None,
-        content: list[Node] | None = None,
+        content: Sequence[Node] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
@@ -201,19 +163,6 @@ class MacroHeaderNode(Node, NodeContentMixin):
 
         NodeContentMixin.__init__(self, content)
 
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "target_alias": self.target_alias,
-            "target_id": self.target_id,
-        }
-
-        base["custom"]["header"] = self.header.asdict() if self.header else None
-
-        NodeContentMixin.content_asdict(self, base)
-
-        return base
-
 
 class MacroFootnoteNode(Node):
     """This node contains a link to a footnote node."""
@@ -229,11 +178,3 @@ class MacroFootnoteNode(Node):
         super().__init__(parent=parent, info=info)
 
         self.footnote = footnote
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "footnote": self.footnote.asdict(),
-        }
-
-        return base

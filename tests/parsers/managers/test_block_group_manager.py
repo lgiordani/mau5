@@ -5,9 +5,7 @@ from mau.nodes.commands import BlockGroupNode
 from mau.parsers.managers.block_group_manager import (
     BlockGroupManager,
 )
-from mau.test_helpers import (
-    compare_asdict_object,
-)
+from mau.test_helpers import compare_nodes
 
 
 def test_block_group_manager():
@@ -75,7 +73,7 @@ def test_block_group_manager_process():
 
     bgm.process()
 
-    compare_asdict_object(group_node, expected_node)
+    compare_nodes(group_node, expected_node)
 
 
 def test_block_group_manager_process_group_does_not_exist():

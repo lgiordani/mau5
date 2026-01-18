@@ -5,7 +5,7 @@ from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -26,7 +26,7 @@ def test_header_level_1():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             HeaderNode(
@@ -54,7 +54,7 @@ def test_header_level_3():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             HeaderNode(
@@ -83,7 +83,7 @@ def test_header_attributes():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             HeaderNode(
@@ -115,7 +115,7 @@ def test_header_attributes_can_overwrite_ids():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             HeaderNode(
@@ -151,7 +151,7 @@ def test_header_usese_labels():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             HeaderNode(
@@ -189,7 +189,7 @@ def test_header_uses_control_positive():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             HeaderNode(
@@ -222,7 +222,7 @@ def test_header_uses_control_negative():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(parser.nodes, [])
+    compare_nodes_sequence(parser.nodes, [])
 
     assert parser.arguments_buffer.arguments is None
     assert parser.label_buffer.labels == {}

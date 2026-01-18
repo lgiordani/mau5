@@ -1,3 +1,4 @@
+from collections.abc import Sequence, Mapping
 from mau.nodes.node import Node, NodeContentMixin, NodeInfo
 
 
@@ -17,7 +18,7 @@ class FootnoteNode(Node, NodeContentMixin):
         # The private unique ID assigned to this footnote
         # that can be used as reference (e.g. for links).
         private_id: str | None = None,
-        content: list[Node] | None = None,
+        content: Sequence[Node] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
@@ -27,15 +28,3 @@ class FootnoteNode(Node, NodeContentMixin):
         self.name = name
         self.public_id = public_id
         self.private_id = private_id
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "name": self.name,
-            "public_id": self.public_id,
-            "private_id": self.private_id,
-        }
-
-        NodeContentMixin.content_asdict(self, base)
-
-        return base

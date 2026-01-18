@@ -1,3 +1,4 @@
+from collections.abc import Sequence, Mapping
 from mau.nodes.node import (
     Node,
     NodeContentMixin,
@@ -28,7 +29,7 @@ class HeaderNode(Node, NodeLabelsMixin, NodeContentMixin):
         internal_id: str | None = None,
         alias: str | None = None,
         content: list[Node] | None = None,
-        labels: dict[str, list[Node]] | None = None,
+        labels: Mapping[str, Sequence[Node]] | None = None,
         source_text: str | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
@@ -54,16 +55,3 @@ class HeaderNode(Node, NodeLabelsMixin, NodeContentMixin):
 
         NodeContentMixin.__init__(self, content)
         NodeLabelsMixin.__init__(self, labels)
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "level": self.level,
-            "internal_id": self.internal_id,
-            "alias": self.alias,
-        }
-
-        NodeLabelsMixin.content_asdict(self, base)
-        NodeContentMixin.content_asdict(self, base)
-
-        return base

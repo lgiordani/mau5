@@ -8,7 +8,7 @@ from mau.nodes.node import NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -26,7 +26,7 @@ def test_include_content_inline_arguments():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             IncludeNode(
@@ -52,7 +52,7 @@ def test_include_content_boxed_arguments():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             IncludeNode(
@@ -118,7 +118,7 @@ def test_include_content_with_label():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             IncludeNode(
@@ -149,7 +149,7 @@ def test_header_uses_control_positive():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             IncludeNode(
@@ -180,7 +180,7 @@ def test_header_uses_control_negative():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(parser.nodes, [])
+    compare_nodes_sequence(parser.nodes, [])
 
 
 def test_include_image_with_only_path():
@@ -190,7 +190,7 @@ def test_include_image_with_only_path():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             IncludeImageNode(
@@ -214,7 +214,7 @@ def test_include_image_with_alt_text_and_classes():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             IncludeImageNode(

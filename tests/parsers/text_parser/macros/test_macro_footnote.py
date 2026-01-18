@@ -7,7 +7,7 @@ from mau.nodes.node import NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -30,8 +30,8 @@ def test_macro_footnote():
 
     parser = runner(source)
 
-    compare_asdict_list(parser.nodes, [footnote_macro_node])
-    compare_asdict_list(parser.footnotes, [footnote_node])
+    compare_nodes_sequence(parser.nodes, [footnote_macro_node])
+    compare_nodes_sequence(parser.footnotes, [footnote_node])
 
 
 def test_macro_footnote_without_name():

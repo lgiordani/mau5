@@ -89,7 +89,7 @@ def parse_raw_engine(
     parser: DocumentParser,
     content: Token,
     arguments: Arguments,
-) -> list[Node]:
+) -> list[RawNode]:
     # Engine "raw" doesn't process the content,
     # so we just pass it untouched in the form of
     # a RawNode per line.
@@ -98,7 +98,7 @@ def parse_raw_engine(
     content_lines = content.value.split("\n")
 
     # A list of raw content lines.
-    raw_content: list[Node[RawNode]] = []
+    raw_content: list[RawNode] = []
 
     for number, line_content in enumerate(content_lines, start=1):
         line_context = content.context.clone()
@@ -164,7 +164,7 @@ def parse_source_engine(
     content_lines = content.value.split("\n")
 
     # A list of code lines (after processing).
-    code: list[Node[SourceLineNode]] = []
+    code: list[SourceLineNode] = []
 
     for number, line_content in enumerate(content_lines, start=1):
         line_number = str(number)
@@ -203,7 +203,7 @@ def parse_source_engine(
             highlight_style = marker[1:] or highlight_default_style
             marker = None
 
-        marker_node: Node[SourceMarkerNode] | None = None
+        marker_node: SourceMarkerNode | None = None
 
         # If there is a marker, change the line
         # context to remove the marker.
@@ -249,11 +249,11 @@ def parse_source_engine(
 
 
 def create_source_line(
-    code: list[Node[SourceLineNode]],
+    code: list[SourceLineNode],
     line_number: str,
     line_content: str,
     line_context: Context,
-    marker_node: Node[SourceMarkerNode] | None = None,
+    marker_node: SourceMarkerNode | None = None,
     highlight_style: str | None = None,
 ):
     # Prepare the source line
@@ -373,13 +373,10 @@ def block_processor(parser: DocumentParser):
 
     node.info = NodeInfo(context=context, **arguments.asdict())
 
-    if group_name:
+    if group_name and position:
         parser.block_group_manager.add_block(group_name, position, node)
 
         return True
-
-    # for name, nodes in children.items():
-    #     node.add_children_at_position(name, nodes, allow_all=True)
 
     # Check the stored control
     if control := parser.control_buffer.pop():

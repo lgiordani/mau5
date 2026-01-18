@@ -1,8 +1,10 @@
 # pylint: disable=too-many-lines
 
 from __future__ import annotations
-
+from dataclasses import dataclass, field
+from typing import Type
 from functools import partial
+from collections.abc import Sequence, Mapping
 
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
@@ -33,6 +35,13 @@ from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.parsers.text_parser import TextParser
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
+
+
+@dataclass
+class DocumentParserOutput:
+    document: Node | None = None
+    nested_toc: Sequence[Node] = field(default_factory=list)
+    plain_toc: Sequence[Node] = field(default_factory=list)
 
 
 # The DocumentParser is in charge of parsing
@@ -98,11 +107,7 @@ class DocumentParser(BaseParser):
         self.latest_ordered_list_index = 0
 
         # This is the final output of the parser
-        self.output: dict[str, None | Node] = {
-            "document": None,
-            "nested_toc": None,
-            "plain_toc": None,
-        }
+        self.output = DocumentParserOutput()
 
     def _process_functions(self):
         # All the functions that this parser provides.
@@ -122,7 +127,7 @@ class DocumentParser(BaseParser):
             partial(paragraph_processor, self),
         ]
 
-    def _parse_text(self, text: str, context: Context) -> list[Node[Node]]:
+    def _parse_text(self, text: str, context: Context) -> list[Node]:
         # This parses a piece of text.
         # It runs the text through the preprocessor to
         # replace variables, then parses it storing
@@ -213,13 +218,9 @@ class DocumentParser(BaseParser):
             self.nodes[0].info.context, self.nodes[-1].info.context
         )
 
-        self.output.update(
-            {
-                "document": document_content_class(
-                    content=self.nodes,
-                    info=NodeInfo(context=context),
-                ),
-                "nested_toc": self.toc_manager.nested_headers,
-                "plain_toc": self.toc_manager.headers,
-            }
+        self.output.document = document_content_class(
+            content=self.nodes,
+            info=NodeInfo(context=context),
         )
+        self.output.nested_toc = self.toc_manager.nested_headers
+        self.output.plain_toc = self.toc_manager.headers

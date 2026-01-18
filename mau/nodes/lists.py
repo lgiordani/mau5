@@ -1,3 +1,4 @@
+from collections.abc import Sequence, Mapping
 from mau.nodes.node import (
     Node,
     NodeContentMixin,
@@ -45,17 +46,11 @@ class ListItemNode(WrapperNode):
         level: int,
         parent: Node | None = None,
         info: NodeInfo | None = None,
-        content: list[Node] | None = None,
+        content: Sequence[Node] | None = None,
     ):
         super().__init__(parent=parent, info=info, content=content)
 
         self.level = level
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"]["level"] = self.level
-
-        return base
 
 
 class ListNode(Node, NodeContentMixin, NodeLabelsMixin):
@@ -68,8 +63,8 @@ class ListNode(Node, NodeContentMixin, NodeLabelsMixin):
         ordered,
         main_node=False,
         start=1,
-        content: list[Node] | None = None,
-        labels: dict[str, list[Node]] | None = None,
+        content: Sequence[Node] | None = None,
+        labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
@@ -80,16 +75,3 @@ class ListNode(Node, NodeContentMixin, NodeLabelsMixin):
         self.ordered = ordered
         self.main_node = main_node
         self.start = start
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "ordered": self.ordered,
-            "main_node": self.main_node,
-            "start": self.start,
-        }
-
-        NodeContentMixin.content_asdict(self, base)
-        NodeLabelsMixin.content_asdict(self, base)
-
-        return base

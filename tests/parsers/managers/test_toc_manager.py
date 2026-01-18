@@ -9,7 +9,7 @@ from mau.parsers.managers.toc_manager import (
     TocManager,
     add_nodes_under_level,
 )
-from mau.test_helpers import compare_asdict_list
+from mau.test_helpers import compare_nodes_sequence
 
 
 def test_toc_manager_init():
@@ -72,7 +72,9 @@ def test_add_nodes_without_nesting():
 
     assert idx == len(nodes)
 
-    compare_asdict_list(children, [node_toc_item_a, node_toc_item_b, node_toc_item_c])
+    compare_nodes_sequence(
+        children, [node_toc_item_a, node_toc_item_b, node_toc_item_c]
+    )
 
 
 def test_add_nodes_with_nesting():
@@ -110,7 +112,7 @@ def test_add_nodes_with_nesting():
 
     assert idx == len(nodes)
 
-    compare_asdict_list(children, [node_toc_item_a, node_toc_item_f])
+    compare_nodes_sequence(children, [node_toc_item_a, node_toc_item_f])
 
 
 def test_add_nodes_under_level_starts_with_any_level():
@@ -134,7 +136,7 @@ def test_add_nodes_under_level_starts_with_any_level():
 
     assert idx == len(nodes)
 
-    compare_asdict_list(children, [node_toc_item_a, node_toc_item_b])
+    compare_nodes_sequence(children, [node_toc_item_a, node_toc_item_b])
 
 
 def test_add_nodes_under_level_can_terminate_with_single_node():
@@ -158,7 +160,9 @@ def test_add_nodes_under_level_can_terminate_with_single_node():
 
     assert idx == len(nodes)
 
-    compare_asdict_list(children, [node_toc_item_a, node_toc_item_b, node_toc_item_c])
+    compare_nodes_sequence(
+        children, [node_toc_item_a, node_toc_item_b, node_toc_item_c]
+    )
 
 
 @patch("mau.parsers.managers.toc_manager.default_header_internal_id")
@@ -183,8 +187,8 @@ def test_process(mock_default_header_internal_id):
 
     tm.process()
 
-    compare_asdict_list(test_toc_node.plain_entries, header_nodes)
-    compare_asdict_list(test_toc_node.nested_entries, [node_toc_item_a])
+    compare_nodes_sequence(test_toc_node.plain_entries, header_nodes)
+    compare_nodes_sequence(test_toc_node.nested_entries, [node_toc_item_a])
 
     assert mock_default_header_internal_id.mock_calls == [
         call(node_header_a),
@@ -211,5 +215,5 @@ def test_process_internal_id():
 
     tm.process()
 
-    compare_asdict_list(test_toc_node.plain_entries, header_nodes)
-    compare_asdict_list(test_toc_node.nested_entries, [node_toc_item_a])
+    compare_nodes_sequence(test_toc_node.plain_entries, header_nodes)
+    compare_nodes_sequence(test_toc_node.nested_entries, [node_toc_item_a])

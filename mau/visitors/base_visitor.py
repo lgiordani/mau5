@@ -1,3 +1,4 @@
+from collections.abc import Sequence, Mapping
 from mau.environment.environment import Environment
 from mau.nodes.node import Node
 
@@ -34,31 +35,42 @@ class BaseVisitor:
 
         return node.accept(self, *args, **kwargs)
 
-    def visitlist(self, nodes_list: list[Node], *args, **kwargs):
+    def visitlist(
+        self, current_node: Node, nodes_list: Sequence[Node], *args, **kwargs
+    ):
         # Visit all the nodes in the given sequence.
         return [self.visit(node, *args, **kwargs) for node in nodes_list]
 
-    def visitdict(self, nodes_dict: dict[str, Node], *args, **kwargs):
+    def visitdict(
+        self, current_node: Node, nodes_dict: Mapping[str, Node], *args, **kwargs
+    ):
         # Visit all the nodes in the given dictionary.
         return {k: self.visit(node, *args, **kwargs) for k, node in nodes_dict.items()}
 
-    def visitdictlist(self, nodes_dict: dict[str, list[Node]], *args, **kwargs):
+    def visitdictlist(
+        self,
+        current_node: Node,
+        nodes_dict: Mapping[str, Sequence[Node]],
+        *args,
+        **kwargs,
+    ):
         # Visit all the nodes in the given dictionary.
         return {
-            k: self.visitlist(nodes, *args, **kwargs) for k, nodes in nodes_dict.items()
+            k: self.visitlist(current_node, nodes, *args, **kwargs)
+            for k, nodes in nodes_dict.items()
         }
 
     def _add_visit_content(self, result: dict, node: Node, *args, **kwargs):
         result.update(
             {
-                "content": self.visitlist(node.content, *args, **kwargs),
+                "content": self.visitlist(node, node.content, *args, **kwargs),
             }
         )
 
     def _add_visit_labels(self, result: dict, node: Node, *args, **kwargs):
         result.update(
             {
-                "labels": self.visitdictlist(node.labels),
+                "labels": self.visitdictlist(node, node.labels),
             }
         )
 
@@ -69,14 +81,6 @@ class BaseVisitor:
             "_type": node.type,
             "_info": node.info.asdict(),
         }
-
-    def _visit_paragraph(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
-
-        self._add_visit_content(result, node, *args, **kwargs)
-        self._add_visit_labels(result, node, *args, **kwargs)
-
-        return result
 
     def _visit_value(self, node: Node, *args, **kwargs) -> dict:
         result = self._visit_default(node, *args, **kwargs)
@@ -229,7 +233,7 @@ class BaseVisitor:
 
         result.update(
             {
-                "footnotes": self.visitlist(node.footnotes, *args, **kwargs),
+                "footnotes": self.visitlist(node, node.footnotes, *args, **kwargs),
             }
         )
 
@@ -243,7 +247,7 @@ class BaseVisitor:
         result.update(
             {
                 "header": self.visit(node.header),
-                "entries": self.visitlist(node.entries, *args, **kwargs),
+                "entries": self.visitlist(node, node.entries, *args, **kwargs),
             }
         )
 
@@ -254,8 +258,12 @@ class BaseVisitor:
 
         result.update(
             {
-                "plain_entries": self.visitlist(node.plain_entries, *args, **kwargs),
-                "nested_entries": self.visitlist(node.nested_entries, *args, **kwargs),
+                "plain_entries": self.visitlist(
+                    node, node.plain_entries, *args, **kwargs
+                ),
+                "nested_entries": self.visitlist(
+                    node, node.nested_entries, *args, **kwargs
+                ),
             }
         )
 
@@ -269,7 +277,7 @@ class BaseVisitor:
         result.update(
             {
                 "name": node.name,
-                "blocks": self.visitdict(node.blocks, *args, **kwargs),
+                "blocks": self.visitdict(node, node.blocks, *args, **kwargs),
             }
         )
 
@@ -367,17 +375,9 @@ class BaseVisitor:
     def _visit_paragraph(self, node: Node, *args, **kwargs) -> dict:
         result = self._visit_default(node, *args, **kwargs)
 
-        self._add_visit_content(result, node, *args, **kwargs)
-        self._add_visit_labels(result, node, *args, **kwargs)
-
-        return result
-
-    def _visit_paragraph(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
-
         result.update(
             {
-                "lines": self.visitlist(node.lines, *args, **kwargs),
+                "lines": self.visitlist(node, node.lines, *args, **kwargs),
             }
         )
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Sequence, Mapping
 from mau.nodes.block import BlockNode
 from mau.nodes.footnotes import FootnoteNode
 from mau.nodes.headers import HeaderNode
@@ -27,8 +28,8 @@ class FootnotesNode(Node, NodeLabelsMixin):
 
     def __init__(
         self,
-        footnotes: list[FootnoteNode] | None = None,
-        labels: dict[str, list[Node]] | None = None,
+        footnotes: Sequence[FootnoteNode] | None = None,
+        labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
@@ -36,16 +37,6 @@ class FootnotesNode(Node, NodeLabelsMixin):
         NodeLabelsMixin.__init__(self, labels)
 
         self.footnotes = footnotes or []
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "footnotes": [i.asdict() for i in self.footnotes],
-        }
-
-        NodeLabelsMixin.content_asdict(self, base)
-
-        return base
 
 
 class TocItemNode(Node):
@@ -59,7 +50,7 @@ class TocItemNode(Node):
     def __init__(
         self,
         header: HeaderNode,
-        entries: list[TocItemNode] | None = None,
+        entries: Sequence[TocItemNode] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
@@ -67,15 +58,6 @@ class TocItemNode(Node):
 
         self.header = header
         self.entries = entries or []
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "header": self.header.asdict(),
-            "entries": [i.asdict() for i in self.entries],
-        }
-
-        return base
 
 
 class TocNode(Node, NodeLabelsMixin):
@@ -85,9 +67,9 @@ class TocNode(Node, NodeLabelsMixin):
 
     def __init__(
         self,
-        plain_entries: list[HeaderNode] | None = None,
-        nested_entries: list[TocItemNode] | None = None,
-        labels: dict[str, list[Node]] | None = None,
+        plain_entries: Sequence[HeaderNode] | None = None,
+        nested_entries: Sequence[TocItemNode] | None = None,
+        labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
@@ -97,17 +79,6 @@ class TocNode(Node, NodeLabelsMixin):
         self.plain_entries = plain_entries or []
         self.nested_entries = nested_entries or []
 
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "plain_entries": [i.asdict() for i in self.plain_entries],
-            "nested_entries": [i.asdict() for i in self.nested_entries],
-        }
-
-        NodeLabelsMixin.content_asdict(self, base)
-
-        return base
-
 
 class BlockGroupNode(Node, NodeLabelsMixin):
     type = "block-group"
@@ -115,8 +86,8 @@ class BlockGroupNode(Node, NodeLabelsMixin):
     def __init__(
         self,
         name: str,
-        blocks: dict[str, BlockNode] | None = None,
-        labels: dict[str, list[Node]] | None = None,
+        blocks: Mapping[str, BlockNode] | None = None,
+        labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
@@ -125,15 +96,3 @@ class BlockGroupNode(Node, NodeLabelsMixin):
 
         self.name = name
         self.blocks = blocks or {}
-
-    def asdict(self):
-        base = super().asdict()
-
-        base["custom"] = {
-            "name": self.name,
-            "blocks": {k: v.asdict() for k, v in self.blocks.items()},
-        }
-
-        NodeLabelsMixin.content_asdict(self, base)
-
-        return base

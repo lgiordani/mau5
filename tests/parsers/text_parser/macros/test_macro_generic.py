@@ -4,7 +4,7 @@ from mau.nodes.macros import MacroNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -26,12 +26,7 @@ def test_generic_macro():
         )
     ]
 
-    parser = runner(source)
-
-    compare_asdict_list(
-        parser.nodes,
-        expected,
-    )
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_generic_macro_incomplete():
@@ -44,12 +39,7 @@ def test_generic_macro_incomplete():
         ),
     ]
 
-    parser = runner(source)
-
-    compare_asdict_list(
-        parser.nodes,
-        expected,
-    )
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_generic_macro_named_arguments():
@@ -64,12 +54,7 @@ def test_generic_macro_named_arguments():
         )
     ]
 
-    parser = runner(source)
-
-    compare_asdict_list(
-        parser.nodes,
-        expected,
-    )
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_generic_macro_without_arguments():
@@ -84,9 +69,4 @@ def test_generic_macro_without_arguments():
         )
     ]
 
-    parser = runner(source)
-
-    compare_asdict_list(
-        parser.nodes,
-        expected,
-    )
+    compare_nodes_sequence(runner(source).nodes, expected)

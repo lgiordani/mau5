@@ -1,3 +1,4 @@
+from collections.abc import Sequence, Mapping
 from mau.nodes.node import Node, NodeContentMixin, NodeInfo, NodeLabelsMixin
 
 
@@ -18,8 +19,8 @@ class BlockNode(Node, NodeLabelsMixin, NodeContentMixin):
         self,
         classes=None,
         engine=None,
-        content: list[Node] | None = None,
-        labels: dict[str, list[Node]] | None = None,
+        content: Sequence[Node] | None = None,
+        labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
@@ -29,15 +30,3 @@ class BlockNode(Node, NodeLabelsMixin, NodeContentMixin):
 
         self.classes = classes or []
         self.engine = engine
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {
-            "classes": self.classes,
-            "engine": self.engine,
-        }
-
-        NodeContentMixin.content_asdict(self, base)
-        NodeLabelsMixin.content_asdict(self, base)
-
-        return base

@@ -26,7 +26,7 @@ def paragraph_processor(parser: DocumentParser):
         line_tokens.append(parser.tm.get_token(TokenType.TEXT))
 
     # Fill a list of line nodes TODO
-    line_nodes: list[Node] = []
+    line_nodes: list[ParagraphLineNode] = []
 
     for line_token in line_tokens:
         # Build the node info.

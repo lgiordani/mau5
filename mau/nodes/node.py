@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Sequence, Mapping
 from typing import TYPE_CHECKING
 
 from mau.text_buffer import Context
@@ -60,13 +61,6 @@ class Node:
 
         return self
 
-    def asdict(self):
-        return {
-            "type": self.type,
-            "custom": {},
-            "info": self.info.asdict(),
-        }
-
     def accept(self, visitor: BaseVisitor, *args, **kwargs) -> dict:
         # Simple implementation of the visitor pattern.
         # Here, the node accepts a visitor and
@@ -87,38 +81,21 @@ class Node:
 
         return method(self, *args, **kwargs)
 
-    def __eq__(self, other):
-        if not isinstance(other, Node):
-            return False
-
-        return self.asdict() == other.asdict()
-
-    def __repr__(self):  # pragma: no cover
-        return str(self.asdict())
-
 
 class NodeContentMixin:
     def __init__(
         self,
-        content: list[Node] | None = None,
+        content: Sequence[Node] | None = None,
     ):
-        self.content: list[Node] = content or []
-
-    def content_asdict(self, base: dict):
-        base["custom"]["content"] = [i.asdict() for i in self.content]
+        self.content = content or []
 
 
 class NodeLabelsMixin:
     def __init__(
         self,
-        labels: dict[str, list[Node]] | None = None,
+        labels: Mapping[str, Sequence[Node]] | None = None,
     ):
         self.labels = labels or {}
-
-    def content_asdict(self, base: dict):
-        base["custom"]["labels"] = {
-            k: [i.asdict() for i in v] for k, v in self.labels.items()
-        }
 
 
 class ValueNode(Node):
@@ -134,12 +111,6 @@ class ValueNode(Node):
 
         self.value = value
 
-    def asdict(self):
-        base = super().asdict()
-        base["custom"] = {"value": self.value}
-
-        return base
-
 
 class WrapperNode(Node, NodeContentMixin):
     type = "wrapper"
@@ -148,16 +119,10 @@ class WrapperNode(Node, NodeContentMixin):
         self,
         parent: Node | None = None,
         info: NodeInfo | None = None,
-        content: list[Node] | None = None,
+        content: Sequence[Node] | None = None,
     ):
         super().__init__(parent=parent, info=info)
         NodeContentMixin.__init__(self, content)
-
-    def asdict(self):
-        base = super().asdict()
-        NodeContentMixin.content_asdict(self, base)
-
-        return base
 
 
 # # def format_node(node: Node, indent: int = 0) -> str:  # pragma: no cover

@@ -7,7 +7,7 @@ from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.parsers.document_processors.block import EngineType
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -26,7 +26,7 @@ def test_block_with_empty_body():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -47,7 +47,7 @@ def test_block_content():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -87,7 +87,7 @@ def test_block_content_variables():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -127,7 +127,7 @@ def test_block_content_external_variables():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -167,7 +167,7 @@ def test_block_inside_block():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -199,7 +199,7 @@ def test_block_uses_control_positive():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -243,7 +243,7 @@ def test_block_uses_control_positive_when_block_is_empty():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             BlockNode(
@@ -270,7 +270,7 @@ def test_block_uses_control_negative():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(parser.nodes, [])
+    compare_nodes_sequence(parser.nodes, [])
 
     assert parser.control_buffer.pop() is None
 
@@ -287,7 +287,7 @@ def test_block_uses_control_negative_when_block_is_empty():
 
     parser = runner(source, environment)
 
-    compare_asdict_list(parser.nodes, [])
+    compare_nodes_sequence(parser.nodes, [])
 
     assert parser.control_buffer.pop() is None
 
@@ -306,7 +306,7 @@ def test_block_control():
 
     parser = runner(source)
 
-    compare_asdict_list(parser.nodes, [])
+    compare_nodes_sequence(parser.nodes, [])
 
     assert parser.arguments_buffer.arguments is None
     assert parser.label_buffer.labels == {}

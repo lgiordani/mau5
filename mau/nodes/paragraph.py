@@ -1,3 +1,4 @@
+from collections.abc import Sequence, Mapping
 from mau.nodes.node import (
     Node,
     NodeContentMixin,
@@ -15,22 +16,14 @@ class ParagraphLineNode(Node, NodeContentMixin, NodeLabelsMixin):
 
     def __init__(
         self,
-        content: list[Node] | None = None,
-        labels: dict[str, list[Node]] | None = None,
+        content: Sequence[Node] | None = None,
+        labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
         super().__init__(parent=parent, info=info)
         NodeContentMixin.__init__(self, content)
         NodeLabelsMixin.__init__(self, labels)
-
-    def asdict(self):
-        base = super().asdict()
-
-        NodeContentMixin.content_asdict(self, base)
-        NodeLabelsMixin.content_asdict(self, base)
-
-        return base
 
 
 class ParagraphNode(Node, NodeLabelsMixin):
@@ -44,8 +37,8 @@ class ParagraphNode(Node, NodeLabelsMixin):
 
     def __init__(
         self,
-        lines: list[ParagraphLineNode] | None = None,
-        labels: dict[str, list[Node]] | None = None,
+        lines: Sequence[ParagraphLineNode] | None = None,
+        labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
     ):
@@ -54,11 +47,3 @@ class ParagraphNode(Node, NodeLabelsMixin):
         self.lines = lines or []
 
         NodeLabelsMixin.__init__(self, labels)
-
-    def asdict(self):
-        base = super().asdict()
-        base["custom"]["lines"]: [i.asdict() for i in self.lines]
-
-        NodeLabelsMixin.content_asdict(self, base)
-
-        return base

@@ -3,6 +3,7 @@ from mau.nodes.inline import TextNode, VerbatimNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -23,7 +24,7 @@ def test_verbatim():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_verbatim_escaped_backtick():
@@ -36,7 +37,7 @@ def test_verbatim_escaped_backtick():
         )
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_verbatim_style_inside_verbatim():
@@ -49,7 +50,7 @@ def test_verbatim_style_inside_verbatim():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_verbatim_open():
@@ -62,7 +63,7 @@ def test_verbatim_open():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_verbatim_escape_characters():
@@ -75,4 +76,4 @@ def test_verbatim_escape_characters():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)

@@ -3,6 +3,7 @@ from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -16,7 +17,7 @@ runner = parser_runner_factory(TextLexer, TextParser)
 def test_empty_text():
     source = ""
 
-    assert runner(source).nodes == []
+    compare_nodes_sequence(runner(source).nodes, [])
 
 
 def test_parse_word():
@@ -29,7 +30,7 @@ def test_parse_word():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_multiple_words():
@@ -42,7 +43,7 @@ def test_multiple_words():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_parse_escape_word():
@@ -55,7 +56,7 @@ def test_parse_escape_word():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_parse_escape_symbol():
@@ -68,7 +69,7 @@ def test_parse_escape_symbol():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)
 
 
 def test_square_brackets():
@@ -81,4 +82,4 @@ def test_square_brackets():
         ),
     ]
 
-    assert runner(source).nodes == expected
+    compare_nodes_sequence(runner(source).nodes, expected)

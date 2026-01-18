@@ -4,7 +4,7 @@ from mau.nodes.lists import ListItemNode, ListNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
-    compare_asdict_list,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -22,7 +22,7 @@ def test_parse_list_with_one_item():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ListNode(
@@ -54,7 +54,7 @@ def test_parse_list_with_multiple_items():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ListNode(
@@ -97,7 +97,7 @@ def test_parse_list_with_multiple_levels():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ListNode(
@@ -159,7 +159,7 @@ def test_parse_numbered_list():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ListNode(
@@ -221,7 +221,7 @@ def test_parse_mixed_list():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ListNode(
@@ -287,7 +287,7 @@ def test_parse_mixed_list_cannot_change_type():
     * Item 2
     """
 
-    assert runner(source1).nodes == runner(source2).nodes
+    compare_nodes_sequence(runner(source1).nodes, runner(source2).nodes)
 
 
 def test_parse_numbered_list_continue():
@@ -301,7 +301,7 @@ def test_parse_numbered_list_continue():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ListNode(
@@ -368,7 +368,7 @@ def test_parse_numbered_list_continue_after_forced():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ListNode(
@@ -441,7 +441,7 @@ def test_parse_numbered_list_do_not_continue_by_default():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ListNode(
@@ -490,7 +490,7 @@ def test_parse_list_arguments():
 
     parser = runner(source)
 
-    compare_asdict_list(
+    compare_nodes_sequence(
         parser.nodes,
         [
             ListNode(
@@ -532,7 +532,7 @@ def test_parse_list_control():
 
     parser = runner(source)
 
-    compare_asdict_list(parser.nodes, [])
+    compare_nodes_sequence(parser.nodes, [])
 
     assert parser.arguments_buffer.arguments is None
     assert parser.label_buffer.labels == {}
