@@ -1,5 +1,11 @@
 from mau.nodes.block import BlockNode
-from mau.nodes.commands import BlockGroupNode, FootnotesNode, TocItemNode, TocNode
+from mau.nodes.commands import (
+    BlockGroupNode,
+    FootnotesNode,
+    FootnotesItemNode,
+    TocItemNode,
+    TocNode,
+)
 from mau.nodes.footnotes import FootnoteNode
 from mau.nodes.headers import HeaderNode
 from mau.nodes.node import NodeInfo
@@ -20,29 +26,38 @@ def test_footnotes_node_empty():
 
 
 def test_footnotes_node():
-    footnotes = [
-        FootnoteNode("somename1"),
-        FootnoteNode("somename2"),
+    footnotes_items = [
+        FootnotesItemNode(footnote=FootnoteNode("somename1")),
+        FootnotesItemNode(footnote=FootnoteNode("somename2")),
     ]
-    node = FootnotesNode(footnotes=footnotes)
+
+    node = FootnotesNode(footnotes=footnotes_items)
 
     expected = {
         "_type": "footnotes",
         "footnotes": [
             {
-                "_type": "footnote",
-                "name": "somename1",
-                "public_id": None,
-                "private_id": None,
-                "content": [],
+                "_type": "footnotes-item",
+                "footnote": {
+                    "_type": "footnote",
+                    "name": "somename1",
+                    "public_id": None,
+                    "private_id": None,
+                    "content": [],
+                    "_info": NodeInfo.empty().asdict(),
+                },
                 "_info": NodeInfo.empty().asdict(),
             },
             {
-                "_type": "footnote",
-                "name": "somename2",
-                "public_id": None,
-                "private_id": None,
-                "content": [],
+                "_type": "footnotes-item",
+                "footnote": {
+                    "_type": "footnote",
+                    "name": "somename2",
+                    "public_id": None,
+                    "private_id": None,
+                    "content": [],
+                    "_info": NodeInfo.empty().asdict(),
+                },
                 "_info": NodeInfo.empty().asdict(),
             },
         ],

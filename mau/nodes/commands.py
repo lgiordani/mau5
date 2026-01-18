@@ -21,6 +21,20 @@ The command operator `::` runs the requested command passing the optional argume
 """
 
 
+class FootnotesItemNode(Node):
+    type = "footnotes-item"
+
+    def __init__(
+        self,
+        footnote: FootnoteNode,
+        parent: Node | None = None,
+        info: NodeInfo | None = None,
+    ):
+        super().__init__(parent=parent, info=info)
+
+        self.footnote = footnote
+
+
 class FootnotesNode(Node, NodeLabelsMixin):
     """The list of footnotes."""
 
@@ -28,7 +42,7 @@ class FootnotesNode(Node, NodeLabelsMixin):
 
     def __init__(
         self,
-        footnotes: Sequence[FootnoteNode] | None = None,
+        footnotes: Sequence[FootnotesItemNode] | None = None,
         labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,

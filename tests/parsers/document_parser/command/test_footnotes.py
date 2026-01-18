@@ -3,7 +3,7 @@ from unittest.mock import patch
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNode
-from mau.nodes.commands import FootnotesNode
+from mau.nodes.commands import FootnotesNode, FootnotesItemNode
 from mau.nodes.footnotes import FootnoteNode
 from mau.nodes.inline import TextNode
 from mau.nodes.lists import ListItemNode, ListNode
@@ -221,7 +221,7 @@ def test_command_footnotes(mock_footnote_unique_id):
         )
     ]
 
-    footnote_data = FootnoteNode(
+    footnote_node = FootnoteNode(
         name="somename",
         public_id="1",
         private_id="XXYY",
@@ -240,7 +240,7 @@ def test_command_footnotes(mock_footnote_unique_id):
                                 info=NodeInfo(context=generate_context(1, 0, 1, 24)),
                             ),
                             MacroFootnoteNode(
-                                footnote=footnote_data,
+                                footnote=footnote_node,
                                 info=NodeInfo(context=generate_context(1, 24, 1, 44)),
                             ),
                             TextNode(
@@ -254,7 +254,7 @@ def test_command_footnotes(mock_footnote_unique_id):
                 info=NodeInfo(context=generate_context(1, 0, 1, 45)),
             ),
             FootnotesNode(
-                footnotes=[footnote_data],
+                footnotes=[FootnotesItemNode(footnote=footnote_node)],
                 info=NodeInfo(context=generate_context(8, 0, 8, 11)),
             ),
         ],

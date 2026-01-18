@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from mau.nodes.block import BlockNode
-from mau.nodes.commands import FootnotesNode
+from mau.nodes.commands import FootnotesNode, FootnotesItemNode
 from mau.nodes.footnotes import FootnoteNode
 
 
@@ -92,6 +92,10 @@ class FootnotesManager:
             # behind the scenes.
             footnote.private_id = self.footnote_unique_id_function(footnote)
 
+        footnote_items = [
+            FootnotesItemNode(footnote=footnote) for footnote in self.footnotes
+        ]
+
         # Update all the nodes that list footnotes.
         for footnotes_list in self.footnotes_lists:
-            footnotes_list.footnotes = self.footnotes
+            footnotes_list.footnotes = footnote_items

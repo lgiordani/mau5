@@ -516,7 +516,6 @@ def sum(a, b):
 answer: int = 42
 ----
 
-////
 
 //- BLOCKS: FOOTNOTES -----------------------------
 
@@ -543,6 +542,7 @@ This is the content of another footnote.
 ----
 
 
+////
 //- BLOCKS: GROUPS --------------------------------
 
 // Sometimes sections are not enough, and

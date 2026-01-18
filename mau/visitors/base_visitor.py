@@ -231,18 +231,7 @@ class BaseVisitor:
 
         return result
 
-    def _visit_macro__footnote(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
-
-        result.update(
-            {
-                "footnote": self.visit(node.footnote),
-            }
-        )
-
-        return result
-
-    def _visit_footnote(self, node: Node, *args, **kwargs) -> dict:
+    def _get_footnote_data(self, node: Node, *args, **kwargs) -> dict:
         result = self._visit_default(node, *args, **kwargs)
 
         result.update(
@@ -254,6 +243,28 @@ class BaseVisitor:
         )
 
         self._add_visit_content(result, node, *args, **kwargs)
+
+        return result
+
+    def _visit_macro__footnote(self, node: Node, *args, **kwargs) -> dict:
+        result = self._visit_default(node, *args, **kwargs)
+
+        result.update(
+            {
+                "footnote": self._get_footnote_data(node.footnote, *args, **kwargs),
+            }
+        )
+
+        return result
+
+    def _visit_footnotes_item(self, node: Node, *args, **kwargs) -> dict:
+        result = self._visit_default(node, *args, **kwargs)
+
+        result.update(
+            {
+                "footnote": self._get_footnote_data(node.footnote, *args, **kwargs),
+            }
+        )
 
         return result
 
