@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Sequence, Mapping
+from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING
 
 from mau.text_buffer import Context
@@ -123,33 +123,3 @@ class WrapperNode(Node, NodeContentMixin):
     ):
         super().__init__(parent=parent, info=info)
         NodeContentMixin.__init__(self, content)
-
-
-# # def format_node(node: Node, indent: int = 0) -> str:  # pragma: no cover
-# #     # Everything shuld be indented at
-# #     # least at this level.
-# #     prefix = " " * indent
-#
-# #     output_lines = []
-#
-# #     node_type = node.content.type.upper()
-# #     output_lines.append(node_type)
-#
-# #     node_info = f"  INFO: {node.info.context}"
-# #     output_lines.append(node_info)
-#
-# #     node_content = f"  CONTENT: {node.content.asdict()}"
-# #     output_lines.append(node_content)
-#
-# #     node_children = "  CHILDREN:"
-# #     output_lines.append(node_children)
-#
-# #     for key, children in node.children.items():
-# #         output_lines.append(f"    [{key}]")
-#
-# #         for child in children:
-# #             child_output = format_node(child, indent=indent + 6)
-# #             output_lines.append(child_output)
-#
-# #     output_lines = [prefix + line for line in output_lines]
-# #     return "\n".join(output_lines)

@@ -1,5 +1,5 @@
-from mau.nodes.raw import RawLineNode, RawNode
 from mau.nodes.node import NodeInfo
+from mau.nodes.raw import RawLineNode, RawNode
 from mau.test_helpers import check_visit_node
 
 

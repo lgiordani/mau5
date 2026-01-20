@@ -18,9 +18,9 @@ from mau.nodes.macros import (
     MacroHeaderNode,
     MacroImageNode,
     MacroLinkNode,
-    MacroUnicodeNode,
-    MacroRawNode,
     MacroNode,
+    MacroRawNode,
+    MacroUnicodeNode,
 )
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.arguments_parser import ArgumentsParser

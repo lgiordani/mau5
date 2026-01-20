@@ -66,7 +66,7 @@ def variable_definition_processor(parser: DocumentParser):
 
         # The preprocess parser returns always
         # a single node.
-        value = preprocess_parser.nodes[0].value
+        value = preprocess_parser.get_processed_text().value
 
     if value == "":
         raise MauParserException(

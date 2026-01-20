@@ -3,9 +3,9 @@ from abc import ABC, abstractmethod
 from mau.lexers.base_lexer import MauLexerException
 from mau.nodes.node import Node
 from mau.parsers.base_parser import MauParserException
-from mau.visitors.base_visitor import MauVisitorException
 from mau.text_buffer import Context, Position
 from mau.token import Token
+from mau.visitors.base_visitor import MauVisitorException
 
 
 class BaseFormatter(ABC):

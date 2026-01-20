@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 
 from mau.nodes.block import BlockNode
-from mau.nodes.commands import FootnotesNode, FootnotesItemNode
+from mau.nodes.commands import FootnotesItemNode, FootnotesNode
 from mau.nodes.footnotes import FootnoteNode
 from mau.parsers.managers.footnotes_manager import FootnotesManager
 from mau.test_helpers import compare_nodes_sequence

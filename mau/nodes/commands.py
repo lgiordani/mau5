@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from collections.abc import Sequence, Mapping
+from collections.abc import Mapping, Sequence
+
 from mau.nodes.block import BlockNode
 from mau.nodes.footnotes import FootnoteNode
 from mau.nodes.headers import HeaderNode

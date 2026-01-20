@@ -1,11 +1,10 @@
 import yaml
 
-from mau.visitors.base_visitor import MauVisitorException
 from mau.lexers.base_lexer import MauLexerException
-from mau.parsers.base_parser import MauParserException
-from mau.visitors.base_visitor import BaseVisitor
 from mau.nodes.node import Node
+from mau.parsers.base_parser import MauParserException
 from mau.token import Token
+from mau.visitors.base_visitor import BaseVisitor, MauVisitorException
 
 from .base_formatter import BaseFormatter
 

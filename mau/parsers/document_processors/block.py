@@ -7,11 +7,10 @@ if TYPE_CHECKING:
 
 from enum import Enum
 
-from collections.abc import Sequence, Mapping
 from mau.environment.environment import Environment
 from mau.nodes.block import BlockNode
-from mau.nodes.raw import RawLineNode, RawNode
 from mau.nodes.node import Node, NodeInfo
+from mau.nodes.raw import RawLineNode, RawNode
 from mau.nodes.source import (
     SourceLineNode,
     SourceMarkerNode,

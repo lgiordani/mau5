@@ -4,6 +4,7 @@ from collections import defaultdict
 
 from mau.nodes.block import BlockNode
 from mau.nodes.commands import BlockGroupNode
+from mau.parsers.base_parser import MauParserException
 
 
 class BlockGroupManager:
@@ -46,9 +47,10 @@ class BlockGroupManager:
 
             # Check if the requested group exists.
             if group_name not in self.blocks:
-                # TODO replace this with a MauParserexception
-                # when Node and Node are unified.
-                raise ValueError(f"The group named {group_name} does not exist.")
+                raise MauParserException(
+                    f"The group named {group_name} does not exist.",
+                    group_node.info.context,
+                )
 
             # Add all blocks that mention this
             # group to the group node.

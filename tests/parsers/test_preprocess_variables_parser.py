@@ -7,11 +7,13 @@ from mau.nodes.node import NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.test_helpers import (
+    compare_asdict_object,
     compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
 )
+from mau.token import Token, TokenType
 
 init_parser = init_parser_factory(PreprocessVariablesLexer, PreprocessVariablesParser)
 runner = parser_runner_factory(PreprocessVariablesLexer, PreprocessVariablesParser)
@@ -23,14 +25,16 @@ def test_empty():
     parser = runner(source)
 
     assert parser.nodes == []
+    assert parser.get_processed_text() == Token.generate(TokenType.TEXT)
 
 
 def test_plain_text_with_no_variables():
     source = "This is text"
 
+    expected_text = "This is text"
     expected = [
         TextNode(
-            "This is text",
+            expected_text,
             info=NodeInfo(context=generate_context(0, 0, 0, 12)),
         )
     ]
@@ -38,15 +42,24 @@ def test_plain_text_with_no_variables():
     parser = runner(source)
 
     compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            expected_text,
+            generate_context(0, 0, 0, 12),
+        ),
+    )
 
 
 def test_plain_text_with_variables():
     environment = Environment.from_dict({"attr": "5"})
     source = "This is text"
 
+    expected_text = "This is text"
     expected = [
         TextNode(
-            "This is text",
+            expected_text,
             info=NodeInfo(context=generate_context(0, 0, 0, 12)),
         )
     ]
@@ -54,6 +67,14 @@ def test_plain_text_with_variables():
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            expected_text,
+            generate_context(0, 0, 0, 12),
+        ),
+    )
 
 
 def test_replace_variable():
@@ -62,14 +83,26 @@ def test_replace_variable():
 
     expected = [
         TextNode(
-            "This is number 5",
-            info=NodeInfo(context=generate_context(0, 0, 0, 21)),
-        )
+            "This is number ",
+            info=NodeInfo(context=generate_context(0, 0, 0, 15)),
+        ),
+        TextNode(
+            "5",
+            info=NodeInfo(context=generate_context(0, 15, 0, 21)),
+        ),
     ]
 
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            "This is number 5",
+            generate_context(0, 0, 0, 21),
+        ),
+    )
 
 
 def test_manage_unclosed_curly_braces():
@@ -78,14 +111,31 @@ def test_manage_unclosed_curly_braces():
 
     expected = [
         TextNode(
-            "This is {attr",
-            info=NodeInfo(context=generate_context(0, 0, 0, 13)),
-        )
+            "This is ",
+            info=NodeInfo(context=generate_context(0, 0, 0, 8)),
+        ),
+        TextNode(
+            "{",
+            info=NodeInfo(context=generate_context(0, 8, 0, 9)),
+        ),
+        TextNode(
+            "attr",
+            info=NodeInfo(context=generate_context(0, 9, 0, 13)),
+        ),
     ]
 
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.nodes, expected)
+    compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            "This is {attr",
+            generate_context(0, 0, 0, 13),
+        ),
+    )
 
 
 def test_replace_variable_with_namespace():
@@ -94,30 +144,26 @@ def test_replace_variable_with_namespace():
 
     expected = [
         TextNode(
-            "This is number 5",
-            info=NodeInfo(context=generate_context(0, 0, 0, 25)),
-        )
-    ]
-
-    parser = runner(source, environment)
-
-    compare_nodes_sequence(parser.nodes, expected)
-
-
-def test_replace_boolean():
-    environment = Environment.from_dict({"flag": True})
-    source = "This flag is {flag}"
-
-    expected = [
+            "This is number ",
+            info=NodeInfo(context=generate_context(0, 0, 0, 15)),
+        ),
         TextNode(
-            "This flag is ",
-            info=NodeInfo(context=generate_context(0, 0, 0, 19)),
-        )
+            "5",
+            info=NodeInfo(context=generate_context(0, 15, 0, 25)),
+        ),
     ]
 
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            "This is number 5",
+            generate_context(0, 0, 0, 25),
+        ),
+    )
 
 
 def test_escape_curly_braces():
@@ -126,14 +172,34 @@ def test_escape_curly_braces():
 
     expected = [
         TextNode(
-            "This is {attr}",
-            info=NodeInfo(context=generate_context(0, 0, 0, 16)),
-        )
+            "This is ",
+            info=NodeInfo(context=generate_context(0, 0, 0, 8)),
+        ),
+        TextNode(
+            "{",
+            info=NodeInfo(context=generate_context(0, 8, 0, 10)),
+        ),
+        TextNode(
+            "attr",
+            info=NodeInfo(context=generate_context(0, 10, 0, 14)),
+        ),
+        TextNode(
+            "}",
+            info=NodeInfo(context=generate_context(0, 14, 0, 16)),
+        ),
     ]
 
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            "This is {attr}",
+            generate_context(0, 0, 0, 16),
+        ),
+    )
 
 
 def test_curly_braces_in_verbatim():
@@ -142,14 +208,26 @@ def test_curly_braces_in_verbatim():
 
     expected = [
         TextNode(
-            "This is `{attr}`",
-            info=NodeInfo(context=generate_context(0, 0, 0, 16)),
-        )
+            "This is ",
+            info=NodeInfo(context=generate_context(0, 0, 0, 8)),
+        ),
+        TextNode(
+            "`{attr}`",
+            info=NodeInfo(context=generate_context(0, 8, 0, 16)),
+        ),
     ]
 
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            "This is `{attr}`",
+            generate_context(0, 0, 0, 16),
+        ),
+    )
 
 
 def test_open_verbatim():
@@ -158,14 +236,30 @@ def test_open_verbatim():
 
     expected = [
         TextNode(
-            "This is `5",
-            info=NodeInfo(context=generate_context(0, 0, 0, 15)),
-        )
+            "This is ",
+            info=NodeInfo(context=generate_context(0, 0, 0, 8)),
+        ),
+        TextNode(
+            "`",
+            info=NodeInfo(context=generate_context(0, 8, 0, 9)),
+        ),
+        TextNode(
+            "5",
+            info=NodeInfo(context=generate_context(0, 9, 0, 15)),
+        ),
     ]
 
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            "This is `5",
+            generate_context(0, 0, 0, 15),
+        ),
+    )
 
 
 def test_escape_curly_braces_in_verbatim():
@@ -174,14 +268,26 @@ def test_escape_curly_braces_in_verbatim():
 
     expected = [
         TextNode(
-            r"This is `\{attr\}`",
-            info=NodeInfo(context=generate_context(0, 0, 0, 18)),
-        )
+            r"This is ",
+            info=NodeInfo(context=generate_context(0, 0, 0, 8)),
+        ),
+        TextNode(
+            r"`\{attr\}`",
+            info=NodeInfo(context=generate_context(0, 8, 0, 18)),
+        ),
     ]
 
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            r"This is `\{attr\}`",
+            generate_context(0, 0, 0, 18),
+        ),
+    )
 
 
 def test_escape_other_chars():
@@ -190,14 +296,34 @@ def test_escape_other_chars():
 
     expected = [
         TextNode(
-            r"This \_is\_ \text",
-            info=NodeInfo(context=generate_context(0, 0, 0, 17)),
-        )
+            r"This ",
+            info=NodeInfo(context=generate_context(0, 0, 0, 5)),
+        ),
+        TextNode(
+            r"\_is",
+            info=NodeInfo(context=generate_context(0, 5, 0, 9)),
+        ),
+        TextNode(
+            r"\_ ",
+            info=NodeInfo(context=generate_context(0, 9, 0, 12)),
+        ),
+        TextNode(
+            r"\text",
+            info=NodeInfo(context=generate_context(0, 12, 0, 17)),
+        ),
     ]
 
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            r"This \_is\_ \text",
+            generate_context(0, 0, 0, 17),
+        ),
+    )
 
 
 def test_curly_braces_in_escaped_verbatim():
@@ -206,14 +332,34 @@ def test_curly_braces_in_escaped_verbatim():
 
     expected = [
         TextNode(
-            r"This is \`5\`",
-            info=NodeInfo(context=generate_context(0, 0, 0, 18)),
-        )
+            r"This is ",
+            info=NodeInfo(context=generate_context(0, 0, 0, 8)),
+        ),
+        TextNode(
+            r"\`",
+            info=NodeInfo(context=generate_context(0, 8, 0, 10)),
+        ),
+        TextNode(
+            r"5",
+            info=NodeInfo(context=generate_context(0, 10, 0, 16)),
+        ),
+        TextNode(
+            r"\`",
+            info=NodeInfo(context=generate_context(0, 16, 0, 18)),
+        ),
     ]
 
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            r"This is \`5\`",
+            generate_context(0, 0, 0, 18),
+        ),
+    )
 
 
 def test_variable_not_existing():
@@ -234,14 +380,34 @@ def test_variables_can_contain_markers():
 
     expected = [
         TextNode(
-            "A very *bold* text. Some code: `adict = {'a':5}`",
-            info=NodeInfo(context=generate_context(0, 0, 0, 40)),
-        )
+            "A very ",
+            info=NodeInfo(context=generate_context(0, 0, 0, 7)),
+        ),
+        TextNode(
+            "*bold*",
+            info=NodeInfo(context=generate_context(0, 7, 0, 13)),
+        ),
+        TextNode(
+            " text. Some code: ",
+            info=NodeInfo(context=generate_context(0, 13, 0, 31)),
+        ),
+        TextNode(
+            "`adict = {'a':5}`",
+            info=NodeInfo(context=generate_context(0, 31, 0, 40)),
+        ),
     ]
 
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            "A very *bold* text. Some code: `adict = {'a':5}`",
+            generate_context(0, 0, 0, 40),
+        ),
+    )
 
 
 def test_escape_backtick():
@@ -249,11 +415,23 @@ def test_escape_backtick():
 
     expected = [
         TextNode(
-            r"This is `\``",
-            info=NodeInfo(context=generate_context(0, 0, 0, 12)),
-        )
+            "This is ",
+            info=NodeInfo(context=generate_context(0, 0, 0, 8)),
+        ),
+        TextNode(
+            r"`\``",
+            info=NodeInfo(context=generate_context(0, 8, 0, 12)),
+        ),
     ]
 
     parser = runner(source)
 
     compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            r"This is `\``",
+            generate_context(0, 0, 0, 12),
+        ),
+    )

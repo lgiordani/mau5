@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from mau.parsers.document_parser import DocumentParser
 
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
@@ -25,7 +25,6 @@ def paragraph_processor(parser: DocumentParser):
     while parser.tm.peek_token().type == TokenType.TEXT:
         line_tokens.append(parser.tm.get_token(TokenType.TEXT))
 
-    # Fill a list of line nodes TODO
     line_nodes: list[ParagraphLineNode] = []
 
     for line_token in line_tokens:

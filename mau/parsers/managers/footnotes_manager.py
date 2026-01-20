@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from mau.nodes.block import BlockNode
-from mau.nodes.commands import FootnotesNode, FootnotesItemNode
+from mau.nodes.commands import FootnotesItemNode, FootnotesNode
 from mau.nodes.footnotes import FootnoteNode
 
 

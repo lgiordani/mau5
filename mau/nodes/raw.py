@@ -1,5 +1,6 @@
-from collections.abc import Sequence, Mapping
-from mau.nodes.node import Node, NodeContentMixin, NodeInfo, NodeLabelsMixin, ValueNode
+from collections.abc import Mapping, Sequence
+
+from mau.nodes.node import Node, NodeInfo, NodeLabelsMixin, ValueNode
 
 
 class RawLineNode(ValueNode):

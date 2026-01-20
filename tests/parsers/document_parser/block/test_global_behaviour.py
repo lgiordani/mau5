@@ -6,9 +6,6 @@ from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
-from mau.parsers.document_processors.block import (
-    EngineType,
-)
 from mau.test_helpers import (
     compare_nodes_sequence,
     generate_context,

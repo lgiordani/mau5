@@ -1,8 +1,8 @@
 from mau.nodes.block import BlockNode
 from mau.nodes.commands import (
     BlockGroupNode,
-    FootnotesNode,
     FootnotesItemNode,
+    FootnotesNode,
     TocItemNode,
     TocNode,
 )

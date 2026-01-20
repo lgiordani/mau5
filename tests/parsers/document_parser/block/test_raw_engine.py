@@ -1,6 +1,6 @@
 from mau.lexers.document_lexer import DocumentLexer
-from mau.nodes.raw import RawNode, RawLineNode
 from mau.nodes.node import NodeInfo
+from mau.nodes.raw import RawLineNode, RawNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     compare_nodes_sequence,

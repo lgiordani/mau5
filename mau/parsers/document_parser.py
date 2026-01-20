@@ -1,10 +1,10 @@
 # pylint: disable=too-many-lines
 
 from __future__ import annotations
+
+from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Type
 from functools import partial
-from collections.abc import Sequence, Mapping
 
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
@@ -155,7 +155,7 @@ class DocumentParser(BaseParser):
             return []
 
         # The preprocess parser outputs a single node.
-        text = preprocess_parser.nodes[0].value
+        text = preprocess_parser.get_processed_text().value
 
         # Parse the text
         text_parser = TextParser.lex_and_parse(

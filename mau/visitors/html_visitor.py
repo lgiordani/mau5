@@ -1,14 +1,14 @@
 import html
-import sys
 from importlib.resources import files
+from typing import Callable
 
-from mau.environment.environment import Environment
-from mau.visitors.jinja_visitor import JinjaVisitor, _load_templates_from_path
 from pygments import highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
-from typing import Callable
+
+from mau.environment.environment import Environment
 from mau.nodes.node import Node
+from mau.visitors.jinja_visitor import JinjaVisitor, _load_templates_from_path
 
 
 # This removes trailing spaces and newlines from

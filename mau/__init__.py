@@ -6,15 +6,13 @@ import yaml
 __version__ = metadata.version("mau")
 
 from mau.environment.environment import Environment
-from mau.lexers.base_lexer import BaseLexer
 from mau.lexers.document_lexer import DocumentLexer
-from mau.parsers.base_parser import BaseParser
 from mau.parsers.document_parser import DocumentParser
 from mau.text_buffer import TextBuffer
 from mau.token import Token
 from mau.visitors.base_visitor import BaseVisitor
-from mau.visitors.jinja_visitor import JinjaVisitor
 from mau.visitors.html_visitor import HtmlVisitor
+from mau.visitors.jinja_visitor import JinjaVisitor
 
 BASE_NAMESPACE = "mau"
 
@@ -182,4 +180,6 @@ class Mau:  # pragma: no cover
         lexer = self.run_lexer(text_buffer)
 
         # Parse the lexer tokens.
-        parser = self.run_parser(lexer.tokens)
+        self.run_parser(lexer.tokens)
+
+        # TODO add run_visitor

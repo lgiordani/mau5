@@ -3,7 +3,7 @@ from unittest.mock import patch
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNode
-from mau.nodes.commands import FootnotesNode, FootnotesItemNode
+from mau.nodes.commands import FootnotesItemNode, FootnotesNode
 from mau.nodes.footnotes import FootnoteNode
 from mau.nodes.inline import TextNode
 from mau.nodes.lists import ListItemNode, ListNode

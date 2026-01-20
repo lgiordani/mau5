@@ -45,17 +45,17 @@ def arguments_processor(parser: DocumentParser):
         return True
 
     # The preprocess parser outputs a single node.
-    text = preprocess_parser.nodes[0]
+    text_token = preprocess_parser.get_processed_text()
 
     # Unpack the text initial position.
-    start_line, start_column = text.info.context.start_position
+    start_line, start_column = text_token.context.start_position
 
     # Get the text source.
-    source_filename = text.info.context.source
+    source_filename = text_token.context.source
 
     # Parse the arguments.
     arguments_parser = ArgumentsParser.lex_and_parse(
-        text=text.value,
+        text=text_token.value,
         environment=parser.environment,
         start_line=start_line,
         start_column=start_column,

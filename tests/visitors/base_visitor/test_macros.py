@@ -6,9 +6,9 @@ from mau.nodes.macros import (
     MacroHeaderNode,
     MacroImageNode,
     MacroLinkNode,
-    MacroUnicodeNode,
-    MacroRawNode,
     MacroNode,
+    MacroRawNode,
+    MacroUnicodeNode,
 )
 from mau.nodes.node import NodeInfo
 from mau.test_helpers import check_node_with_content, check_visit_node

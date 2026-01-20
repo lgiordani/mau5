@@ -1,4 +1,5 @@
-from collections.abc import Sequence, Mapping
+from collections.abc import Mapping, Sequence
+
 from mau.nodes.footnotes import FootnoteNode
 from mau.nodes.headers import HeaderNode
 from mau.nodes.node import Node, NodeContentMixin, NodeInfo, ValueNode

@@ -149,18 +149,14 @@ class PreprocessVariablesParser(BaseParser):
             self._process_pass,
         ]
 
-    def parse(self):
+    def get_processed_text(self) -> Token:
         # After having parsed the text and replaced the
         # variables, this parser should eventually return
         # a single piece of text.
-        # So, after the standard parsing, we create a
-        # single TEXT node from all the nodes that
-        # we processed.
-
-        super().parse()
-
-        if not self.nodes:
-            return
+        # However, the method `parse()` is bound to return
+        # a list of nodes as per the definition in it parent.
+        # This method groups the value of all text nodes
+        # and returns a single token.
 
         text_tokens = [
             Token(
@@ -171,11 +167,4 @@ class PreprocessVariablesParser(BaseParser):
             for i in self.nodes
         ]
 
-        token = Token.from_token_list(text_tokens)
-
-        self.nodes = [
-            TextNode(
-                token.value,
-                info=NodeInfo(context=token.context),
-            )
-        ]
+        return Token.from_token_list(text_tokens)
