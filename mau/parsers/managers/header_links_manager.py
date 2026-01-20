@@ -13,35 +13,35 @@ class HeaderLinksManager:
     def __init__(self):
         # This list containes the internal links created
         # in the text through a macro.
-        self._links: list[MacroHeaderNode] = []
+        self.links: list[MacroHeaderNode] = []
 
         # This dictionary contains the headers
         # flagged with an id
-        self._headers: dict[str, HeaderNode] = {}
+        self.headers: dict[str, HeaderNode] = {}
 
     def add_header(self, alias: str, data: HeaderNode):
         """Add a single header to the list
         of managed headers. Check that the header
         ID is not already in use."""
-        if alias in self._headers:
+        if alias in self.headers:
             raise ValueError(
                 f"Duplicate header id detected: {alias}",
             )
 
-        self._headers[alias] = data
+        self.headers[alias] = data
 
     def add_links(self, links: list[MacroHeaderNode]):
         """Add the given list of links
         to the managed links."""
-        self._links.extend(links)
+        self.links.extend(links)
 
     def update(self, other: HeaderLinksManager):
         """Update the headers and macro nodes
         with those contained in another
         Header Links Manager."""
-        self.add_links(other._links)
+        self.add_links(other.links)
 
-        for alias, node in other._headers.items():
+        for alias, node in other.headers.items():
             self.add_header(alias, node)
 
     def process(self):
@@ -49,9 +49,9 @@ class HeaderLinksManager:
         # header it mentions in the list of
         # headers, and connect the two.
 
-        for link in self._links:
+        for link in self.links:
             try:
-                target = self._headers[link.target_alias]
+                target = self.headers[link.target_alias]
 
                 link.header = target
                 link.target_id = target.internal_id
