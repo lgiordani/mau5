@@ -4,8 +4,8 @@ import pytest
 
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNode
-from mau.nodes.commands import TocItemNode, TocNode
-from mau.nodes.headers import HeaderNode
+from mau.nodes.command import TocItemNode, TocNode
+from mau.nodes.header import HeaderNode
 from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode

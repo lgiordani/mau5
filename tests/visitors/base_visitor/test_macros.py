@@ -1,6 +1,6 @@
-from mau.nodes.footnotes import FootnoteNode
-from mau.nodes.headers import HeaderNode
-from mau.nodes.macros import (
+from mau.nodes.footnote import FootnoteNode
+from mau.nodes.header import HeaderNode
+from mau.nodes.macro import (
     MacroClassNode,
     MacroFootnoteNode,
     MacroHeaderNode,

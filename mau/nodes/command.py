@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 
 from mau.nodes.block import BlockNode
-from mau.nodes.footnotes import FootnoteNode
-from mau.nodes.headers import HeaderNode
+from mau.nodes.footnote import FootnoteNode
+from mau.nodes.header import HeaderNode
 from mau.nodes.node import (
     Node,
     NodeInfo,

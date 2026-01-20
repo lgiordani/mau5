@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from mau.nodes.block import BlockNode
-from mau.nodes.commands import FootnotesItemNode, FootnotesNode
-from mau.nodes.footnotes import FootnoteNode
+from mau.nodes.command import FootnotesItemNode, FootnotesNode
+from mau.nodes.footnote import FootnoteNode
 
 
 def default_footnote_unique_id(

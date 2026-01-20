@@ -1,7 +1,7 @@
 import pytest
 
 from mau.lexers.text_lexer import TextLexer
-from mau.nodes.macros import MacroImageNode
+from mau.nodes.macro import MacroImageNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.text_parser import TextParser

@@ -5,7 +5,7 @@ from mau.environment.environment import Environment
 # from mau.nodes.header import HeaderNode
 from mau.nodes.inline import TextNode
 
-# from mau.nodes.macros import (
+# from mau.nodes.macro import (
 #     MacroClassNode,
 #     MacroHeaderNode,
 #     MacroImageNode,

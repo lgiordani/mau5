@@ -1,4 +1,4 @@
-from mau.nodes.headers import HeaderNode
+from mau.nodes.header import HeaderNode
 from mau.nodes.node import NodeInfo
 from mau.test_helpers import (
     check_node_with_content,

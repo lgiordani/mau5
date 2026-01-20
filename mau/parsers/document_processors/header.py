@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from mau.parsers.document_parser import DocumentParser
 
 
-from mau.nodes.headers import HeaderNode
+from mau.nodes.header import HeaderNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.text_buffer import Context

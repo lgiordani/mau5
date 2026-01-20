@@ -1,7 +1,7 @@
 from collections.abc import Mapping, Sequence
 
-from mau.nodes.footnotes import FootnoteNode
-from mau.nodes.headers import HeaderNode
+from mau.nodes.footnote import FootnoteNode
+from mau.nodes.header import HeaderNode
 from mau.nodes.node import Node, NodeContentMixin, NodeInfo, ValueNode
 
 MACRO_HELP = """

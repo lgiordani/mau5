@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from mau.parsers.document_parser import DocumentParser
 
 
-from mau.nodes.commands import (
+from mau.nodes.command import (
     COMMAND_HELP,
     BlockGroupNode,
     FootnotesNode,

@@ -1,7 +1,7 @@
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.inline import StyleNode, TextNode
-from mau.nodes.macros import MacroLinkNode
+from mau.nodes.macro import MacroLinkNode
 from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser

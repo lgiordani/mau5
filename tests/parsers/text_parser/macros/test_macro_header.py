@@ -2,7 +2,7 @@ import pytest
 
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.inline import TextNode
-from mau.nodes.macros import MacroHeaderNode
+from mau.nodes.macro import MacroHeaderNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.text_parser import TextParser

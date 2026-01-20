@@ -3,7 +3,7 @@ import pytest
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNode
-from mau.nodes.commands import BlockGroupNode
+from mau.nodes.command import BlockGroupNode
 from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from mau.nodes.headers import HeaderNode
-from mau.nodes.macros import MacroHeaderNode
+from mau.nodes.header import HeaderNode
+from mau.nodes.macro import MacroHeaderNode
 
 
 class HeaderLinksManager:

@@ -5,14 +5,14 @@ import logging
 
 from mau.environment.environment import Environment
 from mau.lexers.text_lexer import TextLexer
-from mau.nodes.footnotes import FootnoteNode
+from mau.nodes.footnote import FootnoteNode
 from mau.nodes.inline import (
     StyleNode,
     TextNode,
     VerbatimNode,
     WordNode,
 )
-from mau.nodes.macros import (
+from mau.nodes.macro import (
     MacroClassNode,
     MacroFootnoteNode,
     MacroHeaderNode,

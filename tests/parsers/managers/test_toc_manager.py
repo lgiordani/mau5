@@ -1,10 +1,10 @@
 from unittest.mock import call, patch
 
-from mau.nodes.commands import (
+from mau.nodes.command import (
     TocItemNode,
     TocNode,
 )
-from mau.nodes.headers import HeaderNode
+from mau.nodes.header import HeaderNode
 from mau.parsers.managers.toc_manager import (
     TocManager,
     add_nodes_under_level,

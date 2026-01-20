@@ -1,4 +1,4 @@
-from mau.nodes.lists import ListItemNode, ListNode
+from mau.nodes.list import ListItemNode, ListNode
 from mau.nodes.node import NodeInfo
 from mau.test_helpers import check_visit_node
 
