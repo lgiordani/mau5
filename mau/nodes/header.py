@@ -27,10 +27,10 @@ class HeaderNode(Node, NodeLabelsMixin, NodeContentMixin):
     def __init__(
         self,
         level: int,
-        # The private unique ID assigned to this footnote
+        # The internal unique ID assigned to this footnote
         # that can be used to create references in
         # the rendered text.
-        private_id: str | None = None,
+        internal_id: str | None = None,
         # The unique internal name of the
         # referenced footnote content.
         # This name is used to link a
@@ -45,7 +45,7 @@ class HeaderNode(Node, NodeLabelsMixin, NodeContentMixin):
     ):
         super().__init__(parent=parent, info=info)
         self.level = level
-        self.private_id = private_id
+        self.internal_id = internal_id
 
         # This is a name for this header,
         # used to link it internally.

@@ -132,7 +132,7 @@ class BaseVisitor:
         result.update(
             {
                 "level": node.level,
-                "private_id": node.private_id,
+                "internal_id": node.internal_id,
                 "name": node.name,
             }
         )
@@ -245,7 +245,7 @@ class BaseVisitor:
             {
                 "name": node.name,
                 "public_id": node.public_id,
-                "private_id": node.private_id,
+                "internal_id": node.internal_id,
             }
         )
 

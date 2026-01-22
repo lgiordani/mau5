@@ -22,7 +22,7 @@ def header_processor(parser: DocumentParser):
     # and represents the level of the header.
     # Headers are automatically assigned a unique ID
     # created using the provided function
-    # parser.header_private_id_function
+    # parser.header_internal_id_function
 
     # Get all the equal signs.
     header = parser.tm.get_token(TokenType.HEADER)
@@ -56,7 +56,7 @@ def header_processor(parser: DocumentParser):
     # only through the arguments manager.
     arguments = parser.arguments_buffer.pop_or_default()
 
-    # Private IDs are used to create anchors
+    # Internal IDs are used to create anchors
     # in the document. For example, they might be
     # the anchor name in HTML. They are stored
     # in the header itself.
@@ -64,10 +64,10 @@ def header_processor(parser: DocumentParser):
     # in the headers manager. They are used to link
     # the header through the [header](name) macro.
 
-    # Create the private ID.
+    # Create the internal ID.
     # This uses the actual text contained in
     # the TextNode object.
-    private_id = arguments.named_args.pop("private_id", None)
+    internal_id = arguments.named_args.pop("internal_id", None)
 
     # Extract the header id if specified.
     name = arguments.named_args.pop("name", None)
@@ -83,7 +83,7 @@ def header_processor(parser: DocumentParser):
     # The final node created by this parser.
     header_node = HeaderNode(
         level,
-        private_id=private_id,
+        internal_id=internal_id,
         name=name,
         content=text_nodes,
         source_text=text_token.value,

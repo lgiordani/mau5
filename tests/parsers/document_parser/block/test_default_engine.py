@@ -12,9 +12,9 @@ init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-@patch("mau.parsers.managers.toc_manager.default_header_private_id")
-def test_default_engine_adds_headers_to_global_toc(mock_header_private_id):
-    mock_header_private_id.return_value = "XXYY"
+@patch("mau.parsers.managers.toc_manager.default_header_internal_id")
+def test_default_engine_adds_headers_to_global_toc(mock_header_internal_id):
+    mock_header_internal_id.return_value = "XXYY"
 
     source = """
     ----

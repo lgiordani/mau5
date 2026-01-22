@@ -133,7 +133,7 @@ def test_macro_header_node_with_header():
         "header": {
             "_type": "header",
             "name": None,
-            "private_id": None,
+            "internal_id": None,
             "level": 1,
             "labels": {},
             "content": [],
@@ -174,7 +174,7 @@ def test_macro_footnote_node_parameters():
             "_type": "footnote",
             "name": "somename",
             "public_id": None,
-            "private_id": None,
+            "internal_id": None,
             "content": [],
             "_info": NodeInfo.empty().asdict(),
         },

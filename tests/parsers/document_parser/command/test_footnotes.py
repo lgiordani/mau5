@@ -61,7 +61,7 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
     footnote_data = FootnoteNode(
         name="somename",
         public_id="1",
-        private_id="XXYY",
+        internal_id="XXYY",
         content=footnote_body_nodes,
     )
 
@@ -141,7 +141,7 @@ def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
     footnote_data = FootnoteNode(
         name="somename",
         public_id="1",
-        private_id="XXYY",
+        internal_id="XXYY",
         content=footnote_body_nodes,
     )
 
@@ -224,7 +224,7 @@ def test_command_footnotes(mock_footnote_unique_id):
     footnote_node = FootnoteNode(
         name="somename",
         public_id="1",
-        private_id="XXYY",
+        internal_id="XXYY",
         content=footnote_body_nodes,
     )
 
@@ -391,7 +391,7 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
     footnote_data = FootnoteNode(
         name="somename",
         public_id="1",
-        private_id="XXYY",
+        internal_id="XXYY",
         content=footnote_body_nodes,
     )
 

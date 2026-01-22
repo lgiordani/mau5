@@ -139,10 +139,10 @@ def test_footnotes_manager_process(mock_footnote_unique_id):
     fnm.process()
 
     assert footnote_node1.public_id == "1"
-    assert footnote_node1.private_id == "XXYY"
+    assert footnote_node1.internal_id == "XXYY"
 
     assert footnote_node2.public_id == "2"
-    assert footnote_node2.private_id == "XXYY"
+    assert footnote_node2.internal_id == "XXYY"
 
     compare_nodes_sequence(
         footnote_list.footnotes,

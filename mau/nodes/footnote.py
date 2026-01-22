@@ -20,10 +20,10 @@ class FootnoteNode(Node, NodeContentMixin):
         # (typically a progressive number).
         # This ID can be displayed on the rendered text.
         public_id: str | None = None,
-        # The private unique ID assigned to this footnote
+        # The unique ID assigned to this footnote
         # that can be used to create references in
         # the rendered text.
-        private_id: str | None = None,
+        internal_id: str | None = None,
         content: Sequence[Node] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
@@ -33,4 +33,4 @@ class FootnoteNode(Node, NodeContentMixin):
 
         self.name = name
         self.public_id = public_id
-        self.private_id = private_id
+        self.internal_id = internal_id

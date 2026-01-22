@@ -10,14 +10,14 @@ from mau.test_helpers import (
 def test_header_node_without_content():
     node = HeaderNode(
         level=42,
-        private_id="some_private_id",
+        internal_id="some_internal_id",
         name="some_alias",
     )
 
     expected = {
         "_type": "header",
         "level": 42,
-        "private_id": "some_private_id",
+        "internal_id": "some_internal_id",
         "name": "some_alias",
         "labels": {},
         "content": [],
@@ -30,7 +30,7 @@ def test_header_node_without_content():
 def test_header_node_with_content():
     node = HeaderNode(
         level=42,
-        private_id="some_private_id",
+        internal_id="some_internal_id",
         name="some_alias",
     )
 
@@ -40,7 +40,7 @@ def test_header_node_with_content():
 def test_header_node_with_labels():
     node = HeaderNode(
         level=42,
-        private_id="some_private_id",
+        internal_id="some_internal_id",
         name="some_alias",
     )
 

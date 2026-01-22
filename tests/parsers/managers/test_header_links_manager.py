@@ -11,7 +11,7 @@ def test_header_links_manager():
 
     header_node = HeaderNode(
         level=2,
-        private_id="XXXXXX",
+        internal_id="XXXXXX",
         name="someheader",
         content=[
             TextNode(
@@ -37,7 +37,7 @@ def test_header_macros_manager_no_macro():
 
     header_node = HeaderNode(
         level=2,
-        private_id="XXXXXX",
+        internal_id="XXXXXX",
         name="someheader",
         content=[
             TextNode(
@@ -67,13 +67,13 @@ def test_header_links_manager_duplicate_header_name():
 
     header_node1 = HeaderNode(
         level=2,
-        private_id="XXXXXX",
+        internal_id="XXXXXX",
         name="someheader",
     )
 
     header_node2 = HeaderNode(
         level=2,
-        private_id="XXXXXX",
+        internal_id="XXXXXX",
         name="someheader",
     )
 
@@ -89,7 +89,7 @@ def test_header_links_manager_update():
 
     header_node = HeaderNode(
         level=2,
-        private_id="XXXXXX",
+        internal_id="XXXXXX",
         name="someheader",
         content=[
             TextNode(

@@ -87,10 +87,8 @@ class FootnotesManager:
             # we will render in the document.
             footnote.public_id = str(number)
 
-            # The private ID is the value
-            # used to manage the connection
-            # behind the scenes.
-            footnote.private_id = self.footnote_unique_id_function(footnote)
+            # Create the internal ID.
+            footnote.internal_id = self.footnote_unique_id_function(footnote)
 
         footnote_items = [
             FootnotesItemNode(footnote=footnote) for footnote in self.footnotes

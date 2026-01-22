@@ -152,7 +152,7 @@ def test_inline_macro_footnote_node():
         "text.j2": "{{ value }}",
         "macro.footnote.j2": (
             "{{ footnote.content }} - {{ footnote.name }} - "
-            "{{ footnote.public_id }} - {{ footnote.private_id }}"
+            "{{ footnote.public_id }} - {{ footnote.internal_id }}"
         ),
     }
 
@@ -165,13 +165,13 @@ def test_inline_macro_footnote_node():
             content=[TextNode("Just some text.")],
             name="somenote",
             public_id="public_id",
-            private_id="private_id",
+            internal_id="internal_id",
         )
     )
 
     result = visitor.visit(node)
 
-    assert result == "Just some text. - somenote - public_id - private_id"
+    assert result == "Just some text. - somenote - public_id - internal_id"
 
 
 def test_inline_class_node():
@@ -212,8 +212,8 @@ def test_inline_header_node():
     templates = {
         "text.j2": "{{ value }}",
         "sentence.j2": "{{ content }}",
-        "macro.header.j2": "#{{ header.private_id }} - {{ content }}",
-        "header.j2": "#{{ private_id }}  {{ content }}",
+        "macro.header.j2": "#{{ header.internal_id }} - {{ content }}",
+        "header.j2": "#{{ internal_id }}  {{ content }}",
     }
 
     environment = Environment()
@@ -223,7 +223,7 @@ def test_inline_header_node():
     header_node = HeaderNode(
         level=2,
         content=[TextNode("Header")],
-        private_id="XXXXXX",
+        internal_id="XXXXXX",
         name="someid",
     )
 
