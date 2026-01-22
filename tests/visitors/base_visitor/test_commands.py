@@ -80,8 +80,8 @@ def test_toc_item_node_without_entries():
         "header": {
             "_type": "header",
             "level": 1,
-            "internal_id": None,
-            "alias": None,
+            "private_id": None,
+            "name": None,
             "labels": {},
             "content": [],
             "_info": NodeInfo.empty().asdict(),
@@ -112,8 +112,8 @@ def test_toc_item_node_with_entries():
                 "header": {
                     "_type": "header",
                     "level": 2,
-                    "internal_id": None,
-                    "alias": None,
+                    "private_id": None,
+                    "name": None,
                     "labels": {},
                     "content": [],
                     "_info": NodeInfo.empty().asdict(),
@@ -124,8 +124,8 @@ def test_toc_item_node_with_entries():
         "header": {
             "_type": "header",
             "level": 1,
-            "internal_id": None,
-            "alias": None,
+            "private_id": None,
+            "name": None,
             "labels": {},
             "content": [],
             "_info": NodeInfo.empty().asdict(),

@@ -22,7 +22,7 @@ def header_processor(parser: DocumentParser):
     # and represents the level of the header.
     # Headers are automatically assigned a unique ID
     # created using the provided function
-    # parser.header_internal_id_function
+    # parser.header_private_id_function
 
     # Get all the equal signs.
     header = parser.tm.get_token(TokenType.HEADER)
@@ -56,21 +56,21 @@ def header_processor(parser: DocumentParser):
     # only through the arguments manager.
     arguments = parser.arguments_buffer.pop_or_default()
 
-    # Internal IDs are used to create anchors
+    # Private IDs are used to create anchors
     # in the document. For example, they might be
     # the anchor name in HTML. They are stored
     # in the header itself.
-    # Aliases are set by the user and stored
+    # Names are set by the user and stored
     # in the headers manager. They are used to link
-    # the header through the [header](alias) macro.
+    # the header through the [header](name) macro.
 
-    # Create the internal ID.
+    # Create the private ID.
     # This uses the actual text contained in
     # the TextNode object.
-    internal_id = arguments.named_args.pop("internal_id", None)
+    private_id = arguments.named_args.pop("private_id", None)
 
     # Extract the header id if specified.
-    alias = arguments.named_args.pop("alias", None)
+    name = arguments.named_args.pop("name", None)
 
     # Find the context of the text.
     text_context = Context.merge_contexts(
@@ -83,8 +83,8 @@ def header_processor(parser: DocumentParser):
     # The final node created by this parser.
     header_node = HeaderNode(
         level,
-        internal_id=internal_id,
-        alias=alias,
+        private_id=private_id,
+        name=name,
         content=text_nodes,
         source_text=text_token.value,
         info=NodeInfo(context=context, **arguments.asdict()),
@@ -105,8 +105,8 @@ def header_processor(parser: DocumentParser):
 
     # If there is an id store the header node
     # to be matched with potential header links.
-    if alias:
-        parser.header_links_manager.add_header(alias, header_node)
+    if name:
+        parser.header_links_manager.add_header(header_node)
 
     parser.toc_manager.add_header(header_node)
 

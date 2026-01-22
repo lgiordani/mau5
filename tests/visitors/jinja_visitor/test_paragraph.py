@@ -1,46 +1,47 @@
-# from mau.environment.environment import Environment
-# from mau.nodes.node import NodeInfo
-# from mau.nodes.block import BlockNode
-# from mau.nodes.inline import TextNode
-# from mau.nodes.paragraph import ParagraphNode
-# from mau.visitors.jinja_visitor import JinjaVisitor
-# from mau.test_helpers import generate_context
+from mau.environment.environment import Environment
+from mau.nodes.node import NodeInfo
+from mau.nodes.block import BlockNode
+from mau.nodes.inline import TextNode
+from mau.nodes.paragraph import ParagraphNode, ParagraphLineNode
+from mau.visitors.jinja_visitor import JinjaVisitor
+from mau.test_helpers import generate_context
 
 
-# def test_page_paragraph_node():
-#     templates = {
-#         # "text.j2": "{{ value }}",
-#         # "sentence.j2": "{{ content }}",
-#         # "paragraph.j2": (
-#         #     "{{ content }} - {{ title }} - {{ args | join(',') }} - "
-#         #     "{% for key, value in kwargs|items %}{{ key }}:{{ value }}{% endfor %} - "
-#         #     "{{ tags | join(',') }}"
-#         # ),
-#     }
+def test_page_paragraph_node():
+    templates = {
+        "text.j2": "{{ value }}",
+        # "sentence.j2": "{{ content }}",
+        "paragraph-line.j2": "{{ content }}",
+        "paragraph.j2": (
+            "{{ lines }} - {{ labels.title }} - {{ _info.unnamed_args | join(',') }} - "
+            "{% for key, value in _info.named_args | items %}{{ key }}:{{ value }}{% endfor %} - "
+            "{{ _info.tags | join(',') }}"
+        ),
+    }
 
-#     environment = Environment()
-#     environment.dupdate(templates, "mau.visitor.templates.custom")
-#     visitor = JinjaVisitor(environment)
+    environment = Environment()
+    environment.dupdate(templates, "mau.visitor.templates.custom")
+    visitor = JinjaVisitor(environment)
 
-#     unnamed_args = ["arg1", "arg2"]
-#     named_args = {"key1": "value1"}
-#     tags = ["tag1", "tag2"]
+    unnamed_args = ["arg1", "arg2"]
+    named_args = {"key1": "value1"}
+    tags = ["tag1", "tag2"]
 
-#     node = ParagraphNode(
-#         labels={"title": [TextNode("sometitle")]},
-#         content=[TextNode("Just some text")],
-#         info=NodeInfo(
-#             context=generate_context(0, 0, 0, 0),
-#             unnamed_args=unnamed_args,
-#             named_args=named_args,
-#             tags=tags,
-#             subtype="subtype1",
-#         ),
-#     )
+    node = ParagraphNode(
+        labels={"title": [TextNode("sometitle")]},
+        lines=[ParagraphLineNode(content=[TextNode("Just some text")])],
+        info=NodeInfo(
+            context=generate_context(0, 0, 0, 0),
+            unnamed_args=unnamed_args,
+            named_args=named_args,
+            tags=tags,
+            subtype="subtype1",
+        ),
+    )
 
-#     result = visitor.visit(node)
+    result = visitor.visit(node)
 
-#     assert result == "Just some text - sometitle - arg1,arg2 - key1:value1 - tag1,tag2"
+    assert result == "Just some text - sometitle - arg1,arg2 - key1:value1 - tag1,tag2"
 
 
 # def test_page_paragraph_node_inside_block():

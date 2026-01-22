@@ -82,9 +82,9 @@ class DocumentParser(BaseParser):
 
         super().__init__(tokens, base_environment, parent_node)
 
-        # This is the function used to create internal IDs for headers.
-        self.header_internal_id_function = self.environment.get(
-            "mau.parser.header_internal_id_function", None
+        # This is the function used to create private IDs for headers.
+        self.header_private_id_function = self.environment.get(
+            "mau.parser.header_private_id_function", None
         )
 
         # This is the function used to create unique IDs for footnotes.
@@ -95,7 +95,7 @@ class DocumentParser(BaseParser):
         self.header_links_manager: HeaderLinksManager = HeaderLinksManager()
         self.block_group_manager = BlockGroupManager()
         self.footnotes_manager = FootnotesManager(self.footnote_unique_id_function)
-        self.toc_manager: TocManager = TocManager(self.header_internal_id_function)
+        self.toc_manager: TocManager = TocManager(self.header_private_id_function)
 
         self.arguments_buffer: ArgumentsBuffer = ArgumentsBuffer()
         self.label_buffer: LabelBuffer = LabelBuffer()
@@ -171,7 +171,7 @@ class DocumentParser(BaseParser):
         self.footnotes_manager.add_footnotes(text_parser.footnotes)
 
         # Extract the header links found in this piece of text.
-        self.header_links_manager.add_links(text_parser.header_links)
+        self.header_links_manager.add_macros(text_parser.header_links)
 
         return text_parser.nodes
 

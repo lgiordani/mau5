@@ -12,12 +12,17 @@ class FootnoteNode(Node, NodeContentMixin):
         self,
         # The unique internal name of the
         # referenced footnote content.
+        # This name is used to link a
+        # footnote macro (mention) with its
+        # block (definition).
         name: str,
-        # The public ID assigned to this footnote
+        # The unique public ID assigned to this footnote
         # (typically a progressive number).
+        # This ID can be displayed on the rendered text.
         public_id: str | None = None,
         # The private unique ID assigned to this footnote
-        # that can be used as reference (e.g. for links).
+        # that can be used to create references in
+        # the rendered text.
         private_id: str | None = None,
         content: Sequence[Node] | None = None,
         parent: Node | None = None,

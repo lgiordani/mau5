@@ -27,8 +27,16 @@ class HeaderNode(Node, NodeLabelsMixin, NodeContentMixin):
     def __init__(
         self,
         level: int,
-        internal_id: str | None = None,
-        alias: str | None = None,
+        # The private unique ID assigned to this footnote
+        # that can be used to create references in
+        # the rendered text.
+        private_id: str | None = None,
+        # The unique internal name of the
+        # referenced footnote content.
+        # This name is used to link a
+        # header macro (mention) with its
+        # header (definition).
+        name: str | None = None,
         content: list[Node] | None = None,
         labels: Mapping[str, Sequence[Node]] | None = None,
         source_text: str | None = None,
@@ -37,16 +45,14 @@ class HeaderNode(Node, NodeLabelsMixin, NodeContentMixin):
     ):
         super().__init__(parent=parent, info=info)
         self.level = level
+        self.private_id = private_id
 
-        # This is an internal ID, usually calculated
-        # automatically, used to create hyperlinks.
-        self.internal_id = internal_id
-
-        # This is an alias for this header,
+        # This is a name for this header,
         # used to link it internally.
-        # Headers with an alias will still
+        # Headers with an name will still
         # receive a programmatic ID.
-        self.alias = alias
+        # TODO clarify and use correct names.
+        self.name = name
 
         # The source text of the header.
         # This is the unparsed text

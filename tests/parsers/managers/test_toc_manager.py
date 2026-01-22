@@ -165,9 +165,9 @@ def test_add_nodes_under_level_can_terminate_with_single_node():
     )
 
 
-@patch("mau.parsers.managers.toc_manager.default_header_internal_id")
-def test_process(mock_default_header_internal_id):
-    mock_default_header_internal_id.return_value = "some_uid"
+@patch("mau.parsers.managers.toc_manager.default_header_private_id")
+def test_process(mock_default_header_private_id):
+    mock_default_header_private_id.return_value = "some_uid"
 
     node_header_a = HeaderNode(1)
     node_header_b = HeaderNode(2)
@@ -190,13 +190,13 @@ def test_process(mock_default_header_internal_id):
     compare_nodes_sequence(test_toc_node.plain_entries, header_nodes)
     compare_nodes_sequence(test_toc_node.nested_entries, [node_toc_item_a])
 
-    assert mock_default_header_internal_id.mock_calls == [
+    assert mock_default_header_private_id.mock_calls == [
         call(node_header_a),
         call(node_header_b),
     ]
 
 
-def test_process_internal_id():
+def test_process_private_id():
     node_header_a = HeaderNode(1, "A")
     node_header_b = HeaderNode(2, "B")
 

@@ -140,9 +140,8 @@ class MacroHeaderNode(Node, NodeContentMixin):
 
     def __init__(
         self,
-        target_alias: str,
+        target_name: str,
         header: HeaderNode | None = None,
-        target_id: str | None = None,
         content: Sequence[Node] | None = None,
         parent: Node | None = None,
         info: NodeInfo | None = None,
@@ -151,13 +150,7 @@ class MacroHeaderNode(Node, NodeContentMixin):
 
         # This is the internal name of the
         # header that we are pointing to.
-        self.target_alias = target_alias
-
-        # This is the ID of the header that
-        # we are pointing to.
-        # It is an automatically generated
-        # unique ID.
-        self.target_id = target_id
+        self.target_name = target_name
 
         # The header linked by this macro.
         self.header = header

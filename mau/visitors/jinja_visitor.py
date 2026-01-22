@@ -335,7 +335,7 @@ class JinjaVisitor(BaseVisitor):
     default_templates = Environment().from_dict(
         {
             "document.j2": "{{ content }}",
-            "paragraph.j2": "{{ content }}",
+            # "paragraph.j2": "{{ content }}",
             "text.j2": "{{ value }}",
         }
     )

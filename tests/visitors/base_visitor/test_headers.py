@@ -10,15 +10,15 @@ from mau.test_helpers import (
 def test_header_node_without_content():
     node = HeaderNode(
         level=42,
-        internal_id="some_internal_id",
-        alias="some_alias",
+        private_id="some_private_id",
+        name="some_alias",
     )
 
     expected = {
         "_type": "header",
         "level": 42,
-        "internal_id": "some_internal_id",
-        "alias": "some_alias",
+        "private_id": "some_private_id",
+        "name": "some_alias",
         "labels": {},
         "content": [],
         "_info": NodeInfo.empty().asdict(),
@@ -30,8 +30,8 @@ def test_header_node_without_content():
 def test_header_node_with_content():
     node = HeaderNode(
         level=42,
-        internal_id="some_internal_id",
-        alias="some_alias",
+        private_id="some_private_id",
+        name="some_alias",
     )
 
     check_node_with_content(node)
@@ -40,8 +40,8 @@ def test_header_node_with_content():
 def test_header_node_with_labels():
     node = HeaderNode(
         level=42,
-        internal_id="some_internal_id",
-        alias="some_alias",
+        private_id="some_private_id",
+        name="some_alias",
     )
 
     check_node_with_labels(node)

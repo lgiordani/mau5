@@ -10,8 +10,9 @@ def test_header_links_manager():
     ilm = HeaderLinksManager()
 
     header_node = HeaderNode(
-        2,
-        "XXXXXX",
+        level=2,
+        private_id="XXXXXX",
+        name="someheader",
         content=[
             TextNode(
                 "Header",
@@ -19,26 +20,25 @@ def test_header_links_manager():
         ],
     )
 
-    link_node = MacroHeaderNode("someheader")
+    macro_node = MacroHeaderNode("someheader")
 
-    ilm.add_header("someheader", header_node)
-    ilm.add_links([link_node])
+    ilm.add_header(header_node)
+    ilm.add_macros([macro_node])
 
-    assert link_node.header is None
-    assert link_node.target_id is None
+    assert macro_node.header is None
 
     ilm.process()
 
-    assert link_node.header == header_node
-    assert link_node.target_id == header_node.internal_id
+    assert macro_node.header == header_node
 
 
-def test_header_links_manager_no_link():
+def test_header_macros_manager_no_macro():
     ilm = HeaderLinksManager()
 
     header_node = HeaderNode(
-        2,
-        "XXXXXX",
+        level=2,
+        private_id="XXXXXX",
+        name="someheader",
         content=[
             TextNode(
                 "Header",
@@ -46,33 +46,41 @@ def test_header_links_manager_no_link():
         ],
     )
 
-    ilm.add_header("someheader", header_node)
+    ilm.add_header(header_node)
 
     ilm.process()
 
 
-def test_header_links_manager_no_header():
+def test_header_macros_manager_no_header():
     ilm = HeaderLinksManager()
 
-    link_node = MacroHeaderNode("someheader")
+    macro_node = MacroHeaderNode("someheader")
 
-    ilm.add_links([link_node])
+    ilm.add_macros([macro_node])
 
     with pytest.raises(ValueError):
         ilm.process()
 
 
-def test_header_links_manager_duplicate_header():
+def test_header_links_manager_duplicate_header_name():
     ilm = HeaderLinksManager()
 
-    header_node1 = HeaderNode(2, "XXXXXX")
+    header_node1 = HeaderNode(
+        level=2,
+        private_id="XXXXXX",
+        name="someheader",
+    )
 
-    header_node2 = HeaderNode(2, "XXXXXX")
+    header_node2 = HeaderNode(
+        level=2,
+        private_id="XXXXXX",
+        name="someheader",
+    )
 
-    ilm.add_header("someheader", header_node1)
+    ilm.add_header(header_node1)
 
     with pytest.raises(ValueError):
-        ilm.add_header("someheader", header_node2)
+        ilm.add_header(header_node2)
 
 
 def test_header_links_manager_update():
@@ -80,8 +88,9 @@ def test_header_links_manager_update():
     ilm_dst = HeaderLinksManager()
 
     header_node = HeaderNode(
-        2,
-        "XXXXXX",
+        level=2,
+        private_id="XXXXXX",
+        name="someheader",
         content=[
             TextNode(
                 "Header",
@@ -89,12 +98,12 @@ def test_header_links_manager_update():
         ],
     )
 
-    link_node = MacroHeaderNode("someheader")
+    macro_node = MacroHeaderNode("someheader")
 
-    ilm_src.add_header("someheader", header_node)
-    ilm_src.add_links([link_node])
+    ilm_src.add_header(header_node)
+    ilm_src.add_macros([macro_node])
 
     ilm_dst.update(ilm_src)
     ilm_dst.process()
 
-    assert link_node.header == header_node
+    assert macro_node.header == header_node

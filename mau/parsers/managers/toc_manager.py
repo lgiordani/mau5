@@ -9,7 +9,7 @@ from mau.nodes.command import (
 from mau.nodes.header import HeaderNode
 
 
-def default_header_internal_id(
+def default_header_private_id(
     data: HeaderNode,
 ) -> str:  # pragma: no cover
     """
@@ -75,7 +75,7 @@ class TocManager:
     each TOC node.
     """
 
-    def __init__(self, header_internal_id_function=None):
+    def __init__(self, header_private_id_function=None):
         # This list contains the headers
         # found parsing a document
         self.headers: list[HeaderNode] = []
@@ -85,8 +85,8 @@ class TocManager:
         # has been processed
         self.toc_nodes: list[TocNode] = []
 
-        self.header_internal_id_function = (
-            header_internal_id_function or default_header_internal_id
+        self.header_private_id_function = (
+            header_private_id_function or default_header_private_id
         )
 
         self.nested_headers: list[TocItemNode] = []
@@ -114,12 +114,12 @@ class TocManager:
         # Check that all headers have a
         # unique internal ID. If not, create it.
         for header in self.headers:
-            if header.internal_id is not None:
+            if header.private_id is not None:
                 continue
 
             # Create the unique internal ID.
-            internal_id = self.header_internal_id_function(header)
-            header.internal_id = internal_id
+            private_id = self.header_private_id_function(header)
+            header.private_id = private_id
 
         # Create the nodes hierarchy.
         add_nodes_under_level(0, self.headers, 0, self.nested_headers)

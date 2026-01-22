@@ -114,8 +114,7 @@ def test_macro_header_node():
 
     expected = {
         "_type": "macro.header",
-        "target_alias": "someid",
-        "target_id": None,
+        "target_name": "someid",
         "content": [],
         "header": {},
         "_info": NodeInfo.empty().asdict(),
@@ -129,13 +128,12 @@ def test_macro_header_node_with_header():
 
     expected = {
         "_type": "macro.header",
-        "target_alias": "someid",
-        "target_id": None,
+        "target_name": "someid",
         "content": [],
         "header": {
             "_type": "header",
-            "alias": None,
-            "internal_id": None,
+            "name": None,
+            "private_id": None,
             "level": 1,
             "labels": {},
             "content": [],
@@ -154,12 +152,11 @@ def test_macro_header_node_with_header():
 
 
 def test_macro_header_node_parameters():
-    node = MacroHeaderNode("someid", target_id="targetid")
+    node = MacroHeaderNode(target_name="somename")
 
     expected = {
         "_type": "macro.header",
-        "target_alias": "someid",
-        "target_id": "targetid",
+        "target_name": "somename",
         "content": [],
         "header": {},
         "_info": NodeInfo.empty().asdict(),

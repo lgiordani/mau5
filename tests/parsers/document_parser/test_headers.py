@@ -18,7 +18,7 @@ runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 def test_header_level_1():
     environment = Environment()
-    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
+    environment["mau.parser.header_private_id_function"] = lambda node: "XXXXXY"
 
     source = """
     = Title of the section
@@ -31,7 +31,7 @@ def test_header_level_1():
         [
             HeaderNode(
                 1,
-                internal_id="XXXXXY",
+                private_id="XXXXXY",
                 content=[
                     TextNode(
                         "Title of the section",
@@ -46,7 +46,7 @@ def test_header_level_1():
 
 def test_header_level_3():
     environment = Environment()
-    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
+    environment["mau.parser.header_private_id_function"] = lambda node: "XXXXXY"
 
     source = """
     === Title of a subsection
@@ -59,7 +59,7 @@ def test_header_level_3():
         [
             HeaderNode(
                 3,
-                internal_id="XXXXXY",
+                private_id="XXXXXY",
                 content=[
                     TextNode(
                         "Title of a subsection",
@@ -74,7 +74,7 @@ def test_header_level_3():
 
 def test_header_attributes():
     environment = Environment()
-    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
+    environment["mau.parser.header_private_id_function"] = lambda node: "XXXXXY"
 
     source = """
     [arg1, #tag1, *subtype1, key1=value1]
@@ -88,7 +88,7 @@ def test_header_attributes():
         [
             HeaderNode(
                 1,
-                internal_id="XXXXXY",
+                private_id="XXXXXY",
                 content=[
                     TextNode(
                         "Title of the section",
@@ -109,7 +109,7 @@ def test_header_attributes():
 
 def test_header_attributes_can_overwrite_ids():
     source = """
-    [arg1, #tag1, *subtype1, internal_id=some_internal_id, alias=some_alias]
+    [arg1, #tag1, *subtype1, private_id=some_private_id, name=some_alias]
     = Title of the section
     """
 
@@ -120,8 +120,8 @@ def test_header_attributes_can_overwrite_ids():
         [
             HeaderNode(
                 1,
-                internal_id="some_internal_id",
-                alias="some_alias",
+                private_id="some_private_id",
+                name="some_alias",
                 content=[
                     TextNode(
                         "Title of the section",
@@ -142,7 +142,7 @@ def test_header_attributes_can_overwrite_ids():
 
 def test_header_usese_labels():
     environment = Environment()
-    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
+    environment["mau.parser.header_private_id_function"] = lambda node: "XXXXXY"
 
     source = """
     . This is a label
@@ -156,7 +156,7 @@ def test_header_usese_labels():
         [
             HeaderNode(
                 1,
-                internal_id="XXXXXY",
+                private_id="XXXXXY",
                 content=[
                     TextNode(
                         "Title of the section",
@@ -179,7 +179,7 @@ def test_header_usese_labels():
 
 def test_header_uses_control_positive():
     environment = Environment()
-    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
+    environment["mau.parser.header_private_id_function"] = lambda node: "XXXXXY"
     environment["answer"] = "42"
 
     source = """
@@ -194,7 +194,7 @@ def test_header_uses_control_positive():
         [
             HeaderNode(
                 1,
-                internal_id="XXXXXY",
+                private_id="XXXXXY",
                 content=[
                     TextNode(
                         "Title of the section",

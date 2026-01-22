@@ -23,9 +23,9 @@ init_parser = init_parser_factory(DocumentLexer, DocumentParser)
 runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
-@patch("mau.parsers.managers.toc_manager.default_header_internal_id")
-def test_block_isolation_doesnt_add_headers_to_the_global_toc(mock_header_internal_id):
-    mock_header_internal_id.return_value = "XXYY"
+@patch("mau.parsers.managers.toc_manager.default_header_private_id")
+def test_block_isolation_doesnt_add_headers_to_the_global_toc(mock_header_private_id):
+    mock_header_private_id.return_value = "XXYY"
 
     source = """
     = Global header
@@ -95,9 +95,9 @@ def test_block_isolation_doesnt_add_headers_to_the_global_toc(mock_header_intern
     )
 
 
-@patch("mau.parsers.managers.toc_manager.default_header_internal_id")
-def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id):
-    mock_header_internal_id.return_value = "XXYY"
+@patch("mau.parsers.managers.toc_manager.default_header_private_id")
+def test_block_isolation_multiple_blocks_are_independent(mock_header_private_id):
+    mock_header_private_id.return_value = "XXYY"
 
     source = """
     = Global header
@@ -192,9 +192,9 @@ def test_block_isolation_multiple_blocks_are_independent(mock_header_internal_id
     )
 
 
-@patch("mau.parsers.managers.toc_manager.default_header_internal_id")
-def test_block_isolation_toc(mock_header_internal_id):
-    mock_header_internal_id.return_value = "XXYY"
+@patch("mau.parsers.managers.toc_manager.default_header_private_id")
+def test_block_isolation_toc(mock_header_private_id):
+    mock_header_private_id.return_value = "XXYY"
 
     source = """
     = Global header

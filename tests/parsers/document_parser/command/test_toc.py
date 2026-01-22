@@ -136,14 +136,14 @@ def test_command_toc_supports_control():
 
 
 def test_command_toc_with_entries():
-    def _header_internal_id(node: HeaderNode) -> str:
+    def _header_private_id(node: HeaderNode) -> str:
         # Lowercase the text of the header.
         text = node.source_text
 
         return f"{text}-XXXXXX"
 
     environment = Environment()
-    environment["mau.parser.header_internal_id_function"] = _header_internal_id
+    environment["mau.parser.header_private_id_function"] = _header_private_id
 
     source = """
     = Header 1
@@ -157,7 +157,7 @@ def test_command_toc_with_entries():
 
     header_1_1 = HeaderNode(
         level=2,
-        internal_id="Header 1.1-XXXXXX",
+        private_id="Header 1.1-XXXXXX",
         source_text="Header 1.1",
         content=[
             TextNode(
@@ -170,7 +170,7 @@ def test_command_toc_with_entries():
 
     header_1 = HeaderNode(
         level=1,
-        internal_id="Header 1-XXXXXX",
+        private_id="Header 1-XXXXXX",
         source_text="Header 1",
         content=[
             TextNode(
@@ -183,7 +183,7 @@ def test_command_toc_with_entries():
 
     header_2 = HeaderNode(
         level=1,
-        internal_id="Header 2-XXXXXX",
+        private_id="Header 2-XXXXXX",
         source_text="Header 2",
         content=[
             TextNode(

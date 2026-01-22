@@ -126,14 +126,14 @@ class BaseVisitor:
 
         return result
 
-    def _visit_header(self, node: Node, *args, **kwargs) -> dict:
+    def _get_header_data(self, node: Node, *args, **kwargs) -> dict:
         result = self._visit_default(node, *args, **kwargs)
 
         result.update(
             {
                 "level": node.level,
-                "internal_id": node.internal_id,
-                "alias": node.alias,
+                "private_id": node.private_id,
+                "name": node.name,
             }
         )
 
@@ -141,6 +141,9 @@ class BaseVisitor:
         self._add_visit_labels(result, node, *args, **kwargs)
 
         return result
+
+    def _visit_header(self, node: Node, *args, **kwargs) -> dict:
+        return self._get_header_data(node, *args, **kwargs)
 
     def _visit_macro(self, node: Node, *args, **kwargs) -> dict:
         result = self._visit_default(node, *args, **kwargs)
@@ -220,11 +223,14 @@ class BaseVisitor:
     def _visit_macro__header(self, node: Node, *args, **kwargs) -> dict:
         result = self._visit_default(node, *args, **kwargs)
 
+        header_data = (
+            self._get_header_data(node.header, *args, **kwargs) if node.header else {}
+        )
+
         result.update(
             {
-                "target_alias": node.target_alias,
-                "target_id": node.target_id,
-                "header": self.visit(node.header),
+                "target_name": node.target_name,
+                "header": header_data,
             }
         )
 
@@ -250,9 +256,15 @@ class BaseVisitor:
     def _visit_macro__footnote(self, node: Node, *args, **kwargs) -> dict:
         result = self._visit_default(node, *args, **kwargs)
 
+        footnote_data = (
+            self._get_footnote_data(node.footnote, *args, **kwargs)
+            if node.footnote
+            else None
+        )
+
         result.update(
             {
-                "footnote": self._get_footnote_data(node.footnote, *args, **kwargs),
+                "footnote": footnote_data,
             }
         )
 
