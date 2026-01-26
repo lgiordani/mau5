@@ -16,12 +16,13 @@ def test_header_node_without_content():
 
     expected = {
         "_type": "header",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "level": 42,
         "internal_id": "some_internal_id",
         "name": "some_alias",
         "labels": {},
         "content": [],
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)

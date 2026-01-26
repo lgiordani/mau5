@@ -1,5 +1,6 @@
 from unittest.mock import call, patch
 
+from mau.nodes.node import Node
 from mau.nodes.command import (
     TocItemNode,
     TocNode,
@@ -52,13 +53,11 @@ def test_toc_manager_update():
 
 
 def test_add_nodes_without_nesting():
+    parent_node = Node()
+
     node_header_a = HeaderNode(1, "A")
     node_header_b = HeaderNode(1, "B")
     node_header_c = HeaderNode(1, "C")
-
-    node_toc_item_a = TocItemNode(node_header_a)
-    node_toc_item_b = TocItemNode(node_header_b)
-    node_toc_item_c = TocItemNode(node_header_c)
 
     nodes = [
         node_header_a,
@@ -68,16 +67,26 @@ def test_add_nodes_without_nesting():
 
     children: list[TocItemNode] = []
 
-    idx = add_nodes_under_level(0, nodes, 0, children)
+    idx = add_nodes_under_level(0, nodes, 0, children, parent_node)
 
     assert idx == len(nodes)
+
+    node_toc_item_a = children[0]
+    node_toc_item_b = children[1]
+    node_toc_item_c = children[2]
 
     compare_nodes_sequence(
         children, [node_toc_item_a, node_toc_item_b, node_toc_item_c]
     )
 
+    assert node_toc_item_a.parent == parent_node
+    assert node_toc_item_b.parent == parent_node
+    assert node_toc_item_c.parent == parent_node
+
 
 def test_add_nodes_with_nesting():
+    parent_node = Node()
+
     node_header_a = HeaderNode(1, "A")
     node_header_b = HeaderNode(2, "B")
     node_header_c = HeaderNode(3, "C")
@@ -85,16 +94,6 @@ def test_add_nodes_with_nesting():
     node_header_e = HeaderNode(2, "E")
     node_header_f = HeaderNode(1, "F")
     node_header_g = HeaderNode(3, "G")
-
-    node_toc_item_c = TocItemNode(node_header_c)
-    node_toc_item_b = TocItemNode(node_header_b, entries=[node_toc_item_c])
-    node_toc_item_d = TocItemNode(node_header_d)
-    node_toc_item_e = TocItemNode(node_header_e)
-    node_toc_item_a = TocItemNode(
-        node_header_a, entries=[node_toc_item_b, node_toc_item_d, node_toc_item_e]
-    )
-    node_toc_item_g = TocItemNode(node_header_g)
-    node_toc_item_f = TocItemNode(node_header_f, entries=[node_toc_item_g])
 
     nodes = [
         node_header_a,
@@ -108,14 +107,32 @@ def test_add_nodes_with_nesting():
 
     children: list[TocItemNode] = []
 
-    idx = add_nodes_under_level(0, nodes, 0, children)
+    idx = add_nodes_under_level(0, nodes, 0, children, parent=parent_node)
 
     assert idx == len(nodes)
 
+    node_toc_item_a = children[0]
+    node_toc_item_f = children[1]
+    node_toc_item_b = node_toc_item_a.entries[0]
+    node_toc_item_d = node_toc_item_a.entries[1]
+    node_toc_item_e = node_toc_item_a.entries[2]
+    node_toc_item_c = node_toc_item_b.entries[0]
+    node_toc_item_g = node_toc_item_f.entries[0]
+
     compare_nodes_sequence(children, [node_toc_item_a, node_toc_item_f])
+
+    assert node_toc_item_a.parent == parent_node
+    assert node_toc_item_b.parent == parent_node
+    assert node_toc_item_c.parent == parent_node
+    assert node_toc_item_d.parent == parent_node
+    assert node_toc_item_e.parent == parent_node
+    assert node_toc_item_f.parent == parent_node
+    assert node_toc_item_g.parent == parent_node
 
 
 def test_add_nodes_under_level_starts_with_any_level():
+    parent_node = Node()
+
     node_header_a = HeaderNode(3, "A")
     node_header_b = HeaderNode(2, "B")
     node_header_c = HeaderNode(3, "C")
@@ -132,7 +149,7 @@ def test_add_nodes_under_level_starts_with_any_level():
 
     children: list[TocItemNode] = []
 
-    idx = add_nodes_under_level(0, nodes, 0, children)
+    idx = add_nodes_under_level(0, nodes, 0, children, parent=parent_node)
 
     assert idx == len(nodes)
 
@@ -140,6 +157,8 @@ def test_add_nodes_under_level_starts_with_any_level():
 
 
 def test_add_nodes_under_level_can_terminate_with_single_node():
+    parent_node = Node()
+
     node_header_a = HeaderNode(3, "A")
     node_header_b = HeaderNode(2, "B")
     node_header_c = HeaderNode(1, "C")
@@ -156,7 +175,7 @@ def test_add_nodes_under_level_can_terminate_with_single_node():
 
     children: list[TocItemNode] = []
 
-    idx = add_nodes_under_level(0, nodes, 0, children)
+    idx = add_nodes_under_level(0, nodes, 0, children, parent=parent_node)
 
     assert idx == len(nodes)
 

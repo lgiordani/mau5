@@ -8,10 +8,11 @@ def test_block_node():
 
     expected = {
         "_type": "block",
+        "_info": NodeInfo.empty().asdict(),
+        "_parent_info": {},
         "classes": [],
         "labels": {},
         "content": [],
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)

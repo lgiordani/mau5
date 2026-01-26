@@ -1,11 +1,10 @@
-[enable_sections=true]
+[*test]
 ----
-++ section_1
-Some text in section 1.
 
-++ section_2
-Some other text in section 2.
+[*internal]
+####
+Text
+####
 
-++ details
-A third section.
+
 ----

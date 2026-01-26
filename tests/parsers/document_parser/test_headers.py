@@ -5,6 +5,7 @@ from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
+    check_parent,
     compare_nodes_sequence,
     generate_context,
     init_parser_factory,
@@ -26,22 +27,21 @@ def test_header_level_1():
 
     parser = runner(source, environment)
 
-    compare_nodes_sequence(
-        parser.nodes,
-        [
-            HeaderNode(
-                1,
-                internal_id="XXXXXY",
-                content=[
-                    TextNode(
-                        "Title of the section",
-                        info=NodeInfo(context=generate_context(1, 2, 1, 22)),
-                    )
-                ],
-                info=NodeInfo(context=generate_context(1, 0, 1, 22)),
-            )
-        ],
-    )
+    expected_nodes = [
+        HeaderNode(
+            1,
+            internal_id="XXXXXY",
+            content=[
+                TextNode(
+                    "Title of the section",
+                    info=NodeInfo(context=generate_context(1, 2, 1, 22)),
+                )
+            ],
+            info=NodeInfo(context=generate_context(1, 0, 1, 22)),
+        )
+    ]
+
+    compare_nodes_sequence(parser.nodes, expected_nodes)
 
 
 def test_header_level_3():
@@ -54,22 +54,21 @@ def test_header_level_3():
 
     parser = runner(source, environment)
 
-    compare_nodes_sequence(
-        parser.nodes,
-        [
-            HeaderNode(
-                3,
-                internal_id="XXXXXY",
-                content=[
-                    TextNode(
-                        "Title of a subsection",
-                        info=NodeInfo(context=generate_context(1, 4, 1, 25)),
-                    )
-                ],
-                info=NodeInfo(context=generate_context(1, 0, 1, 25)),
-            )
-        ],
-    )
+    expected_nodes = [
+        HeaderNode(
+            3,
+            internal_id="XXXXXY",
+            content=[
+                TextNode(
+                    "Title of a subsection",
+                    info=NodeInfo(context=generate_context(1, 4, 1, 25)),
+                )
+            ],
+            info=NodeInfo(context=generate_context(1, 0, 1, 25)),
+        )
+    ]
+
+    compare_nodes_sequence(parser.nodes, expected_nodes)
 
 
 def test_header_attributes():
@@ -83,28 +82,27 @@ def test_header_attributes():
 
     parser = runner(source, environment)
 
-    compare_nodes_sequence(
-        parser.nodes,
-        [
-            HeaderNode(
-                1,
-                internal_id="XXXXXY",
-                content=[
-                    TextNode(
-                        "Title of the section",
-                        info=NodeInfo(context=generate_context(2, 2, 2, 22)),
-                    )
-                ],
-                info=NodeInfo(
-                    context=generate_context(2, 0, 2, 22),
-                    unnamed_args=["arg1"],
-                    named_args={"key1": "value1"},
-                    tags=["tag1"],
-                    subtype="subtype1",
-                ),
-            )
-        ],
-    )
+    expected_nodes = [
+        HeaderNode(
+            1,
+            internal_id="XXXXXY",
+            content=[
+                TextNode(
+                    "Title of the section",
+                    info=NodeInfo(context=generate_context(2, 2, 2, 22)),
+                )
+            ],
+            info=NodeInfo(
+                context=generate_context(2, 0, 2, 22),
+                unnamed_args=["arg1"],
+                named_args={"key1": "value1"},
+                tags=["tag1"],
+                subtype="subtype1",
+            ),
+        )
+    ]
+
+    compare_nodes_sequence(parser.nodes, expected_nodes)
 
 
 def test_header_attributes_can_overwrite_ids():
@@ -115,29 +113,28 @@ def test_header_attributes_can_overwrite_ids():
 
     parser = runner(source)
 
-    compare_nodes_sequence(
-        parser.nodes,
-        [
-            HeaderNode(
-                1,
-                internal_id="some_internal_id",
-                name="some_alias",
-                content=[
-                    TextNode(
-                        "Title of the section",
-                        info=NodeInfo(context=generate_context(2, 2, 2, 22)),
-                    )
-                ],
-                info=NodeInfo(
-                    context=generate_context(2, 0, 2, 22),
-                    unnamed_args=["arg1"],
-                    named_args={},
-                    tags=["tag1"],
-                    subtype="subtype1",
-                ),
-            )
-        ],
-    )
+    expected_nodes = [
+        HeaderNode(
+            1,
+            internal_id="some_internal_id",
+            name="some_alias",
+            content=[
+                TextNode(
+                    "Title of the section",
+                    info=NodeInfo(context=generate_context(2, 2, 2, 22)),
+                )
+            ],
+            info=NodeInfo(
+                context=generate_context(2, 0, 2, 22),
+                unnamed_args=["arg1"],
+                named_args={},
+                tags=["tag1"],
+                subtype="subtype1",
+            ),
+        )
+    ]
+
+    compare_nodes_sequence(parser.nodes, expected_nodes)
 
 
 def test_header_usese_labels():
@@ -151,30 +148,29 @@ def test_header_usese_labels():
 
     parser = runner(source, environment)
 
-    compare_nodes_sequence(
-        parser.nodes,
-        [
-            HeaderNode(
-                1,
-                internal_id="XXXXXY",
-                content=[
+    expected_nodes = [
+        HeaderNode(
+            1,
+            internal_id="XXXXXY",
+            content=[
+                TextNode(
+                    "Title of the section",
+                    info=NodeInfo(context=generate_context(2, 2, 2, 22)),
+                )
+            ],
+            labels={
+                "title": [
                     TextNode(
-                        "Title of the section",
-                        info=NodeInfo(context=generate_context(2, 2, 2, 22)),
+                        "This is a label",
+                        info=NodeInfo(context=generate_context(1, 2, 1, 17)),
                     )
-                ],
-                labels={
-                    "title": [
-                        TextNode(
-                            "This is a label",
-                            info=NodeInfo(context=generate_context(1, 2, 1, 17)),
-                        )
-                    ]
-                },
-                info=NodeInfo(context=generate_context(2, 0, 2, 22)),
-            )
-        ],
-    )
+                ]
+            },
+            info=NodeInfo(context=generate_context(2, 0, 2, 22)),
+        )
+    ]
+
+    compare_nodes_sequence(parser.nodes, expected_nodes)
 
 
 def test_header_uses_control_positive():
@@ -189,22 +185,21 @@ def test_header_uses_control_positive():
 
     parser = runner(source, environment)
 
-    compare_nodes_sequence(
-        parser.nodes,
-        [
-            HeaderNode(
-                1,
-                internal_id="XXXXXY",
-                content=[
-                    TextNode(
-                        "Title of the section",
-                        info=NodeInfo(context=generate_context(2, 2, 2, 22)),
-                    )
-                ],
-                info=NodeInfo(context=generate_context(2, 0, 2, 22)),
-            )
-        ],
-    )
+    expected_nodes = [
+        HeaderNode(
+            1,
+            internal_id="XXXXXY",
+            content=[
+                TextNode(
+                    "Title of the section",
+                    info=NodeInfo(context=generate_context(2, 2, 2, 22)),
+                )
+            ],
+            info=NodeInfo(context=generate_context(2, 0, 2, 22)),
+        )
+    ]
+
+    compare_nodes_sequence(parser.nodes, expected_nodes)
 
     assert parser.control_buffer.pop() is None
 
@@ -227,3 +222,42 @@ def test_header_uses_control_negative():
     assert parser.arguments_buffer.arguments is None
     assert parser.label_buffer.labels == {}
     assert parser.control_buffer.control is None
+
+
+def test_header_parenthood():
+    source = """
+    = Title of the section
+    """
+
+    parser = runner(source)
+
+    document_node = parser.output.document
+
+    header_node = parser.nodes[0]
+
+    # The header node must be a
+    # child of the document.
+    check_parent(document_node, [header_node])
+
+    # All nodes inside the header
+    # must be children of the header node.
+    check_parent(header_node, header_node.content)
+
+
+def test_header_parenthood_labels():
+    source = """
+    . A label
+    .role Another label
+    = Title of the section
+    """
+
+    parser = runner(source)
+
+    header_node = parser.nodes[0]
+    label_title_nodes = header_node.labels["title"]
+    label_role_nodes = header_node.labels["role"]
+
+    # Each label must be a child of the
+    # list it has been assigned to.
+    check_parent(header_node, label_title_nodes)
+    check_parent(header_node, label_role_nodes)

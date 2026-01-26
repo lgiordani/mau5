@@ -81,7 +81,7 @@ def header_processor(parser: DocumentParser):
     context = Context.merge_contexts(header.context, text_context)
 
     # The final node created by this parser.
-    header_node = HeaderNode(
+    node = HeaderNode(
         level,
         internal_id=internal_id,
         name=name,
@@ -90,10 +90,13 @@ def header_processor(parser: DocumentParser):
         info=NodeInfo(context=context, **arguments.asdict()),
     )
 
+    # Assign the given parent to each node.
+    for i in text_nodes:
+        i.parent = node
+
     # Extract labels from the buffer and
     # store them in the node data.
-    if labels := parser.label_buffer.pop():
-        header_node.labels = labels
+    parser.pop_labels(node)
 
     # Check the stored control
     if control := parser.control_buffer.pop():
@@ -106,10 +109,10 @@ def header_processor(parser: DocumentParser):
     # If there is an id store the header node
     # to be matched with potential header links.
     if name:
-        parser.header_links_manager.add_header(header_node)
+        parser.header_links_manager.add_header(node)
 
-    parser.toc_manager.add_header(header_node)
+    parser.toc_manager.add_header(node)
 
-    parser._save(header_node)
+    parser._save(node)
 
     return True

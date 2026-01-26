@@ -8,6 +8,7 @@ from mau.nodes.node import NodeInfo
 from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
+    check_parent,
     compare_nodes_sequence,
     generate_context,
     init_parser_factory,
@@ -242,3 +243,36 @@ def test_include_image_without_uri():
         runner(source)
 
     assert exc.value.context == generate_context(1, 0, 1, 8)
+
+
+def test_include_parenthood():
+    source = """
+    << ctype1:/path/to/it
+    """
+
+    parser = runner(source)
+
+    document_node = parser.output.document
+
+    # All parser nodes must be
+    # children of the document node.
+    check_parent(document_node, parser.nodes)
+
+
+def test_list_parenthood_labels():
+    source = """
+    . A label
+    .role Another label
+    << ctype1:/path/to/it
+    """
+
+    parser = runner(source)
+
+    include_node = parser.nodes[0]
+    label_title_nodes = include_node.labels["title"]
+    label_role_nodes = include_node.labels["role"]
+
+    # Each label must be a child of the
+    # include node it has been assigned to.
+    check_parent(include_node, label_title_nodes)
+    check_parent(include_node, label_role_nodes)

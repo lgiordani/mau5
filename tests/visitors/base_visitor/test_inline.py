@@ -13,8 +13,9 @@ def test_word_node():
 
     expected = {
         "_type": "word",
-        "value": "somevalue",
+        "_parent_info": {},
         "_info": NodeInfo.empty().asdict(),
+        "value": "somevalue",
     }
 
     check_visit_node(node, expected)
@@ -25,8 +26,9 @@ def test_text_node():
 
     expected = {
         "_type": "text",
-        "value": "somevalue",
+        "_parent_info": {},
         "_info": NodeInfo.empty().asdict(),
+        "value": "somevalue",
     }
 
     check_visit_node(node, expected)
@@ -37,8 +39,9 @@ def test_verbatim_node():
 
     expected = {
         "_type": "verbatim",
-        "value": "somevalue",
+        "_parent_info": {},
         "_info": NodeInfo.empty().asdict(),
+        "value": "somevalue",
     }
 
     check_visit_node(node, expected)
@@ -49,9 +52,10 @@ def test_style_node_without_content():
 
     expected = {
         "_type": "style",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "style": "mystyle",
         "content": [],
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)

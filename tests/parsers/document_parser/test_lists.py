@@ -4,6 +4,7 @@ from mau.nodes.list import ListItemNode, ListNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
+    check_parent,
     compare_nodes_sequence,
     generate_context,
     init_parser_factory,
@@ -537,3 +538,56 @@ def test_parse_list_control():
     assert parser.arguments_buffer.arguments is None
     assert parser.label_buffer.labels == {}
     assert parser.control_buffer.control is None
+
+
+def test_list_parenthood():
+    source = """
+    * Item 1
+    ** Item 1.1
+    * Item 2
+    """
+
+    parser = runner(source)
+
+    document_node = parser.output.document
+
+    list_node = parser.nodes[0]
+
+    item_node1 = list_node.content[0]
+    item_node2 = list_node.content[2]
+
+    list_node1 = list_node.content[1]
+    item_node1_1 = list_node1.content[0]
+
+    # All parser nodes must be
+    # children of the document node.
+    check_parent(document_node, parser.nodes)
+
+    # All items, at any level, are
+    # children of the list node.
+    check_parent(list_node, [item_node1, item_node2, list_node1, item_node1_1])
+
+    # All text nodes, at any level, are
+    # children of the list node.
+    check_parent(list_node, item_node1.content)
+    check_parent(list_node, item_node2.content)
+    check_parent(list_node, item_node1_1.content)
+
+
+def test_list_parenthood_labels():
+    source = """
+    . A label
+    .role Another label
+    * Item 1
+    """
+
+    parser = runner(source)
+
+    list_node = parser.nodes[0]
+    label_title_nodes = list_node.labels["title"]
+    label_role_nodes = list_node.labels["role"]
+
+    # Each label must be a child of the
+    # list it has been assigned to.
+    check_parent(list_node, label_title_nodes)
+    check_parent(list_node, label_role_nodes)

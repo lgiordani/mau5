@@ -12,6 +12,7 @@ from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
+    check_parent,
     compare_nodes,
     compare_nodes_sequence,
     generate_context,
@@ -432,3 +433,54 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
         parser.footnotes_manager.footnotes,
         [footnote_data],
     )
+
+
+def test_footnotes_parenthood():
+    source = """
+    This contains a footnote[footnote](somename).
+
+    [footnote=somename]
+    ----
+    Some text.
+    ----
+
+    ::footnotes
+    """
+
+    parser = runner(source)
+
+    document_node = parser.output.document
+
+    footnotes_node = parser.nodes[1]
+    footnotes_item_node = footnotes_node.footnotes[0]
+
+    # All parser nodes must be
+    # children of the document node.
+    check_parent(document_node, parser.nodes)
+
+    # All nodes inside the footnotes list must be
+    # children of the command.
+    check_parent(footnotes_node, footnotes_node.footnotes)
+
+    # The footnote inside the footnotes item are
+    # floating and are not children of any node.
+    check_parent(None, [footnotes_item_node.footnote])
+
+
+def test_footnotes_parenthood_labels():
+    source = """
+    . A label
+    .role Another label
+    ::footnotes
+    """
+
+    parser = runner(source)
+
+    footnotes_node = parser.nodes[0]
+    label_title_nodes = footnotes_node.labels["title"]
+    label_role_nodes = footnotes_node.labels["role"]
+
+    # Each label must be a child of the
+    # block group it has been assigned to.
+    check_parent(footnotes_node, label_title_nodes)
+    check_parent(footnotes_node, label_role_nodes)

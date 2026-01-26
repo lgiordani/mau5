@@ -11,8 +11,9 @@ def test_horizontal_rule_node():
 
     expected = {
         "_type": "horizontal-rule",
-        "labels": {},
+        "_parent_info": {},
         "_info": NodeInfo.empty().asdict(),
+        "labels": {},
     }
 
     check_visit_node(node, expected)
@@ -23,8 +24,9 @@ def test_document_node():
 
     expected = {
         "_type": "document",
-        "content": [],
+        "_parent_info": {},
         "_info": NodeInfo.empty().asdict(),
+        "content": [],
     }
 
     check_visit_node(node, expected)

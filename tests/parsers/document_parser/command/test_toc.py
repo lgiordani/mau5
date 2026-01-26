@@ -6,6 +6,7 @@ from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
+    check_parent,
     compare_nodes_sequence,
     generate_context,
     init_parser_factory,
@@ -222,3 +223,55 @@ def test_command_toc_with_entries():
             node_toc,
         ],
     )
+
+
+def test_toc_parenthood():
+    source = """
+    = Header 1
+    == Header 1.1
+    = Header 2
+
+    ::toc
+    """
+
+    parser = runner(source)
+
+    document_node = parser.output.document
+
+    toc_node = parser.nodes[3]
+
+    toc_item_1_node = toc_node.nested_entries[0]
+    toc_item_2_node = toc_node.nested_entries[1]
+    toc_item_1_1_node = toc_item_1_node.entries[0]
+
+    # All parser nodes must be
+    # children of the document node.
+    check_parent(document_node, parser.nodes)
+
+    # All plain entries inside the toc must be
+    # children of the document. They are
+    # just headers.
+    check_parent(document_node, toc_node.plain_entries)
+
+    # All nested entries inside the toc must be
+    # children of the command.
+    check_parent(toc_node, [toc_item_1_node, toc_item_2_node, toc_item_1_1_node])
+
+
+def test_toc_parenthood_labels():
+    source = """
+    . A label
+    .role Another label
+    ::toc
+    """
+
+    parser = runner(source)
+
+    toc_node = parser.nodes[0]
+    label_title_nodes = toc_node.labels["title"]
+    label_role_nodes = toc_node.labels["role"]
+
+    # Each label must be a child of the
+    # block group it has been assigned to.
+    check_parent(toc_node, label_title_nodes)
+    check_parent(toc_node, label_role_nodes)

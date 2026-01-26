@@ -6,6 +6,7 @@ from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
+    check_parent,
     compare_nodes_sequence,
     generate_context,
     init_parser_factory,
@@ -555,7 +556,7 @@ def test_paragraph_uses_control_negative():
     This is another paragraph.
     """
 
-    parser: DocumentParser = runner(source, environment)
+    parser = runner(source, environment)
 
     compare_nodes_sequence(
         parser.nodes,
@@ -597,3 +598,63 @@ def test_paragraph_control():
     assert parser.arguments_buffer.arguments is None
     assert parser.label_buffer.labels == {}
     assert parser.control_buffer.control is None
+
+
+def test_paragraph_parenthood():
+    source = """
+    This is a paragraph.
+    This is part of the same paragraph.
+
+    This is another paragraph.
+    """
+
+    parser = runner(source)
+
+    document_node = parser.output.document
+
+    paragraph_node1 = parser.nodes[0]
+    paragraph_node2 = parser.nodes[1]
+
+    line_node1 = paragraph_node1.lines[0]
+    line_node2 = paragraph_node1.lines[1]
+    line_node3 = paragraph_node2.lines[0]
+
+    # Check the number of lines
+    # for each paragraph.
+    assert len(paragraph_node1.lines) == 2
+    assert len(paragraph_node2.lines) == 1
+
+    # All parser nodes must be
+    # children of the document node.
+    check_parent(document_node, parser.nodes)
+
+    # Each paragraph line must be a child
+    # of the paragraph it belongs to.
+    check_parent(paragraph_node1, paragraph_node1.lines)
+    check_parent(paragraph_node2, paragraph_node2.lines)
+
+    # Each node inside the paragraph lines
+    # must be a children of the paragraph
+    # they belong to.
+    check_parent(paragraph_node1, line_node1.content)
+    check_parent(paragraph_node1, line_node2.content)
+    check_parent(paragraph_node2, line_node3.content)
+
+
+def test_paragraph_parenthood_labels():
+    source = """
+    . A label
+    .role Another label
+    This is a paragraph.
+    """
+
+    parser = runner(source)
+
+    paragraph_node = parser.nodes[0]
+    label_title_nodes = paragraph_node.labels["title"]
+    label_role_nodes = paragraph_node.labels["role"]
+
+    # Each label must be a child of the
+    # paragraph it has been assigned to.
+    check_parent(paragraph_node, label_title_nodes)
+    check_parent(paragraph_node, label_role_nodes)

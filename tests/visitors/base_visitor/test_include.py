@@ -8,10 +8,11 @@ def test_include_node():
 
     expected = {
         "_type": "include",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "content_type": "ctype",
         "uris": ["uri1", "uri2"],
         "labels": {},
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
@@ -22,11 +23,12 @@ def test_include_image_node():
 
     expected = {
         "_type": "include-image",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "uri": "uri",
         "alt_text": None,
         "classes": [],
         "labels": {},
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
@@ -37,11 +39,12 @@ def test_include_image_node_alt_text_classes():
 
     expected = {
         "_type": "include-image",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "uri": "uri",
         "alt_text": "alt_text",
         "classes": ["class1", "class2"],
         "labels": {},
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)

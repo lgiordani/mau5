@@ -84,8 +84,7 @@ def command_processor(parser: DocumentParser):
 
         # Extract labels from the buffer and
         # store them in the node data.
-        if labels := parser.label_buffer.pop():
-            toc_node.labels = labels
+        parser.pop_labels(toc_node)
 
         # Check the stored control
         if control := parser.control_buffer.pop():
@@ -104,8 +103,7 @@ def command_processor(parser: DocumentParser):
 
         # Extract labels from the buffer and
         # store them in the node data.
-        if labels := parser.label_buffer.pop():
-            footnotes_node.labels = labels
+        parser.pop_labels(footnotes_node)
 
         # Check the stored control
         if control := parser.control_buffer.pop():
@@ -130,8 +128,7 @@ def command_processor(parser: DocumentParser):
 
         # Extract labels from the buffer and
         # store them in the node data.
-        if labels := parser.label_buffer.pop():
-            block_group_node.labels = labels
+        parser.pop_labels(block_group_node)
 
         # Check the stored control
         if control := parser.control_buffer.pop():

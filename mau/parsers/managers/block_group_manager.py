@@ -55,3 +55,10 @@ class BlockGroupManager:
             # Add all blocks that mention this
             # group to the group node.
             group_node.blocks.update(self.blocks[group_name])
+
+            # Add each block that mention this
+            # group to the group node and add
+            # the group as the parent node.
+            for position, block in self.blocks[group_name].items():
+                block.parent = group_node
+                group_node.blocks[position] = block

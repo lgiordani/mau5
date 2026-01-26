@@ -14,7 +14,7 @@ def test_footnotes_manager_init():
 
     assert fnm.footnotes == []
     assert fnm.bodies == {}
-    assert fnm.footnotes_lists == []
+    assert fnm.footnotes_list_nodes == []
 
 
 def test_footnotes_manager_add_mention():
@@ -26,7 +26,7 @@ def test_footnotes_manager_add_mention():
 
     assert fnm.footnotes == [footnote_node]
     assert fnm.bodies == {}
-    assert fnm.footnotes_lists == []
+    assert fnm.footnotes_list_nodes == []
 
 
 def test_footnotes_manager_add_mentions():
@@ -38,7 +38,7 @@ def test_footnotes_manager_add_mentions():
 
     assert fnm.footnotes == [footnote_node]
     assert fnm.bodies == {}
-    assert fnm.footnotes_lists == []
+    assert fnm.footnotes_list_nodes == []
 
 
 def test_footnotes_manager_add_node():
@@ -52,7 +52,7 @@ def test_footnotes_manager_add_node():
 
     assert fnm.footnotes == []
     assert fnm.bodies == {footnote_name: footnote_block_node}
-    assert fnm.footnotes_lists == []
+    assert fnm.footnotes_list_nodes == []
 
 
 def test_footnotes_manager_add_node_duplicate_name():
@@ -73,7 +73,7 @@ def test_footnotes_manager_add_node_duplicate_name():
 
     assert fnm.footnotes == []
     assert fnm.bodies == {footnote_name: footnote_block_node1}
-    assert fnm.footnotes_lists == []
+    assert fnm.footnotes_list_nodes == []
 
 
 def test_footnotes_manager_add_footnotes_list():
@@ -85,7 +85,7 @@ def test_footnotes_manager_add_footnotes_list():
 
     assert fnm.footnotes == []
     assert fnm.bodies == {}
-    assert fnm.footnotes_lists == [footnote_list]
+    assert fnm.footnotes_list_nodes == [footnote_list]
 
 
 def test_footnotes_manager_update():
@@ -107,7 +107,7 @@ def test_footnotes_manager_update():
 
     assert other_fnm.footnotes == [footnote_node]
     assert other_fnm.bodies == {footnote_name: footnote_block_node}
-    assert other_fnm.footnotes_lists == [footnote_list]
+    assert other_fnm.footnotes_list_nodes == [footnote_list]
 
 
 @patch("mau.parsers.managers.footnotes_manager.default_footnote_unique_id")

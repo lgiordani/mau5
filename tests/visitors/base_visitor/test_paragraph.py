@@ -8,9 +8,10 @@ def test_paragraph_line_node_without_content():
 
     expected = {
         "_type": "paragraph-line",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "content": [],
         "labels": {},
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
@@ -24,13 +25,17 @@ def test_paragraph_line_node_with_content():
 
     expected = {
         "_type": "paragraph-line",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "content": [
             {
                 "_type": "none",
+                "_parent_info": {},
                 "_info": NodeInfo.empty().asdict(),
             },
             {
                 "_type": "none",
+                "_parent_info": {},
                 "_info": NodeInfo.empty().asdict(),
             },
         ],
@@ -38,11 +43,11 @@ def test_paragraph_line_node_with_content():
             "somelabel": [
                 {
                     "_type": "none",
+                    "_parent_info": {},
                     "_info": NodeInfo.empty().asdict(),
                 }
             ],
         },
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
@@ -53,9 +58,10 @@ def test_paragraph_node_without_content():
 
     expected = {
         "_type": "paragraph",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "lines": [],
         "labels": {},
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
@@ -69,29 +75,33 @@ def test_paragraph_node_with_content():
 
     expected = {
         "_type": "paragraph",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "lines": [
             {
                 "_type": "paragraph-line",
+                "_parent_info": {},
+                "_info": NodeInfo.empty().asdict(),
                 "content": [],
                 "labels": {},
-                "_info": NodeInfo.empty().asdict(),
             },
             {
                 "_type": "paragraph-line",
+                "_parent_info": {},
+                "_info": NodeInfo.empty().asdict(),
                 "content": [],
                 "labels": {},
-                "_info": NodeInfo.empty().asdict(),
             },
         ],
         "labels": {
             "somelabel": [
                 {
                     "_type": "none",
+                    "_parent_info": {},
                     "_info": NodeInfo.empty().asdict(),
                 }
             ],
         },
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)

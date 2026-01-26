@@ -25,22 +25,27 @@ def paragraph_processor(parser: DocumentParser):
     while parser.tm.peek_token().type == TokenType.TEXT:
         line_tokens.append(parser.tm.get_token(TokenType.TEXT))
 
-    line_nodes: list[ParagraphLineNode] = []
+    node = ParagraphNode()
 
     for line_token in line_tokens:
-        # Build the node info.
-        info = NodeInfo(context=line_token.context)
-
-        # Process the text of the paragraph.
-        text_nodes = parser._parse_text(line_token.value, context=line_token.context)
-
+        # Create the paragraph line node.
         line_node = ParagraphLineNode(
-            content=text_nodes,
-            parent=parser.parent_node,
-            info=info,
+            parent=node,
+            info=NodeInfo(context=line_token.context),
         )
 
-        line_nodes.append(line_node)
+        # Process the text of the paragraph.
+        text_nodes = parser._parse_text(
+            line_token.value, context=line_token.context, parent=node
+        )
+
+        # Add the text nodes to the
+        # paragraph line.
+        line_node.content = text_nodes
+
+        # Add the paragraph line node
+        # the the lines of this paragraph.
+        node.lines.append(line_node)
 
     # Get the stored arguments.
     # Paragraphs can receive arguments
@@ -48,24 +53,17 @@ def paragraph_processor(parser: DocumentParser):
     arguments = parser.arguments_buffer.pop_or_default()
 
     # Build the node info.
-    info = NodeInfo(
+    node.info = NodeInfo(
         context=Context.merge_contexts(
-            line_nodes[0].info.context,
-            line_nodes[-1].info.context,
+            node.lines[0].info.context,
+            node.lines[-1].info.context,
         ),
         **arguments.asdict(),
     )
 
-    paragraph_node = ParagraphNode(
-        lines=line_nodes,
-        parent=parser.parent_node,
-        info=info,
-    )
-
     # Extract labels from the buffer and
     # store them in the node data.
-    if labels := parser.label_buffer.pop():
-        paragraph_node.labels = labels
+    parser.pop_labels(node)
 
     # Check the stored control
     if control := parser.control_buffer.pop():
@@ -75,6 +73,6 @@ def paragraph_processor(parser: DocumentParser):
         if not control.process(parser.environment):
             return True
 
-    parser._save(paragraph_node)
+    parser._save(node)
 
     return True

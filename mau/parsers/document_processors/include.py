@@ -86,8 +86,7 @@ def include_processor(parser: DocumentParser):
 
     # Extract labels from the buffer and
     # store them in the node data.
-    if labels := parser.label_buffer.pop():
-        node.labels = labels
+    parser.pop_labels(node)
 
     parser._save(node)
 

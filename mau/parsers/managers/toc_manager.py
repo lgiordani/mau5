@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 
+from mau.nodes.node import Node
 from mau.nodes.command import (
     TocItemNode,
     TocNode,
@@ -32,6 +33,7 @@ def add_nodes_under_level(
     nodes: list[HeaderNode],
     index: int,
     output: list[TocItemNode],
+    parent: Node,
 ) -> int:
     # This recursive function transforms a list
     # of nodes into a hierarchy.
@@ -46,7 +48,7 @@ def add_nodes_under_level(
             return index
 
         # Add the first node.
-        node = TocItemNode(nodes[index])
+        node = TocItemNode(nodes[index], parent=parent)
         output.append(node)
 
         # Now perform the recursion on the
@@ -58,6 +60,7 @@ def add_nodes_under_level(
             nodes=nodes,
             index=index + 1,
             output=node.entries,
+            parent=parent,
         )
 
     # There are no more nodes to process.
@@ -109,6 +112,9 @@ class TocManager:
         self.toc_nodes.extend(other.toc_nodes)
 
     def process(self):
+        if not self.headers:
+            return
+
         self.nested_headers = []
 
         # Check that all headers have a
@@ -121,11 +127,40 @@ class TocManager:
             internal_id = self.header_internal_id_function(header)
             header.internal_id = internal_id
 
+        # Header parent (the document)
+        header_parent = self.headers[0].parent
+
         # Create the nodes hierarchy.
-        add_nodes_under_level(0, self.headers, 0, self.nested_headers)
+        # This is done to expose a hierarchy
+        # of nodes that have the document as
+        # a parent, so that the document
+        # can expose a TOC.
+        add_nodes_under_level(
+            0,
+            self.headers,
+            0,
+            self.nested_headers,
+            parent=header_parent,
+        )
 
         # Store the plain and hierarchical nodes
         # inside each TOC node.
         for toc_node in self.toc_nodes:
-            toc_node.nested_entries = self.nested_headers
+            # Each toc node receives a new
+            # set of nested header because they
+            # need to be children of the
+            # toc command and not of the document.
+            nested_headers: list[TocItemNode] = []
+
+            # Create the nodes hierarchy
+            # using the toc node as parent.
+            add_nodes_under_level(
+                0,
+                self.headers,
+                0,
+                nested_headers,
+                parent=toc_node,
+            )
+
+            toc_node.nested_entries = nested_headers
             toc_node.plain_entries = self.headers

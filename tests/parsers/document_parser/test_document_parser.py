@@ -63,3 +63,47 @@ def test_parse_output_custom_content_container():
             info=NodeInfo(context=generate_context(0, 0, 0, 4)),
         ),
     )
+
+
+def test_parenthood_document():
+    source = """
+    This is a paragraph.
+
+    This is another paragraph.
+    """
+
+    parser = runner(source)
+
+    compare_nodes_sequence(
+        parser.nodes,
+        [
+            ParagraphNode(
+                lines=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is a paragraph.",
+                                info=NodeInfo(context=generate_context(1, 0, 1, 20)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(1, 0, 1, 20)),
+                    ),
+                ],
+                info=NodeInfo(context=generate_context(1, 0, 1, 20)),
+            ),
+            ParagraphNode(
+                lines=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This is another paragraph.",
+                                info=NodeInfo(context=generate_context(3, 0, 3, 26)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(3, 0, 3, 26)),
+                    ),
+                ],
+                info=NodeInfo(context=generate_context(3, 0, 3, 26)),
+            ),
+        ],
+    )

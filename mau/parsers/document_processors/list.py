@@ -12,7 +12,7 @@ from mau.text_buffer import Context
 from mau.token import Token, TokenType
 
 
-def _process_list_nodes(parser: DocumentParser):
+def _process_list_nodes(parser: DocumentParser, parent: Node):
     # This parses all items of a list
 
     # Parse the header.
@@ -22,10 +22,7 @@ def _process_list_nodes(parser: DocumentParser):
     text = parser.tm.get_token(TokenType.TEXT)
 
     # Parse the text of the item.
-    content = parser._parse_text(
-        text.value,
-        context=text.context,
-    )
+    content = parser._parse_text(text.value, context=text.context, parent=parent)
 
     # Compute the level of the item
     level = len(header.value)
@@ -36,9 +33,7 @@ def _process_list_nodes(parser: DocumentParser):
     nodes: list[Node] = []
     nodes.append(
         ListItemNode(
-            level,
-            content=content,
-            info=NodeInfo(context=context),
+            level, content=content, info=NodeInfo(context=context), parent=parent
         )
     )
 
@@ -57,8 +52,7 @@ def _process_list_nodes(parser: DocumentParser):
 
             # Parse the text of the item.
             content = parser._parse_text(
-                text.value,
-                context=text.context,
+                text.value, context=text.context, parent=parent
             )
 
             # Compute the level of the item
@@ -71,6 +65,7 @@ def _process_list_nodes(parser: DocumentParser):
                 ListItemNode(
                     level,
                     content=content,
+                    parent=parent,
                     info=NodeInfo(context=context),
                 )
             )
@@ -83,7 +78,7 @@ def _process_list_nodes(parser: DocumentParser):
             ordered = header.value[0] == "#"
 
             # Parse all the items at this level or higher.
-            subnodes = _process_list_nodes(parser)
+            subnodes = _process_list_nodes(parser, parent)
 
             # Find the final context.
             context = Context.merge_contexts(header.context, subnodes[-1].info.context)
@@ -92,6 +87,7 @@ def _process_list_nodes(parser: DocumentParser):
                 ListNode(
                     ordered=ordered,
                     content=subnodes,
+                    parent=parent,
                     info=NodeInfo(context=context),
                 )
             )
@@ -136,8 +132,13 @@ def list_processor(parser: DocumentParser):
     header = parser.tm.peek_token(TokenType.LIST)
     ordered = header.value[0] == "#"
 
+    node = ListNode(
+        ordered=ordered,
+        main_node=True,
+    )
+
     # Parse all the following items
-    nodes = _process_list_nodes(parser)
+    nodes = _process_list_nodes(parser, parent=node)
 
     # Get the stored arguments.
     # Lists can receive arguments
@@ -155,18 +156,13 @@ def list_processor(parser: DocumentParser):
     # Find the final context.
     context = Context.merge_contexts(nodes[0].info.context, nodes[-1].info.context)
 
-    node = ListNode(
-        ordered=ordered,
-        main_node=True,
-        start=start,
-        content=nodes,
-        info=NodeInfo(context=context, **arguments.asdict()),
-    )
+    node.start = start
+    node.content = nodes
+    node.info = NodeInfo(context=context, **arguments.asdict())
 
     # Extract labels from the buffer and
     # store them in the node data.
-    if labels := parser.label_buffer.pop():
-        node.labels = labels
+    parser.pop_labels(node)
 
     # Check the stored control
     if control := parser.control_buffer.pop():

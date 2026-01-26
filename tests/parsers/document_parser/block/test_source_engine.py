@@ -7,6 +7,7 @@ from mau.nodes.source import (
 )
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
+    check_parent,
     compare_nodes_sequence,
     generate_context,
     init_parser_factory,
@@ -546,3 +547,48 @@ def test_source_engine_highlight_marker_custom_highlight_style():
             ),
         ],
     )
+
+
+def test_source_parenthood():
+    source = """
+    [python, engine=source]
+    ----
+    import os
+    ----
+    """
+
+    parser = runner(source)
+
+    document_node = parser.output.document
+
+    source_node = parser.nodes[0]
+
+    # All parser nodes must be
+    # children of the document node.
+    check_parent(document_node, parser.nodes)
+
+    # All nodes inside the block must be
+    # children of the block.
+    check_parent(source_node, source_node.content)
+
+
+def test_source_parenthood_labels():
+    source = """
+    . A label
+    .role Another label
+    [engine=source]
+    ----
+    This is a paragraph.
+    ----
+    """
+
+    parser = runner(source)
+
+    source_node = parser.nodes[0]
+    label_title_nodes = source_node.labels["title"]
+    label_role_nodes = source_node.labels["role"]
+
+    # Each label must be a child of the
+    # source it has been assigned to.
+    check_parent(source_node, label_title_nodes)
+    check_parent(source_node, label_role_nodes)

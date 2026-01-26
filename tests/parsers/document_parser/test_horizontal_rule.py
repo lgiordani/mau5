@@ -5,6 +5,7 @@ from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
+    check_parent,
     compare_nodes_sequence,
     generate_context,
     init_parser_factory,
@@ -21,13 +22,13 @@ def test_horizontal_rule():
     ---
     """
 
+    parser = runner(source)
+
     expected_nodes = [
         HorizontalRuleNode(
             info=NodeInfo(context=generate_context(1, 0, 1, 3)),
         )
     ]
-
-    parser = runner(source)
 
     compare_nodes_sequence(parser.nodes, expected_nodes)
 
@@ -37,6 +38,8 @@ def test_horizontal_rule_with_arguments():
     [arg1,#tag1,*subtype1,key1=value1]
     ---
     """
+
+    parser = runner(source)
 
     expected_nodes = [
         HorizontalRuleNode(
@@ -52,8 +55,6 @@ def test_horizontal_rule_with_arguments():
         )
     ]
 
-    parser = runner(source)
-
     compare_nodes_sequence(parser.nodes, expected_nodes)
 
 
@@ -62,6 +63,8 @@ def test_horizontal_rule_with_labels():
     .details This is a label
     ---
     """
+
+    parser = runner(source)
 
     expected_nodes = [
         HorizontalRuleNode(
@@ -80,8 +83,6 @@ def test_horizontal_rule_with_labels():
             ),
         )
     ]
-
-    parser = runner(source)
 
     compare_nodes_sequence(parser.nodes, expected_nodes)
 
@@ -104,3 +105,36 @@ def test_horizontal_rule_with_control():
     assert parser.arguments_buffer.arguments is None
     assert parser.label_buffer.labels == {}
     assert parser.control_buffer.control is None
+
+
+def test_list_parenthood():
+    source = """
+    ---
+    """
+
+    parser = runner(source)
+
+    document_node = parser.output.document
+
+    # All parser nodes must be
+    # children of the document node.
+    check_parent(document_node, parser.nodes)
+
+
+def test_horizontal_rule_parenthood_labels():
+    source = """
+    . A label
+    .role Another label
+    ---
+    """
+
+    parser = runner(source)
+
+    horizontal_rule_node = parser.nodes[0]
+    label_title_nodes = horizontal_rule_node.labels["title"]
+    label_role_nodes = horizontal_rule_node.labels["role"]
+
+    # Each label must be a child of the
+    # horizontal rule it has been assigned to.
+    check_parent(horizontal_rule_node, label_title_nodes)
+    check_parent(horizontal_rule_node, label_role_nodes)

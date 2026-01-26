@@ -48,35 +48,13 @@ def check_node_with_content(node):
     assert result["content"] == [
         {
             "_type": "none",
-            "_info": {
-                "context": {
-                    "end_column": 0,
-                    "end_line": 0,
-                    "source": None,
-                    "start_column": 0,
-                    "start_line": 0,
-                },
-                "named_args": {},
-                "subtype": None,
-                "tags": [],
-                "unnamed_args": [],
-            },
+            "_parent_info": {},
+            "_info": NodeInfo.empty().asdict(),
         },
         {
             "_type": "none",
-            "_info": {
-                "context": {
-                    "end_column": 0,
-                    "end_line": 0,
-                    "source": None,
-                    "start_column": 0,
-                    "start_line": 0,
-                },
-                "named_args": {},
-                "subtype": None,
-                "tags": [],
-                "unnamed_args": [],
-            },
+            "_parent_info": {},
+            "_info": NodeInfo.empty().asdict(),
         },
     ]
 
@@ -92,56 +70,28 @@ def check_node_with_labels(node):
         "label1": [
             {
                 "_type": "none",
-                "_info": {
-                    "context": {
-                        "end_column": 0,
-                        "end_line": 0,
-                        "source": None,
-                        "start_column": 0,
-                        "start_line": 0,
-                    },
-                    "named_args": {},
-                    "subtype": None,
-                    "tags": [],
-                    "unnamed_args": [],
-                },
+                "_parent_info": {},
+                "_info": NodeInfo.empty().asdict(),
             },
             {
                 "_type": "none",
-                "_info": {
-                    "context": {
-                        "end_column": 0,
-                        "end_line": 0,
-                        "source": None,
-                        "start_column": 0,
-                        "start_line": 0,
-                    },
-                    "named_args": {},
-                    "subtype": None,
-                    "tags": [],
-                    "unnamed_args": [],
-                },
+                "_parent_info": {},
+                "_info": NodeInfo.empty().asdict(),
             },
         ],
         "label2": [
             {
                 "_type": "none",
-                "_info": {
-                    "context": {
-                        "end_column": 0,
-                        "end_line": 0,
-                        "source": None,
-                        "start_column": 0,
-                        "start_line": 0,
-                    },
-                    "named_args": {},
-                    "subtype": None,
-                    "tags": [],
-                    "unnamed_args": [],
-                },
+                "_parent_info": {},
+                "_info": NodeInfo.empty().asdict(),
             },
         ],
     }
+
+
+def check_parent(node: Node | None, nodes: Sequence[Node]):
+    for i in nodes:
+        assert i.parent == node
 
 
 def compare_nodes(node: Node, expected: Node):
@@ -156,8 +106,22 @@ def compare_nodes(node: Node, expected: Node):
 def compare_nodes_sequence(nodes: Sequence[Node], expected: Sequence[Node]):
     bv = BaseVisitor()
 
-    visit_nodes = [bv.visit(node) for node in nodes]
-    visit_expected = [bv.visit(node) for node in expected]
+    # This function removes the parent
+    # info if present. This is done
+    # to make it possible to write
+    # the node sequence without
+    # having to build each single
+    # component in isolation to
+    # establish the parent-child
+    # relationship.
+    def remove_parent(data: dict) -> dict:
+        data["_parent_info"] = {}
+
+        return data
+
+    visit_nodes = [bv.visit(node, transformer=remove_parent) for node in nodes]
+
+    visit_expected = [bv.visit(node, transformer=remove_parent) for node in expected]
 
     assert visit_nodes == visit_expected
 

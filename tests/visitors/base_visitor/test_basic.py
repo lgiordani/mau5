@@ -49,4 +49,5 @@ def test_generic_node():
             "tags": ["tag1"],
             "context": generate_context(1, 2, 3, 4).asdict(),
         },
+        "_parent_info": {},
     }

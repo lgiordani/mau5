@@ -3,6 +3,7 @@ from mau.nodes.node import NodeInfo
 from mau.nodes.raw import RawLineNode, RawNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
+    check_parent,
     compare_nodes_sequence,
     generate_context,
     init_parser_factory,
@@ -44,3 +45,48 @@ def test_raw_engine():
             ),
         ],
     )
+
+
+def test_raw_parenthood():
+    source = """
+    [engine=raw]
+    ----
+    This is a paragraph.
+    ----
+    """
+
+    parser = runner(source)
+
+    document_node = parser.output.document
+
+    raw_node = parser.nodes[0]
+
+    # All parser nodes must be
+    # children of the document node.
+    check_parent(document_node, parser.nodes)
+
+    # All nodes inside the block must be
+    # children of the block.
+    check_parent(raw_node, raw_node.content)
+
+
+def test_raw_parenthood_labels():
+    source = """
+    . A label
+    .role Another label
+    [engine=raw]
+    ----
+    This is a paragraph.
+    ----
+    """
+
+    parser = runner(source)
+
+    raw_node = parser.nodes[0]
+    label_title_nodes = raw_node.labels["title"]
+    label_role_nodes = raw_node.labels["role"]
+
+    # Each label must be a child of the
+    # raw it has been assigned to.
+    check_parent(raw_node, label_title_nodes)
+    check_parent(raw_node, label_role_nodes)

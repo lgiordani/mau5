@@ -9,6 +9,7 @@ from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
+    check_parent,
     compare_nodes_sequence,
     generate_context,
     init_parser_factory,
@@ -305,3 +306,62 @@ def test_command_toc_supports_control():
     assert parser.arguments_buffer.arguments is None
     assert parser.label_buffer.labels == {}
     assert parser.control_buffer.control is None
+
+
+def test_block_group_parenthood():
+    source = """
+    [group=group1, position=position1]
+    ----
+    Some text 1.
+    ----
+
+    [group=group1, position=position2]
+    ----
+    Some text 2.
+    ----
+
+    ::blockgroup:group1
+    """
+
+    parser = runner(source)
+
+    document_node = parser.output.document
+
+    block_group_node = parser.nodes[0]
+
+    # All parser nodes must be
+    # children of the document node.
+    check_parent(document_node, parser.nodes)
+
+    # All nodes inside the block group must be
+    # children of the command.
+    check_parent(block_group_node, block_group_node.blocks.values())
+
+
+def test_block_group_parenthood_labels():
+    source = """
+    [group=group1, position=position1]
+    ----
+    Some text 1.
+    ----
+
+    [group=group1, position=position2]
+    ----
+    Some text 2.
+    ----
+
+    . A label
+    .role Another label
+    ::blockgroup:group1
+    """
+
+    parser = runner(source)
+
+    block_group_node = parser.nodes[0]
+    label_title_nodes = block_group_node.labels["title"]
+    label_role_nodes = block_group_node.labels["role"]
+
+    # Each label must be a child of the
+    # block group it has been assigned to.
+    check_parent(block_group_node, label_title_nodes)
+    check_parent(block_group_node, label_role_nodes)

@@ -44,7 +44,12 @@ class BaseVisitor:
         if node is None:
             return {}
 
-        return node.accept(self, *args, **kwargs)
+        result = node.accept(self, *args, **kwargs)
+
+        if transformer := kwargs.get("transformer"):
+            result = transformer(result)
+
+        return result
 
     def visitlist(
         self, current_node: Node, nodes_list: Sequence[Node], *args, **kwargs
@@ -81,15 +86,25 @@ class BaseVisitor:
     def _add_visit_labels(self, result: dict, node: Node, *args, **kwargs):
         result.update(
             {
-                "labels": self.visitdictlist(node, node.labels),
+                "labels": self.visitdictlist(node, node.labels, *args, **kwargs),
             }
         )
+
+    def _get_parent_data(self, node: Node, *args, **kwargs) -> dict:
+        if not node:
+            return {}
+
+        return {
+            "_type": node.type,
+            "_info": node.info.asdict(),
+        }
 
     def _visit_default(self, node: Node, *args, **kwargs) -> dict:
         # This is the default code to visit a node.
 
         return {
             "_type": node.type,
+            "_parent_info": self._get_parent_data(node.parent),
             "_info": node.info.asdict(),
         }
 
@@ -299,7 +314,7 @@ class BaseVisitor:
 
         result.update(
             {
-                "header": self.visit(node.header),
+                "header": self.visit(node.header, *args, **kwargs),
                 "entries": self.visitlist(node, node.entries, *args, **kwargs),
             }
         )

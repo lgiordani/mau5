@@ -109,6 +109,13 @@ class DocumentParser(BaseParser):
         # This is the final output of the parser
         self.output = DocumentParserOutput()
 
+        # Initialise the container node.
+        document_node_class = self.environment.get(
+            "mau.parser.document_wrapper", DocumentNode
+        )
+
+        self.parent_node = document_node_class()
+
     def _process_functions(self):
         # All the functions that this parser provides.
 
@@ -127,7 +134,7 @@ class DocumentParser(BaseParser):
             partial(paragraph_processor, self),
         ]
 
-    def _parse_text(self, text: str, context: Context) -> list[Node]:
+    def _parse_text(self, text: str, context: Context, parent: Node) -> list[Node]:
         # This parses a piece of text.
         # It runs the text through the preprocessor to
         # replace variables, then parses it storing
@@ -173,7 +180,28 @@ class DocumentParser(BaseParser):
         # Extract the header links found in this piece of text.
         self.header_links_manager.add_macros(text_parser.header_links)
 
+        # Assign the given parent to each node.
+        for i in text_parser.nodes:
+            i.parent = parent
+
         return text_parser.nodes
+
+    def pop_labels(self, node: Node):
+        # Extract labels from the buffer and
+        # store them in the given node.
+        labels = self.label_buffer.pop()
+
+        # Collect all nodes of all labels.
+        all_nodes = []
+        for label_nodes in labels.values():
+            all_nodes.extend(label_nodes)
+
+        # Assign the parent to each node.
+        for i in all_nodes:
+            i.parent = node
+
+        # Assign the labels to the node.
+        node.labels = labels
 
     def _process_eol(self) -> bool:
         # This simply ignores the end of line.
@@ -209,18 +237,15 @@ class DocumentParser(BaseParser):
         if not self.nodes:
             return self.output
 
-        document_content_class = self.environment.get(
-            "mau.parser.document_wrapper", DocumentNode
-        )
-
         # Find the document context.
         context = Context.merge_contexts(
             self.nodes[0].info.context, self.nodes[-1].info.context
         )
 
-        self.output.document = document_content_class(
-            content=self.nodes,
-            info=NodeInfo(context=context),
-        )
+        self.parent_node.content = self.nodes
+        self.parent_node.info = NodeInfo(context=context)
+
+        self.output.document = self.parent_node
+
         self.output.nested_toc = self.toc_manager.nested_headers
         self.output.plain_toc = self.toc_manager.headers

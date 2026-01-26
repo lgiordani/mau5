@@ -431,6 +431,12 @@ class JinjaVisitor(BaseVisitor):
         if not result:
             return
 
+        parent_prefix = None
+        if node.parent:
+            parent_prefix = f"{node.parent.type}"
+
+        # print("PARENT:", node.parent)
+
         # Create the template names for the
         # current node.
         templates = _create_templates(
@@ -440,6 +446,7 @@ class JinjaVisitor(BaseVisitor):
             node.info.tags,
             node.custom_attributes,
             self.template_prefixes,
+            parent_prefix,
         )
 
         # print(f"#### Node {node}")

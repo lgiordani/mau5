@@ -35,15 +35,11 @@ def parse_block_content(
     content: Token,
     arguments: Arguments,
 ) -> list[Node]:
-    update = arguments.named_args.get("isolate", "false") == "false"
+    update = arguments.named_args.get("isolate", "true") == "false"
 
-    # The parsing environment
-    # can be either the one contained
-    # in the external parser or an empty
-    # one. This depends if the
-    # current parsing is updating
-    # the external parser or not.
-    environment = parser.environment if update else Environment()
+    # The parsing environment is
+    # that of the external parser.
+    environment = parser.environment
 
     # Unpack the token initial position.
     start_line, start_column = content.context.start_position
@@ -79,13 +75,24 @@ def parse_default_engine(
     content: Token | None,
     arguments: Arguments,
 ) -> list[Node]:
+    node = BlockNode()
+
     if not content:
-        return BlockNode()
+        return node
 
     # Parse the content of the block.
     nodes = parse_block_content(parser, content, arguments)
 
-    return BlockNode(content=nodes)
+    # Assign the block as parent
+    # of all nodes directly
+    # contained in it.
+    for i in nodes:
+        i.parent = node
+
+    # Assign the nodes to the block.
+    node.content = nodes
+
+    return node
 
 
 def parse_raw_engine(
@@ -106,6 +113,8 @@ def parse_raw_engine(
     # A list of raw content lines.
     raw_lines: list[RawLineNode] = []
 
+    node = RawNode()
+
     for number, line_content in enumerate(content_lines, start=1):
         line_context = content.context.clone()
         line_context.start_line += number - 1
@@ -116,10 +125,14 @@ def parse_raw_engine(
             RawLineNode(
                 line_content,
                 info=NodeInfo(context=line_context),
+                parent=node,
             )
         )
 
-    return RawNode(content=raw_lines)
+    # Assign the nodes to the block.
+    node.content = raw_lines
+
+    return node
 
 
 def parse_source_engine(
@@ -175,6 +188,8 @@ def parse_source_engine(
     # A list of code lines (after processing).
     code: list[SourceLineNode] = []
 
+    node = SourceNode(language)
+
     for number, line_content in enumerate(content_lines, start=1):
         line_number = str(number)
 
@@ -192,7 +207,13 @@ def parse_source_engine(
         highlight_style: str | None = None
 
         if not line_content.endswith(marker_delimiter):
-            create_source_line(code, line_number, line_content, line_context)
+            create_source_line(
+                code,
+                line_number,
+                line_content,
+                line_context,
+                parent=node,
+            )
             continue
 
         # Split without the final delimiter
@@ -201,7 +222,13 @@ def parse_source_engine(
         if len(splits) < 2:
             # It's a trap! There are no separators left.
             # Just add the line as it is.
-            create_source_line(code, line_number, line_content, line_context)
+            create_source_line(
+                code,
+                line_number,
+                line_content,
+                line_context,
+                parent=node,
+            )
             continue
 
         # Get the callout and the line
@@ -244,15 +271,15 @@ def parse_source_engine(
             line_number,
             line_content,
             line_context,
+            parent=node,
             marker_node=marker_node,
             highlight_style=highlight_style,
         )
 
-    return SourceNode(
-        language,
-        content=code,
-        info=NodeInfo(context=content.context),
-    )
+    node.content = code
+    node.info = NodeInfo(context=content.context)
+
+    return node
 
 
 def create_source_line(
@@ -260,6 +287,7 @@ def create_source_line(
     line_number: str,
     line_content: str,
     line_context: Context,
+    parent: Node,
     marker_node: SourceMarkerNode | None = None,
     highlight_style: str | None = None,
 ):
@@ -269,6 +297,7 @@ def create_source_line(
         line_content=line_content,
         highlight_style=highlight_style,
         info=NodeInfo(context=line_context),
+        parent=parent,
     )
 
     if marker_node:
@@ -322,10 +351,6 @@ def block_processor(parser: DocumentParser):
             f"Engine {engine_name} is not available", context=context
         ) from exc
 
-    # Extract labels from the buffer and
-    # store them in the node.
-    labels = parser.label_buffer.pop()
-
     match engine:
         # Real engine: decides how the content is processed
         case EngineType.DEFAULT:
@@ -338,7 +363,10 @@ def block_processor(parser: DocumentParser):
             node = parse_source_engine(parser, content, arguments)
 
     node.classes = classes
-    node.labels = labels
+
+    # Extract labels from the buffer and
+    # store them in the node data.
+    parser.pop_labels(node)
 
     footnote_name = arguments.named_args.get("footnote")
 

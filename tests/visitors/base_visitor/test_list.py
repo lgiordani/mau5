@@ -8,9 +8,10 @@ def test_list_item_node():
 
     expected = {
         "_type": "list-item",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "content": [],
         "level": 3,
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
@@ -21,12 +22,13 @@ def test_list_node():
 
     expected = {
         "_type": "list",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "content": [],
         "labels": {},
         "ordered": True,
         "main_node": False,
         "start": 1,
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
@@ -37,12 +39,13 @@ def test_list_node_unordered():
 
     expected = {
         "_type": "list",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "content": [],
         "labels": {},
         "ordered": False,
         "main_node": False,
         "start": 1,
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
@@ -53,12 +56,13 @@ def test_list_node_parameters():
 
     expected = {
         "_type": "list",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "content": [],
         "labels": {},
         "ordered": True,
         "main_node": True,
         "start": 42,
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)

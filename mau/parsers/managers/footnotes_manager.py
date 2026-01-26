@@ -34,7 +34,7 @@ class FootnotesManager:
         # created through blocks.
         self.bodies: dict[str, BlockNode] = {}
 
-        self.footnotes_lists: list[FootnotesNode] = []
+        self.footnotes_list_nodes: list[FootnotesNode] = []
 
         self.footnote_unique_id_function = (
             footnote_unique_id_function or default_footnote_unique_id
@@ -61,7 +61,7 @@ class FootnotesManager:
     def add_footnotes_list(self, data: FootnotesNode):
         """Add a footnotes list node to
         the list of managed nodes."""
-        self.footnotes_lists.append(data)
+        self.footnotes_list_nodes.append(data)
 
     def update(self, other: FootnotesManager):
         """Update footnotes, data, and footnotes nodes
@@ -69,7 +69,7 @@ class FootnotesManager:
         Footnotes Manager."""
         self.footnotes.extend(other.footnotes)
         self.bodies.update(other.bodies)
-        self.footnotes_lists.extend(other.footnotes_lists)
+        self.footnotes_list_nodes.extend(other.footnotes_list_nodes)
 
     def process(self):
         # Process all footnotes. For each footnote
@@ -90,10 +90,17 @@ class FootnotesManager:
             # Create the internal ID.
             footnote.internal_id = self.footnote_unique_id_function(footnote)
 
-        footnote_items = [
-            FootnotesItemNode(footnote=footnote) for footnote in self.footnotes
-        ]
+        # TODO The problem here is that all footnotes commands
+        # share the same list of footnotes. Items cannot be children
+        # of one of them only.
+        # I need to generate a list of footnotes items per footnotes
+        # list, so that all footnotes contained are children of the
+        # document and the items themselves are children of the
+        # footnotes list.
 
         # Update all the nodes that list footnotes.
-        for footnotes_list in self.footnotes_lists:
-            footnotes_list.footnotes = footnote_items
+        for footnotes_list_node in self.footnotes_list_nodes:
+            footnotes_list_node.footnotes = [
+                FootnotesItemNode(footnote=footnote, parent=footnotes_list_node)
+                for footnote in self.footnotes
+            ]

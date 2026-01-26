@@ -17,9 +17,10 @@ def test_footnotes_node_empty():
 
     expected = {
         "_type": "footnotes",
+        "_info": NodeInfo.empty().asdict(),
+        "_parent_info": {},
         "footnotes": [],
         "labels": {},
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
@@ -35,34 +36,39 @@ def test_footnotes_node():
 
     expected = {
         "_type": "footnotes",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "footnotes": [
             {
                 "_type": "footnotes-item",
+                "_parent_info": {},
+                "_info": NodeInfo.empty().asdict(),
                 "footnote": {
                     "_type": "footnote",
+                    "_parent_info": {},
+                    "_info": NodeInfo.empty().asdict(),
                     "name": "somename1",
                     "public_id": None,
                     "internal_id": None,
                     "content": [],
-                    "_info": NodeInfo.empty().asdict(),
                 },
-                "_info": NodeInfo.empty().asdict(),
             },
             {
                 "_type": "footnotes-item",
+                "_parent_info": {},
+                "_info": NodeInfo.empty().asdict(),
                 "footnote": {
                     "_type": "footnote",
+                    "_parent_info": {},
+                    "_info": NodeInfo.empty().asdict(),
                     "name": "somename2",
                     "public_id": None,
                     "internal_id": None,
                     "content": [],
-                    "_info": NodeInfo.empty().asdict(),
                 },
-                "_info": NodeInfo.empty().asdict(),
             },
         ],
         "labels": {},
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
@@ -76,17 +82,19 @@ def test_toc_item_node_without_entries():
 
     expected = {
         "_type": "toc-item",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "entries": [],
         "header": {
             "_type": "header",
+            "_parent_info": {},
+            "_info": NodeInfo.empty().asdict(),
             "level": 1,
             "internal_id": None,
             "name": None,
             "labels": {},
             "content": [],
-            "_info": NodeInfo.empty().asdict(),
         },
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
@@ -105,32 +113,36 @@ def test_toc_item_node_with_entries():
 
     expected = {
         "_type": "toc-item",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "entries": [
             {
                 "_type": "toc-item",
+                "_parent_info": {},
+                "_info": NodeInfo.empty().asdict(),
                 "entries": [],
                 "header": {
                     "_type": "header",
+                    "_parent_info": {},
+                    "_info": NodeInfo.empty().asdict(),
                     "level": 2,
                     "internal_id": None,
                     "name": None,
                     "labels": {},
                     "content": [],
-                    "_info": NodeInfo.empty().asdict(),
                 },
-                "_info": NodeInfo.empty().asdict(),
             }
         ],
         "header": {
             "_type": "header",
+            "_parent_info": {},
+            "_info": NodeInfo.empty().asdict(),
             "level": 1,
             "internal_id": None,
             "name": None,
             "labels": {},
             "content": [],
-            "_info": NodeInfo.empty().asdict(),
         },
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
@@ -141,10 +153,11 @@ def test_toc_node():
 
     expected = {
         "_type": "toc",
+        "_info": NodeInfo.empty().asdict(),
+        "_parent_info": {},
         "plain_entries": [],
         "nested_entries": [],
         "labels": {},
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
@@ -155,10 +168,11 @@ def test_block_group_node_empty():
 
     expected = {
         "_type": "block-group",
+        "_info": NodeInfo.empty().asdict(),
+        "_parent_info": {},
         "name": "somename",
         "blocks": {},
         "labels": {},
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
@@ -174,25 +188,28 @@ def test_block_group_node_with_blocks():
 
     expected = {
         "_type": "block-group",
+        "_parent_info": {},
+        "_info": NodeInfo.empty().asdict(),
         "name": "somename",
         "labels": {},
         "blocks": {
             "position1": {
                 "_type": "block",
+                "_parent_info": {},
+                "_info": NodeInfo.empty().asdict(),
                 "classes": [],
                 "content": [],
                 "labels": {},
-                "_info": NodeInfo.empty().asdict(),
             },
             "position2": {
                 "_type": "block",
+                "_parent_info": {},
+                "_info": NodeInfo.empty().asdict(),
                 "classes": [],
                 "content": [],
                 "labels": {},
-                "_info": NodeInfo.empty().asdict(),
             },
         },
-        "_info": NodeInfo.empty().asdict(),
     }
 
     check_visit_node(node, expected)
