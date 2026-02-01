@@ -1,10 +1,10 @@
 import pytest
 
+from mau.error import MauErrorType, MauException
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.inline import StyleNode, TextNode, VerbatimNode
 from mau.nodes.macro import MacroClassNode
 from mau.nodes.node import NodeInfo
-from mau.parsers.base_parser import MauParserException
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
     compare_nodes_sequence,
@@ -115,7 +115,8 @@ def test_macro_class_without_classes():
 def test_macro_class_without_text():
     source = "[class]()"
 
-    with pytest.raises(MauParserException) as exc:
+    with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.context == generate_context(0, 0, 0, 9)
+    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.error.content["context"] == generate_context(0, 0, 0, 9)

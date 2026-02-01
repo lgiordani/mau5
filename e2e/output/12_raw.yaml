@@ -1,0 +1,55 @@
+_info:
+  context:
+    end_column: 4
+    end_line: 26
+    source: e2e/source/12_raw.mau
+    start_column: 0
+    start_line: 24
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 4
+      end_line: 26
+      source: e2e/source/12_raw.mau
+      start_column: 0
+      start_line: 24
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: raw
+classes: []
+content:
+- _info:
+    context:
+      end_column: 24
+      end_line: 25
+      source: e2e/source/12_raw.mau
+      start_column: 0
+      start_line: 25
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 4
+        end_line: 26
+        source: e2e/source/12_raw.mau
+        start_column: 0
+        start_line: 24
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: raw
+  _type: raw-line
+  value: <p>An HTML paragraph</p>
+labels: {}
+

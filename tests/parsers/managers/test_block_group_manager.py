@@ -1,8 +1,8 @@
 import pytest
 
+from mau.error import MauErrorType, MauException
 from mau.nodes.block import BlockNode
 from mau.nodes.command import BlockGroupNode
-from mau.parsers.base_parser import MauParserException
 from mau.parsers.managers.block_group_manager import (
     BlockGroupManager,
 )
@@ -84,5 +84,7 @@ def test_block_group_manager_process_group_does_not_exist():
 
     bgm.add_group(group_node)
 
-    with pytest.raises(MauParserException):
+    with pytest.raises(MauException) as exc:
         bgm.process()
+
+    assert exc.value.error.type == MauErrorType.PARSER

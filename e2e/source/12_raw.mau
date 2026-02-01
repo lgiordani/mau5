@@ -1,0 +1,27 @@
+// /////////////////////////////////////////
+// MAU E2E TESTS
+// /////////////////////////////////////////
+
+////
+This is a test file to check the end-to-end
+behaviour of the Mau lexers, parsers and
+visitors.
+////
+
+// -----------------------------------------
+
+// /////////////////////////////////////////
+// Raw blocks
+
+// The engine `raw` preserves the content of
+// the whole block verbatim.
+// This means that raw blocks cannot contain
+// other blocks, as the fences delimiters are
+// not parsed as such.
+// In case the closing delimiter must be added
+// to the block, the first character needs
+// to be escaped.
+[engine=raw]
+----
+<p>An HTML paragraph</p>
+----

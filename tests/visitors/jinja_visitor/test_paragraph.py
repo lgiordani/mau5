@@ -1,10 +1,9 @@
 from mau.environment.environment import Environment
-from mau.nodes.node import NodeInfo
-from mau.nodes.block import BlockNode
 from mau.nodes.inline import TextNode
-from mau.nodes.paragraph import ParagraphNode, ParagraphLineNode
-from mau.visitors.jinja_visitor import JinjaVisitor
+from mau.nodes.node import NodeInfo
+from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.test_helpers import generate_context
+from mau.visitors.jinja_visitor import JinjaVisitor
 
 
 def test_page_paragraph_node():

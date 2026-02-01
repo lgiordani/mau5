@@ -1,0 +1,28 @@
+// /////////////////////////////////////////
+// MAU E2E TESTS
+// /////////////////////////////////////////
+
+////
+This is a test file to check the end-to-end
+behaviour of the Mau lexers, parsers and
+visitors.
+////
+
+// -----------------------------------------
+
+// /////////////////////////////////////////
+// Commands
+
+// The syntax ::command creates a command node
+// that supports named and unnamed arguments,
+// tags and subtype.
+// Mau currently supports three commands:
+// * `::toc`
+// * `::footnotes`
+// * `::blockgroup`
+
+// The syntax can be used to implement custom
+// commands, even though there is no support
+// for adding custom Python logic yet.
+::custom:arg1, #tag1, *subtype1, key1=value1
+

@@ -1,0 +1,71 @@
+// /////////////////////////////////////////
+// MAU E2E TESTS
+// /////////////////////////////////////////
+
+////
+This is a test file to check the end-to-end
+behaviour of the Mau lexers, parsers and
+visitors.
+////
+
+// -----------------------------------------
+
+// /////////////////////////////////////////
+// ToC
+
+// The command `toc` collects the document headers
+// and creates a node that represents the
+// Table of Contents.
+
+= Header 1
+== Header 1.1
+= Header 2
+= Header 3
+
+::toc
+
+// The ToC node contains headers in two groups.
+//
+// `plain_entries` is the list of all headers,
+// without any structure.
+// Given the headers above, `plain_entries` is
+// `[Header 1, Header 1.1, Header 2, Header 3]`
+//
+// `nested_entries` is the structured list of
+// all headers, with `toc-item` nodes that
+// contain other ToC items.
+// Given the headers above, `nested_entries` is
+// `[Header 1, Header 2, Header 3]`
+// and the item for `Header 1` will contain
+// the item for `Header 1.1`.
+
+// Headers contained inside blocks are not
+// added to the ToC, as blocks are isolated.
+----
+= This header will NOT appear in the document TOC.
+----
+
+// The block isolation can be turned off with
+// the attribute `isolate`.
+[isolate=false]
+----
+= This header will appear in the document ToC.
+----
+
+// All `toc` commands are processed at the
+// end, after all headers have been parsed.
+// So, independently from the position of the
+// command, all the document headers will
+// be listed.
+
+// All commands support unnamed and named
+// arguments, together with tags and
+// the subtype.
+// Such values can be added as
+// fenced arguments between square
+// brackets.
+[arg1, #tag1, *subtype1, key1=value1]
+::toc
+
+// Or they can be added inline.
+::toc:arg1, #tag1, *subtype1, key1=value1

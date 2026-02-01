@@ -1,0 +1,75 @@
+// /////////////////////////////////////////
+// MAU E2E TESTS
+// /////////////////////////////////////////
+
+////
+This is a test file to check the end-to-end
+behaviour of the Mau lexers, parsers and
+visitors.
+////
+
+// -----------------------------------------
+
+// /////////////////////////////////////////
+// Source blocks
+
+// The engine `source` is used to highlight
+// source code. The language can be specified with
+// `language`.
+[engine=source, language=python]
+----
+def sum(a, b):
+    return a + b
+----
+
+// Just like the engine `raw`, the content
+// is automatically escaped but for the closing
+// delimiter of the block.
+[engine=source, language=text]
+----
+####
+These is NOT a block within the block.
+####
+----
+
+// The engine supports markers. A marker is a
+// label attached to a line that can be rendered
+// separately (e.g. as an actual label at the
+// end of the line).
+// Here, `:1:` attaches the marker `1` to the line.
+[engine=source, language=python]
+----
+def sum(a, b):
+    return a + b:1:
+----
+
+// If the syntax `:marker:` clashes with
+// the programming language you are highlighting,
+// you can use `marker_delimiter` to use a
+// different character than `:`.
+[engine=source, language=python, marker_delimiter="|"]
+----
+def sum(a, b):
+    return a + b|1|
+----
+
+// Highlight styles are markers that start with
+// `@` and that will be attached to the line.
+// They can be used to change the rendering of
+// the specific line, for example setting a
+// specific background colour.
+// Here, `@added` attaches the highlight style
+// `added` to the code line.
+[engine=source, language=python]
+----
+def sum(a, b):
+    return a + b:@added:
+----
+
+// The standard syntax can be long to type, so
+// Mau defines a convenient shortcut
+// with the subtype `*source`.
+[*source, python]
+----
+answer: int = 42
+----

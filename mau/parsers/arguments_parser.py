@@ -6,7 +6,7 @@ from typing import Any
 from mau.environment.environment import Environment
 from mau.lexers.arguments_lexer import ArgumentsLexer
 from mau.nodes.node import NodeInfo, ValueNode
-from mau.parsers.base_parser import BaseParser, MauParserException
+from mau.parsers.base_parser import BaseParser, create_parser_exception
 from mau.token import Token, TokenType
 
 
@@ -167,7 +167,7 @@ class ArgumentsParser(BaseParser):
 
         # Unnamed arguments can't appear after named ones.
         if self._named_arguments_on:
-            raise MauParserException(
+            raise create_parser_exception(
                 message="Unnamed arguments after named arguments are forbidden",
                 context=self.context,
             )
@@ -236,7 +236,7 @@ class ArgumentsParser(BaseParser):
 
         # There can be only one subtype.
         if len(subtypes) > 1:
-            raise MauParserException(
+            raise create_parser_exception(
                 message="Multiple subtypes detected",
                 context=self.context,
             )

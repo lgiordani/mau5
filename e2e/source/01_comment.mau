@@ -1,0 +1,24 @@
+// /////////////////////////////////////////
+// MAU E2E TESTS
+// /////////////////////////////////////////
+
+////
+This is a test file to check the end-to-end
+behaviour of the Mau lexers, parsers and
+visitors.
+////
+
+// -----------------------------------------
+
+// /////////////////////////////////////////
+// Comments
+
+// This is a comment on a single line.
+
+////
+This is a multiline comment.
+Both types of comments, are detected by the lexer
+but discarded, so the parser and the visitor
+never see them.
+////
+

@@ -1,0 +1,66 @@
+// /////////////////////////////////////////
+// MAU E2E TESTS
+// /////////////////////////////////////////
+
+////
+This is a test file to check the end-to-end
+behaviour of the Mau lexers, parsers and
+visitors.
+////
+
+// -----------------------------------------
+
+// /////////////////////////////////////////
+// Basic text
+
+// Paragraphs are blocks of text on a single line.
+Standard text on a single line.
+
+// Multiple adjacent lines are collapsed into a
+// single paragraph.
+This is still
+a single paragraph.
+
+// Multiple paragraphs are separated by at least
+// one empty line. Multiple empty lines are
+// collapsed into a single empty line.
+This is the first paragraph.
+
+This is the second paragraph.
+
+
+
+This is the third paragraph.
+
+
+// /////////////////////////////////////////
+// Text styles and verbatim
+
+// Paragraphs can contain 4 different text styles.
+// Surround text with `*`, `_`, `^`, or `~`.
+Text line with styles: *star*, _underscore_, ^caret^, ~tilde~.
+
+// Verbatim text is a special style that escapes Mau syntax.
+Text line with `verbatim` text. `*this is not styled text*`.
+
+
+// /////////////////////////////////////////
+// Escaping
+
+// While verbatim escapes almost every special character,
+// it also corresponds to the verbatim "style", which is
+// often used to represent code.
+// You can escape without giving the text a specific
+// style using `$` and `%`. You can always escape a single
+// special character with a backslash `\`.
+Paragraph with escapes: verbatim escapes dollar and percent `$%`,
+dollar escapes percent $%$,
+and percent escapes dollar %$%.
+$
+Text line with escaped Mau syntax: $[not](a macro)$, \`not verbatim\`.
+
+// Text can contain special characters
+HTML Characters like < and >, e.g. <p> are accepted.
+
+// Unicode characters can be added directly
+Volcano: 🌋 (direct)

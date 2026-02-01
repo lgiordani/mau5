@@ -1,0 +1,38 @@
+// /////////////////////////////////////////
+// MAU E2E TESTS
+// /////////////////////////////////////////
+
+////
+This is a test file to check the end-to-end
+behaviour of the Mau lexers, parsers and
+visitors.
+////
+
+// -----------------------------------------
+
+// /////////////////////////////////////////
+// Arguments
+
+// You can use square brackets to specify arguments that
+// will be passed to the next element in the document.
+[arg1, arg2]
+
+// Arguments can be unnamed or named.
+// All unnamed arguments must be specified before
+// named arguments.
+[unnamed1, unnamed2, name1=value1, name2=value2]
+
+// Unnamed arguments that start with a `#` are
+// stored as tags.
+[arg1, arg2, #tag1]
+
+// An unnamed argument that start with a `*` is
+// stored as subtype.
+// There can be only one subtype
+[arg1, arg2, *subtype]
+
+// The arguments buffer contains one single slot
+// so defining arguments twice results in the
+// second definition overwriting the first.
+[arg1, arg2]
+[arg3, name1=value1]

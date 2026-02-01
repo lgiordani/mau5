@@ -1,0 +1,2614 @@
+_info:
+  context:
+    end_column: 10
+    end_line: 19
+    source: e2e/source/16_toc.mau
+    start_column: 0
+    start_line: 19
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 10
+      end_line: 70
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 19
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: header
+content:
+- _info:
+    context:
+      end_column: 10
+      end_line: 19
+      source: e2e/source/16_toc.mau
+      start_column: 2
+      start_line: 19
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 19
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: header
+  _type: text
+  value: Header 1
+internal_id: 1aa562c9
+labels: {}
+level: 1
+name: null
+
+_info:
+  context:
+    end_column: 13
+    end_line: 20
+    source: e2e/source/16_toc.mau
+    start_column: 0
+    start_line: 20
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 10
+      end_line: 70
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 19
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: header
+content:
+- _info:
+    context:
+      end_column: 13
+      end_line: 20
+      source: e2e/source/16_toc.mau
+      start_column: 3
+      start_line: 20
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 13
+        end_line: 20
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 20
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: header
+  _type: text
+  value: Header 1.1
+internal_id: 3cc75f45
+labels: {}
+level: 2
+name: null
+
+_info:
+  context:
+    end_column: 10
+    end_line: 21
+    source: e2e/source/16_toc.mau
+    start_column: 0
+    start_line: 21
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 10
+      end_line: 70
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 19
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: header
+content:
+- _info:
+    context:
+      end_column: 10
+      end_line: 21
+      source: e2e/source/16_toc.mau
+      start_column: 2
+      start_line: 21
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 21
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 21
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: header
+  _type: text
+  value: Header 2
+internal_id: 3780c261
+labels: {}
+level: 1
+name: null
+
+_info:
+  context:
+    end_column: 10
+    end_line: 22
+    source: e2e/source/16_toc.mau
+    start_column: 0
+    start_line: 22
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 10
+      end_line: 70
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 19
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: header
+content:
+- _info:
+    context:
+      end_column: 10
+      end_line: 22
+      source: e2e/source/16_toc.mau
+      start_column: 2
+      start_line: 22
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 22
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 22
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: header
+  _type: text
+  value: Header 3
+internal_id: 087ff601
+labels: {}
+level: 1
+name: null
+
+_info:
+  context:
+    end_column: 5
+    end_line: 24
+    source: e2e/source/16_toc.mau
+    start_column: 0
+    start_line: 24
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 10
+      end_line: 70
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 19
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: toc
+labels: {}
+nested_entries:
+- _info:
+    context:
+      end_column: 0
+      end_line: 0
+      source: null
+      start_column: 0
+      start_line: 0
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 5
+        end_line: 24
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 24
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: toc
+  _type: toc-item
+  entries:
+  - _info:
+      context:
+        end_column: 0
+        end_line: 0
+        source: null
+        start_column: 0
+        start_line: 0
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 5
+          end_line: 24
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 24
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: toc
+    _type: toc-item
+    entries: []
+    header:
+      _info:
+        context:
+          end_column: 13
+          end_line: 20
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 20
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 10
+            end_line: 70
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 19
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: document
+      _type: header
+      content:
+      - _info:
+          context:
+            end_column: 13
+            end_line: 20
+            source: e2e/source/16_toc.mau
+            start_column: 3
+            start_line: 20
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _parent_info:
+          _info:
+            context:
+              end_column: 13
+              end_line: 20
+              source: e2e/source/16_toc.mau
+              start_column: 0
+              start_line: 20
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _type: header
+        _type: text
+        value: Header 1.1
+      internal_id: 3cc75f45
+      labels: {}
+      level: 2
+      name: null
+  header:
+    _info:
+      context:
+        end_column: 10
+        end_line: 19
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 70
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: document
+    _type: header
+    content:
+    - _info:
+        context:
+          end_column: 10
+          end_line: 19
+          source: e2e/source/16_toc.mau
+          start_column: 2
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 10
+            end_line: 19
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 19
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: header
+      _type: text
+      value: Header 1
+    internal_id: 1aa562c9
+    labels: {}
+    level: 1
+    name: null
+- _info:
+    context:
+      end_column: 0
+      end_line: 0
+      source: null
+      start_column: 0
+      start_line: 0
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 5
+        end_line: 24
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 24
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: toc
+  _type: toc-item
+  entries: []
+  header:
+    _info:
+      context:
+        end_column: 10
+        end_line: 21
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 21
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 70
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: document
+    _type: header
+    content:
+    - _info:
+        context:
+          end_column: 10
+          end_line: 21
+          source: e2e/source/16_toc.mau
+          start_column: 2
+          start_line: 21
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 10
+            end_line: 21
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 21
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: header
+      _type: text
+      value: Header 2
+    internal_id: 3780c261
+    labels: {}
+    level: 1
+    name: null
+- _info:
+    context:
+      end_column: 0
+      end_line: 0
+      source: null
+      start_column: 0
+      start_line: 0
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 5
+        end_line: 24
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 24
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: toc
+  _type: toc-item
+  entries: []
+  header:
+    _info:
+      context:
+        end_column: 10
+        end_line: 22
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 22
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 70
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: document
+    _type: header
+    content:
+    - _info:
+        context:
+          end_column: 10
+          end_line: 22
+          source: e2e/source/16_toc.mau
+          start_column: 2
+          start_line: 22
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 10
+            end_line: 22
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 22
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: header
+      _type: text
+      value: Header 3
+    internal_id: 087ff601
+    labels: {}
+    level: 1
+    name: null
+- _info:
+    context:
+      end_column: 0
+      end_line: 0
+      source: null
+      start_column: 0
+      start_line: 0
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 5
+        end_line: 24
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 24
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: toc
+  _type: toc-item
+  entries: []
+  header:
+    _info:
+      context:
+        end_column: 46
+        end_line: 51
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 51
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 4
+          end_line: 52
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 50
+        named_args:
+          isolate: 'false'
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: block
+    _type: header
+    content:
+    - _info:
+        context:
+          end_column: 46
+          end_line: 51
+          source: e2e/source/16_toc.mau
+          start_column: 2
+          start_line: 51
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 46
+            end_line: 51
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 51
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: header
+      _type: text
+      value: This header will appear in the document ToC.
+    internal_id: 348c5982
+    labels: {}
+    level: 1
+    name: null
+plain_entries:
+- _info:
+    context:
+      end_column: 10
+      end_line: 19
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 19
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: document
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 10
+        end_line: 19
+        source: e2e/source/16_toc.mau
+        start_column: 2
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 19
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: Header 1
+  internal_id: 1aa562c9
+  labels: {}
+  level: 1
+  name: null
+- _info:
+    context:
+      end_column: 13
+      end_line: 20
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 20
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: document
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 13
+        end_line: 20
+        source: e2e/source/16_toc.mau
+        start_column: 3
+        start_line: 20
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 13
+          end_line: 20
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 20
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: Header 1.1
+  internal_id: 3cc75f45
+  labels: {}
+  level: 2
+  name: null
+- _info:
+    context:
+      end_column: 10
+      end_line: 21
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 21
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: document
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 10
+        end_line: 21
+        source: e2e/source/16_toc.mau
+        start_column: 2
+        start_line: 21
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 21
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 21
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: Header 2
+  internal_id: 3780c261
+  labels: {}
+  level: 1
+  name: null
+- _info:
+    context:
+      end_column: 10
+      end_line: 22
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 22
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: document
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 10
+        end_line: 22
+        source: e2e/source/16_toc.mau
+        start_column: 2
+        start_line: 22
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 22
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 22
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: Header 3
+  internal_id: 087ff601
+  labels: {}
+  level: 1
+  name: null
+- _info:
+    context:
+      end_column: 46
+      end_line: 51
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 51
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 4
+        end_line: 52
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 50
+      named_args:
+        isolate: 'false'
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: block
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 46
+        end_line: 51
+        source: e2e/source/16_toc.mau
+        start_column: 2
+        start_line: 51
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 46
+          end_line: 51
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 51
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: This header will appear in the document ToC.
+  internal_id: 348c5982
+  labels: {}
+  level: 1
+  name: null
+
+_info:
+  context:
+    end_column: 4
+    end_line: 45
+    source: e2e/source/16_toc.mau
+    start_column: 0
+    start_line: 43
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 10
+      end_line: 70
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 19
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: block
+classes: []
+content:
+- _info:
+    context:
+      end_column: 50
+      end_line: 44
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 44
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 4
+        end_line: 45
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 43
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: block
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 50
+        end_line: 44
+        source: e2e/source/16_toc.mau
+        start_column: 2
+        start_line: 44
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 50
+          end_line: 44
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 44
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: This header will NOT appear in the document TOC.
+  internal_id: 09057e00
+  labels: {}
+  level: 1
+  name: null
+labels: {}
+
+_info:
+  context:
+    end_column: 4
+    end_line: 52
+    source: e2e/source/16_toc.mau
+    start_column: 0
+    start_line: 50
+  named_args:
+    isolate: 'false'
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 10
+      end_line: 70
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 19
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: block
+classes: []
+content:
+- _info:
+    context:
+      end_column: 46
+      end_line: 51
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 51
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 4
+        end_line: 52
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 50
+      named_args:
+        isolate: 'false'
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: block
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 46
+        end_line: 51
+        source: e2e/source/16_toc.mau
+        start_column: 2
+        start_line: 51
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 46
+          end_line: 51
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 51
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: This header will appear in the document ToC.
+  internal_id: 348c5982
+  labels: {}
+  level: 1
+  name: null
+labels: {}
+
+_info:
+  context:
+    end_column: 5
+    end_line: 67
+    source: e2e/source/16_toc.mau
+    start_column: 0
+    start_line: 67
+  named_args:
+    key1: value1
+  subtype: subtype1
+  tags:
+  - tag1
+  unnamed_args:
+  - arg1
+_parent_info:
+  _info:
+    context:
+      end_column: 10
+      end_line: 70
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 19
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: toc
+labels: {}
+nested_entries:
+- _info:
+    context:
+      end_column: 0
+      end_line: 0
+      source: null
+      start_column: 0
+      start_line: 0
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 5
+        end_line: 67
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 67
+      named_args:
+        key1: value1
+      subtype: subtype1
+      tags:
+      - tag1
+      unnamed_args:
+      - arg1
+    _type: toc
+  _type: toc-item
+  entries:
+  - _info:
+      context:
+        end_column: 0
+        end_line: 0
+        source: null
+        start_column: 0
+        start_line: 0
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 5
+          end_line: 67
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 67
+        named_args:
+          key1: value1
+        subtype: subtype1
+        tags:
+        - tag1
+        unnamed_args:
+        - arg1
+      _type: toc
+    _type: toc-item
+    entries: []
+    header:
+      _info:
+        context:
+          end_column: 13
+          end_line: 20
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 20
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 10
+            end_line: 70
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 19
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: document
+      _type: header
+      content:
+      - _info:
+          context:
+            end_column: 13
+            end_line: 20
+            source: e2e/source/16_toc.mau
+            start_column: 3
+            start_line: 20
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _parent_info:
+          _info:
+            context:
+              end_column: 13
+              end_line: 20
+              source: e2e/source/16_toc.mau
+              start_column: 0
+              start_line: 20
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _type: header
+        _type: text
+        value: Header 1.1
+      internal_id: 3cc75f45
+      labels: {}
+      level: 2
+      name: null
+  header:
+    _info:
+      context:
+        end_column: 10
+        end_line: 19
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 70
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: document
+    _type: header
+    content:
+    - _info:
+        context:
+          end_column: 10
+          end_line: 19
+          source: e2e/source/16_toc.mau
+          start_column: 2
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 10
+            end_line: 19
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 19
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: header
+      _type: text
+      value: Header 1
+    internal_id: 1aa562c9
+    labels: {}
+    level: 1
+    name: null
+- _info:
+    context:
+      end_column: 0
+      end_line: 0
+      source: null
+      start_column: 0
+      start_line: 0
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 5
+        end_line: 67
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 67
+      named_args:
+        key1: value1
+      subtype: subtype1
+      tags:
+      - tag1
+      unnamed_args:
+      - arg1
+    _type: toc
+  _type: toc-item
+  entries: []
+  header:
+    _info:
+      context:
+        end_column: 10
+        end_line: 21
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 21
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 70
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: document
+    _type: header
+    content:
+    - _info:
+        context:
+          end_column: 10
+          end_line: 21
+          source: e2e/source/16_toc.mau
+          start_column: 2
+          start_line: 21
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 10
+            end_line: 21
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 21
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: header
+      _type: text
+      value: Header 2
+    internal_id: 3780c261
+    labels: {}
+    level: 1
+    name: null
+- _info:
+    context:
+      end_column: 0
+      end_line: 0
+      source: null
+      start_column: 0
+      start_line: 0
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 5
+        end_line: 67
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 67
+      named_args:
+        key1: value1
+      subtype: subtype1
+      tags:
+      - tag1
+      unnamed_args:
+      - arg1
+    _type: toc
+  _type: toc-item
+  entries: []
+  header:
+    _info:
+      context:
+        end_column: 10
+        end_line: 22
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 22
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 70
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: document
+    _type: header
+    content:
+    - _info:
+        context:
+          end_column: 10
+          end_line: 22
+          source: e2e/source/16_toc.mau
+          start_column: 2
+          start_line: 22
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 10
+            end_line: 22
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 22
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: header
+      _type: text
+      value: Header 3
+    internal_id: 087ff601
+    labels: {}
+    level: 1
+    name: null
+- _info:
+    context:
+      end_column: 0
+      end_line: 0
+      source: null
+      start_column: 0
+      start_line: 0
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 5
+        end_line: 67
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 67
+      named_args:
+        key1: value1
+      subtype: subtype1
+      tags:
+      - tag1
+      unnamed_args:
+      - arg1
+    _type: toc
+  _type: toc-item
+  entries: []
+  header:
+    _info:
+      context:
+        end_column: 46
+        end_line: 51
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 51
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 4
+          end_line: 52
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 50
+        named_args:
+          isolate: 'false'
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: block
+    _type: header
+    content:
+    - _info:
+        context:
+          end_column: 46
+          end_line: 51
+          source: e2e/source/16_toc.mau
+          start_column: 2
+          start_line: 51
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 46
+            end_line: 51
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 51
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: header
+      _type: text
+      value: This header will appear in the document ToC.
+    internal_id: 348c5982
+    labels: {}
+    level: 1
+    name: null
+plain_entries:
+- _info:
+    context:
+      end_column: 10
+      end_line: 19
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 19
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: document
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 10
+        end_line: 19
+        source: e2e/source/16_toc.mau
+        start_column: 2
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 19
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: Header 1
+  internal_id: 1aa562c9
+  labels: {}
+  level: 1
+  name: null
+- _info:
+    context:
+      end_column: 13
+      end_line: 20
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 20
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: document
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 13
+        end_line: 20
+        source: e2e/source/16_toc.mau
+        start_column: 3
+        start_line: 20
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 13
+          end_line: 20
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 20
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: Header 1.1
+  internal_id: 3cc75f45
+  labels: {}
+  level: 2
+  name: null
+- _info:
+    context:
+      end_column: 10
+      end_line: 21
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 21
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: document
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 10
+        end_line: 21
+        source: e2e/source/16_toc.mau
+        start_column: 2
+        start_line: 21
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 21
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 21
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: Header 2
+  internal_id: 3780c261
+  labels: {}
+  level: 1
+  name: null
+- _info:
+    context:
+      end_column: 10
+      end_line: 22
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 22
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: document
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 10
+        end_line: 22
+        source: e2e/source/16_toc.mau
+        start_column: 2
+        start_line: 22
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 22
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 22
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: Header 3
+  internal_id: 087ff601
+  labels: {}
+  level: 1
+  name: null
+- _info:
+    context:
+      end_column: 46
+      end_line: 51
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 51
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 4
+        end_line: 52
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 50
+      named_args:
+        isolate: 'false'
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: block
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 46
+        end_line: 51
+        source: e2e/source/16_toc.mau
+        start_column: 2
+        start_line: 51
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 46
+          end_line: 51
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 51
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: This header will appear in the document ToC.
+  internal_id: 348c5982
+  labels: {}
+  level: 1
+  name: null
+
+_info:
+  context:
+    end_column: 5
+    end_line: 70
+    source: e2e/source/16_toc.mau
+    start_column: 0
+    start_line: 70
+  named_args:
+    key1: value1
+  subtype: subtype1
+  tags:
+  - tag1
+  unnamed_args:
+  - arg1
+_parent_info:
+  _info:
+    context:
+      end_column: 10
+      end_line: 70
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 19
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: toc
+labels: {}
+nested_entries:
+- _info:
+    context:
+      end_column: 0
+      end_line: 0
+      source: null
+      start_column: 0
+      start_line: 0
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 5
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 70
+      named_args:
+        key1: value1
+      subtype: subtype1
+      tags:
+      - tag1
+      unnamed_args:
+      - arg1
+    _type: toc
+  _type: toc-item
+  entries:
+  - _info:
+      context:
+        end_column: 0
+        end_line: 0
+        source: null
+        start_column: 0
+        start_line: 0
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 5
+          end_line: 70
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 70
+        named_args:
+          key1: value1
+        subtype: subtype1
+        tags:
+        - tag1
+        unnamed_args:
+        - arg1
+      _type: toc
+    _type: toc-item
+    entries: []
+    header:
+      _info:
+        context:
+          end_column: 13
+          end_line: 20
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 20
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 10
+            end_line: 70
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 19
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: document
+      _type: header
+      content:
+      - _info:
+          context:
+            end_column: 13
+            end_line: 20
+            source: e2e/source/16_toc.mau
+            start_column: 3
+            start_line: 20
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _parent_info:
+          _info:
+            context:
+              end_column: 13
+              end_line: 20
+              source: e2e/source/16_toc.mau
+              start_column: 0
+              start_line: 20
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _type: header
+        _type: text
+        value: Header 1.1
+      internal_id: 3cc75f45
+      labels: {}
+      level: 2
+      name: null
+  header:
+    _info:
+      context:
+        end_column: 10
+        end_line: 19
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 70
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: document
+    _type: header
+    content:
+    - _info:
+        context:
+          end_column: 10
+          end_line: 19
+          source: e2e/source/16_toc.mau
+          start_column: 2
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 10
+            end_line: 19
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 19
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: header
+      _type: text
+      value: Header 1
+    internal_id: 1aa562c9
+    labels: {}
+    level: 1
+    name: null
+- _info:
+    context:
+      end_column: 0
+      end_line: 0
+      source: null
+      start_column: 0
+      start_line: 0
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 5
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 70
+      named_args:
+        key1: value1
+      subtype: subtype1
+      tags:
+      - tag1
+      unnamed_args:
+      - arg1
+    _type: toc
+  _type: toc-item
+  entries: []
+  header:
+    _info:
+      context:
+        end_column: 10
+        end_line: 21
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 21
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 70
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: document
+    _type: header
+    content:
+    - _info:
+        context:
+          end_column: 10
+          end_line: 21
+          source: e2e/source/16_toc.mau
+          start_column: 2
+          start_line: 21
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 10
+            end_line: 21
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 21
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: header
+      _type: text
+      value: Header 2
+    internal_id: 3780c261
+    labels: {}
+    level: 1
+    name: null
+- _info:
+    context:
+      end_column: 0
+      end_line: 0
+      source: null
+      start_column: 0
+      start_line: 0
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 5
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 70
+      named_args:
+        key1: value1
+      subtype: subtype1
+      tags:
+      - tag1
+      unnamed_args:
+      - arg1
+    _type: toc
+  _type: toc-item
+  entries: []
+  header:
+    _info:
+      context:
+        end_column: 10
+        end_line: 22
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 22
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 70
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: document
+    _type: header
+    content:
+    - _info:
+        context:
+          end_column: 10
+          end_line: 22
+          source: e2e/source/16_toc.mau
+          start_column: 2
+          start_line: 22
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 10
+            end_line: 22
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 22
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: header
+      _type: text
+      value: Header 3
+    internal_id: 087ff601
+    labels: {}
+    level: 1
+    name: null
+- _info:
+    context:
+      end_column: 0
+      end_line: 0
+      source: null
+      start_column: 0
+      start_line: 0
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 5
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 70
+      named_args:
+        key1: value1
+      subtype: subtype1
+      tags:
+      - tag1
+      unnamed_args:
+      - arg1
+    _type: toc
+  _type: toc-item
+  entries: []
+  header:
+    _info:
+      context:
+        end_column: 46
+        end_line: 51
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 51
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 4
+          end_line: 52
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 50
+        named_args:
+          isolate: 'false'
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: block
+    _type: header
+    content:
+    - _info:
+        context:
+          end_column: 46
+          end_line: 51
+          source: e2e/source/16_toc.mau
+          start_column: 2
+          start_line: 51
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 46
+            end_line: 51
+            source: e2e/source/16_toc.mau
+            start_column: 0
+            start_line: 51
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: header
+      _type: text
+      value: This header will appear in the document ToC.
+    internal_id: 348c5982
+    labels: {}
+    level: 1
+    name: null
+plain_entries:
+- _info:
+    context:
+      end_column: 10
+      end_line: 19
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 19
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: document
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 10
+        end_line: 19
+        source: e2e/source/16_toc.mau
+        start_column: 2
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 19
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 19
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: Header 1
+  internal_id: 1aa562c9
+  labels: {}
+  level: 1
+  name: null
+- _info:
+    context:
+      end_column: 13
+      end_line: 20
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 20
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: document
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 13
+        end_line: 20
+        source: e2e/source/16_toc.mau
+        start_column: 3
+        start_line: 20
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 13
+          end_line: 20
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 20
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: Header 1.1
+  internal_id: 3cc75f45
+  labels: {}
+  level: 2
+  name: null
+- _info:
+    context:
+      end_column: 10
+      end_line: 21
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 21
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: document
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 10
+        end_line: 21
+        source: e2e/source/16_toc.mau
+        start_column: 2
+        start_line: 21
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 21
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 21
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: Header 2
+  internal_id: 3780c261
+  labels: {}
+  level: 1
+  name: null
+- _info:
+    context:
+      end_column: 10
+      end_line: 22
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 22
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 10
+        end_line: 70
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 19
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: document
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 10
+        end_line: 22
+        source: e2e/source/16_toc.mau
+        start_column: 2
+        start_line: 22
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 10
+          end_line: 22
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 22
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: Header 3
+  internal_id: 087ff601
+  labels: {}
+  level: 1
+  name: null
+- _info:
+    context:
+      end_column: 46
+      end_line: 51
+      source: e2e/source/16_toc.mau
+      start_column: 0
+      start_line: 51
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 4
+        end_line: 52
+        source: e2e/source/16_toc.mau
+        start_column: 0
+        start_line: 50
+      named_args:
+        isolate: 'false'
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: block
+  _type: header
+  content:
+  - _info:
+      context:
+        end_column: 46
+        end_line: 51
+        source: e2e/source/16_toc.mau
+        start_column: 2
+        start_line: 51
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 46
+          end_line: 51
+          source: e2e/source/16_toc.mau
+          start_column: 0
+          start_line: 51
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: header
+    _type: text
+    value: This header will appear in the document ToC.
+  internal_id: 348c5982
+  labels: {}
+  level: 1
+  name: null
+

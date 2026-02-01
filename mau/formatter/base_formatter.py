@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from mau.error import MauException
 from mau.lexers.base_lexer import MauLexerException
 from mau.nodes.node import Node
 from mau.parsers.base_parser import MauParserException
@@ -36,3 +37,8 @@ class BaseFormatter(ABC):
     @classmethod
     @abstractmethod
     def print_visitor_exception(cls, exc: MauVisitorException): ...
+
+    @classmethod
+    def print_mau_exception(cls, exc: MauException):
+        if isinstance(exc, MauVisitorException):
+            cls.print_visitor_exception(exc)

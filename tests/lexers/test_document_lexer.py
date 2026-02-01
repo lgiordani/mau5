@@ -1,6 +1,7 @@
 import pytest
 
-from mau.lexers.base_lexer import MauLexerException, TokenType
+from mau.error import MauErrorType, MauException
+from mau.lexers.base_lexer import TokenType
 from mau.lexers.document_lexer import DocumentLexer
 from mau.test_helpers import (
     TEST_CONTEXT_SOURCE,
@@ -338,8 +339,10 @@ def test_multiline_comment():
 
 
 def test_multiline_comment_unclosed():
-    with pytest.raises(MauLexerException):
+    with pytest.raises(MauException) as exc:
         runner("////")
+
+    assert exc.value.error.type == MauErrorType.LEXER
 
 
 def test_include_content():
@@ -615,8 +618,10 @@ def test_block_inside_block():
 
 
 def test_block_unclosed():
-    with pytest.raises(MauLexerException):
+    with pytest.raises(MauException) as exc:
         runner("----")
+
+    assert exc.value.error.type == MauErrorType.LEXER
 
 
 def test_block_with_header():

@@ -1,12 +1,15 @@
 import yaml
 
-from mau.lexers.base_lexer import MauLexerException
 from mau.nodes.node import Node
-from mau.parsers.base_parser import MauParserException
 from mau.token import Token
-from mau.visitors.base_visitor import BaseVisitor, MauVisitorException
+from mau.visitors.base_visitor import BaseVisitor
 
 from .base_formatter import BaseFormatter
+
+
+class NoAliasDumper(yaml.SafeDumper):
+    def ignore_aliases(self, data):
+        return True
 
 
 class RawFormatter(BaseFormatter):
@@ -39,42 +42,5 @@ class RawFormatter(BaseFormatter):
         for node in nodes:
             result = bv.visit(node)
 
-            print(yaml.dump(result, Dumper=yaml.Dumper))
-
-    @classmethod
-    def print_lexer_exception(cls, exc: MauLexerException):
-        print(f"ERROR: {exc.message}")
-        if exc.position:
-            print(f"POSITION: {cls._adjust_position(exc.position)}")
-        print()
-
-    @classmethod
-    def print_parser_exception(cls, exc: MauParserException):
-        print(f"ERROR: {exc.message}")
-        if exc.context:
-            print(f"CONTEXT: {cls._adjust_context(exc.context)}")
-            # TODO long help
-        print()
-
-    @classmethod
-    def print_visitor_exception(cls, exc: MauVisitorException):
-        print(f"Error while rendering node of type {exc.node.type}")
-        print(f"Message: {exc.message}")
-
-        if exc.node:
-            print()
-            print(f"Node context: {cls._adjust_context(exc.node.info.context)}")
-
-        if exc.data:
-            print()
-            print("Node data:")
-            cls.print_node_data(exc.data)
-
-        if exc.additional_info:
-            print()
-            print(exc.additional_info)
-
-        if exc.environment:
-            print()
-            print("Current environment:")
-            print(exc.environment.asdict())
+            # print(result)
+            print(yaml.dump(result, Dumper=NoAliasDumper))

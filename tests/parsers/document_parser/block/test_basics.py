@@ -6,7 +6,6 @@ from mau.nodes.node import NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
-    check_parent,
     compare_nodes_sequence,
     generate_context,
     init_parser_factory,

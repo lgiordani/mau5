@@ -1,0 +1,181 @@
+_info:
+  context:
+    end_column: 7
+    end_line: 16
+    source: e2e/source/14_include.mau
+    start_column: 0
+    start_line: 16
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 7
+      end_line: 34
+      source: e2e/source/14_include.mau
+      start_column: 0
+      start_line: 16
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: include
+content_type: type
+labels: {}
+uris:
+- someuri
+
+_info:
+  context:
+    end_column: 7
+    end_line: 19
+    source: e2e/source/14_include.mau
+    start_column: 0
+    start_line: 19
+  named_args:
+    key: value
+  subtype: subtype
+  tags:
+  - tag
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 7
+      end_line: 34
+      source: e2e/source/14_include.mau
+      start_column: 0
+      start_line: 16
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: include
+content_type: type
+labels: {}
+uris:
+- someuri
+
+_info:
+  context:
+    end_column: 7
+    end_line: 23
+    source: e2e/source/14_include.mau
+    start_column: 0
+    start_line: 23
+  named_args:
+    key: value
+  subtype: subtype
+  tags:
+  - tag
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 7
+      end_line: 34
+      source: e2e/source/14_include.mau
+      start_column: 0
+      start_line: 16
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: include
+content_type: type
+labels: {}
+uris:
+- someuri
+
+_info:
+  context:
+    end_column: 7
+    end_line: 27
+    source: e2e/source/14_include.mau
+    start_column: 0
+    start_line: 27
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 7
+      end_line: 34
+      source: e2e/source/14_include.mau
+      start_column: 0
+      start_line: 16
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: include
+content_type: type
+labels:
+  somerole:
+  - _info:
+      context:
+        end_column: 19
+        end_line: 26
+        source: e2e/source/14_include.mau
+        start_column: 10
+        start_line: 26
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 7
+          end_line: 27
+          source: e2e/source/14_include.mau
+          start_column: 0
+          start_line: 27
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: include
+    _type: text
+    value: Somelabel
+uris:
+- someuri
+
+_info:
+  context:
+    end_column: 7
+    end_line: 34
+    source: e2e/source/14_include.mau
+    start_column: 0
+    start_line: 34
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 7
+      end_line: 34
+      source: e2e/source/14_include.mau
+      start_column: 0
+      start_line: 16
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: include
+content_type: type
+labels: {}
+uris:
+- some_uri_shown
+

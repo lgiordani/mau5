@@ -1,0 +1,42 @@
+// /////////////////////////////////////////
+// MAU E2E TESTS
+// /////////////////////////////////////////
+
+////
+This is a test file to check the end-to-end
+behaviour of the Mau lexers, parsers and
+visitors.
+////
+
+// -----------------------------------------
+
+// /////////////////////////////////////////
+// Control
+
+// You can conditionally render a structure using
+// the syntax `@ OPERATOR CONDITION`
+:answer:42
+@if answer==42
+This paragraph will be rendered.
+
+// Mau supports the operator `@if` and the comparisons
+// `==` and `!=`.
+:answer:42
+@if answer!=42
+This paragraph will not be rendered.
+
+// The operator can be surrounded by spaces
+:answer:42
+@if answer != 42
+This paragraph will not be rendered.
+
+// Control stops the resource from being rendered,
+// which means that if the resource reads arguments or
+// labels those will disappear and not be attached to
+// the next resource.
+:answer:42
+. Some title
+@if answer!=42
+This paragraph will not be rendered.
+
+This paragraph will not receive the title.

@@ -1,5 +1,6 @@
 from importlib import metadata
 from pathlib import Path
+from typing import Type
 
 import yaml
 
@@ -7,6 +8,7 @@ __version__ = metadata.version("mau")
 
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
+from mau.nodes.node import Node
 from mau.parsers.document_parser import DocumentParser
 from mau.text_buffer import TextBuffer
 from mau.token import Token
@@ -14,9 +16,22 @@ from mau.visitors.base_visitor import BaseVisitor
 from mau.visitors.html_visitor import HtmlVisitor
 from mau.visitors.jinja_visitor import JinjaVisitor
 
+# This is the base namespace used by
+# the configuration, by variables defined
+# on the command line, and by variables
+# loaded from YAML files.
 BASE_NAMESPACE = "mau"
 
+# All YAML environment files are
+# loaded by default into this
+# secondary namespace (in addition
+# to the base namespace).
 DEFAULT_ENVIRONMENT_FILES_NAMESPACE = "envfiles"
+
+# All variables defined on the command
+# line are loaded into this
+# secondary namespace (in addition
+# to the base namespace).
 DEFAULT_ENVIRONMENT_VARIABLES_NAMESPACE = "envvars"
 
 
@@ -24,12 +39,12 @@ class ConfigurationError(ValueError):
     """Used to signal an error in the configuration"""
 
 
-def load_visitors():
+def load_visitors():  # pragma: no cover
     """
     This function loads all the visitors belonging to
     the group "mau.visitors". This code has been isolated
     in a function to allow visitor modules to import the
-    Mau package without creating a cycle.
+    Mau package without running into circula imports.
     """
 
     import sys
@@ -39,13 +54,38 @@ def load_visitors():
     else:
         from importlib.metadata import entry_points
 
+    # Load all packages that register
+    # themselves under the group
+    # `mau.visitors`.
     discovered_plugins = entry_points(group="mau.visitors")
 
-    # Load the available visitors
+    # Load the available visitors.
     visitors = [i.load() for i in discovered_plugins]
-    visitors.append(BaseVisitor)
+
+    # Add the visitors defined
+    # in this codebase.
     visitors.append(JinjaVisitor)
     visitors.append(HtmlVisitor)
+
+    return visitors
+
+
+def load_visitors_dict():  # pragma: no cover
+    """
+    Loads the visitors as `load_visitors`, but
+    returns a dictionary in the form
+    {format_code: visitor}
+    where `format_code` is the name of the
+    output format as specified inside
+    the visitor. Examples: `python`, `html`.
+    """
+
+    # Load all the available visitor classes.
+    visitor_classes = load_visitors()
+
+    # Store them in a dictionary
+    # according to their format code.
+    visitors = {i.format_code: i for i in visitor_classes}
 
     return visitors
 
@@ -55,26 +95,31 @@ def load_environment_files(
     files: list[str],
     namespace: str | None = None,
 ):
-    """Load each environment file into the environment."""
+    """Load YAML files into dictionaries and
+    convert them into an environment."""
 
-    # Set the namespace.
+    # Set the namespace or use the default one.
     namespace = namespace or DEFAULT_ENVIRONMENT_FILES_NAMESPACE
 
     # Add the base namespace as a prefix.
     namespace = f"{BASE_NAMESPACE}.{namespace}"
 
-    # A flat dictionary that will contain all the environment files.
+    # Create a flat dictionary that will
+    # contain all the environment files.
     flat_environment_files: dict[str, str] = {}
 
     for filename in files:
-        # Files can be specified as path or as key=path.
-        # If it's just path, the file content is stored under
-        #
-        # DEFAULT_ENVIRONMENT_FILES_NAMESPACE.filename
-        #
+        # Files can be specified as `PATH` or as `KEY=PATH`.
         # If the key is specified the file content is stored under
         #
-        # DEFAULT_ENVIRONMENT_FILES_NAMESPACE.key.filename
+        # ENVIRONMENT_FILES_NAMESPACE.KEY
+        #
+        # If it's just path, the file content is stored under
+        #
+        # ENVIRONMENT_FILES_NAMESPACE.FILENAME
+        #
+        # where `FILENAME` is just the name of the file
+        # extracted from the full path.
 
         try:
             # Assume the filename is in the form "key=path".
@@ -119,10 +164,10 @@ def load_environment_variables(
     flat_environment_variables: dict[str, str] = {}
 
     for variable in variables:
-        # Variables must be specified as key=value.
-        # They are stored under
+        # Variables must be specified as KEY=VALUE.
+        # The VALUE is stored under
         #
-        # DEFAULT_ENVIRONMENT_VARIABLES_NAMESPACE.key.value
+        # ENVIRONMENT_VARIABLES_NAMESPACE.KEY
 
         # Parse the environment variable syntax.
         key, value = variable.split("=")
@@ -163,16 +208,20 @@ class Mau:  # pragma: no cover
 
         return parser
 
-    def init_visitor(self, visitor_class) -> BaseVisitor:
-        return visitor_class(
-            environment=self.environment,
-        )
+    def run_visitor(self, visitor_class: Type, node: Node | None) -> dict:
+        # Initialise the visitor with the
+        # current environment.
+        visitor = visitor_class(environment=self.environment)
 
-    def run_visitor(self, visitor, node) -> dict:
         # Visit the given node and all its children.
-        return visitor.visit(node)
+        return visitor.process(node)
 
-    def process(self, text: str, source_filename: str):
+    def process(
+        self,
+        visitor_class: Type[BaseVisitor],
+        text: str,
+        source_filename: str,
+    ):
         # The text buffer that manages the input file.
         text_buffer = self.init_text_buffer(text, source_filename)
 
@@ -180,6 +229,12 @@ class Mau:  # pragma: no cover
         lexer = self.run_lexer(text_buffer)
 
         # Parse the lexer tokens.
-        self.run_parser(lexer.tokens)
+        parser = self.run_parser(lexer.tokens)
 
-        # TODO add run_visitor
+        # Get the main node from the parser.
+        document = parser.output.document
+
+        # Run the selected visitor.
+        rendered = self.run_visitor(visitor_class, document)
+
+        return rendered

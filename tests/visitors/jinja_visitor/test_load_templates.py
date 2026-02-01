@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from mau.environment.environment import Environment
-from mau.visitors.base_visitor import MauVisitorException
+from mau.error import MauErrorType, MauException
 from mau.visitors.jinja_visitor import (
     _load_template_prefixes,
     _load_templates_from_environment,
@@ -76,9 +76,10 @@ def test_load_templates_from_providers_provider_unavailable(
 
     env = Environment.from_dict({"mau.visitor.templates.providers": ["provider2"]})
 
-    with pytest.raises(MauVisitorException):
+    with pytest.raises(MauException) as exc:
         assert _load_templates_from_providers(env)
 
+    assert exc.value.error.type == MauErrorType.VISITOR
     mock_load_available_template_providers.assert_called_once()
 
 

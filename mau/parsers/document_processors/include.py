@@ -6,10 +6,10 @@ if TYPE_CHECKING:
     from mau.parsers.document_parser import DocumentParser
 
 
-from mau.nodes.include import IncludeImageNode, IncludeNode
+from mau.nodes.include import IncludeImageNode, IncludeMauNode, IncludeNode
 from mau.nodes.node import NodeInfo
 from mau.parsers.arguments_parser import Arguments, ArgumentsParser
-from mau.parsers.base_parser import MauParserException
+from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 from mau.token import TokenType
 
@@ -36,7 +36,7 @@ def include_processor(parser: DocumentParser):
         # Check if boxed arguments have been defined.
         # In that case we need to stop with an error.
         if arguments:
-            raise MauParserException(
+            raise create_parser_exception(
                 "Syntax error. You cannot specify both boxed and inline arguments.",
                 context,
                 IncludeNode.long_help,
@@ -60,7 +60,7 @@ def include_processor(parser: DocumentParser):
         arguments = arguments_parser.arguments
 
     if not arguments:
-        raise MauParserException(
+        raise create_parser_exception(
             "Syntax error. You need to specify a list of URIs.",
             context,
             IncludeNode.long_help,
@@ -76,10 +76,13 @@ def include_processor(parser: DocumentParser):
 
     node: IncludeImageNode | IncludeNode
 
-    if content_type.value == "image":
-        node = _parse_image(arguments, context)
-    else:
-        node = _parse_generic(content_type.value, arguments, context)
+    match content_type.value:
+        case "image":
+            node = _parse_image(parser, arguments, context)
+        case "mau":
+            node = _parse_mau(parser, arguments, context)
+        case _:
+            node = _parse_generic(parser, content_type.value, arguments, context)
 
     # Build the node info.
     node.info = NodeInfo(context=context, **arguments.asdict())
@@ -94,14 +97,14 @@ def include_processor(parser: DocumentParser):
 
 
 def _parse_generic(
-    content_type: str, arguments: Arguments, context: Context
+    parser: DocumentParser, content_type: str, arguments: Arguments, context: Context
 ) -> IncludeNode:
     # Get the URIs list and empty the unnamed arguments
     uris = arguments.unnamed_args[:]
     arguments.unnamed_args = []
 
     if not uris:
-        raise MauParserException(
+        raise create_parser_exception(
             "Syntax error. You need to specify a list of URIs.",
             context,
             IncludeNode.long_help,
@@ -110,7 +113,9 @@ def _parse_generic(
     return IncludeNode(content_type, uris)
 
 
-def _parse_image(arguments: Arguments, context: Context) -> IncludeImageNode:
+def _parse_image(
+    parser: DocumentParser, arguments: Arguments, context: Context
+) -> IncludeImageNode:
     arguments.set_names(["uri", "alt_text", "classes"])
 
     uri = arguments.named_args.pop("uri")
@@ -129,3 +134,50 @@ def _parse_image(arguments: Arguments, context: Context) -> IncludeImageNode:
     )
 
     return content
+
+
+def _parse_mau(
+    parser: DocumentParser, arguments: Arguments, context: Context
+) -> IncludeImageNode:
+    arguments.set_names(["uri"])
+
+    uri = arguments.named_args.pop("uri")
+
+    with open(uri, "r", encoding="utf-8") as f:
+        text = f.read()
+
+    # The parsing environment is
+    # that of the external parser.
+    environment = parser.environment
+
+    # Unpack the token initial position.
+    start_line, start_column = context.start_position
+
+    # Get the token source.
+    source_filename = uri
+
+    content_parser = parser.lex_and_parse(
+        text,
+        environment,
+        start_line=start_line,
+        start_column=start_column,
+        source_filename=source_filename,
+    )
+    content_parser.finalise()
+
+    # TODO
+    # if update:
+    #     # The footnote mentions and definitions
+    #     # found in this block are part of the
+    #     # main document. Import them.
+    #     parser.footnotes_manager.update(content_parser.footnotes_manager)
+
+    #     # The internal links and headers
+    #     # found in this block are part of the
+    #     # main document. Import them.
+    #     parser.toc_manager.update(content_parser.toc_manager)
+
+    return IncludeMauNode(
+        uri,
+        content=content_parser.nodes,
+    )

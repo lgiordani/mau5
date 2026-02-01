@@ -9,12 +9,13 @@ if TYPE_CHECKING:
 from mau.nodes.command import (
     COMMAND_HELP,
     BlockGroupNode,
+    CommandNode,
     FootnotesNode,
     TocNode,
 )
 from mau.nodes.node import NodeInfo
 from mau.parsers.arguments_parser import Arguments, ArgumentsParser
-from mau.parsers.base_parser import MauParserException
+from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 from mau.token import TokenType
 
@@ -44,7 +45,7 @@ def command_processor(parser: DocumentParser):
         # Check if boxed arguments have been defined.
         # In that case we need to stop with an error.
         if arguments:
-            raise MauParserException(
+            raise create_parser_exception(
                 "Syntax error. You cannot specify both boxed and inline arguments.",
                 context,
                 COMMAND_HELP,
@@ -54,7 +55,7 @@ def command_processor(parser: DocumentParser):
         parser.tm.get_token(TokenType.LITERAL, ":")
 
         if parser.tm.peek_token().type != TokenType.TEXT:
-            raise MauParserException(
+            raise create_parser_exception(
                 f"Syntax error. If you use the colon after {name.value} you need to specify arguments.",
                 context,
                 COMMAND_HELP,
@@ -143,7 +144,20 @@ def command_processor(parser: DocumentParser):
         parser.block_group_manager.add_group(block_group_node)
 
     else:
-        parser.label_buffer.pop()
-        parser.control_buffer.pop()
+        command_node = CommandNode(name=name.value, info=info)
+
+        # Extract labels from the buffer and
+        # store them in the node data.
+        parser.pop_labels(command_node)
+
+        # Check the stored control
+        if control := parser.control_buffer.pop():
+            # If control is False, we need to stop
+            # processing here and return without
+            # saving any node.
+            if not control.process(parser.environment):
+                return True
+
+        parser._save(command_node)
 
     return True

@@ -3,6 +3,7 @@ import re
 from typing import Callable
 
 from mau.environment.environment import Environment
+from mau.error import MauError, MauErrorType, MauException
 from mau.text_buffer import Context, Position, TextBuffer
 from mau.token import Token, TokenType
 
@@ -14,13 +15,14 @@ def rematch(regexp, text):
     return re.compile(regexp).match(text)
 
 
-class MauLexerException(ValueError):
-    def __init__(self, message: str, position: Position | None = None):
-        self.message = message
-        self.position = position
+def create_lexer_exception(message: str, position: Position | None = None):
+    content = {
+        "position": position,
+    }
 
-    def __str__(self):
-        return f"{self.message} - {self.position}"
+    error = MauError(type=MauErrorType.LEXER, content=content)
+
+    return MauException(message, error)
 
 
 class BaseLexer:
@@ -166,7 +168,7 @@ class BaseLexer:
         # to parse the same context, so if we spot that
         # we are doing it we should raise an error.
         if self._last_position is not None and self._last_position == self._position:
-            raise MauLexerException(
+            raise create_lexer_exception(
                 message="Loop detected, cannot process context",
                 position=self._position,
             )  # pragma: no cover
@@ -190,7 +192,10 @@ class BaseLexer:
         ]
 
     def _process_error(self):
-        raise MauLexerException(message="Cannot process token", position=self._position)
+        raise create_lexer_exception(
+            message="Cannot process token",
+            position=self._position,
+        )
 
     def _process_eof(self) -> list[Token] | None:
         # If we are not at the end of

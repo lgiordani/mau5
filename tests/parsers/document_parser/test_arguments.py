@@ -1,9 +1,9 @@
 import pytest
 
 from mau.environment.environment import Environment
+from mau.error import MauErrorType, MauException
 from mau.lexers.document_lexer import DocumentLexer
 from mau.parsers.arguments_parser import Arguments
-from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     init_parser_factory,
@@ -43,8 +43,10 @@ def test_arguments_multiple_subtypes():
     [*subtype1, *subtype2]
     """
 
-    with pytest.raises(MauParserException):
-        assert runner(source)
+    with pytest.raises(MauException) as exc:
+        runner(source)
+
+    assert exc.value.error.type == MauErrorType.PARSER
 
 
 def test_arguments_support_variables():

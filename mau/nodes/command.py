@@ -22,6 +22,24 @@ The command operator `::` runs the requested command passing the optional argume
 """
 
 
+class CommandNode(Node, NodeLabelsMixin):
+    """A custom command."""
+
+    type = "command"
+
+    def __init__(
+        self,
+        name: str,
+        labels: Mapping[str, Sequence[Node]] | None = None,
+        parent: Node | None = None,
+        info: NodeInfo | None = None,
+    ):
+        super().__init__(parent=parent, info=info)
+        NodeLabelsMixin.__init__(self, labels)
+
+        self.name = name
+
+
 class FootnotesItemNode(Node):
     type = "footnotes-item"
 

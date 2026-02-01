@@ -1,33 +1,74 @@
 from collections.abc import Mapping, Sequence
 
 from mau.environment.environment import Environment
+from mau.error import MauError, MauErrorType, MauException
 from mau.nodes.node import Node
+from mau.text_buffer import adjust_context, adjust_context_dict
 
 
-class MauVisitorException(ValueError):
-    def __init__(
-        self,
-        message: str,
-        node: Node | None = None,
-        data: dict | None = None,
-        environment: Environment | None = None,
-        additional_info: str | None = None,
-    ):
-        self.message = message
-        self.node = node
-        self.data = data
-        self.environment = environment
-        self.additional_info = additional_info
+def create_visitor_exception(
+    message: str,
+    node: Node | None = None,
+    data: dict | None = None,
+    environment: Environment | None = None,
+    additional_info: dict[str, str] | None = None,
+):
+    context = "unknown"
+    if data:
+        data_context = data["_info"]["context"]
+        context = adjust_context_dict(data_context)
+    elif node:
+        context = adjust_context(node.info.context)
+
+    content = {
+        "Context": context,
+    }
+
+    if node:
+        content["Node type"] = node.type
+
+    if data:
+        content["Template data"] = data
+
+    if additional_info:
+        content.update(additional_info)
+
+    error = MauError(type=MauErrorType.VISITOR, content=content)
+
+    return MauException(message, error)
 
 
 class BaseVisitor:
     format_code = "python"
+    extension = ""
 
     def __init__(self, environment: Environment = Environment()):
         self.toc = None
         self.footnotes = None
 
         self.environment = environment
+
+    def process(self, node: Node | None, *args, **kwargs):
+        # This is a wrapper around the method visit
+        # that allows the visitor to preprocess
+        # the input data and postprocess the output.
+
+        # Preprocess the input node.
+        node = self.preprocess(node, *args, **kwargs)
+
+        # Visit the node.
+        result = self.visit(node, *args, **kwargs)
+
+        # Postprocess the result.
+        result = self.postprocess(result, *args, **kwargs)
+
+        return result
+
+    def preprocess(self, node: Node | None, *args, **kwargs):
+        return node
+
+    def postprocess(self, result, *args, **kwargs):
+        return result
 
     def visit(self, node: Node | None, *args, **kwargs):
         # Simple implementation of the visitor pattern.
@@ -353,6 +394,19 @@ class BaseVisitor:
 
         return result
 
+    def _visit_command(self, node: Node, *args, **kwargs) -> dict:
+        result = self._visit_default(node, *args, **kwargs)
+
+        result.update(
+            {
+                "name": node.name,
+            }
+        )
+
+        self._add_visit_labels(result, node, *args, **kwargs)
+
+        return result
+
     def _visit_block(self, node: Node, *args, **kwargs) -> dict:
         result = self._visit_default(node, *args, **kwargs)
 
@@ -406,6 +460,20 @@ class BaseVisitor:
             }
         )
 
+        self._add_visit_labels(result, node, *args, **kwargs)
+
+        return result
+
+    def _visit_include_mau(self, node: Node, *args, **kwargs) -> dict:
+        result = self._visit_default(node, *args, **kwargs)
+
+        result.update(
+            {
+                "uri": node.uri,
+            }
+        )
+
+        self._add_visit_content(result, node, *args, **kwargs)
         self._add_visit_labels(result, node, *args, **kwargs)
 
         return result

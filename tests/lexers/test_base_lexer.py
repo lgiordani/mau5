@@ -4,9 +4,9 @@ from unittest.mock import Mock, patch
 import pytest
 
 from mau.environment.environment import Environment
+from mau.error import MauErrorType, MauException
 from mau.lexers.base_lexer import (
     BaseLexer,
-    MauLexerException,
     rematch,
 )
 from mau.test_helpers import (
@@ -89,8 +89,10 @@ def test_process_error():
     mock_text_buffer = Mock()
     lex = BaseLexer(mock_text_buffer)
 
-    with pytest.raises(MauLexerException):
+    with pytest.raises(MauException) as exc:
         lex._process_error()
+
+    assert exc.value.error.type == MauErrorType.LEXER
 
 
 def test_process_eof_if_true():

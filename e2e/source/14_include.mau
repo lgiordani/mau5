@@ -1,0 +1,39 @@
+// /////////////////////////////////////////
+// MAU E2E TESTS
+// /////////////////////////////////////////
+
+////
+This is a test file to check the end-to-end
+behaviour of the Mau lexers, parsers and
+visitors.
+////
+
+// -----------------------------------------
+
+// /////////////////////////////////////////
+// Include
+
+// Included content is created with `<< TYPE`
+<< type:someuri
+
+// Included content with inline arguments.
+<< type:someuri, #tag, *subtype, key=value
+
+// Included content with stand-alone arguments.
+[someuri, #tag, *subtype, key=value]
+<< type
+
+// Included content supports labels.
+.somerole Somelabel
+<< type:someuri
+
+// Included content supports control.
+// This will be rendered.
+:var:42
+
+@if var == 42
+<< type:some_uri_shown
+
+// This will NOT be rendered.
+@if var == 43
+<< type:some_uri_not_shown

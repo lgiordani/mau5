@@ -5,6 +5,46 @@ from dataclasses import dataclass
 Position = tuple[int, int]
 
 
+def adjust_context(context: Context):
+    """Text files in editors are indexed from 1
+    both vertically (lines) and horizontally
+    (columns), while internally, we
+    deal with lists which are indexed from 0.
+
+    This function moves the given context
+    to 1,1, making it readable by a human.
+    """
+    return context.clone().move_to(1, 1)
+
+
+def adjust_context_dict(context_dict: dict):
+    """Text files in editors are indexed from 1
+    both vertically (lines) and horizontally
+    (columns), while internally, we
+    deal with lists which are indexed from 0.
+
+    This function moves the given context
+    to 1,1, making it readable by a human.
+    """
+    context = Context(**context_dict)
+    new_context = context.clone().move_to(1, 1)
+
+    return new_context
+
+
+def adjust_position(position: Position):
+    """Text files in editors are indexed from 1
+    both vertically (lines) and horizontally
+    (columns), while internally, we
+    deal with lists which are indexed from 0.
+
+    This function shifts the given position
+    by 1 both vertically and horizontally,
+    making it readable by a human.
+    """
+    return (position[0] + 1, position[1] + 1)
+
+
 @dataclass
 class Context:
     # Context objects represent the place where a token was found

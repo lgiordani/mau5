@@ -1,10 +1,10 @@
 import pytest
 
 from mau.environment.environment import Environment
+from mau.error import MauErrorType, MauException
 from mau.lexers.preprocess_variables_lexer import PreprocessVariablesLexer
 from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
-from mau.parsers.base_parser import MauParserException
 from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.test_helpers import (
     compare_asdict_object,
@@ -366,10 +366,11 @@ def test_variable_not_existing():
     environment = Environment()
     source = "This is number {attr}"
 
-    with pytest.raises(MauParserException) as exc:
+    with pytest.raises(MauException) as exc:
         runner(source, environment)
 
-    assert exc.value.context == generate_context(0, 15, 0, 21)
+    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.error.content["context"] == generate_context(0, 15, 0, 21)
 
 
 def test_variables_can_contain_markers():

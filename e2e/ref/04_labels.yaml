@@ -1,0 +1,135 @@
+_info:
+  context:
+    end_column: 53
+    end_line: 34
+    source: e2e/source/04_labels.mau
+    start_column: 0
+    start_line: 34
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 53
+      end_line: 34
+      source: e2e/source/04_labels.mau
+      start_column: 0
+      start_line: 34
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: paragraph
+labels:
+  details:
+  - _info:
+      context:
+        end_column: 43
+        end_line: 31
+        source: e2e/source/04_labels.mau
+        start_column: 9
+        start_line: 31
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 53
+          end_line: 34
+          source: e2e/source/04_labels.mau
+          start_column: 0
+          start_line: 34
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: This overwrites the previous label
+  title:
+  - _info:
+      context:
+        end_column: 39
+        end_line: 32
+        source: e2e/source/04_labels.mau
+        start_column: 7
+        start_line: 32
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 53
+          end_line: 34
+          source: e2e/source/04_labels.mau
+          start_column: 0
+          start_line: 34
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: This doesn't overwrite any label
+lines:
+- _info:
+    context:
+      end_column: 53
+      end_line: 34
+      source: e2e/source/04_labels.mau
+      start_column: 0
+      start_line: 34
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 53
+        end_line: 34
+        source: e2e/source/04_labels.mau
+        start_column: 0
+        start_line: 34
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: paragraph
+  _type: paragraph-line
+  content:
+  - _info:
+      context:
+        end_column: 53
+        end_line: 34
+        source: e2e/source/04_labels.mau
+        start_column: 0
+        start_line: 34
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 53
+          end_line: 34
+          source: e2e/source/04_labels.mau
+          start_column: 0
+          start_line: 34
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: This paragraph will receive the labels defined above.
+  labels: {}
+

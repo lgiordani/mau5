@@ -1,4 +1,5 @@
 import itertools
+import logging
 import sys
 from collections.abc import Sequence
 from pathlib import Path
@@ -8,29 +9,13 @@ import jinja2
 
 from mau.environment.environment import Environment
 from mau.nodes.node import Node
-from mau.visitors.base_visitor import BaseVisitor, MauVisitorException
+from mau.visitors.base_visitor import BaseVisitor, create_visitor_exception
+
+logger = logging.getLogger(__name__)
 
 
 class TemplateNotFound(ValueError):
     pass
-
-
-# def dedent(text):
-#     return textwrap.dedent(text).strip()
-
-
-class MissingTemplateException(MauVisitorException):
-    def __init__(
-        self,
-        node: Node,
-        data: dict,
-        environment: Environment,
-        templates: list[str],
-    ):
-        message = "Cannot find a suitable template."
-        additional_info = f"Accepted teplates: {templates}"
-
-        super().__init__(message, node, data, environment, additional_info)
 
 
 def _create_templates(
@@ -222,7 +207,9 @@ def _load_templates_from_providers(environment: Environment) -> Environment:
     for provider in requested_providers:
         # Check if the provider is available.
         if provider not in available_providers:
-            raise MauVisitorException(f"Template provider {provider} is not available")
+            raise create_visitor_exception(
+                f"Template provider {provider} is not available"
+            )
 
         templates.dupdate(available_providers[provider].templates)
 
@@ -249,8 +236,7 @@ def _load_templates_from_path(
     # If the path is not absolute, find the relative
     # version and make it absolute.
     if not templates_path.is_absolute():
-        templates_path = templates_path.relative_to(Path.cwd())
-        templates_path = Path.cwd() / Path(templates_path)
+        templates_path = (Path.cwd() / templates_path).resolve()
 
     # Set up the preprocess function.
     # If no preprocess function is given we can
@@ -359,7 +345,7 @@ class JinjaVisitor(BaseVisitor):
         # Load user-defined templates from files.
         templates_from_filesystem = _load_templates_from_filesystem(
             self.environment,
-            preprocess=self.templates_preprocess,
+            preprocess=self.__class__.templates_preprocess,
         )
         self.templates.update(templates_from_filesystem)
 
@@ -394,14 +380,12 @@ class JinjaVisitor(BaseVisitor):
                 config=self.environment.asdict(), **kwargs
             )
         except jinja2.exceptions.UndefinedError as exception:
-            raise MauVisitorException(
+            raise create_visitor_exception(
                 message=f"Error rendering node with template {template_full_name}: {str(exception)}",
                 node=node,
                 data=kwargs,
                 environment=environment,
             ) from exception
-
-        # print(f"NODE {node} RENDERED TO #{rendered_template}#")
 
         return rendered_template
 
@@ -422,20 +406,21 @@ class JinjaVisitor(BaseVisitor):
 
         # [prefix.][parent_type.][parent_subtype.][parent_position.][node_template][.node_subtype][.ext]
 
-        # if node is None:
-        #     return {}
+        # If the node is None we don't need to process
+        # anything. If we did, we would get an empty
+        # dictionary as a result, and it would be
+        # pointless to process it anyway.
+        # If the node is None we just return an
+        # empty string.
+        if node is None:
+            return ""
 
         # Visit the node.
         result = super().visit(node, *args, **kwargs)
 
-        if not result:
-            return
-
         parent_prefix = None
         if node.parent:
             parent_prefix = f"{node.parent.type}"
-
-        # print("PARENT:", node.parent)
 
         # Create the template names for the
         # current node.
@@ -449,26 +434,21 @@ class JinjaVisitor(BaseVisitor):
             parent_prefix,
         )
 
-        # print(f"#### Node {node}")
-        # print(f"#### Result {result}")
-        # print(f"#### Templates: {templates}")
-
         # Scan all potential templates, trying to render
         # the given data with each of them.
         # Stop as soon as we find a working template.
         for template in templates:
             try:
-                # print(f"RENDERING {template} WITH {result}")
                 return self._render(node, self.environment, template, **result)
             except TemplateNotFound:
                 continue
 
         # No templates were found, stop with an error.
-        raise MissingTemplateException(
-            node=node,
+        raise create_visitor_exception(
+            message="Cannot find a suitable template.",
             data=result,
             environment=self.environment,
-            templates=templates,
+            additional_info={"Accepted templates": templates},
         )
 
     def visitlist(

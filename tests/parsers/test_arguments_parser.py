@@ -3,10 +3,10 @@ from unittest.mock import patch
 import pytest
 
 from mau.environment.environment import Environment
+from mau.error import MauErrorType, MauException
 from mau.lexers.arguments_lexer import ArgumentsLexer
 from mau.nodes.node import NodeInfo, ValueNode
 from mau.parsers.arguments_parser import Arguments, ArgumentsParser, set_names
-from mau.parsers.base_parser import MauParserException
 from mau.test_helpers import (
     compare_nodes,
     compare_nodes_map,
@@ -563,8 +563,10 @@ def test_unnamed_and_named_arguments():
 def test_named_arguments_followed_by_unnamed():
     source = "name=value2, value1"
 
-    with pytest.raises(MauParserException):
+    with pytest.raises(MauException) as exc:
         runner(source)
+
+    assert exc.value.error.type == MauErrorType.PARSER
 
 
 def test_process_arguments_subtype():
@@ -625,8 +627,10 @@ def test_process_arguments_tags():
 def test_process_arguments_multiple_subtypes():
     source = "*value1, *value2"
 
-    with pytest.raises(MauParserException):
+    with pytest.raises(MauException) as exc:
         runner(source)
+
+    assert exc.value.error.type == MauErrorType.PARSER
 
 
 def test_arguments():

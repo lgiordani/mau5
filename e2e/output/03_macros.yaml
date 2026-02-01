@@ -1,0 +1,1223 @@
+_info:
+  context:
+    end_column: 68
+    end_line: 74
+    source: e2e/source/03_macros.mau
+    start_column: 0
+    start_line: 74
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 68
+      end_line: 137
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 74
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: paragraph
+labels: {}
+lines:
+- _info:
+    context:
+      end_column: 68
+      end_line: 74
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 74
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 68
+        end_line: 74
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 74
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: paragraph
+  _type: paragraph-line
+  content:
+  - _info:
+      context:
+        end_column: 18
+        end_line: 74
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 74
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 68
+          end_line: 74
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 74
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: 'A link with text: '
+  - _info:
+      context:
+        end_column: 68
+        end_line: 74
+        source: e2e/source/03_macros.mau
+        start_column: 18
+        start_line: 74
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 68
+          end_line: 74
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 74
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: macro.link
+    content:
+    - _info:
+        context:
+          end_column: 66
+          end_line: 74
+          source: e2e/source/03_macros.mau
+          start_column: 45
+          start_line: 74
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info: {}
+      _type: text
+      value: the free encyclopedia
+    target: www.wikipedia.org
+  labels: {}
+
+_info:
+  context:
+    end_column: 77
+    end_line: 80
+    source: e2e/source/03_macros.mau
+    start_column: 0
+    start_line: 79
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 68
+      end_line: 137
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 74
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: paragraph
+labels: {}
+lines:
+- _info:
+    context:
+      end_column: 50
+      end_line: 79
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 79
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 77
+        end_line: 80
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 79
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: paragraph
+  _type: paragraph-line
+  content:
+  - _info:
+      context:
+        end_column: 16
+        end_line: 79
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 79
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 77
+          end_line: 80
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 79
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: 'This is a link: '
+  - _info:
+      context:
+        end_column: 49
+        end_line: 79
+        source: e2e/source/03_macros.mau
+        start_column: 16
+        start_line: 79
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 77
+          end_line: 80
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 79
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: macro.link
+    content:
+    - _info:
+        context:
+          end_column: 48
+          end_line: 79
+          source: e2e/source/03_macros.mau
+          start_column: 23
+          start_line: 79
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info: {}
+      _type: text
+      value: https://www.wikipedia.org
+    target: https://www.wikipedia.org
+  - _info:
+      context:
+        end_column: 50
+        end_line: 79
+        source: e2e/source/03_macros.mau
+        start_column: 49
+        start_line: 79
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 77
+          end_line: 80
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 79
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: .
+  labels: {}
+- _info:
+    context:
+      end_column: 77
+      end_line: 80
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 80
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 77
+        end_line: 80
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 79
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: paragraph
+  _type: paragraph-line
+  content:
+  - _info:
+      context:
+        end_column: 16
+        end_line: 80
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 80
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 77
+          end_line: 80
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 79
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: 'This is a link: '
+  - _info:
+      context:
+        end_column: 76
+        end_line: 80
+        source: e2e/source/03_macros.mau
+        start_column: 16
+        start_line: 80
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 77
+          end_line: 80
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 79
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: macro.link
+    content:
+    - _info:
+        context:
+          end_column: 75
+          end_line: 80
+          source: e2e/source/03_macros.mau
+          start_column: 50
+          start_line: 80
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info: {}
+      _type: text
+      value: https://www.wikipedia.org
+    target: https://www.wikipedia.org
+  - _info:
+      context:
+        end_column: 77
+        end_line: 80
+        source: e2e/source/03_macros.mau
+        start_column: 76
+        start_line: 80
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 77
+          end_line: 80
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 79
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: .
+  labels: {}
+
+_info:
+  context:
+    end_column: 48
+    end_line: 88
+    source: e2e/source/03_macros.mau
+    start_column: 0
+    start_line: 88
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 68
+      end_line: 137
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 74
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: paragraph
+labels: {}
+lines:
+- _info:
+    context:
+      end_column: 48
+      end_line: 88
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 88
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 48
+        end_line: 88
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 88
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: paragraph
+  _type: paragraph-line
+  content:
+  - _info:
+      context:
+        end_column: 17
+        end_line: 88
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 88
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 48
+          end_line: 88
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 88
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: 'Send an email to '
+  - _info:
+      context:
+        end_column: 47
+        end_line: 88
+        source: e2e/source/03_macros.mau
+        start_column: 17
+        start_line: 88
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 48
+          end_line: 88
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 88
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: macro.link
+    content:
+    - _info:
+        context:
+          end_column: 46
+          end_line: 88
+          source: e2e/source/03_macros.mau
+          start_column: 26
+          start_line: 88
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info: {}
+      _type: text
+      value: info@project-mau.org
+    target: mailto:info@project-mau.org
+  - _info:
+      context:
+        end_column: 48
+        end_line: 88
+        source: e2e/source/03_macros.mau
+        start_column: 47
+        start_line: 88
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 48
+          end_line: 88
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 88
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: .
+  labels: {}
+
+_info:
+  context:
+    end_column: 48
+    end_line: 104
+    source: e2e/source/03_macros.mau
+    start_column: 0
+    start_line: 104
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 68
+      end_line: 137
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 74
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: paragraph
+labels: {}
+lines:
+- _info:
+    context:
+      end_column: 48
+      end_line: 104
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 104
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 48
+        end_line: 104
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 104
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: paragraph
+  _type: paragraph-line
+  content:
+  - _info:
+      context:
+        end_column: 20
+        end_line: 104
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 104
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 48
+          end_line: 104
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 104
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: 'Click on the symbol '
+  - _info:
+      context:
+        end_column: 48
+        end_line: 104
+        source: e2e/source/03_macros.mau
+        start_column: 20
+        start_line: 104
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 48
+          end_line: 104
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 104
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: macro.image
+    alt_text: null
+    height: null
+    uri: images/symbol.jpg
+    width: null
+  labels: {}
+
+_info:
+  context:
+    end_column: 51
+    end_line: 120
+    source: e2e/source/03_macros.mau
+    start_column: 0
+    start_line: 120
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 68
+      end_line: 137
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 74
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: paragraph
+labels: {}
+lines:
+- _info:
+    context:
+      end_column: 51
+      end_line: 120
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 120
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 51
+        end_line: 120
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 120
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: paragraph
+  _type: paragraph-line
+  content:
+  - _info:
+      context:
+        end_column: 5
+        end_line: 120
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 120
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 51
+          end_line: 120
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 120
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: 'Some '
+  - _info:
+      context:
+        end_column: 49
+        end_line: 120
+        source: e2e/source/03_macros.mau
+        start_column: 5
+        start_line: 120
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 51
+          end_line: 120
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 120
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: macro.class
+    classes:
+    - class1
+    - class2
+    content:
+    - _info:
+        context:
+          end_column: 31
+          end_line: 120
+          source: e2e/source/03_macros.mau
+          start_column: 14
+          start_line: 120
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info: {}
+      _type: text
+      value: text with classes
+  - _info:
+      context:
+        end_column: 50
+        end_line: 120
+        source: e2e/source/03_macros.mau
+        start_column: 49
+        start_line: 120
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 51
+          end_line: 120
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 120
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: .
+  labels: {}
+
+_info:
+  context:
+    end_column: 33
+    end_line: 128
+    source: e2e/source/03_macros.mau
+    start_column: 0
+    start_line: 128
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 68
+      end_line: 137
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 74
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: paragraph
+labels: {}
+lines:
+- _info:
+    context:
+      end_column: 33
+      end_line: 128
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 128
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 33
+        end_line: 128
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 128
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: paragraph
+  _type: paragraph-line
+  content:
+  - _info:
+      context:
+        end_column: 9
+        end_line: 128
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 128
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 33
+          end_line: 128
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 128
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: 'Volcano: '
+  - _info:
+      context:
+        end_column: 25
+        end_line: 128
+        source: e2e/source/03_macros.mau
+        start_column: 9
+        start_line: 128
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 33
+          end_line: 128
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 128
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: macro.unicode
+    value: 1F30B
+  - _info:
+      context:
+        end_column: 33
+        end_line: 128
+        source: e2e/source/03_macros.mau
+        start_column: 25
+        start_line: 128
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 33
+          end_line: 128
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 128
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: ' (macro)'
+  labels: {}
+
+_info:
+  context:
+    end_column: 46
+    end_line: 137
+    source: e2e/source/03_macros.mau
+    start_column: 0
+    start_line: 134
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 68
+      end_line: 137
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 74
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: paragraph
+labels: {}
+lines:
+- _info:
+    context:
+      end_column: 46
+      end_line: 134
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 134
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 46
+        end_line: 137
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 134
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: paragraph
+  _type: paragraph-line
+  content:
+  - _info:
+      context:
+        end_column: 46
+        end_line: 134
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 134
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 46
+          end_line: 137
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 134
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: Sometimes we need to include text verbatim but
+  labels: {}
+- _info:
+    context:
+      end_column: 48
+      end_line: 135
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 135
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 46
+        end_line: 137
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 134
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: paragraph
+  _type: paragraph-line
+  content:
+  - _info:
+      context:
+        end_column: 43
+        end_line: 135
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 135
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 46
+          end_line: 137
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 134
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: 'do not want to style it as code. The macro '
+  - _info:
+      context:
+        end_column: 48
+        end_line: 135
+        source: e2e/source/03_macros.mau
+        start_column: 43
+        start_line: 135
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 46
+          end_line: 137
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 134
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: verbatim
+    value: raw
+  labels: {}
+- _info:
+    context:
+      end_column: 29
+      end_line: 136
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 136
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 46
+        end_line: 137
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 134
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: paragraph
+  _type: paragraph-line
+  content:
+  - _info:
+      context:
+        end_column: 29
+        end_line: 136
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 136
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 46
+          end_line: 137
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 134
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: leaves its content untouched.
+  labels: {}
+- _info:
+    context:
+      end_column: 38
+      end_line: 137
+      source: e2e/source/03_macros.mau
+      start_column: 0
+      start_line: 137
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 46
+        end_line: 137
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 134
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: paragraph
+  _type: paragraph-line
+  content:
+  - _info:
+      context:
+        end_column: 20
+        end_line: 137
+        source: e2e/source/03_macros.mau
+        start_column: 0
+        start_line: 137
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 46
+          end_line: 137
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 134
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: 'This is Mau syntax: '
+  - _info:
+      context:
+        end_column: 38
+        end_line: 137
+        source: e2e/source/03_macros.mau
+        start_column: 20
+        start_line: 137
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 46
+          end_line: 137
+          source: e2e/source/03_macros.mau
+          start_column: 0
+          start_line: 134
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: macro.raw
+    value: $escaped$
+  labels: {}
+

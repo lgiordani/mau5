@@ -1,0 +1,84 @@
+// /////////////////////////////////////////
+// MAU E2E TESTS
+// /////////////////////////////////////////
+
+////
+This is a test file to check the end-to-end
+behaviour of the Mau lexers, parsers and
+visitors.
+////
+
+// -----------------------------------------
+
+// /////////////////////////////////////////
+// Blocks
+
+// Mau text can be wrapped by a block. The block
+// is surrounded by any four identical characters,
+// with the exception of `////` which denotes
+// a multi-line comment.
+@@@@
+This is a block surrounded by `@@@@`.
+@@@@
+
+####
+This is a block surrounded by `####`.
+####
+
+// Blocks can contain other blocks.
+----
+This is the outer block, level 0.
+
+####
+This is an inner block, level 1.
+
+@@@@
+This is an inner block, level 2.
+@@@@
+####
+----
+
+// Blocks support labels and attributes.
+. Title of the block
+[arg1, arg2]
+----
+This is a block with title and attributes.
+----
+
+// Blocks support control.
+:var:44
+
+@if var == 42
+. Title of the block
+[arg1, arg2]
+----
+This block will not be rendered.
+----
+
+----
+This block will not receive title or arguments.
+----
+
+// Blocks support multiple engines that
+// decide how to treat the content.
+// The available engines are:
+// * `default`
+// * `raw`
+// * `source`
+
+// The default engine parses Mau syntax inside
+// the block but keeps all headers and footnotes
+inside the block.
+----
+= This header will NOT appear in the document TOC.
+----
+
+// The behaviour can be changed passing
+// the argument `isolate=false`.
+// That makes the block share headers
+// and footnotes with the document
+// that contains it.
+[isolate=false]
+----
+= This header will appear in the document ToC.
+----

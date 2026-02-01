@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import hashlib
+import re
 
-from mau.nodes.node import Node
 from mau.nodes.command import (
     TocItemNode,
     TocNode,
 )
 from mau.nodes.header import HeaderNode
+from mau.nodes.node import Node
 
 
 def default_header_internal_id(
@@ -20,12 +21,30 @@ def default_header_internal_id(
     # Get the source text of the header.
     text = data.source_text
 
+    # Everything lowercase
+    sanitised_text = text.lower()
+
+    # Get only letters, numbers, dashes, spaces, and dots
+    sanitised_text = "".join(re.findall("[a-z0-9-\\. ]+", sanitised_text))
+
     # Find the header level
     level = data.level
 
-    hashed_value = hashlib.md5(f"{level} {text}".encode("utf-8")).hexdigest()[:8]
+    # Calculate a hash.
+    # Using the hash means that headers internal ids
+    # will clash only if two headers have the same
+    # level and the same content.
+    # We could use the Python object ID, of course,
+    # but this would result in a different internal
+    # ID every time Mau runs, which is not acceptable
+    # for permanent links.
+    # Should there be a clash, the internal_id can
+    # be set as an argument to the header.
+    # So, a clash is not impossible, but this strategy
+    # looks like an acceptable compromise.
+    hashed_value = hashlib.md5(f"{level} {text}".encode("utf-8")).hexdigest()[:4]
 
-    return hashed_value
+    return f"{sanitised_text}-{hashed_value}"
 
 
 def add_nodes_under_level(

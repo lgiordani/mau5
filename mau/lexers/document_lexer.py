@@ -1,7 +1,7 @@
 import logging
 from typing import Callable
 
-from mau.lexers.base_lexer import BaseLexer, MauLexerException, rematch
+from mau.lexers.base_lexer import BaseLexer, create_lexer_exception, rematch
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
 
@@ -49,7 +49,10 @@ class DocumentLexer(BaseLexer):
         while True:
             # If we reached the EOF we have a problem.
             if self.text_buffer.eof:
-                raise MauLexerException("Unclosed multiline comment.", initial_position)
+                raise create_lexer_exception(
+                    "Unclosed multiline comment.",
+                    initial_position,
+                )
 
             # If reached the closing slashes
             # we need to stop this loop.
@@ -144,8 +147,9 @@ class DocumentLexer(BaseLexer):
         while True:
             # Check if we reached the EOF.
             if self.text_buffer.eof:
-                raise MauLexerException(
-                    "Unclosed block.", delimiter.context.start_position
+                raise create_lexer_exception(
+                    "Unclosed block.",
+                    delimiter.context.start_position,
                 )
 
             # If the current line contains only the

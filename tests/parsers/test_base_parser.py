@@ -3,10 +3,10 @@ from unittest.mock import Mock
 import pytest
 
 from mau.environment.environment import Environment
+from mau.error import MauErrorType, MauException
 from mau.lexers.base_lexer import BaseLexer
 from mau.parsers.base_parser import (
     BaseParser,
-    MauParserException,
 )
 from mau.parsers.managers.tokens_manager import TokenError
 from mau.test_helpers import (
@@ -35,11 +35,12 @@ def test_unknown_token():
 
     parser = BaseParser([test_token], Environment())
 
-    with pytest.raises(MauParserException) as exc:
+    with pytest.raises(MauException) as exc:
         parser.parse()
 
+    assert exc.value.error.type == MauErrorType.PARSER
     assert exc.value.message == "Cannot parse token"
-    assert exc.value.context is test_context
+    assert exc.value.error.content["context"] is test_context
 
 
 def test_process_functions_token_error():
@@ -55,9 +56,10 @@ def test_process_functions_token_error():
     parser = BaseParser([test_token], Environment())
     parser._process_functions = process_functions
 
-    with pytest.raises(MauParserException):
+    with pytest.raises(MauException) as exc:
         parser.parse()
 
+    assert exc.value.error.type == MauErrorType.PARSER
     process_test.assert_called()
 
 
@@ -74,7 +76,8 @@ def test_process_functions_success():
     parser = BaseParser([test_token], Environment())
     parser._process_functions = process_functions
 
-    with pytest.raises(MauParserException):
+    with pytest.raises(MauException) as exc:
         parser.parse()
 
+    assert exc.value.error.type == MauErrorType.PARSER
     process_test.assert_called()

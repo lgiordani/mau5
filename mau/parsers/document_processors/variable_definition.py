@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from mau.parsers.document_parser import DocumentParser
 
 
-from mau.parsers.base_parser import MauParserException
+from mau.parsers.base_parser import create_parser_exception
 from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.text_buffer import Context
 from mau.token import TokenType
@@ -69,7 +69,7 @@ def variable_definition_processor(parser: DocumentParser):
         value = preprocess_parser.get_processed_text().value
 
     if value == "":
-        raise MauParserException(
+        raise create_parser_exception(
             f"Error in variable definition. Variable '{variable_name}' has no value.",
             context,
         )

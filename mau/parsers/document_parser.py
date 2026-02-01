@@ -57,6 +57,8 @@ class DocumentParser(BaseParser):
         environment: Environment | None = None,
         parent_node=None,
     ):
+        super().__init__(tokens, environment, parent_node)
+
         # Define the default block aliases.
         base_environment = Environment.from_dict(
             {
@@ -72,15 +74,9 @@ class DocumentParser(BaseParser):
             "mau.parser.subtypes",
         )
 
-        # Update the base environment with the
-        # environment passed to the parser.
-        # This way, the base environment doens't
-        # override any parameter otherwise
-        # set outside.
-        if environment:
-            base_environment.update(environment)
-
-        super().__init__(tokens, base_environment, parent_node)
+        # Update the environment without
+        # overwriting existing values.
+        self.environment.update(base_environment, overwrite=False)
 
         # This is the function used to create internal IDs for headers.
         self.header_internal_id_function = self.environment.get(

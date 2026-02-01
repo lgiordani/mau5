@@ -1,0 +1,36 @@
+// /////////////////////////////////////////
+// MAU E2E TESTS
+// /////////////////////////////////////////
+
+////
+This is a test file to check the end-to-end
+behaviour of the Mau lexers, parsers and
+visitors.
+////
+
+// -----------------------------------------
+
+// /////////////////////////////////////////
+// Horizontal rule
+
+// A horizontal rule can be created with three dashes.
+---
+
+// Horizontal rules support arguments.
+[arg, #tag, *subtype, key=value]
+---
+
+// Horizontal rules support labels.
+. A title for the rule
+---
+
+// Horizontal rules support control.
+// This will be rendered.
+:var:42
+
+@if var == 42
+---
+
+// This will NOT be rendered.
+@if var == 43
+---

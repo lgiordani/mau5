@@ -1,0 +1,139 @@
+// /////////////////////////////////////////
+// MAU E2E TESTS
+// /////////////////////////////////////////
+
+////
+This is a test file to check the end-to-end
+behaviour of the Mau lexers, parsers and
+visitors.
+////
+
+// -----------------------------------------
+
+// /////////////////////////////////////////
+// Macros
+
+// Paragraphs of text can contain macros, which
+// implement special commands.
+// The list of available macros is:
+// * `link`
+// * `header`
+// * `mailto`
+// * `image`
+// * `footnote`
+// * `class`
+// * `unicode`
+// * `raw`
+
+// The macros `header` and `footnote` will
+// be discussed later in the sections relative
+// to those concepts.
+
+// /////////////////////////////////////////
+// Syntax
+
+// Macros come always in the form
+// [name](arguments)
+// where name is one of the names listed
+// above, and arguments is a comma-separated
+// list of unnamed and named arguments.
+// For example
+// (unnamed1, unnamed2, name1=value1, name2=value2)
+
+// All unnamed arguments must be specified before
+// named arguments.
+// The following syntax is invalid
+// (unnamed1, name1=value1, name2=value2, unnamed2)
+
+// The amount of spaces between commas is
+// irrelevant, and can be zero. The following
+// versions of macro arguments are all valid
+// (unnamed1,name1=value1)
+// (unnamed1, name1=value1)
+// (unnamed1, name1 = value1)
+// (unnamed1,   name1   =   value1)
+
+
+// /////////////////////////////////////////
+// Quotes
+
+// Arguments can always be quoted, and must be when
+// they contains ambiguous characters like
+// a space, a comma, a closing round bracket.
+// (argument1, argument2)
+// ("argument1", argument2)
+// ("argument with a space", argument2)
+// ("argument, with a comma", argument2)
+// ("argument, with a bracket)", argument2)
+
+
+// /////////////////////////////////////////
+// Macro link
+
+// The macro `link` connects a hyperlink
+// to a piece of text.
+A link with text: [link](www.wikipedia.org, "the free encyclopedia")
+
+// If not text is specified, the text of
+// the link will be the link itself.
+// The following forms are equivalent.
+This is a link: [link](https://www.wikipedia.org).
+This is a link: [link](https://www.wikipedia.org, https://www.wikipedia.org).
+
+
+// /////////////////////////////////////////
+// Macro mailto
+
+// The macro `mailto` works like `link` but
+// creates a `mailto:` connection.
+Send an email to [mailto](info@project-mau.org).
+
+
+// /////////////////////////////////////////
+// Macro header
+
+// The macro `header` is used to create an internal
+// link to a document header. The macro will be
+// introduced in a later section.
+
+
+// /////////////////////////////////////////
+// Macro image
+
+// The macro `image` embeds an image file in a
+// paragraph.
+Click on the symbol [image]("images/symbol.jpg")
+
+
+// /////////////////////////////////////////
+// Macro footnote
+
+// The macro `footnote` is used to create an internal
+// link to a footnote. The macro will be
+// introduced in a later section.
+
+
+// /////////////////////////////////////////
+// Macro class
+
+// The macro `class` attached the given classes
+// to a piece of text.
+Some [class]("text with classes", class1, class2). 
+
+
+// /////////////////////////////////////////
+// Macro unicode
+
+// The macro `unicode` is used to add a Unicode
+// data point to a piece of text.
+Volcano: [unicode](1F30B) (macro)
+
+
+// /////////////////////////////////////////
+// Macro raw
+
+Sometimes we need to include text verbatim but
+do not want to style it as code. The macro `raw`
+leaves its content untouched.
+This is Mau syntax: [raw]("$escaped$")
+

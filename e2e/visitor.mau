@@ -1,10 +1,6 @@
-[*test]
+[*test, engine=source]
 ----
 
-[*internal]
-####
-Text
-####
-
+Some text.
 
 ----

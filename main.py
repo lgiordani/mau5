@@ -1,21 +1,23 @@
 import argparse
 import logging
 import sys
+from typing import Type
 
+import yaml
 from rich.traceback import install
 
 from mau import (
+    BASE_NAMESPACE,
     Mau,
     __version__,
     load_environment_files,
     load_environment_variables,
-    load_visitors,
+    load_visitors_dict,
 )
 from mau.environment.environment import Environment
+from mau.error import MauException, RawErrorFormatter
 from mau.formatter.raw_formatter import RawFormatter
-from mau.lexers.base_lexer import MauLexerException
-from mau.parsers.base_parser import MauParserException
-from mau.visitors.base_visitor import MauVisitorException
+from mau.visitors.base_visitor import BaseVisitor
 
 default_formatter = RawFormatter.type
 available_formatters = {formatter.type: formatter for formatter in [RawFormatter]}
@@ -24,13 +26,14 @@ install(show_locals=True)
 
 logger = logging.getLogger(__name__)
 
-visitor_classes = load_visitors()
-visitors = {i.format_code: i for i in visitor_classes}
+# Load a dictionary of all visitors,
+# indexed by the output format.
+visitors: dict[str, Type[BaseVisitor]] = load_visitors_dict()
 
 
-def write_output(output, output_file, transform=None):
-    if transform:
-        output = transform(output)
+def write_output(output, output_file, postprocess=None):
+    if postprocess:
+        output = postprocess(output)
 
     # The output file can be "-" which means
     # the standard output
@@ -48,6 +51,14 @@ def write_output(output, output_file, transform=None):
 def parse_args():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+
+    parser.add_argument(
+        "-c",
+        "--config-file",
+        action="store",
+        required=False,
+        help="Optional YAML config file",
     )
 
     parser.add_argument(
@@ -98,7 +109,7 @@ def parse_args():
         action="store",
         default="envfiles",
         required=False,
-        help="Optional namespace for environment files (default: envfiles)",
+        help="Optional namespace for environment files",
     )
 
     parser.add_argument(
@@ -117,7 +128,7 @@ def parse_args():
         action="store",
         default="envvars",
         required=False,
-        help="Optional namespace for environment variables (default: envvars)",
+        help="Optional namespace for environment variables",
     )
 
     parser.add_argument(
@@ -125,8 +136,8 @@ def parse_args():
         "--output-format",
         action="store",
         dest="visitor_output_format",
-        default=list(visitors.keys())[0],
         choices=visitors.keys(),
+        required=True,
         help="Output format",
     )
 
@@ -181,6 +192,10 @@ def setup_logging(loglevel):
 
 
 def main():
+    ###############################################
+    # INITIAL SETUP
+    ###############################################
+
     # Get arguments and logging set up.
     args = parse_args()
     setup_logging(args.loglevel)
@@ -188,12 +203,23 @@ def main():
     # Initialise the formatter.
     formatter = available_formatters[args.formatter]
 
-    # Read the input file
-    with open(args.input_file, "r", encoding="utf-8") as input_file:
-        text = input_file.read()
+    # Initialise the error formatter.
+    error_formatter = RawErrorFormatter()
 
-    # Start with a clean environment.
-    environment = Environment()
+    ###############################################
+    # CONFIGURATION
+    ###############################################
+
+    # Load the YAML configuration file into a dictionary.
+    # All values in the configuration file are loaded
+    # under the hard coded Mau base namespace.
+    config = {}
+    if args.config_file:
+        with open(args.config_file, "r", encoding="utf-8") as config_file:
+            config = yaml.load(config_file, Loader=yaml.FullLoader)
+
+    # Build the inital environment.
+    environment = Environment.from_dict(config, BASE_NAMESPACE)
 
     # The list of environment files passed on the command line.
     environment_files = args.environment_file or []
@@ -215,8 +241,13 @@ def main():
         namespace=args.environment_variables_namespace,
     )
 
-    # The Mau object configured with what we figured out above.
-    mau = Mau()
+    # Read the input file
+    with open(args.input_file, "r", encoding="utf-8") as input_file:
+        text = input_file.read()
+
+    # Create the Mau object, passing the environment that
+    # we built in the previous section.
+    mau = Mau(environment=environment)
 
     # Initialise the Text Buffer.
     text_buffer = mau.init_text_buffer(text, args.input_file)
@@ -228,8 +259,8 @@ def main():
     # Run the lexer.
     try:
         lexer = mau.run_lexer(text_buffer)
-    except MauLexerException as exc:
-        formatter.print_lexer_exception(exc)
+    except MauException as exc:
+        error_formatter.process_mau_exception(exc)
         sys.exit(1)
 
     # The user wants us print the resulting tokens.
@@ -239,6 +270,7 @@ def main():
 
     # The user wants us to run the lexer only.
     if args.lexer_only:
+        print("Mau stopped after the lexing step as requested")
         sys.exit(0)
 
     ###############################################
@@ -248,8 +280,8 @@ def main():
     # Run the parser.
     try:
         parser = mau.run_parser(lexer.tokens)
-    except MauParserException as exc:
-        formatter.print_parser_exception(exc)
+    except MauException as exc:
+        error_formatter.process_mau_exception(exc)
         sys.exit(1)
 
     # The user wants us print the resulting nodes.
@@ -259,6 +291,7 @@ def main():
 
     # The user wants us to run the parser only.
     if args.parser_only:
+        print("Mau stopped after the parsing step as requested")
         sys.exit(0)
 
     ###############################################
@@ -267,13 +300,18 @@ def main():
 
     # Run the visitor.
     try:
+        # Select the visitor according
+        # to the required output format.
         visitor_class = visitors[args.visitor_output_format]
-        visitor = mau.init_visitor(visitor_class)
 
-        if document := parser.output.document:
-            rendered = mau.run_visitor(visitor, document)
-    except MauVisitorException as exc:
-        formatter.print_visitor_exception(exc)
+        # Get the main output node
+        # from the parser.
+        document = parser.output.document
+
+        # Process the node.
+        rendered = mau.run_visitor(visitor_class, document)
+    except MauException as exc:
+        error_formatter.process_mau_exception(exc)
         sys.exit(1)
 
     # Find out the name of the output file
@@ -281,8 +319,9 @@ def main():
         ".mau", f".{visitor_class.extension}"
     )
 
-    # TODO check transform`
-    write_output(rendered, output_file, transform=None)
+    # Write the rendered text to
+    # the selected output file.
+    write_output(rendered, output_file)
 
 
 if __name__ == "__main__":

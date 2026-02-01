@@ -7,7 +7,6 @@ if TYPE_CHECKING:
 
 from enum import Enum
 
-from mau.environment.environment import Environment
 from mau.nodes.block import BlockNode
 from mau.nodes.node import Node, NodeInfo
 from mau.nodes.raw import RawLineNode, RawNode
@@ -17,11 +16,9 @@ from mau.nodes.source import (
     SourceNode,
 )
 from mau.parsers.arguments_parser import Arguments
-from mau.parsers.base_parser import MauParserException
+from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
-
-DEFAULT_SECTION_PREFIX = "++ "
 
 
 class EngineType(Enum):
@@ -347,7 +344,7 @@ def block_processor(parser: DocumentParser):
     try:
         engine: EngineType = EngineType(engine_name)
     except ValueError as exc:
-        raise MauParserException(
+        raise create_parser_exception(
             f"Engine {engine_name} is not available", context=context
         ) from exc
 

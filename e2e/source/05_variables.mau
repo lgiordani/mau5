@@ -1,0 +1,50 @@
+// /////////////////////////////////////////
+// MAU E2E TESTS
+// /////////////////////////////////////////
+
+////
+This is a test file to check the end-to-end
+behaviour of the Mau lexers, parsers and
+visitors.
+////
+
+// -----------------------------------------
+
+// /////////////////////////////////////////
+// Variables
+
+// Variables can be declared with `:NAME:VALUE`.
+// Variable names can contain letters, numbers,
+// and the symbols `_+-`, but cannot start with
+// a number.
+// The value is always interpreted as a string,
+// even if it's made of digits.
+:var:42
+:var_1:42
+
+// Variables can be printed using curly braces.
+Value of `var`: {var}
+
+// Variable names can contain dots. Internally,
+// this creates a namespace.
+:namespace.var:42
+
+Value of `namespace.var`: {namespace.var}
+
+// Variables with a name that starts with `+` are
+// given the value `true`.  If the name starts
+// with `-` the value is `false`.
+// Those values are not booleans but strings.
+:+var:
+:-var:
+
+// If specified, the value of boolean variables
+// is ignored.
+// The following variable has value `true`.
+:+var:42
+
+// Keep in mind that the "boolean" values
+// are pure strings. There is no difference
+// between the next two lines.
+:+somevar:
+:somevar:true

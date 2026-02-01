@@ -27,15 +27,18 @@ class Environment:
     def from_environment(cls, other: Environment, namespace: str | None = None):
         return cls().from_dict(other.asdict(), namespace)
 
-    def update(self, other: Environment, namespace: str | None = None):
-        data = other._variables
+    def update(self, other: Environment, namespace: str | None = None, overwrite=True):
+        # Create an environment, to get all
+        # plain variables with the right
+        # namespace.
+        new_env = Environment.from_dict(other._variables, namespace)
 
-        # If there is a namespace store the
-        # new dictionary under it.
-        if namespace:
-            data = {namespace: data}
+        if overwrite:
+            self._variables.update(new_env._variables)
+            return
 
-        self._variables.update(data)
+        new_env._variables.update(self._variables)
+        self._variables = new_env._variables
 
     def dupdate(self, other: dict, namespace: str | None = None):
         # If there is a namespace store the

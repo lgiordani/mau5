@@ -1,0 +1,674 @@
+_info:
+  context:
+    end_column: 12
+    end_line: 40
+    source: e2e/source/18_blockgroups.mau
+    start_column: 0
+    start_line: 40
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args:
+  - mygroup
+_parent_info:
+  _info:
+    context:
+      end_column: 12
+      end_line: 57
+      source: e2e/source/18_blockgroups.mau
+      start_column: 0
+      start_line: 40
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: block-group
+blocks:
+  position1:
+    _info:
+      context:
+        end_column: 4
+        end_line: 29
+        source: e2e/source/18_blockgroups.mau
+        start_column: 0
+        start_line: 27
+      named_args:
+        group: mygroup
+        position: position1
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 12
+          end_line: 40
+          source: e2e/source/18_blockgroups.mau
+          start_column: 0
+          start_line: 40
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args:
+        - mygroup
+      _type: block-group
+    _type: block
+    classes: []
+    content:
+    - _info:
+        context:
+          end_column: 70
+          end_line: 28
+          source: e2e/source/18_blockgroups.mau
+          start_column: 0
+          start_line: 28
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 4
+            end_line: 29
+            source: e2e/source/18_blockgroups.mau
+            start_column: 0
+            start_line: 27
+          named_args:
+            group: mygroup
+            position: position1
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: block
+      _type: paragraph
+      labels: {}
+      lines:
+      - _info:
+          context:
+            end_column: 70
+            end_line: 28
+            source: e2e/source/18_blockgroups.mau
+            start_column: 0
+            start_line: 28
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _parent_info:
+          _info:
+            context:
+              end_column: 70
+              end_line: 28
+              source: e2e/source/18_blockgroups.mau
+              start_column: 0
+              start_line: 28
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _type: paragraph
+        _type: paragraph-line
+        content:
+        - _info:
+            context:
+              end_column: 36
+              end_line: 28
+              source: e2e/source/18_blockgroups.mau
+              start_column: 0
+              start_line: 28
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _parent_info:
+            _info:
+              context:
+                end_column: 70
+                end_line: 28
+                source: e2e/source/18_blockgroups.mau
+                start_column: 0
+                start_line: 28
+              named_args: {}
+              subtype: null
+              tags: []
+              unnamed_args: []
+            _type: paragraph
+          _type: text
+          value: 'This is a block within in the group '
+        - _info:
+            context:
+              end_column: 45
+              end_line: 28
+              source: e2e/source/18_blockgroups.mau
+              start_column: 36
+              start_line: 28
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _parent_info:
+            _info:
+              context:
+                end_column: 70
+                end_line: 28
+                source: e2e/source/18_blockgroups.mau
+                start_column: 0
+                start_line: 28
+              named_args: {}
+              subtype: null
+              tags: []
+              unnamed_args: []
+            _type: paragraph
+          _type: verbatim
+          value: mygroup
+        - _info:
+            context:
+              end_column: 58
+              end_line: 28
+              source: e2e/source/18_blockgroups.mau
+              start_column: 45
+              start_line: 28
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _parent_info:
+            _info:
+              context:
+                end_column: 70
+                end_line: 28
+                source: e2e/source/18_blockgroups.mau
+                start_column: 0
+                start_line: 28
+              named_args: {}
+              subtype: null
+              tags: []
+              unnamed_args: []
+            _type: paragraph
+          _type: text
+          value: ' at position '
+        - _info:
+            context:
+              end_column: 69
+              end_line: 28
+              source: e2e/source/18_blockgroups.mau
+              start_column: 58
+              start_line: 28
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _parent_info:
+            _info:
+              context:
+                end_column: 70
+                end_line: 28
+                source: e2e/source/18_blockgroups.mau
+                start_column: 0
+                start_line: 28
+              named_args: {}
+              subtype: null
+              tags: []
+              unnamed_args: []
+            _type: paragraph
+          _type: verbatim
+          value: position1
+        - _info:
+            context:
+              end_column: 70
+              end_line: 28
+              source: e2e/source/18_blockgroups.mau
+              start_column: 69
+              start_line: 28
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _parent_info:
+            _info:
+              context:
+                end_column: 70
+                end_line: 28
+                source: e2e/source/18_blockgroups.mau
+                start_column: 0
+                start_line: 28
+              named_args: {}
+              subtype: null
+              tags: []
+              unnamed_args: []
+            _type: paragraph
+          _type: text
+          value: .
+        labels: {}
+    labels: {}
+  position2:
+    _info:
+      context:
+        end_column: 4
+        end_line: 34
+        source: e2e/source/18_blockgroups.mau
+        start_column: 0
+        start_line: 32
+      named_args:
+        group: mygroup
+        position: position2
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 12
+          end_line: 40
+          source: e2e/source/18_blockgroups.mau
+          start_column: 0
+          start_line: 40
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args:
+        - mygroup
+      _type: block-group
+    _type: block
+    classes: []
+    content:
+    - _info:
+        context:
+          end_column: 70
+          end_line: 33
+          source: e2e/source/18_blockgroups.mau
+          start_column: 0
+          start_line: 33
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 4
+            end_line: 34
+            source: e2e/source/18_blockgroups.mau
+            start_column: 0
+            start_line: 32
+          named_args:
+            group: mygroup
+            position: position2
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: block
+      _type: paragraph
+      labels: {}
+      lines:
+      - _info:
+          context:
+            end_column: 70
+            end_line: 33
+            source: e2e/source/18_blockgroups.mau
+            start_column: 0
+            start_line: 33
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _parent_info:
+          _info:
+            context:
+              end_column: 70
+              end_line: 33
+              source: e2e/source/18_blockgroups.mau
+              start_column: 0
+              start_line: 33
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _type: paragraph
+        _type: paragraph-line
+        content:
+        - _info:
+            context:
+              end_column: 36
+              end_line: 33
+              source: e2e/source/18_blockgroups.mau
+              start_column: 0
+              start_line: 33
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _parent_info:
+            _info:
+              context:
+                end_column: 70
+                end_line: 33
+                source: e2e/source/18_blockgroups.mau
+                start_column: 0
+                start_line: 33
+              named_args: {}
+              subtype: null
+              tags: []
+              unnamed_args: []
+            _type: paragraph
+          _type: text
+          value: 'This is a block within in the group '
+        - _info:
+            context:
+              end_column: 45
+              end_line: 33
+              source: e2e/source/18_blockgroups.mau
+              start_column: 36
+              start_line: 33
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _parent_info:
+            _info:
+              context:
+                end_column: 70
+                end_line: 33
+                source: e2e/source/18_blockgroups.mau
+                start_column: 0
+                start_line: 33
+              named_args: {}
+              subtype: null
+              tags: []
+              unnamed_args: []
+            _type: paragraph
+          _type: verbatim
+          value: mygroup
+        - _info:
+            context:
+              end_column: 58
+              end_line: 33
+              source: e2e/source/18_blockgroups.mau
+              start_column: 45
+              start_line: 33
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _parent_info:
+            _info:
+              context:
+                end_column: 70
+                end_line: 33
+                source: e2e/source/18_blockgroups.mau
+                start_column: 0
+                start_line: 33
+              named_args: {}
+              subtype: null
+              tags: []
+              unnamed_args: []
+            _type: paragraph
+          _type: text
+          value: ' at position '
+        - _info:
+            context:
+              end_column: 69
+              end_line: 33
+              source: e2e/source/18_blockgroups.mau
+              start_column: 58
+              start_line: 33
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _parent_info:
+            _info:
+              context:
+                end_column: 70
+                end_line: 33
+                source: e2e/source/18_blockgroups.mau
+                start_column: 0
+                start_line: 33
+              named_args: {}
+              subtype: null
+              tags: []
+              unnamed_args: []
+            _type: paragraph
+          _type: verbatim
+          value: position2
+        - _info:
+            context:
+              end_column: 70
+              end_line: 33
+              source: e2e/source/18_blockgroups.mau
+              start_column: 69
+              start_line: 33
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _parent_info:
+            _info:
+              context:
+                end_column: 70
+                end_line: 33
+                source: e2e/source/18_blockgroups.mau
+                start_column: 0
+                start_line: 33
+              named_args: {}
+              subtype: null
+              tags: []
+              unnamed_args: []
+            _type: paragraph
+          _type: text
+          value: .
+        labels: {}
+    labels: {}
+labels: {}
+name: mygroup
+
+_info:
+  context:
+    end_column: 12
+    end_line: 57
+    source: e2e/source/18_blockgroups.mau
+    start_column: 0
+    start_line: 57
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args:
+  - mixedgroup
+_parent_info:
+  _info:
+    context:
+      end_column: 12
+      end_line: 57
+      source: e2e/source/18_blockgroups.mau
+      start_column: 0
+      start_line: 40
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: block-group
+blocks:
+  position1:
+    _info:
+      context:
+        end_column: 4
+        end_line: 49
+        source: e2e/source/18_blockgroups.mau
+        start_column: 0
+        start_line: 47
+      named_args:
+        group: mixedgroup
+        position: position1
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 12
+          end_line: 57
+          source: e2e/source/18_blockgroups.mau
+          start_column: 0
+          start_line: 57
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args:
+        - mixedgroup
+      _type: block-group
+    _type: block
+    classes: []
+    content:
+    - _info:
+        context:
+          end_column: 23
+          end_line: 48
+          source: e2e/source/18_blockgroups.mau
+          start_column: 0
+          start_line: 48
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 4
+            end_line: 49
+            source: e2e/source/18_blockgroups.mau
+            start_column: 0
+            start_line: 47
+          named_args:
+            group: mixedgroup
+            position: position1
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: block
+      _type: paragraph
+      labels: {}
+      lines:
+      - _info:
+          context:
+            end_column: 23
+            end_line: 48
+            source: e2e/source/18_blockgroups.mau
+            start_column: 0
+            start_line: 48
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _parent_info:
+          _info:
+            context:
+              end_column: 23
+              end_line: 48
+              source: e2e/source/18_blockgroups.mau
+              start_column: 0
+              start_line: 48
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _type: paragraph
+        _type: paragraph-line
+        content:
+        - _info:
+            context:
+              end_column: 23
+              end_line: 48
+              source: e2e/source/18_blockgroups.mau
+              start_column: 0
+              start_line: 48
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          _parent_info:
+            _info:
+              context:
+                end_column: 23
+                end_line: 48
+                source: e2e/source/18_blockgroups.mau
+                start_column: 0
+                start_line: 48
+              named_args: {}
+              subtype: null
+              tags: []
+              unnamed_args: []
+            _type: paragraph
+          _type: text
+          value: This is a normal block.
+        labels: {}
+    labels: {}
+  position2:
+    _info:
+      context:
+        end_column: 4
+        end_line: 54
+        source: e2e/source/18_blockgroups.mau
+        start_column: 0
+        start_line: 52
+      named_args:
+        group: mixedgroup
+        position: position2
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 12
+          end_line: 57
+          source: e2e/source/18_blockgroups.mau
+          start_column: 0
+          start_line: 57
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args:
+        - mixedgroup
+      _type: block-group
+    _type: source
+    classes: []
+    content:
+    - _info:
+        context:
+          end_column: 42
+          end_line: 53
+          source: e2e/source/18_blockgroups.mau
+          start_column: 0
+          start_line: 53
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _parent_info:
+        _info:
+          context:
+            end_column: 4
+            end_line: 54
+            source: e2e/source/18_blockgroups.mau
+            start_column: 0
+            start_line: 52
+          named_args:
+            group: mixedgroup
+            position: position2
+          subtype: null
+          tags: []
+          unnamed_args: []
+        _type: source
+      _type: source-line
+      highlight_style: null
+      line_content: s = "This is a block with Python content."
+      line_number: '1'
+      marker: {}
+    labels: {}
+    language: python
+labels: {}
+name: mixedgroup
+

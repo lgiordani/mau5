@@ -17,6 +17,13 @@ def test_load_environment_files_empty():
 @patch("mau.Path.open")
 @patch("mau.yaml.safe_load")
 def test_load_environment_files(mock_safe_load, mock_path_open):
+    # Test that we can load a file with
+    #
+    # `akey=/path/to/afile.yaml`
+    #
+    # resulting in its content being stored
+    # under the namespace `mau.envfiles.akey`.
+
     test_content = {
         "key1": "value1",
         "key2": "value2",
@@ -45,6 +52,14 @@ def test_load_environment_files(mock_safe_load, mock_path_open):
 @patch("mau.Path.open")
 @patch("mau.yaml.safe_load")
 def test_load_environment_files_custom_namespace(mock_safe_load, mock_path_open):
+    # Test that we can load a file with
+    #
+    # `akey=/path/to/afile.yaml`
+    #
+    # using the custom namespace `somespace`,
+    # resulting in its content being stored
+    # under the namespace `mau.somespace.akey`.
+
     test_content = {
         "key1": "value1",
         "key2": "value2",
@@ -74,6 +89,13 @@ def test_load_environment_files_custom_namespace(mock_safe_load, mock_path_open)
 @patch("mau.Path.open")
 @patch("mau.yaml.safe_load")
 def test_load_environment_files_simple_path(mock_safe_load, mock_path_open):
+    # Test that we can load a file with
+    #
+    # `/path/to/afile.yaml`
+    #
+    # resulting in its content being stored
+    # under the namespace `mau.envfiles.afile`.
+
     test_content = {
         "key1": "value1",
         "key2": "value2",
@@ -120,6 +142,13 @@ def test_load_environment_variables_empty():
 
 
 def test_load_environment_variables():
+    # Test that we can load a variable
+    #
+    # `answer=42`
+    #
+    # resulting in the value 42 being stored
+    # under the namespace `mau.envvars.answer`.
+
     environment = Environment()
 
     load_environment_variables(
@@ -127,12 +156,32 @@ def test_load_environment_variables():
         ["answer=42"],
     )
 
-    assert environment.asdict() == {"mau": {"envvars": {"answer": "42"}}}
+    assert environment.asdict() == {
+        "mau": {
+            "envvars": {
+                "answer": "42",
+            }
+        }
+    }
 
 
 def test_load_environment_variables_custom_namespace():
+    # Test that we can load a variable
+    #
+    # `answer=42`
+    #
+    # using the custom namespace `somespace`,
+    # resulting in the value 42 being stored
+    # under the namespace `mau.somespace.answer`.
+
     environment = Environment()
 
     load_environment_variables(environment, ["answer=42"], "somespace")
 
-    assert environment.asdict() == {"mau": {"somespace": {"answer": "42"}}}
+    assert environment.asdict() == {
+        "mau": {
+            "somespace": {
+                "answer": "42",
+            }
+        }
+    }

@@ -12,7 +12,6 @@ from mau.nodes.macro import (
 )
 from mau.nodes.node import NodeInfo
 from mau.test_helpers import check_node_with_content, check_visit_node
-from mau.text_buffer import Context
 
 
 def test_macro_node():

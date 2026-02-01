@@ -1,12 +1,10 @@
 from mau.environment.environment import Environment
-
 from mau.nodes.footnote import FootnoteNode
 from mau.nodes.header import HeaderNode
-from mau.nodes.inline import TextNode, VerbatimNode, StyleNode
-
+from mau.nodes.inline import StyleNode, TextNode, VerbatimNode
 from mau.nodes.macro import (
-    MacroFootnoteNode,
     MacroClassNode,
+    MacroFootnoteNode,
     MacroHeaderNode,
     MacroImageNode,
     MacroLinkNode,

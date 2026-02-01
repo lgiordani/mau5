@@ -1,7 +1,7 @@
 from mau.lexers.preprocess_variables_lexer import PreprocessVariablesLexer
 from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
-from mau.parsers.base_parser import BaseParser, MauParserException
+from mau.parsers.base_parser import BaseParser, create_parser_exception
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
 
@@ -107,7 +107,7 @@ class PreprocessVariablesParser(BaseParser):
             # mentioned between curly braces.
             variable_value = self.environment[variable_name.value]
         except KeyError as exp:
-            raise MauParserException(
+            raise create_parser_exception(
                 f'Variable "{variable_name}" has not been defined.',
                 context=context,
             ) from exp

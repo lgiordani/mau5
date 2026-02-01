@@ -1,9 +1,9 @@
 import pytest
 
+from mau.error import MauErrorType, MauException
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.macro import MacroImageNode
 from mau.nodes.node import NodeInfo
-from mau.parsers.base_parser import MauParserException
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
     compare_nodes_sequence,
@@ -63,7 +63,8 @@ def test_macro_image_with_width_and_height():
 def test_macro_image_without_uri():
     source = "[image]()"
 
-    with pytest.raises(MauParserException) as exc:
+    with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.context == generate_context(0, 0, 0, 9)
+    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.error.content["context"] == generate_context(0, 0, 0, 9)

@@ -1,0 +1,58 @@
+// /////////////////////////////////////////
+// MAU E2E TESTS
+// /////////////////////////////////////////
+
+////
+This is a test file to check the end-to-end
+behaviour of the Mau lexers, parsers and
+visitors.
+////
+
+// -----------------------------------------
+
+// /////////////////////////////////////////
+// Block groups
+
+// Sometimes you need to split Mau source
+// into different elements to treat each
+// one separately.
+// For example, you might want to have a
+// side-by-side rendering of some text,
+// for example the original text and a
+// translation.
+// You can implement that using block
+// groups. A block can be assigned to a
+// `group` in a certain `position` using
+// the following syntax
+[group=mygroup, position=position1]
+----
+This is a block within in the group `mygroup` at position `position1`.
+----
+
+[group=mygroup, position=position2]
+----
+This is a block within in the group `mygroup` at position `position2`.
+----
+
+// Such groups are not rendered, but
+// stored in a block group manager
+// that makes them available to the
+// command ::blockgroup.
+::blockgroup:mygroup
+
+// The advantage of groups is that you
+// can assign different arguments to
+// each block. For example, you can use
+// different subtypes or even engines.
+[group=mixedgroup, position=position1]
+----
+This is a normal block.
+----
+
+[group=mixedgroup, position=position2, engine=source, language=python]
+----
+s = "This is a block with Python content."
+----
+
+// This renders the group.
+::blockgroup:mixedgroup

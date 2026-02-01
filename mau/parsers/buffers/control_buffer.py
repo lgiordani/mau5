@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum
 
 from mau.environment.environment import Environment
-from mau.parsers.base_parser import MauParserException
+from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 
 
@@ -27,7 +27,7 @@ class Control:
         context: Context | None = None,
     ):
         if operator not in ["if"]:
-            raise MauParserException(
+            raise create_parser_exception(
                 f"Control operator '{operator}' is not supported.",
                 context,
             )
@@ -44,7 +44,7 @@ class Control:
         try:
             variable_value = environment[self.variable]
         except KeyError:
-            raise MauParserException(
+            raise create_parser_exception(
                 f"Variable '{self.variable}' has not been defined.",
                 self.context,
             )

@@ -1,26 +1,11 @@
 from unittest.mock import patch
+
 from mau.lexers.document_lexer import DocumentLexer
+from mau.nodes.command import FootnotesNode, TocNode
 from mau.nodes.header import HeaderNode
-from mau.parsers.document_parser import DocumentParser
-from mau.test_helpers import (
-    init_parser_factory,
-    parser_runner_factory,
-)
-from unittest.mock import patch
-import pytest
-from mau.lexers.document_lexer import DocumentLexer
-from mau.nodes.block import BlockNode
-from mau.nodes.command import TocItemNode, TocNode, FootnotesNode
-from mau.nodes.header import HeaderNode
-from mau.nodes.inline import TextNode
-from mau.nodes.node import NodeInfo
-from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
-from mau.parsers.base_parser import MauParserException
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     check_parent,
-    compare_nodes_sequence,
-    generate_context,
     init_parser_factory,
     parser_runner_factory,
 )

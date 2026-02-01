@@ -4,7 +4,7 @@ from collections import defaultdict
 
 from mau.nodes.block import BlockNode
 from mau.nodes.command import BlockGroupNode
-from mau.parsers.base_parser import MauParserException
+from mau.parsers.base_parser import create_parser_exception
 
 
 class BlockGroupManager:
@@ -47,7 +47,7 @@ class BlockGroupManager:
 
             # Check if the requested group exists.
             if group_name not in self.blocks:
-                raise MauParserException(
+                raise create_parser_exception(
                     f"The group named {group_name} does not exist.",
                     group_node.info.context,
                 )

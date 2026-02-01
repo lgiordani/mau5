@@ -2,6 +2,7 @@ import html
 from importlib.resources import files
 from typing import Callable
 
+from bs4 import BeautifulSoup
 from pygments import highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
@@ -35,6 +36,19 @@ class HtmlVisitor(JinjaVisitor):
 
     default_templates = Environment.from_dict(DEFAULT_TEMPLATES)
     default_templates.dupdate(templates)
+
+    def postprocess(self, result, *args, **kwargs):
+        # Check if the visitor settings enable
+        # postprocessing of the resulting HTML.
+        if not self.environment.get("mau.visitor.html.pretty", False):
+            return result
+
+        # The result is HTML code, let's
+        # make it nice to read.
+        soup = BeautifulSoup(result, "html.parser")
+        pretty = soup.prettify()
+
+        return pretty
 
     def _visit_text(self, node: Node, *args, **kwargs) -> dict:
         result = super()._visit_text(node, *args, **kwargs)

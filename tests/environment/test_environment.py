@@ -350,3 +350,24 @@ def test_update_with_namespace():
     environment.update(other, namespace)
 
     assert environment.asdict() == {"somespace": source_dict}
+
+
+def test_update_no_overwrite_without_namespace():
+    environment = Environment.from_dict({"var1": "valueX"})
+    other = Environment.from_dict({"var1": "value1", "var2": "value2"})
+
+    environment.update(other, overwrite=False)
+
+    assert environment.asdict() == {"var1": "valueX", "var2": "value2"}
+
+
+def test_update_no_overwrite_with_namespace():
+    source_dict = {"var1": "value1", "var2": "value2"}
+    namespace = "somespace"
+
+    environment = Environment.from_dict({"somespace": {"var1": "valueX"}})
+    other = Environment.from_dict(source_dict)
+
+    environment.update(other, namespace, overwrite=False)
+
+    assert environment.asdict() == {"somespace": {"var1": "valueX", "var2": "value2"}}

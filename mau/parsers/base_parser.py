@@ -1,4 +1,5 @@
 from mau.environment.environment import Environment
+from mau.error import MauError, MauErrorType, MauException
 from mau.lexers.base_lexer import BaseLexer
 from mau.nodes.node import Node
 from mau.text_buffer import Context, TextBuffer
@@ -7,13 +8,19 @@ from mau.token import Token, TokenType
 from .managers.tokens_manager import TokensManager
 
 
-class MauParserException(ValueError):
-    def __init__(
-        self, message: str, context: Context | None = None, long_help: str | None = None
-    ):
-        self.message = message
-        self.context = context
-        self.long_help = long_help
+def create_parser_exception(
+    message: str,
+    context: Context | None = None,
+    long_help: str | None = None,
+):
+    content = {
+        "context": context,
+        "long_help": long_help,
+    }
+
+    error = MauError(type=MauErrorType.PARSER, content=content)
+
+    return MauException(message, error)
 
 
 class BaseParser:
@@ -69,7 +76,7 @@ class BaseParser:
                 next_token == self.last_processed_token
                 and next_token.context == self.last_processed_token.context
             ):
-                raise MauParserException(
+                raise create_parser_exception(
                     f"Loop detected, cannot parse token {next_token}",
                     next_token.context,
                 )  # pragma: no cover
@@ -101,7 +108,7 @@ class BaseParser:
             # we didn't find any function to parse the
             # current token.
             if result is False:
-                raise MauParserException(
+                raise create_parser_exception(
                     "Cannot parse token",
                     self.tm.peek_token().context,
                 )

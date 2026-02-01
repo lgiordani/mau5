@@ -1,0 +1,266 @@
+_info:
+  context:
+    end_column: 21
+    end_line: 25
+    source: e2e/source/05_variables.mau
+    start_column: 0
+    start_line: 25
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 41
+      end_line: 31
+      source: e2e/source/05_variables.mau
+      start_column: 0
+      start_line: 25
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: paragraph
+labels: {}
+lines:
+- _info:
+    context:
+      end_column: 21
+      end_line: 25
+      source: e2e/source/05_variables.mau
+      start_column: 0
+      start_line: 25
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 21
+        end_line: 25
+        source: e2e/source/05_variables.mau
+        start_column: 0
+        start_line: 25
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: paragraph
+  _type: paragraph-line
+  content:
+  - _info:
+      context:
+        end_column: 9
+        end_line: 25
+        source: e2e/source/05_variables.mau
+        start_column: 0
+        start_line: 25
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 21
+          end_line: 25
+          source: e2e/source/05_variables.mau
+          start_column: 0
+          start_line: 25
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: 'Value of '
+  - _info:
+      context:
+        end_column: 14
+        end_line: 25
+        source: e2e/source/05_variables.mau
+        start_column: 9
+        start_line: 25
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 21
+          end_line: 25
+          source: e2e/source/05_variables.mau
+          start_column: 0
+          start_line: 25
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: verbatim
+    value: var
+  - _info:
+      context:
+        end_column: 18
+        end_line: 25
+        source: e2e/source/05_variables.mau
+        start_column: 14
+        start_line: 25
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 21
+          end_line: 25
+          source: e2e/source/05_variables.mau
+          start_column: 0
+          start_line: 25
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: ': 42'
+  labels: {}
+
+_info:
+  context:
+    end_column: 41
+    end_line: 31
+    source: e2e/source/05_variables.mau
+    start_column: 0
+    start_line: 31
+  named_args: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+_parent_info:
+  _info:
+    context:
+      end_column: 41
+      end_line: 31
+      source: e2e/source/05_variables.mau
+      start_column: 0
+      start_line: 25
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _type: document
+_type: paragraph
+labels: {}
+lines:
+- _info:
+    context:
+      end_column: 41
+      end_line: 31
+      source: e2e/source/05_variables.mau
+      start_column: 0
+      start_line: 31
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  _parent_info:
+    _info:
+      context:
+        end_column: 41
+        end_line: 31
+        source: e2e/source/05_variables.mau
+        start_column: 0
+        start_line: 31
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _type: paragraph
+  _type: paragraph-line
+  content:
+  - _info:
+      context:
+        end_column: 9
+        end_line: 31
+        source: e2e/source/05_variables.mau
+        start_column: 0
+        start_line: 31
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 41
+          end_line: 31
+          source: e2e/source/05_variables.mau
+          start_column: 0
+          start_line: 31
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: 'Value of '
+  - _info:
+      context:
+        end_column: 24
+        end_line: 31
+        source: e2e/source/05_variables.mau
+        start_column: 9
+        start_line: 31
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 41
+          end_line: 31
+          source: e2e/source/05_variables.mau
+          start_column: 0
+          start_line: 31
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: verbatim
+    value: namespace.var
+  - _info:
+      context:
+        end_column: 28
+        end_line: 31
+        source: e2e/source/05_variables.mau
+        start_column: 24
+        start_line: 31
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    _parent_info:
+      _info:
+        context:
+          end_column: 41
+          end_line: 31
+          source: e2e/source/05_variables.mau
+          start_column: 0
+          start_line: 31
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      _type: paragraph
+    _type: text
+    value: ': 42'
+  labels: {}
+
