@@ -7,7 +7,8 @@ from mau.error import MauErrorType, MauException
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.include import IncludeImageNode, IncludeMauNode, IncludeNode
 from mau.nodes.inline import TextNode
-from mau.nodes.node import NodeArguments, NodeInfo
+from mau.nodes.node import NodeInfo
+from mau.nodes.node_arguments import NodeArguments
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (

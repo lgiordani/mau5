@@ -7,7 +7,8 @@ if TYPE_CHECKING:
 
 
 from mau.nodes.header import HeaderNode
-from mau.nodes.node import NodeArguments, NodeInfo
+from mau.nodes.node import NodeInfo
+from mau.nodes.node_arguments import NodeArguments
 from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.text_buffer import Context
 from mau.token import TokenType

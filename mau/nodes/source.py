@@ -1,6 +1,7 @@
 from collections.abc import Mapping, Sequence
 
-from mau.nodes.node import Node, NodeArguments, NodeInfo, NodeLabelsMixin, ValueNode
+from mau.nodes.node import Node, NodeInfo, NodeLabelsMixin, ValueNode
+from mau.nodes.node_arguments import NodeArguments
 
 
 class SourceMarkerNode(ValueNode):

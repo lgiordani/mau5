@@ -13,8 +13,9 @@ from mau.nodes.command import (
     FootnotesNode,
     TocNode,
 )
-from mau.nodes.node import NodeArguments, NodeInfo
-from mau.parsers.arguments_parser import Arguments, ArgumentsParser
+from mau.nodes.node import NodeInfo
+from mau.nodes.node_arguments import NodeArguments
+from mau.parsers.arguments_parser import ArgumentsParser
 from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 from mau.token import TokenType
@@ -34,7 +35,7 @@ def command_processor(parser: DocumentParser):
     # Get the stored arguments.
     # Commands can receive arguments
     # through the arguments manager or inline..
-    arguments: Arguments | None = parser.arguments_buffer.pop()
+    arguments: NodeArguments | None = parser.arguments_buffer.pop()
 
     # Find the final context.
     context = Context.merge_contexts(prefix.context, name.context)
@@ -75,14 +76,11 @@ def command_processor(parser: DocumentParser):
 
         arguments = arguments_parser.arguments
 
-    arguments = arguments or Arguments()
-
     # Build the node info.
     info = NodeInfo(context=context)
-    node_arguments = NodeArguments(**arguments.asdict())
 
     if name.value == "toc":
-        toc_node = TocNode(info=info, arguments=node_arguments)
+        toc_node = TocNode(info=info, arguments=arguments)
 
         # Extract labels from the buffer and
         # store them in the node data.
@@ -101,7 +99,7 @@ def command_processor(parser: DocumentParser):
         parser.toc_manager.add_toc_node(toc_node)
 
     elif name.value == "footnotes":
-        footnotes_node = FootnotesNode(info=info, arguments=node_arguments)
+        footnotes_node = FootnotesNode(info=info, arguments=arguments)
 
         # Extract labels from the buffer and
         # store them in the node data.
@@ -121,11 +119,10 @@ def command_processor(parser: DocumentParser):
 
     elif name.value == "blockgroup":
         arguments.set_names(["group"])
+
         group_name = arguments.named_args.pop("group")
 
-        block_group_node = BlockGroupNode(
-            group_name, info=info, arguments=node_arguments
-        )
+        block_group_node = BlockGroupNode(group_name, info=info, arguments=arguments)
 
         # Extract labels from the buffer and
         # store them in the node data.
@@ -144,7 +141,7 @@ def command_processor(parser: DocumentParser):
         parser.block_group_manager.add_group(block_group_node)
 
     else:
-        command_node = CommandNode(name=name.value, info=info, arguments=node_arguments)
+        command_node = CommandNode(name=name.value, info=info, arguments=arguments)
 
         # Extract labels from the buffer and
         # store them in the node data.

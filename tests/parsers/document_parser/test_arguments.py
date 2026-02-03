@@ -3,7 +3,7 @@ import pytest
 from mau.environment.environment import Environment
 from mau.error import MauErrorType, MauException
 from mau.lexers.document_lexer import DocumentLexer
-from mau.parsers.arguments_parser import Arguments
+from mau.nodes.node_arguments import NodeArguments
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     init_parser_factory,
@@ -23,7 +23,7 @@ def test_arguments():
     parser = runner(source)
 
     # This checks that attributes are correctly stored.
-    assert parser.arguments_buffer.pop() == Arguments(
+    assert parser.arguments_buffer.pop() == NodeArguments(
         ["attr1", "attr2"], {"key1": "value1"}, ["tag1"], "subtype1"
     )
 
@@ -57,7 +57,7 @@ def test_arguments_support_variables():
 
     parser = runner(source, environment)
 
-    assert parser.arguments_buffer.pop() == Arguments(
+    assert parser.arguments_buffer.pop() == NodeArguments(
         ["number1"],
         {"key1": "42"},
         [],

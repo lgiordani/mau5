@@ -1,72 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
-from typing import Any
-
 from mau.environment.environment import Environment
 from mau.lexers.arguments_lexer import ArgumentsLexer
 from mau.nodes.node import NodeInfo, ValueNode
+from mau.nodes.node_arguments import NodeArguments, set_names
 from mau.parsers.base_parser import BaseParser, create_parser_exception
 from mau.token import Token, TokenType
-
-
-def set_names(
-    unnamed_args: list[Any],
-    named_args: dict[str, Any],
-    positional_names: list[str],
-) -> tuple[list[Any], dict[str, Any]]:
-    """
-    Give names to positional arguments.
-
-    This function uses the given `positional_names`
-    to convert unnamed args to named ones. Each node
-    in `self.unnamed_argument_nodes` is assigned a
-    key from `positional_names` in order.
-
-    If a positional name is used that is already
-    present in `self.named_argument_nodes`, the
-    key is ignored and the corresponding unnamed
-    node remains unassigned.
-    """
-
-    # Filter the given positional names.
-    # If a named argument provides the value for a
-    # positional name we consider it already set and ignore it.
-    positional_names = [i for i in positional_names if i not in named_args]
-
-    # Merge positional names and args into a dictionary.
-    # Then create a named argument out of each value.
-    # The zip() will ignore arguments that don't have a
-    # corresponding value.
-    positional_arguments = dict(zip(positional_names, unnamed_args))
-
-    # If we pass more positional values than names,
-    # some of them won't be converted and become flags
-    unnamed_args = unnamed_args[len(positional_names) :]
-
-    # Update the named dictionary with the
-    named_args.update(positional_arguments)
-
-    return unnamed_args, named_args
-
-
-# TODO unify with NodeArguments
-@dataclass
-class Arguments:
-    unnamed_args: list[str] = field(default_factory=list)
-    named_args: dict[str, str] = field(default_factory=dict)
-    tags: list[str] = field(default_factory=list)
-    subtype: str | None = None
-
-    def asdict(self):
-        return asdict(self)  # pragma: no cover
-
-    def set_names(self, positional_names: list[str]) -> Arguments:
-        self.unnamed_args, self.named_args = set_names(
-            self.unnamed_args, self.named_args, positional_names
-        )
-
-        return self
 
 
 class ArgumentsParser(BaseParser):
@@ -295,7 +234,7 @@ class ArgumentsParser(BaseParser):
 
     @property
     def arguments(self):
-        return Arguments(
+        return NodeArguments(
             unnamed_args=[node.value for node in self.unnamed_argument_nodes],  # type: ignore[attr-defined]
             named_args={
                 key: node.value  # type: ignore[attr-defined]

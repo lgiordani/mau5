@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from mau.parsers.document_parser import DocumentParser
 
-from mau.nodes.node import NodeArguments, NodeInfo
+from mau.nodes.node import NodeInfo
+from mau.nodes.node_arguments import NodeArguments
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.text_buffer import Context
 from mau.token import Token, TokenType

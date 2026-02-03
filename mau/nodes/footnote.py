@@ -1,6 +1,7 @@
 from collections.abc import Sequence
 
-from mau.nodes.node import Node, NodeArguments, NodeContentMixin, NodeInfo
+from mau.nodes.node import Node, NodeContentMixin, NodeInfo
+from mau.nodes.node_arguments import NodeArguments
 
 
 class FootnoteNode(Node, NodeContentMixin):

@@ -6,7 +6,8 @@ from mau.environment.environment import Environment
 from mau.error import MauErrorType, MauException
 from mau.lexers.arguments_lexer import ArgumentsLexer
 from mau.nodes.node import NodeInfo, ValueNode
-from mau.parsers.arguments_parser import Arguments, ArgumentsParser, set_names
+from mau.nodes.node_arguments import NodeArguments
+from mau.parsers.arguments_parser import ArgumentsParser, set_names
 from mau.test_helpers import (
     compare_nodes,
     compare_nodes_map,
@@ -638,7 +639,7 @@ def test_arguments():
 
     parser = runner(source)
 
-    assert parser.arguments == Arguments(
+    assert parser.arguments == NodeArguments(
         ["value1"], {"name": "value2"}, ["tag1"], "subtype1"
     )
 
@@ -811,7 +812,7 @@ def test_arguments_empty():
 
     parser = runner(source)
 
-    assert parser.arguments == Arguments([], {}, [], None)
+    assert parser.arguments == NodeArguments([], {}, [], None)
 
 
 def test_set_names_use_positional_names():
@@ -877,7 +878,7 @@ def test_set_names_not_enough_positional_values():
     assert result_named_args == expected_named_args
 
 
-@patch("mau.parsers.arguments_parser.set_names")
+@patch("mau.nodes.node_arguments.set_names")
 def test_arguments_set_names(mock_set_names):
     source = "value1, value2, key3=value3"
 

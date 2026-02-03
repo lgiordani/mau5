@@ -1,6 +1,7 @@
 from collections.abc import Sequence
 
-from mau.nodes.node import Node, NodeArguments, NodeContentMixin, NodeInfo, ValueNode
+from mau.nodes.node import Node, NodeContentMixin, NodeInfo, ValueNode
+from mau.nodes.node_arguments import NodeArguments
 
 
 class WordNode(ValueNode):

@@ -7,7 +7,8 @@ if TYPE_CHECKING:
 
 
 from mau.nodes.list import ListItemNode, ListNode
-from mau.nodes.node import Node, NodeArguments, NodeInfo
+from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node_arguments import NodeArguments
 from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 from mau.token import Token, TokenType

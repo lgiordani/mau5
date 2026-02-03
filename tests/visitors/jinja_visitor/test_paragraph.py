@@ -1,6 +1,7 @@
 from mau.environment.environment import Environment
 from mau.nodes.inline import TextNode
-from mau.nodes.node import NodeArguments, NodeInfo
+from mau.nodes.node import NodeInfo
+from mau.nodes.node_arguments import NodeArguments
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.test_helpers import generate_context
 from mau.visitors.jinja_visitor import JinjaVisitor

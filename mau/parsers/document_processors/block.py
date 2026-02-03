@@ -8,14 +8,14 @@ if TYPE_CHECKING:
 from enum import Enum
 
 from mau.nodes.block import BlockNode
-from mau.nodes.node import Node, NodeArguments, NodeInfo
+from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node_arguments import NodeArguments
 from mau.nodes.raw import RawLineNode, RawNode
 from mau.nodes.source import (
     SourceLineNode,
     SourceMarkerNode,
     SourceNode,
 )
-from mau.parsers.arguments_parser import Arguments
 from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
@@ -28,9 +28,7 @@ class EngineType(Enum):
 
 
 def parse_block_content(
-    parser: DocumentParser,
-    content: Token,
-    arguments: Arguments,
+    parser: DocumentParser, content: Token, arguments: NodeArguments
 ) -> list[Node]:
     update = arguments.named_args.get("isolate", "true") == "false"
 
@@ -68,9 +66,7 @@ def parse_block_content(
 
 
 def parse_default_engine(
-    parser: DocumentParser,
-    content: Token | None,
-    arguments: Arguments,
+    parser: DocumentParser, content: Token | None, arguments: NodeArguments
 ) -> list[Node]:
     node = BlockNode()
 
@@ -93,9 +89,7 @@ def parse_default_engine(
 
 
 def parse_raw_engine(
-    parser: DocumentParser,
-    content: Token | None,
-    arguments: Arguments,
+    parser: DocumentParser, content: Token | None, arguments: NodeArguments
 ) -> Node:
     # Engine "raw" doesn't process the content,
     # so we just pass it untouched in the form of
@@ -133,9 +127,7 @@ def parse_raw_engine(
 
 
 def parse_source_engine(
-    parser: DocumentParser,
-    content: Token,
-    arguments: Arguments,
+    parser: DocumentParser, content: Token, arguments: NodeArguments
 ) -> Node:
     # Parse a source block in the form
     #

@@ -5,7 +5,8 @@ from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNode
 from mau.nodes.command import BlockGroupNode
 from mau.nodes.inline import TextNode
-from mau.nodes.node import NodeArguments, NodeInfo
+from mau.nodes.node import NodeInfo
+from mau.nodes.node_arguments import NodeArguments
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -94,7 +95,6 @@ def test_group():
             BlockGroupNode(
                 "group1",
                 blocks={"position1": block_node1, "position2": block_node2},
-                arguments=NodeArguments(unnamed_args=["group1"]),
                 info=NodeInfo(
                     context=generate_context(11, 0, 11, 12),
                 ),
@@ -166,7 +166,7 @@ def test_command_toc_supports_inline_arguments():
                 "group1",
                 blocks={"position1": block_node1},
                 arguments=NodeArguments(
-                    unnamed_args=["group1", "arg1"],
+                    unnamed_args=["arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
@@ -224,7 +224,7 @@ def test_command_toc_supports_boxed_arguments():
                 "group1",
                 blocks={"position1": block_node1},
                 arguments=NodeArguments(
-                    unnamed_args=["group1", "arg1"],
+                    unnamed_args=["arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
@@ -289,9 +289,6 @@ def test_command_toc_supports_labels():
                         )
                     ]
                 },
-                arguments=NodeArguments(
-                    unnamed_args=["group1"],
-                ),
                 info=NodeInfo(
                     context=generate_context(7, 0, 7, 12),
                 ),

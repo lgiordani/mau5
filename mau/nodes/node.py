@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING
 
 from mau.text_buffer import Context
 
+from .node_arguments import NodeArguments
+
 if TYPE_CHECKING:
     from mau.visitors.base_visitor import BaseVisitor
 
@@ -26,28 +28,6 @@ class NodeInfo:
     def asdict(self):
         return {
             "context": self.context.asdict(),
-        }
-
-
-class NodeArguments:
-    def __init__(
-        self,
-        unnamed_args: list | None = None,
-        named_args: dict | None = None,
-        tags: list | None = None,
-        subtype: str | None = None,
-    ):
-        self.unnamed_args = unnamed_args or []
-        self.named_args = named_args or {}
-        self.tags = tags or []
-        self.subtype = subtype
-
-    def asdict(self):
-        return {
-            "unnamed_args": self.unnamed_args,
-            "named_args": self.named_args,
-            "tags": self.tags,
-            "subtype": self.subtype,
         }
 
 

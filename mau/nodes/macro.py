@@ -2,7 +2,8 @@ from collections.abc import Mapping, Sequence
 
 from mau.nodes.footnote import FootnoteNode
 from mau.nodes.header import HeaderNode
-from mau.nodes.node import Node, NodeArguments, NodeContentMixin, NodeInfo, ValueNode
+from mau.nodes.node import Node, NodeContentMixin, NodeInfo, ValueNode
+from mau.nodes.node_arguments import NodeArguments
 
 MACRO_HELP = """
 Syntax:

@@ -1,4 +1,5 @@
-from mau.nodes.node import Node, NodeArguments, NodeInfo
+from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node_arguments import NodeArguments
 from mau.test_helpers import generate_context
 
 

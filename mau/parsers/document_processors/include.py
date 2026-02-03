@@ -7,8 +7,9 @@ if TYPE_CHECKING:
 
 
 from mau.nodes.include import IncludeImageNode, IncludeMauNode, IncludeNode
-from mau.nodes.node import NodeArguments, NodeInfo
-from mau.parsers.arguments_parser import Arguments, ArgumentsParser
+from mau.nodes.node import NodeInfo
+from mau.nodes.node_arguments import NodeArguments
+from mau.parsers.arguments_parser import ArgumentsParser
 from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 from mau.token import TokenType
@@ -28,7 +29,7 @@ def include_processor(parser: DocumentParser):
     # Find the final context.
     context = Context.merge_contexts(prefix.context, content_type.context)
 
-    arguments: Arguments | None = parser.arguments_buffer.pop()
+    arguments: NodeArguments | None = parser.arguments_buffer.pop()
 
     if parser.tm.peek_token_is(TokenType.LITERAL, ":"):
         # In this case arguments are inline
@@ -98,7 +99,10 @@ def include_processor(parser: DocumentParser):
 
 
 def _parse_generic(
-    parser: DocumentParser, content_type: str, arguments: Arguments, context: Context
+    parser: DocumentParser,
+    content_type: str,
+    arguments: NodeArguments,
+    context: Context,
 ) -> IncludeNode:
     # Get the URIs list and empty the unnamed arguments
     uris = arguments.unnamed_args[:]
@@ -115,7 +119,7 @@ def _parse_generic(
 
 
 def _parse_image(
-    parser: DocumentParser, arguments: Arguments, context: Context
+    parser: DocumentParser, arguments: NodeArguments, context: Context
 ) -> IncludeImageNode:
     arguments.set_names(["uri", "alt_text", "classes"])
 
@@ -138,7 +142,7 @@ def _parse_image(
 
 
 def _parse_mau(
-    parser: DocumentParser, arguments: Arguments, context: Context
+    parser: DocumentParser, arguments: NodeArguments, context: Context
 ) -> IncludeImageNode:
     arguments.set_names(["uri"])
 

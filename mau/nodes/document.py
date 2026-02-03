@@ -1,6 +1,7 @@
 from collections.abc import Mapping
 
-from mau.nodes.node import Node, NodeArguments, NodeInfo, NodeLabelsMixin, WrapperNode
+from mau.nodes.node import Node, NodeInfo, NodeLabelsMixin, WrapperNode
+from mau.nodes.node_arguments import NodeArguments
 
 HORIZONTAL_RULE_HELP = """
 Syntax:

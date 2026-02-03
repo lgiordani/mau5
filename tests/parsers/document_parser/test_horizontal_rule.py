@@ -2,7 +2,8 @@ from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.document import HorizontalRuleNode
 from mau.nodes.inline import TextNode
-from mau.nodes.node import NodeArguments, NodeInfo
+from mau.nodes.node import NodeInfo
+from mau.nodes.node_arguments import NodeArguments
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     check_parent,

@@ -1,7 +1,8 @@
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.inline import TextNode
 from mau.nodes.list import ListItemNode, ListNode
-from mau.nodes.node import NodeArguments, NodeInfo
+from mau.nodes.node import NodeInfo
+from mau.nodes.node_arguments import NodeArguments
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     check_parent,
