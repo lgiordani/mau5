@@ -17,7 +17,7 @@ from mau import (
 from mau.environment.environment import Environment
 from mau.error import MauException, RawErrorFormatter
 from mau.formatter.raw_formatter import RawFormatter
-from mau.visitors.base_visitor import BaseVisitor
+from mau.visitors.jinja_visitor import JinjaVisitor
 
 default_formatter = RawFormatter.type
 available_formatters = {formatter.type: formatter for formatter in [RawFormatter]}
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 # Load a dictionary of all visitors,
 # indexed by the output format.
-visitors: dict[str, Type[BaseVisitor]] = load_visitors_dict()
+visitors: dict[str, Type[JinjaVisitor]] = load_visitors_dict()
 
 
 def write_output(output, output_file, postprocess=None):
@@ -135,9 +135,8 @@ def parse_args():
         "-f",
         "--output-format",
         action="store",
-        dest="visitor_output_format",
+        dest="output_format",
         choices=visitors.keys(),
-        required=True,
         help="Output format",
     )
 
@@ -298,11 +297,15 @@ def main():
     # VISITOR
     ###############################################
 
+    if not args.output_format:
+        args.print_help()
+        sys.exit(1)
+
     # Run the visitor.
     try:
         # Select the visitor according
         # to the required output format.
-        visitor_class = visitors[args.visitor_output_format]
+        visitor_class = visitors[args.output_format]
 
         # Get the main output node
         # from the parser.

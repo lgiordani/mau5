@@ -39,8 +39,8 @@ def create_visitor_exception(
 
 
 class BaseVisitor:
+    # The output format that identifies this visitor.
     format_code = "python"
-    extension = ""
 
     def __init__(self, environment: Environment = Environment()):
         self.toc = None
@@ -131,23 +131,26 @@ class BaseVisitor:
             }
         )
 
-    def _get_parent_data(self, node: Node, *args, **kwargs) -> dict:
+    def _get_node_data(self, node: Node, *args, **kwargs) -> dict:
         if not node:
             return {}
 
         return {
             "_type": node.type,
-            "_info": node.info.asdict(),
+            "_context": node.info.context.asdict(),
+            "unnamed_args": node.info.unnamed_args,
+            "named_args": node.info.named_args,
+            "tags": node.info.tags,
+            "subtype": node.info.subtype,
         }
 
     def _visit_default(self, node: Node, *args, **kwargs) -> dict:
         # This is the default code to visit a node.
 
-        return {
-            "_type": node.type,
-            "_parent_info": self._get_parent_data(node.parent),
-            "_info": node.info.asdict(),
-        }
+        data = self._get_node_data(node)
+        data["parent"] = self._get_node_data(node)
+
+        return data
 
     def _visit_value(self, node: Node, *args, **kwargs) -> dict:
         result = self._visit_default(node, *args, **kwargs)

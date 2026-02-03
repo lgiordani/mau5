@@ -50,7 +50,7 @@ content:
     _type: header
   _type: text
   value: Header 1
-internal_id: 1aa562c9
+internal_id: header-1-1aa5
 labels: {}
 level: 1
 name: null
@@ -107,7 +107,7 @@ content:
     _type: header
   _type: text
   value: Header 1.1
-internal_id: 3cc75f45
+internal_id: header-1.1-3cc7
 labels: {}
 level: 2
 name: null
@@ -164,7 +164,7 @@ content:
     _type: header
   _type: text
   value: Header 2
-internal_id: 3780c261
+internal_id: header-2-3780
 labels: {}
 level: 1
 name: null
@@ -221,7 +221,7 @@ content:
     _type: header
   _type: text
   value: Header 3
-internal_id: 087ff601
+internal_id: header-3-087f
 labels: {}
 level: 1
 name: null
@@ -358,7 +358,7 @@ nested_entries:
           _type: header
         _type: text
         value: Header 1.1
-      internal_id: 3cc75f45
+      internal_id: header-1.1-3cc7
       labels: {}
       level: 2
       name: null
@@ -415,7 +415,7 @@ nested_entries:
         _type: header
       _type: text
       value: Header 1
-    internal_id: 1aa562c9
+    internal_id: header-1-1aa5
     labels: {}
     level: 1
     name: null
@@ -498,7 +498,7 @@ nested_entries:
         _type: header
       _type: text
       value: Header 2
-    internal_id: 3780c261
+    internal_id: header-2-3780
     labels: {}
     level: 1
     name: null
@@ -581,7 +581,7 @@ nested_entries:
         _type: header
       _type: text
       value: Header 3
-    internal_id: 087ff601
+    internal_id: header-3-087f
     labels: {}
     level: 1
     name: null
@@ -665,7 +665,7 @@ nested_entries:
         _type: header
       _type: text
       value: This header will appear in the document ToC.
-    internal_id: 348c5982
+    internal_id: this-header-will-appear-in-the-document-toc.-348c
     labels: {}
     level: 1
     name: null
@@ -722,7 +722,7 @@ plain_entries:
       _type: header
     _type: text
     value: Header 1
-  internal_id: 1aa562c9
+  internal_id: header-1-1aa5
   labels: {}
   level: 1
   name: null
@@ -778,7 +778,7 @@ plain_entries:
       _type: header
     _type: text
     value: Header 1.1
-  internal_id: 3cc75f45
+  internal_id: header-1.1-3cc7
   labels: {}
   level: 2
   name: null
@@ -834,7 +834,7 @@ plain_entries:
       _type: header
     _type: text
     value: Header 2
-  internal_id: 3780c261
+  internal_id: header-2-3780
   labels: {}
   level: 1
   name: null
@@ -890,7 +890,7 @@ plain_entries:
       _type: header
     _type: text
     value: Header 3
-  internal_id: 087ff601
+  internal_id: header-3-087f
   labels: {}
   level: 1
   name: null
@@ -947,7 +947,7 @@ plain_entries:
       _type: header
     _type: text
     value: This header will appear in the document ToC.
-  internal_id: 348c5982
+  internal_id: this-header-will-appear-in-the-document-toc.-348c
   labels: {}
   level: 1
   name: null
@@ -1031,7 +1031,7 @@ content:
       _type: header
     _type: text
     value: This header will NOT appear in the document TOC.
-  internal_id: 09057e00
+  internal_id: this-header-will-not-appear-in-the-document-toc.-0905
   labels: {}
   level: 1
   name: null
@@ -1118,7 +1118,7 @@ content:
       _type: header
     _type: text
     value: This header will appear in the document ToC.
-  internal_id: 348c5982
+  internal_id: this-header-will-appear-in-the-document-toc.-348c
   labels: {}
   level: 1
   name: null
@@ -1265,7 +1265,7 @@ nested_entries:
           _type: header
         _type: text
         value: Header 1.1
-      internal_id: 3cc75f45
+      internal_id: header-1.1-3cc7
       labels: {}
       level: 2
       name: null
@@ -1322,7 +1322,7 @@ nested_entries:
         _type: header
       _type: text
       value: Header 1
-    internal_id: 1aa562c9
+    internal_id: header-1-1aa5
     labels: {}
     level: 1
     name: null
@@ -1408,7 +1408,7 @@ nested_entries:
         _type: header
       _type: text
       value: Header 2
-    internal_id: 3780c261
+    internal_id: header-2-3780
     labels: {}
     level: 1
     name: null
@@ -1494,7 +1494,7 @@ nested_entries:
         _type: header
       _type: text
       value: Header 3
-    internal_id: 087ff601
+    internal_id: header-3-087f
     labels: {}
     level: 1
     name: null
@@ -1581,7 +1581,7 @@ nested_entries:
         _type: header
       _type: text
       value: This header will appear in the document ToC.
-    internal_id: 348c5982
+    internal_id: this-header-will-appear-in-the-document-toc.-348c
     labels: {}
     level: 1
     name: null
@@ -1638,7 +1638,7 @@ plain_entries:
       _type: header
     _type: text
     value: Header 1
-  internal_id: 1aa562c9
+  internal_id: header-1-1aa5
   labels: {}
   level: 1
   name: null
@@ -1694,7 +1694,7 @@ plain_entries:
       _type: header
     _type: text
     value: Header 1.1
-  internal_id: 3cc75f45
+  internal_id: header-1.1-3cc7
   labels: {}
   level: 2
   name: null
@@ -1750,7 +1750,7 @@ plain_entries:
       _type: header
     _type: text
     value: Header 2
-  internal_id: 3780c261
+  internal_id: header-2-3780
   labels: {}
   level: 1
   name: null
@@ -1806,7 +1806,7 @@ plain_entries:
       _type: header
     _type: text
     value: Header 3
-  internal_id: 087ff601
+  internal_id: header-3-087f
   labels: {}
   level: 1
   name: null
@@ -1863,7 +1863,7 @@ plain_entries:
       _type: header
     _type: text
     value: This header will appear in the document ToC.
-  internal_id: 348c5982
+  internal_id: this-header-will-appear-in-the-document-toc.-348c
   labels: {}
   level: 1
   name: null
@@ -2009,7 +2009,7 @@ nested_entries:
           _type: header
         _type: text
         value: Header 1.1
-      internal_id: 3cc75f45
+      internal_id: header-1.1-3cc7
       labels: {}
       level: 2
       name: null
@@ -2066,7 +2066,7 @@ nested_entries:
         _type: header
       _type: text
       value: Header 1
-    internal_id: 1aa562c9
+    internal_id: header-1-1aa5
     labels: {}
     level: 1
     name: null
@@ -2152,7 +2152,7 @@ nested_entries:
         _type: header
       _type: text
       value: Header 2
-    internal_id: 3780c261
+    internal_id: header-2-3780
     labels: {}
     level: 1
     name: null
@@ -2238,7 +2238,7 @@ nested_entries:
         _type: header
       _type: text
       value: Header 3
-    internal_id: 087ff601
+    internal_id: header-3-087f
     labels: {}
     level: 1
     name: null
@@ -2325,7 +2325,7 @@ nested_entries:
         _type: header
       _type: text
       value: This header will appear in the document ToC.
-    internal_id: 348c5982
+    internal_id: this-header-will-appear-in-the-document-toc.-348c
     labels: {}
     level: 1
     name: null
@@ -2382,7 +2382,7 @@ plain_entries:
       _type: header
     _type: text
     value: Header 1
-  internal_id: 1aa562c9
+  internal_id: header-1-1aa5
   labels: {}
   level: 1
   name: null
@@ -2438,7 +2438,7 @@ plain_entries:
       _type: header
     _type: text
     value: Header 1.1
-  internal_id: 3cc75f45
+  internal_id: header-1.1-3cc7
   labels: {}
   level: 2
   name: null
@@ -2494,7 +2494,7 @@ plain_entries:
       _type: header
     _type: text
     value: Header 2
-  internal_id: 3780c261
+  internal_id: header-2-3780
   labels: {}
   level: 1
   name: null
@@ -2550,7 +2550,7 @@ plain_entries:
       _type: header
     _type: text
     value: Header 3
-  internal_id: 087ff601
+  internal_id: header-3-087f
   labels: {}
   level: 1
   name: null
@@ -2607,8 +2607,9 @@ plain_entries:
       _type: header
     _type: text
     value: This header will appear in the document ToC.
-  internal_id: 348c5982
+  internal_id: this-header-will-appear-in-the-document-toc.-348c
   labels: {}
   level: 1
   name: null
 
+Mau stopped after the parsing step as requested

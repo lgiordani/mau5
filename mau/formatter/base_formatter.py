@@ -1,12 +1,8 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
-from mau.error import MauException
-from mau.lexers.base_lexer import MauLexerException
 from mau.nodes.node import Node
-from mau.parsers.base_parser import MauParserException
 from mau.text_buffer import Context, Position
 from mau.token import Token
-from mau.visitors.base_visitor import MauVisitorException
 
 
 class BaseFormatter(ABC):
@@ -25,20 +21,3 @@ class BaseFormatter(ABC):
 
     @classmethod
     def print_nodes(cls, nodes: list[Node], indent: int = 0): ...
-
-    @classmethod
-    @abstractmethod
-    def print_lexer_exception(cls, exc: MauLexerException): ...
-
-    @classmethod
-    @abstractmethod
-    def print_parser_exception(cls, exc: MauParserException): ...
-
-    @classmethod
-    @abstractmethod
-    def print_visitor_exception(cls, exc: MauVisitorException): ...
-
-    @classmethod
-    def print_mau_exception(cls, exc: MauException):
-        if isinstance(exc, MauVisitorException):
-            cls.print_visitor_exception(exc)

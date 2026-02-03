@@ -1,3 +1,6 @@
 visitor:
   html:
     pretty: false
+  templates:
+    providers:
+      - "mau-docs-templates"

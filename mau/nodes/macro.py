@@ -75,6 +75,10 @@ class MacroNode(Node):
         self.unnamed_args = unnamed_args or []
         self.named_args = named_args or {}
 
+    @property
+    def custom_attributes(self) -> list[str]:
+        return [self.name]
+
 
 class MacroClassNode(Node, NodeContentMixin):
     """Text with one or more classes."""

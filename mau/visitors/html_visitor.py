@@ -9,7 +9,7 @@ from pygments.lexers import get_lexer_by_name
 
 from mau.environment.environment import Environment
 from mau.nodes.node import Node
-from mau.visitors.jinja_visitor import JinjaVisitor, _load_templates_from_path
+from mau.visitors.jinja_visitor import JinjaVisitor, load_templates_from_path
 
 
 # This removes trailing spaces and newlines from
@@ -22,11 +22,9 @@ def filter_html(text):
     return "".join(dedent)
 
 
-templates = _load_templates_from_path(
+templates = load_templates_from_path(
     str(files(__package__).joinpath("templates/html")), filter_html
 )
-
-DEFAULT_TEMPLATES = {"include.html": ""}
 
 
 class HtmlVisitor(JinjaVisitor):
@@ -34,8 +32,7 @@ class HtmlVisitor(JinjaVisitor):
     extension = "html"
     templates_preprocess: Callable[[str], str] | None = filter_html
 
-    default_templates = Environment.from_dict(DEFAULT_TEMPLATES)
-    default_templates.dupdate(templates)
+    default_templates = Environment.from_dict(templates)
 
     def postprocess(self, result, *args, **kwargs):
         # Check if the visitor settings enable
@@ -52,6 +49,13 @@ class HtmlVisitor(JinjaVisitor):
 
     def _visit_text(self, node: Node, *args, **kwargs) -> dict:
         result = super()._visit_text(node, *args, **kwargs)
+
+        result["value"] = html.escape(result["value"])
+
+        return result
+
+    def _visit_verbatim(self, node: Node, *args, **kwargs) -> dict:
+        result = super()._visit_verbatim(node, *args, **kwargs)
 
         result["value"] = html.escape(result["value"])
 

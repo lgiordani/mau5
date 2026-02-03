@@ -1056,7 +1056,7 @@ content:
       _type: header
     _type: text
     value: This header will NOT appear in the document TOC.
-  internal_id: 09057e00
+  internal_id: this-header-will-not-appear-in-the-document-toc.-0905
   labels: {}
   level: 1
   name: null
@@ -1143,9 +1143,10 @@ content:
       _type: header
     _type: text
     value: This header will appear in the document ToC.
-  internal_id: 348c5982
+  internal_id: this-header-will-appear-in-the-document-toc.-348c
   labels: {}
   level: 1
   name: null
 labels: {}
 
+Mau stopped after the parsing step as requested

@@ -23,19 +23,6 @@ class RawFormatter(BaseFormatter):
             )
 
     @classmethod
-    def print_node_data(cls, node_data: dict):
-        local_data = {}
-        local_data.update(node_data)
-
-        node_type = local_data.pop("_type")
-        node_info = local_data.pop("_info")
-        node_info.pop("context")
-
-        print(f"Type: {node_type}")
-        print(f"Info: {node_info}")
-        print(f"Node values: {local_data}")
-
-    @classmethod
     def print_nodes(cls, nodes: list[Node], indent: int = 0):
         bv = BaseVisitor()
 

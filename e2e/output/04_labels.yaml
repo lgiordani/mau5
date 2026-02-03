@@ -133,3 +133,4 @@ lines:
     value: This paragraph will receive the labels defined above.
   labels: {}
 
+Mau stopped after the parsing step as requested

@@ -21,13 +21,16 @@ def default_header_internal_id(
     # Get the source text of the header.
     text = data.source_text
 
-    # Everything lowercase
+    # Everything lowercase.
     sanitised_text = text.lower()
 
-    # Get only letters, numbers, dashes, spaces, and dots
+    # Get only letters, numbers, dashes, spaces, and dots.
     sanitised_text = "".join(re.findall("[a-z0-9-\\. ]+", sanitised_text))
 
-    # Find the header level
+    # Replace spaces and underscores with dashes.
+    sanitised_text = re.sub(r"[\ _]+", "-", sanitised_text)
+
+    # Find the header level.
     level = data.level
 
     # Calculate a hash.

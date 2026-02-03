@@ -61,6 +61,10 @@ class IncludeNode(Node, NodeLabelsMixin):
         self.content_type = content_type
         self.uris = uris
 
+    @property
+    def custom_attributes(self) -> list[str]:
+        return [self.content_type]
+
 
 class IncludeImageNode(Node, NodeLabelsMixin):
     """Content included in the page.

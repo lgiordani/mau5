@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 
 from mau.nodes.list import ListItemNode, ListNode
 from mau.nodes.node import Node, NodeInfo
+from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
 
@@ -41,6 +42,16 @@ def _process_list_nodes(parser: DocumentParser, parent: Node):
         Token.generate(TokenType.EOF),
         Token.generate(TokenType.EOL),
     ]:
+        if not parser.tm.peek_token_is(TokenType.LIST):
+            # Something fishy happened in the source text.
+            # The next token is not the EOL or EOF,
+            # so we expect a new list item, but the
+            # token is not LIST.
+            raise create_parser_exception(
+                "Wrong syntax encountered while processing a list",
+                context=parser.tm.peek_token().context,
+            )
+
         if len(parser.tm.peek_token().value) == level:
             # The new item is on the same level
 

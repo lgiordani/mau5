@@ -50,7 +50,7 @@ content:
     _type: header
   _type: text
   value: Header 1
-internal_id: 1aa562c9
+internal_id: header-1-1aa5
 labels: {}
 level: 1
 name: null
@@ -107,7 +107,7 @@ content:
     _type: header
   _type: text
   value: Header 2
-internal_id: 871b88cc
+internal_id: header-2-871b
 labels: {}
 level: 2
 name: null
@@ -164,7 +164,7 @@ content:
     _type: header
   _type: text
   value: Header 3
-internal_id: 702dacdd
+internal_id: header-3-702d
 labels: {}
 level: 3
 name: null
@@ -221,7 +221,7 @@ content:
     _type: header
   _type: text
   value: Header 4
-internal_id: 6a61d757
+internal_id: header-4-6a61
 labels: {}
 level: 4
 name: null
@@ -278,7 +278,7 @@ content:
     _type: header
   _type: text
   value: Header 5
-internal_id: '31932687'
+internal_id: header-5-3193
 labels: {}
 level: 5
 name: null
@@ -335,7 +335,7 @@ content:
     _type: header
   _type: text
   value: Header 6
-internal_id: 6339b542
+internal_id: header-6-6339
 labels: {}
 level: 6
 name: null
@@ -392,7 +392,7 @@ content:
     _type: header
   _type: text
   value: Header 8
-internal_id: e458e1f2
+internal_id: header-8-e458
 labels: {}
 level: 8
 name: null
@@ -453,7 +453,7 @@ content:
     _type: header
   _type: text
   value: Header 1
-internal_id: 1aa562c9
+internal_id: header-1-1aa5
 labels:
   details:
   - _info:
@@ -539,7 +539,7 @@ content:
     _type: header
   _type: text
   value: This header won't receive arguments or labels
-internal_id: b478e74e
+internal_id: this-header-wont-receive-arguments-or-labels-b478
 labels: {}
 level: 1
 name: null
@@ -596,7 +596,7 @@ content:
     _type: header
   _type: text
   value: This header has the name myheader
-internal_id: ffd2a226
+internal_id: this-header-has-the-name-myheader-ffd2
 labels: {}
 level: 1
 name: myheader
@@ -773,7 +773,7 @@ lines:
           _type: header
         _type: text
         value: This header has the name myheader
-      internal_id: ffd2a226
+      internal_id: this-header-has-the-name-myheader-ffd2
       labels: {}
       level: 1
       name: myheader
@@ -806,3 +806,4 @@ lines:
     value: .
   labels: {}
 
+Mau stopped after the parsing step as requested
