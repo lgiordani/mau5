@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from mau.parsers.document_parser import DocumentParser
 
-from mau.nodes.node import NodeInfo
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
@@ -58,8 +58,8 @@ def paragraph_processor(parser: DocumentParser):
             node.lines[0].info.context,
             node.lines[-1].info.context,
         ),
-        **arguments.asdict(),
     )
+    node.arguments = NodeArguments(**arguments.asdict())
 
     # Extract labels from the buffer and
     # store them in the node data.

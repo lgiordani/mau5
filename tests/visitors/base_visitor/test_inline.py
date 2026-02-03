@@ -4,8 +4,8 @@ from mau.nodes.inline import (
     VerbatimNode,
     WordNode,
 )
-from mau.nodes.node import NodeInfo
 from mau.test_helpers import check_node_with_content, check_visit_node
+from mau.text_buffer import Context
 
 
 def test_word_node():
@@ -13,9 +13,13 @@ def test_word_node():
 
     expected = {
         "_type": "word",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "value": "somevalue",
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -26,9 +30,13 @@ def test_text_node():
 
     expected = {
         "_type": "text",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "value": "somevalue",
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -39,9 +47,13 @@ def test_verbatim_node():
 
     expected = {
         "_type": "verbatim",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "value": "somevalue",
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -52,10 +64,14 @@ def test_style_node_without_content():
 
     expected = {
         "_type": "style",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "style": "mystyle",
         "content": [],
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)

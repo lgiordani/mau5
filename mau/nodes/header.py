@@ -2,6 +2,7 @@ from collections.abc import Mapping, Sequence
 
 from mau.nodes.node import (
     Node,
+    NodeArguments,
     NodeContentMixin,
     NodeInfo,
     NodeLabelsMixin,
@@ -41,9 +42,10 @@ class HeaderNode(Node, NodeLabelsMixin, NodeContentMixin):
         labels: Mapping[str, Sequence[Node]] | None = None,
         source_text: str | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         self.level = level
         self.internal_id = internal_id
 

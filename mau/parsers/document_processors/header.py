@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 from mau.nodes.header import HeaderNode
-from mau.nodes.node import NodeInfo
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.text_buffer import Context
 from mau.token import TokenType
@@ -87,7 +87,8 @@ def header_processor(parser: DocumentParser):
         name=name,
         content=text_nodes,
         source_text=text_token.value,
-        info=NodeInfo(context=context, **arguments.asdict()),
+        info=NodeInfo(context=context),
+        arguments=NodeArguments(**arguments.asdict()),
     )
 
     # Assign the given parent to each node.

@@ -1,9 +1,7 @@
 from unittest.mock import Mock
 
 from mau.environment.environment import Environment
-from mau.nodes.node import (
-    NodeInfo,
-)
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.test_helpers import ATestNode, generate_context
 from mau.visitors.base_visitor import BaseVisitor
 
@@ -28,11 +26,13 @@ def test_visitor_no_node():
 def test_generic_node():
     node = ATestNode(
         "Some test content",
-        info=NodeInfo(
+        arguments=NodeArguments(
             unnamed_args=["arg1"],
             named_args={"key1": "value1"},
             tags=["tag1"],
             subtype="subtype1",
+        ),
+        info=NodeInfo(
             context=generate_context(1, 2, 3, 4),
         ),
     )
@@ -42,12 +42,10 @@ def test_generic_node():
 
     assert result == {
         "_type": "test",
-        "_info": {
-            "unnamed_args": ["arg1"],
-            "named_args": {"key1": "value1"},
-            "subtype": "subtype1",
-            "tags": ["tag1"],
-            "context": generate_context(1, 2, 3, 4).asdict(),
-        },
-        "_parent_info": {},
+        "_context": generate_context(1, 2, 3, 4).asdict(),
+        "unnamed_args": ["arg1"],
+        "named_args": {"key1": "value1"},
+        "subtype": "subtype1",
+        "tags": ["tag1"],
+        "parent": {},
     }

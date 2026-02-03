@@ -1,7 +1,7 @@
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.inline import TextNode
 from mau.nodes.list import ListItemNode, ListNode
-from mau.nodes.node import NodeInfo
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     check_parent,
@@ -348,8 +348,9 @@ def test_parse_numbered_list_continue():
                         info=NodeInfo(context=generate_context(5, 0, 5, 8)),
                     ),
                 ],
+                arguments=NodeArguments(named_args={"start": "auto"}),
                 info=NodeInfo(
-                    context=generate_context(5, 0, 5, 8), named_args={"start": "auto"}
+                    context=generate_context(5, 0, 5, 8),
                 ),
             ),
         ],
@@ -405,8 +406,9 @@ def test_parse_numbered_list_continue_after_forced():
                         info=NodeInfo(context=generate_context(4, 0, 4, 9)),
                     ),
                 ],
+                arguments=NodeArguments(named_args={"start": "20"}),
                 info=NodeInfo(
-                    context=generate_context(4, 0, 4, 9), named_args={"start": "20"}
+                    context=generate_context(4, 0, 4, 9),
                 ),
             ),
             ListNode(
@@ -425,8 +427,9 @@ def test_parse_numbered_list_continue_after_forced():
                         info=NodeInfo(context=generate_context(7, 0, 7, 9)),
                     ),
                 ],
+                arguments=NodeArguments(named_args={"start": "auto"}),
                 info=NodeInfo(
-                    context=generate_context(7, 0, 7, 9), named_args={"start": "auto"}
+                    context=generate_context(7, 0, 7, 9),
                 ),
             ),
         ],
@@ -509,12 +512,14 @@ def test_parse_list_arguments():
                         info=NodeInfo(context=generate_context(2, 0, 2, 33)),
                     ),
                 ],
-                info=NodeInfo(
-                    context=generate_context(2, 0, 2, 33),
+                arguments=NodeArguments(
                     unnamed_args=["arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
+                ),
+                info=NodeInfo(
+                    context=generate_context(2, 0, 2, 33),
                 ),
             ),
         ],

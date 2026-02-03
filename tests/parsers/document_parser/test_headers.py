@@ -2,7 +2,7 @@ from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.header import HeaderNode
 from mau.nodes.inline import TextNode
-from mau.nodes.node import NodeInfo
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     check_parent,
@@ -92,12 +92,14 @@ def test_header_attributes():
                     info=NodeInfo(context=generate_context(2, 2, 2, 22)),
                 )
             ],
-            info=NodeInfo(
-                context=generate_context(2, 0, 2, 22),
+            arguments=NodeArguments(
                 unnamed_args=["arg1"],
                 named_args={"key1": "value1"},
                 tags=["tag1"],
                 subtype="subtype1",
+            ),
+            info=NodeInfo(
+                context=generate_context(2, 0, 2, 22),
             ),
         )
     ]
@@ -124,12 +126,14 @@ def test_header_attributes_can_overwrite_ids():
                     info=NodeInfo(context=generate_context(2, 2, 2, 22)),
                 )
             ],
-            info=NodeInfo(
-                context=generate_context(2, 0, 2, 22),
+            arguments=NodeArguments(
                 unnamed_args=["arg1"],
                 named_args={},
                 tags=["tag1"],
                 subtype="subtype1",
+            ),
+            info=NodeInfo(
+                context=generate_context(2, 0, 2, 22),
             ),
         )
     ]

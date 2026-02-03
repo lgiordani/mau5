@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 from mau.nodes.list import ListItemNode, ListNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import Node, NodeArguments, NodeInfo
 from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
@@ -169,7 +169,8 @@ def list_processor(parser: DocumentParser):
 
     node.start = start
     node.content = nodes
-    node.info = NodeInfo(context=context, **arguments.asdict())
+    node.info = NodeInfo(context=context)
+    node.arguments = NodeArguments(**arguments.asdict())
 
     # Extract labels from the buffer and
     # store them in the node data.

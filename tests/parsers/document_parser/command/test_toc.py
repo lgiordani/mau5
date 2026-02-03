@@ -3,7 +3,7 @@ from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.command import TocItemNode, TocNode
 from mau.nodes.header import HeaderNode
 from mau.nodes.inline import TextNode
-from mau.nodes.node import NodeInfo
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     check_parent,
@@ -50,12 +50,14 @@ def test_command_toc_supports_inline_arguments():
             TocNode(
                 nested_entries=[],
                 plain_entries=[],
-                info=NodeInfo(
-                    context=generate_context(1, 0, 1, 5),
+                arguments=NodeArguments(
                     unnamed_args=["arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
+                ),
+                info=NodeInfo(
+                    context=generate_context(1, 0, 1, 5),
                 ),
             )
         ],
@@ -76,12 +78,14 @@ def test_command_toc_supports_boxed_arguments():
             TocNode(
                 nested_entries=[],
                 plain_entries=[],
-                info=NodeInfo(
-                    context=generate_context(2, 0, 2, 5),
+                arguments=NodeArguments(
                     unnamed_args=["arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
+                ),
+                info=NodeInfo(
+                    context=generate_context(2, 0, 2, 5),
                 ),
             )
         ],

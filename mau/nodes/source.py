@@ -1,6 +1,6 @@
 from collections.abc import Mapping, Sequence
 
-from mau.nodes.node import Node, NodeInfo, NodeLabelsMixin, ValueNode
+from mau.nodes.node import Node, NodeArguments, NodeInfo, NodeLabelsMixin, ValueNode
 
 
 class SourceMarkerNode(ValueNode):
@@ -21,9 +21,10 @@ class SourceLineNode(Node):
         highlight_style: str | None = None,
         marker: SourceMarkerNode | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
 
         self.line_number = line_number
         self.line_content = line_content
@@ -46,9 +47,10 @@ class SourceNode(Node, NodeLabelsMixin):
         content: Sequence[SourceLineNode] | None = None,
         labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
 
         NodeLabelsMixin.__init__(self, labels)
 

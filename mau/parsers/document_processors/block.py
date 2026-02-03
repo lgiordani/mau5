@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 from enum import Enum
 
 from mau.nodes.block import BlockNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import Node, NodeArguments, NodeInfo
 from mau.nodes.raw import RawLineNode, RawNode
 from mau.nodes.source import (
     SourceLineNode,
@@ -375,7 +375,8 @@ def block_processor(parser: DocumentParser):
     group_name = arguments.named_args.get("group")
     position = arguments.named_args.get("position")
 
-    node.info = NodeInfo(context=context, **arguments.asdict())
+    node.info = NodeInfo(context=context)
+    node.arguments = NodeArguments(**arguments.asdict())
 
     if group_name and position:
         parser.block_group_manager.add_block(group_name, position, node)

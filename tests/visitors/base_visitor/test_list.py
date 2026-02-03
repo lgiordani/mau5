@@ -1,6 +1,6 @@
 from mau.nodes.list import ListItemNode, ListNode
-from mau.nodes.node import NodeInfo
 from mau.test_helpers import check_visit_node
+from mau.text_buffer import Context
 
 
 def test_list_item_node():
@@ -8,10 +8,14 @@ def test_list_item_node():
 
     expected = {
         "_type": "list-item",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "content": [],
         "level": 3,
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -22,13 +26,17 @@ def test_list_node():
 
     expected = {
         "_type": "list",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "content": [],
         "labels": {},
         "ordered": True,
         "main_node": False,
         "start": 1,
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -39,13 +47,17 @@ def test_list_node_unordered():
 
     expected = {
         "_type": "list",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "content": [],
         "labels": {},
         "ordered": False,
         "main_node": False,
         "start": 1,
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -56,13 +68,17 @@ def test_list_node_parameters():
 
     expected = {
         "_type": "list",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "content": [],
         "labels": {},
         "ordered": True,
         "main_node": True,
         "start": 42,
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)

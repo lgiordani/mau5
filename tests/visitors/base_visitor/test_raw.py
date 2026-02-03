@@ -1,6 +1,6 @@
-from mau.nodes.node import NodeInfo
 from mau.nodes.raw import RawLineNode, RawNode
 from mau.test_helpers import check_visit_node
+from mau.text_buffer import Context
 
 
 def test_raw_content_line_node():
@@ -8,9 +8,13 @@ def test_raw_content_line_node():
 
     expected = {
         "_type": "raw-line",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "value": "somevalue",
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -23,24 +27,36 @@ def test_raw_content_node():
 
     expected = {
         "_type": "raw",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "classes": [],
         "labels": {},
         "content": [
             {
-                "_info": NodeInfo.empty().asdict(),
+                "_context": Context.empty().asdict(),
                 "_type": "raw-line",
-                "_parent_info": {},
                 "value": "somevalue1",
+                "named_args": {},
+                "parent": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
             },
             {
-                "_info": NodeInfo.empty().asdict(),
+                "_context": Context.empty().asdict(),
                 "_type": "raw-line",
                 "value": "somevalue2",
-                "_parent_info": {},
+                "named_args": {},
+                "parent": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
             },
         ],
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)

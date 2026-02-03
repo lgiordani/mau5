@@ -426,8 +426,8 @@ class JinjaVisitor(BaseVisitor):
         templates = _create_templates(
             node.type,
             self.extension,
-            node.info.subtype,
-            node.info.tags,
+            node.arguments.subtype,
+            node.arguments.tags,
             node.custom_attributes,
             self.template_prefixes,
             parent_prefix,

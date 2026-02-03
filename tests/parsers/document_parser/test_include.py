@@ -7,7 +7,7 @@ from mau.error import MauErrorType, MauException
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.include import IncludeImageNode, IncludeMauNode, IncludeNode
 from mau.nodes.inline import TextNode
-from mau.nodes.node import NodeInfo
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -38,12 +38,14 @@ def test_include_content_inline_arguments():
             IncludeNode(
                 "ctype1",
                 ["/path/to/it", "/another/path"],
-                info=NodeInfo(
-                    context=generate_context(1, 0, 1, 9),
+                arguments=NodeArguments(
                     unnamed_args=[],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
+                ),
+                info=NodeInfo(
+                    context=generate_context(1, 0, 1, 9),
                 ),
             ),
         ],
@@ -64,12 +66,14 @@ def test_include_content_boxed_arguments():
             IncludeNode(
                 "ctype1",
                 ["/path/to/it", "/another/path"],
-                info=NodeInfo(
-                    context=generate_context(2, 0, 2, 9),
+                arguments=NodeArguments(
                     unnamed_args=[],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
+                ),
+                info=NodeInfo(
+                    context=generate_context(2, 0, 2, 9),
                 ),
             ),
         ],
@@ -164,12 +168,14 @@ def test_header_uses_control_positive():
             IncludeNode(
                 "ctype1",
                 ["/path/to/it"],
-                info=NodeInfo(
-                    context=generate_context(2, 0, 2, 9),
+                arguments=NodeArguments(
                     unnamed_args=[],
                     named_args={},
                     tags=[],
                     subtype=None,
+                ),
+                info=NodeInfo(
+                    context=generate_context(2, 0, 2, 9),
                 ),
             ),
         ],
@@ -204,12 +210,14 @@ def test_include_image_with_only_path():
         [
             IncludeImageNode(
                 "/path/to/it.jpg",
-                info=NodeInfo(
-                    context=generate_context(1, 0, 1, 8),
+                arguments=NodeArguments(
                     unnamed_args=[],
                     named_args={},
                     tags=[],
                     subtype=None,
+                ),
+                info=NodeInfo(
+                    context=generate_context(1, 0, 1, 8),
                 ),
             ),
         ],
@@ -230,12 +238,14 @@ def test_include_image_with_alt_text_and_classes():
                 "/path/to/it.jpg",
                 "Alt text",
                 ["class1", "class2"],
-                info=NodeInfo(
-                    context=generate_context(1, 0, 1, 8),
+                arguments=NodeArguments(
                     unnamed_args=[],
                     named_args={},
                     tags=[],
                     subtype=None,
+                ),
+                info=NodeInfo(
+                    context=generate_context(1, 0, 1, 8),
                 ),
             ),
         ],
@@ -307,12 +317,14 @@ def test_include_file():
         [
             IncludeMauNode(
                 "/path/to/it",
-                info=NodeInfo(
-                    context=generate_context(1, 0, 1, 6),
+                arguments=NodeArguments(
                     unnamed_args=[],
                     named_args={},
                     tags=[],
                     subtype=None,
+                ),
+                info=NodeInfo(
+                    context=generate_context(1, 0, 1, 6),
                 ),
                 content=[
                     ParagraphNode(

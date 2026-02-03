@@ -1,6 +1,6 @@
 from mau.environment.environment import Environment
 from mau.nodes.inline import TextNode
-from mau.nodes.node import NodeInfo
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.test_helpers import generate_context
 from mau.visitors.jinja_visitor import JinjaVisitor
@@ -12,9 +12,9 @@ def test_page_paragraph_node():
         # "sentence.j2": "{{ content }}",
         "paragraph-line.j2": "{{ content }}",
         "paragraph.j2": (
-            "{{ lines }} - {{ labels.title }} - {{ _info.unnamed_args | join(',') }} - "
-            "{% for key, value in _info.named_args | items %}{{ key }}:{{ value }}{% endfor %} - "
-            "{{ _info.tags | join(',') }}"
+            "{{ lines }} - {{ labels.title }} - {{ unnamed_args | join(',') }} - "
+            "{% for key, value in named_args | items %}{{ key }}:{{ value }}{% endfor %} - "
+            "{{ tags | join(',') }}"
         ),
     }
 
@@ -29,12 +29,14 @@ def test_page_paragraph_node():
     node = ParagraphNode(
         labels={"title": [TextNode("sometitle")]},
         lines=[ParagraphLineNode(content=[TextNode("Just some text")])],
-        info=NodeInfo(
-            context=generate_context(0, 0, 0, 0),
+        arguments=NodeArguments(
             unnamed_args=unnamed_args,
             named_args=named_args,
             tags=tags,
             subtype="subtype1",
+        ),
+        info=NodeInfo(
+            context=generate_context(0, 0, 0, 0),
         ),
     )
 

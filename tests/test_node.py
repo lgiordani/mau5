@@ -1,18 +1,26 @@
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import Node, NodeArguments, NodeInfo
 from mau.test_helpers import generate_context
 
 
 def test_info():
     info = NodeInfo(
         context=generate_context(0, 0, 0, 0),
+    )
+
+    assert info.asdict() == {
+        "context": generate_context(0, 0, 0, 0).asdict(),
+    }
+
+
+def test_arguments():
+    arguments = NodeArguments(
         unnamed_args=["arg1"],
         named_args={"key1": "value1"},
         tags=["tag1"],
         subtype="subtype1",
     )
 
-    assert info.asdict() == {
-        "context": generate_context(0, 0, 0, 0).asdict(),
+    assert arguments.asdict() == {
         "unnamed_args": ["arg1"],
         "named_args": {"key1": "value1"},
         "tags": ["tag1"],

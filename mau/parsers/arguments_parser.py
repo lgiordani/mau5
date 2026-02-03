@@ -50,6 +50,7 @@ def set_names(
     return unnamed_args, named_args
 
 
+# TODO unify with NodeArguments
 @dataclass
 class Arguments:
     unnamed_args: list[str] = field(default_factory=list)

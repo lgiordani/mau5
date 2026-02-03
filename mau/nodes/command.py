@@ -7,6 +7,7 @@ from mau.nodes.footnote import FootnoteNode
 from mau.nodes.header import HeaderNode
 from mau.nodes.node import (
     Node,
+    NodeArguments,
     NodeInfo,
     NodeLabelsMixin,
 )
@@ -32,9 +33,10 @@ class CommandNode(Node, NodeLabelsMixin):
         name: str,
         labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         NodeLabelsMixin.__init__(self, labels)
 
         self.name = name
@@ -47,9 +49,10 @@ class FootnotesItemNode(Node):
         self,
         footnote: FootnoteNode,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
 
         self.footnote = footnote
 
@@ -64,9 +67,10 @@ class FootnotesNode(Node, NodeLabelsMixin):
         footnotes: Sequence[FootnotesItemNode] | None = None,
         labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         NodeLabelsMixin.__init__(self, labels)
 
         self.footnotes = footnotes or []
@@ -85,9 +89,10 @@ class TocItemNode(Node):
         header: HeaderNode,
         entries: Sequence[TocItemNode] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
 
         self.header = header
         self.entries = entries or []
@@ -104,9 +109,10 @@ class TocNode(Node, NodeLabelsMixin):
         nested_entries: Sequence[TocItemNode] | None = None,
         labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         NodeLabelsMixin.__init__(self, labels)
 
         self.plain_entries = plain_entries or []
@@ -122,9 +128,10 @@ class BlockGroupNode(Node, NodeLabelsMixin):
         blocks: Mapping[str, BlockNode] | None = None,
         labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         NodeLabelsMixin.__init__(self, labels)
 
         self.name = name

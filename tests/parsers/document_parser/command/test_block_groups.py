@@ -5,7 +5,7 @@ from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNode
 from mau.nodes.command import BlockGroupNode
 from mau.nodes.inline import TextNode
-from mau.nodes.node import NodeInfo
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -55,9 +55,11 @@ def test_group():
                 info=NodeInfo(context=generate_context(3, 0, 3, 12)),
             )
         ],
+        arguments=NodeArguments(
+            named_args={"group": "group1", "position": "position1"},
+        ),
         info=NodeInfo(
             context=generate_context(2, 0, 4, 4),
-            named_args={"group": "group1", "position": "position1"},
         ),
     )
 
@@ -78,9 +80,11 @@ def test_group():
                 info=NodeInfo(context=generate_context(8, 0, 8, 12)),
             )
         ],
+        arguments=NodeArguments(
+            named_args={"group": "group1", "position": "position2"},
+        ),
         info=NodeInfo(
             context=generate_context(7, 0, 9, 4),
-            named_args={"group": "group1", "position": "position2"},
         ),
     )
 
@@ -90,8 +94,9 @@ def test_group():
             BlockGroupNode(
                 "group1",
                 blocks={"position1": block_node1, "position2": block_node2},
+                arguments=NodeArguments(unnamed_args=["group1"]),
                 info=NodeInfo(
-                    context=generate_context(11, 0, 11, 12), unnamed_args=["group1"]
+                    context=generate_context(11, 0, 11, 12),
                 ),
             )
         ],
@@ -146,9 +151,11 @@ def test_command_toc_supports_inline_arguments():
                 info=NodeInfo(context=generate_context(3, 0, 3, 12)),
             )
         ],
+        arguments=NodeArguments(
+            named_args={"group": "group1", "position": "position1"},
+        ),
         info=NodeInfo(
             context=generate_context(2, 0, 4, 4),
-            named_args={"group": "group1", "position": "position1"},
         ),
     )
 
@@ -158,12 +165,14 @@ def test_command_toc_supports_inline_arguments():
             BlockGroupNode(
                 "group1",
                 blocks={"position1": block_node1},
-                info=NodeInfo(
-                    context=generate_context(6, 0, 6, 12),
+                arguments=NodeArguments(
                     unnamed_args=["group1", "arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
+                ),
+                info=NodeInfo(
+                    context=generate_context(6, 0, 6, 12),
                 ),
             )
         ],
@@ -200,9 +209,11 @@ def test_command_toc_supports_boxed_arguments():
                 info=NodeInfo(context=generate_context(3, 0, 3, 12)),
             )
         ],
+        arguments=NodeArguments(
+            named_args={"group": "group1", "position": "position1"},
+        ),
         info=NodeInfo(
             context=generate_context(2, 0, 4, 4),
-            named_args={"group": "group1", "position": "position1"},
         ),
     )
 
@@ -212,12 +223,14 @@ def test_command_toc_supports_boxed_arguments():
             BlockGroupNode(
                 "group1",
                 blocks={"position1": block_node1},
-                info=NodeInfo(
-                    context=generate_context(7, 0, 7, 12),
+                arguments=NodeArguments(
                     unnamed_args=["group1", "arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
+                ),
+                info=NodeInfo(
+                    context=generate_context(7, 0, 7, 12),
                 ),
             )
         ],
@@ -254,9 +267,11 @@ def test_command_toc_supports_labels():
                 info=NodeInfo(context=generate_context(3, 0, 3, 12)),
             )
         ],
+        arguments=NodeArguments(
+            named_args={"group": "group1", "position": "position1"},
+        ),
         info=NodeInfo(
             context=generate_context(2, 0, 4, 4),
-            named_args={"group": "group1", "position": "position1"},
         ),
     )
 
@@ -274,9 +289,11 @@ def test_command_toc_supports_labels():
                         )
                     ]
                 },
+                arguments=NodeArguments(
+                    unnamed_args=["group1"],
+                ),
                 info=NodeInfo(
                     context=generate_context(7, 0, 7, 12),
-                    unnamed_args=["group1"],
                 ),
             )
         ],

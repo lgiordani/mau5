@@ -8,19 +8,23 @@ from mau.nodes.command import (
 )
 from mau.nodes.footnote import FootnoteNode
 from mau.nodes.header import HeaderNode
-from mau.nodes.node import NodeInfo
 from mau.test_helpers import check_visit_node
+from mau.text_buffer import Context
 
 
 def test_footnotes_node_empty():
     node = FootnotesNode()
 
     expected = {
+        "_context": Context.empty().asdict(),
         "_type": "footnotes",
-        "_info": NodeInfo.empty().asdict(),
-        "_parent_info": {},
         "footnotes": [],
         "labels": {},
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -35,40 +39,60 @@ def test_footnotes_node():
     node = FootnotesNode(footnotes=footnotes_items)
 
     expected = {
+        "_context": Context.empty().asdict(),
         "_type": "footnotes",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
         "footnotes": [
             {
                 "_type": "footnotes-item",
-                "_parent_info": {},
-                "_info": NodeInfo.empty().asdict(),
+                "_context": Context.empty().asdict(),
                 "footnote": {
+                    "_context": Context.empty().asdict(),
                     "_type": "footnote",
-                    "_parent_info": {},
-                    "_info": NodeInfo.empty().asdict(),
-                    "name": "somename1",
-                    "public_id": None,
-                    "internal_id": None,
                     "content": [],
+                    "internal_id": None,
+                    "name": "somename1",
+                    "named_args": {},
+                    "parent": {},
+                    "public_id": None,
+                    "subtype": None,
+                    "tags": [],
+                    "unnamed_args": [],
                 },
+                "named_args": {},
+                "parent": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
             },
             {
                 "_type": "footnotes-item",
-                "_parent_info": {},
-                "_info": NodeInfo.empty().asdict(),
+                "_context": Context.empty().asdict(),
                 "footnote": {
+                    "_context": Context.empty().asdict(),
                     "_type": "footnote",
-                    "_parent_info": {},
-                    "_info": NodeInfo.empty().asdict(),
-                    "name": "somename2",
-                    "public_id": None,
-                    "internal_id": None,
                     "content": [],
+                    "internal_id": None,
+                    "name": "somename2",
+                    "named_args": {},
+                    "parent": {},
+                    "public_id": None,
+                    "subtype": None,
+                    "tags": [],
+                    "unnamed_args": [],
                 },
+                "named_args": {},
+                "parent": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
             },
         ],
         "labels": {},
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -82,19 +106,27 @@ def test_toc_item_node_without_entries():
 
     expected = {
         "_type": "toc-item",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "entries": [],
         "header": {
             "_type": "header",
-            "_parent_info": {},
-            "_info": NodeInfo.empty().asdict(),
+            "_context": Context.empty().asdict(),
             "level": 1,
             "internal_id": None,
             "name": None,
             "labels": {},
             "content": [],
+            "named_args": {},
+            "parent": {},
+            "subtype": None,
+            "tags": [],
+            "unnamed_args": [],
         },
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -113,36 +145,52 @@ def test_toc_item_node_with_entries():
 
     expected = {
         "_type": "toc-item",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "entries": [
             {
                 "_type": "toc-item",
-                "_parent_info": {},
-                "_info": NodeInfo.empty().asdict(),
+                "_context": Context.empty().asdict(),
                 "entries": [],
                 "header": {
                     "_type": "header",
-                    "_parent_info": {},
-                    "_info": NodeInfo.empty().asdict(),
+                    "_context": Context.empty().asdict(),
                     "level": 2,
                     "internal_id": None,
                     "name": None,
                     "labels": {},
                     "content": [],
+                    "named_args": {},
+                    "parent": {},
+                    "subtype": None,
+                    "tags": [],
+                    "unnamed_args": [],
                 },
+                "named_args": {},
+                "parent": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
             }
         ],
         "header": {
             "_type": "header",
-            "_parent_info": {},
-            "_info": NodeInfo.empty().asdict(),
+            "_context": Context.empty().asdict(),
             "level": 1,
             "internal_id": None,
             "name": None,
             "labels": {},
             "content": [],
+            "named_args": {},
+            "parent": {},
+            "subtype": None,
+            "tags": [],
+            "unnamed_args": [],
         },
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -153,11 +201,15 @@ def test_toc_node():
 
     expected = {
         "_type": "toc",
-        "_info": NodeInfo.empty().asdict(),
-        "_parent_info": {},
+        "_context": Context.empty().asdict(),
         "plain_entries": [],
         "nested_entries": [],
         "labels": {},
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -168,11 +220,15 @@ def test_block_group_node_empty():
 
     expected = {
         "_type": "block-group",
-        "_info": NodeInfo.empty().asdict(),
-        "_parent_info": {},
+        "_context": Context.empty().asdict(),
         "name": "somename",
         "blocks": {},
         "labels": {},
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -188,28 +244,40 @@ def test_block_group_node_with_blocks():
 
     expected = {
         "_type": "block-group",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "name": "somename",
         "labels": {},
         "blocks": {
             "position1": {
                 "_type": "block",
-                "_parent_info": {},
-                "_info": NodeInfo.empty().asdict(),
+                "_context": Context.empty().asdict(),
                 "classes": [],
                 "content": [],
                 "labels": {},
+                "named_args": {},
+                "parent": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
             },
             "position2": {
                 "_type": "block",
-                "_parent_info": {},
-                "_info": NodeInfo.empty().asdict(),
+                "_context": Context.empty().asdict(),
                 "classes": [],
                 "content": [],
                 "labels": {},
+                "named_args": {},
+                "parent": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
             },
         },
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)

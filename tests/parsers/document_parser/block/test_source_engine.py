@@ -1,5 +1,5 @@
 from mau.lexers.document_lexer import DocumentLexer
-from mau.nodes.node import NodeInfo
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.nodes.source import (
     SourceLineNode,
     SourceMarkerNode,
@@ -53,9 +53,10 @@ def test_source_engine_empty_block_language():
         [
             SourceNode(
                 classes=[],
-                info=NodeInfo(
-                    context=generate_context(2, 0, 3, 4), unnamed_args=["python"]
+                arguments=NodeArguments(
+                    unnamed_args=["python"],
                 ),
+                info=NodeInfo(context=generate_context(2, 0, 3, 4)),
             ),
         ],
     )

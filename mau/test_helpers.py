@@ -4,6 +4,7 @@ from collections.abc import MutableMapping, MutableSequence, Sequence
 from mau.environment.environment import Environment
 from mau.nodes.node import (
     Node,
+    NodeArguments,
     NodeContentMixin,
     NodeInfo,
     NodeLabelsMixin,
@@ -48,13 +49,21 @@ def check_node_with_content(node):
     assert result["content"] == [
         {
             "_type": "none",
-            "_parent_info": {},
-            "_info": NodeInfo.empty().asdict(),
+            "_context": Context.empty().asdict(),
+            "named_args": {},
+            "parent": {},
+            "subtype": None,
+            "tags": [],
+            "unnamed_args": [],
         },
         {
             "_type": "none",
-            "_parent_info": {},
-            "_info": NodeInfo.empty().asdict(),
+            "_context": Context.empty().asdict(),
+            "named_args": {},
+            "parent": {},
+            "subtype": None,
+            "tags": [],
+            "unnamed_args": [],
         },
     ]
 
@@ -70,20 +79,32 @@ def check_node_with_labels(node):
         "label1": [
             {
                 "_type": "none",
-                "_parent_info": {},
-                "_info": NodeInfo.empty().asdict(),
+                "_context": Context.empty().asdict(),
+                "named_args": {},
+                "parent": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
             },
             {
                 "_type": "none",
-                "_parent_info": {},
-                "_info": NodeInfo.empty().asdict(),
+                "_context": Context.empty().asdict(),
+                "named_args": {},
+                "parent": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
             },
         ],
         "label2": [
             {
                 "_type": "none",
-                "_parent_info": {},
-                "_info": NodeInfo.empty().asdict(),
+                "_context": Context.empty().asdict(),
+                "named_args": {},
+                "parent": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
             },
         ],
     }
@@ -115,7 +136,7 @@ def compare_nodes_sequence(nodes: Sequence[Node], expected: Sequence[Node]):
     # establish the parent-child
     # relationship.
     def remove_parent(data: dict) -> dict:
-        data["_parent_info"] = {}
+        data["parent"] = {}
 
         return data
 
@@ -249,9 +270,10 @@ class ATestNode(Node, NodeLabelsMixin, NodeContentMixin):
         content: list[Node] | None = None,
         labels: dict[str, list[Node]] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         self.value = value
 
         NodeContentMixin.__init__(self, content)

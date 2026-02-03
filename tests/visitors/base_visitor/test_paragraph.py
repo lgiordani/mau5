@@ -1,6 +1,7 @@
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.node import Node
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.test_helpers import check_visit_node
+from mau.text_buffer import Context
 
 
 def test_paragraph_line_node_without_content():
@@ -8,10 +9,14 @@ def test_paragraph_line_node_without_content():
 
     expected = {
         "_type": "paragraph-line",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "content": [],
         "labels": {},
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -25,29 +30,45 @@ def test_paragraph_line_node_with_content():
 
     expected = {
         "_type": "paragraph-line",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "content": [
             {
                 "_type": "none",
-                "_parent_info": {},
-                "_info": NodeInfo.empty().asdict(),
+                "_context": Context.empty().asdict(),
+                "named_args": {},
+                "parent": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
             },
             {
                 "_type": "none",
-                "_parent_info": {},
-                "_info": NodeInfo.empty().asdict(),
+                "_context": Context.empty().asdict(),
+                "named_args": {},
+                "parent": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
             },
         ],
         "labels": {
             "somelabel": [
                 {
                     "_type": "none",
-                    "_parent_info": {},
-                    "_info": NodeInfo.empty().asdict(),
+                    "_context": Context.empty().asdict(),
+                    "named_args": {},
+                    "parent": {},
+                    "subtype": None,
+                    "tags": [],
+                    "unnamed_args": [],
                 }
             ],
         },
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -58,10 +79,14 @@ def test_paragraph_node_without_content():
 
     expected = {
         "_type": "paragraph",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "lines": [],
         "labels": {},
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -75,33 +100,49 @@ def test_paragraph_node_with_content():
 
     expected = {
         "_type": "paragraph",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "lines": [
             {
                 "_type": "paragraph-line",
-                "_parent_info": {},
-                "_info": NodeInfo.empty().asdict(),
+                "_context": Context.empty().asdict(),
                 "content": [],
                 "labels": {},
+                "named_args": {},
+                "parent": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
             },
             {
                 "_type": "paragraph-line",
-                "_parent_info": {},
-                "_info": NodeInfo.empty().asdict(),
+                "_context": Context.empty().asdict(),
                 "content": [],
                 "labels": {},
+                "named_args": {},
+                "parent": {},
+                "subtype": None,
+                "tags": [],
+                "unnamed_args": [],
             },
         ],
         "labels": {
             "somelabel": [
                 {
                     "_type": "none",
-                    "_parent_info": {},
-                    "_info": NodeInfo.empty().asdict(),
+                    "_context": Context.empty().asdict(),
+                    "named_args": {},
+                    "parent": {},
+                    "subtype": None,
+                    "tags": [],
+                    "unnamed_args": [],
                 }
             ],
         },
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)

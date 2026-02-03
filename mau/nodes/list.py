@@ -2,6 +2,7 @@ from collections.abc import Mapping, Sequence
 
 from mau.nodes.node import (
     Node,
+    NodeArguments,
     NodeContentMixin,
     NodeInfo,
     NodeLabelsMixin,
@@ -46,10 +47,11 @@ class ListItemNode(WrapperNode):
         self,
         level: int,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
         content: Sequence[Node] | None = None,
     ):
-        super().__init__(parent=parent, info=info, content=content)
+        super().__init__(parent=parent, arguments=arguments, info=info, content=content)
 
         self.level = level
 
@@ -67,9 +69,10 @@ class ListNode(Node, NodeContentMixin, NodeLabelsMixin):
         content: Sequence[Node] | None = None,
         labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         NodeContentMixin.__init__(self, content)
         NodeLabelsMixin.__init__(self, labels)
 

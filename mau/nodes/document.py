@@ -1,6 +1,6 @@
 from collections.abc import Mapping
 
-from mau.nodes.node import Node, NodeInfo, NodeLabelsMixin, WrapperNode
+from mau.nodes.node import Node, NodeArguments, NodeInfo, NodeLabelsMixin, WrapperNode
 
 HORIZONTAL_RULE_HELP = """
 Syntax:
@@ -22,9 +22,10 @@ class HorizontalRuleNode(Node, NodeLabelsMixin):
         self,
         labels: Mapping[str, list[Node]] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         NodeLabelsMixin.__init__(self, labels)
 
 

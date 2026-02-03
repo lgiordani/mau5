@@ -2,7 +2,7 @@ from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.inline import StyleNode, TextNode
 from mau.nodes.macro import MacroLinkNode
-from mau.nodes.node import NodeInfo
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -259,12 +259,14 @@ def test_attributes_paragraph():
                         info=NodeInfo(context=generate_context(2, 0, 2, 12)),
                     )
                 ],
-                info=NodeInfo(
-                    context=generate_context(2, 0, 2, 12),
+                arguments=NodeArguments(
                     unnamed_args=["arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
+                ),
+                info=NodeInfo(
+                    context=generate_context(2, 0, 2, 12),
                 ),
             ),
         ],

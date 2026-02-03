@@ -88,7 +88,7 @@ class HtmlVisitor(JinjaVisitor):
 
         # Override the globally set highlighter if
         # this specific block has a different one.
-        highlighter = node.info.named_args.pop("highlighter", highlighter_name)
+        highlighter = node.arguments.named_args.pop("highlighter", highlighter_name)
 
         if highlighter == "pygments":
             # The Pygments lexer for the given language.
@@ -104,7 +104,7 @@ class HtmlVisitor(JinjaVisitor):
             # prefix, and store them in a dictionary.
             node_pygments_config = {
                 k.replace("pygments.", ""): v
-                for k, v in node.info.named_args.items()
+                for k, v in node.aguments.named_args.items()
                 if k.startswith("pygments.")
             }
 

@@ -1,6 +1,12 @@
 from collections.abc import Mapping, Sequence
 
-from mau.nodes.node import Node, NodeContentMixin, NodeInfo, NodeLabelsMixin
+from mau.nodes.node import (
+    Node,
+    NodeArguments,
+    NodeContentMixin,
+    NodeInfo,
+    NodeLabelsMixin,
+)
 
 INCLUDE_HELP = """
 Syntax:
@@ -53,9 +59,10 @@ class IncludeNode(Node, NodeLabelsMixin):
         uris: Sequence[str],
         labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         NodeLabelsMixin.__init__(self, labels)
 
         self.content_type = content_type
@@ -82,9 +89,10 @@ class IncludeImageNode(Node, NodeLabelsMixin):
         classes: Sequence[str] | None = None,
         labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         NodeLabelsMixin.__init__(self, labels)
 
         self.uri = uri
@@ -108,9 +116,10 @@ class IncludeMauNode(Node, NodeContentMixin, NodeLabelsMixin):
         content: Sequence[Node] | None = None,
         labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         NodeContentMixin.__init__(self, content)
         NodeLabelsMixin.__init__(self, labels)
 

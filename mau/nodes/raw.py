@@ -1,6 +1,6 @@
 from collections.abc import Mapping, Sequence
 
-from mau.nodes.node import Node, NodeInfo, NodeLabelsMixin, ValueNode
+from mau.nodes.node import Node, NodeArguments, NodeInfo, NodeLabelsMixin, ValueNode
 
 
 class RawLineNode(ValueNode):
@@ -24,9 +24,10 @@ class RawNode(Node, NodeLabelsMixin):
         content: Sequence[RawLineNode] | None = None,
         labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         NodeLabelsMixin.__init__(self, labels)
 
         self.content = content or []

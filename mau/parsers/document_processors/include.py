@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 from mau.nodes.include import IncludeImageNode, IncludeMauNode, IncludeNode
-from mau.nodes.node import NodeInfo
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.parsers.arguments_parser import Arguments, ArgumentsParser
 from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
@@ -85,7 +85,8 @@ def include_processor(parser: DocumentParser):
             node = _parse_generic(parser, content_type.value, arguments, context)
 
     # Build the node info.
-    node.info = NodeInfo(context=context, **arguments.asdict())
+    node.info = NodeInfo(context=context)
+    node.arguments = NodeArguments(**arguments.asdict())
 
     # Extract labels from the buffer and
     # store them in the node data.

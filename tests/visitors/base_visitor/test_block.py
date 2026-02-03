@@ -1,6 +1,6 @@
 from mau.nodes.block import BlockNode
-from mau.nodes.node import NodeInfo
 from mau.test_helpers import check_visit_node
+from mau.text_buffer import Context
 
 
 def test_block_node():
@@ -8,11 +8,15 @@ def test_block_node():
 
     expected = {
         "_type": "block",
-        "_info": NodeInfo.empty().asdict(),
-        "_parent_info": {},
+        "_context": Context.empty().asdict(),
+        "parent": {},
         "classes": [],
         "labels": {},
         "content": [],
+        "unnamed_args": [],
+        "named_args": {},
+        "tags": [],
+        "subtype": None,
     }
 
     check_visit_node(node, expected)

@@ -1,10 +1,10 @@
-from mau.nodes.node import NodeInfo
 from mau.nodes.source import (
     SourceLineNode,
     SourceMarkerNode,
     SourceNode,
 )
 from mau.test_helpers import check_visit_node
+from mau.text_buffer import Context
 
 
 def test_source_line_marker_node():
@@ -12,9 +12,13 @@ def test_source_line_marker_node():
 
     expected = {
         "_type": "source-marker",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "value": "somemarker",
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -25,12 +29,16 @@ def test_source_line_node():
 
     expected = {
         "_type": "source-line",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "line_number": "42",
         "line_content": "somecontent",
         "highlight_style": None,
         "marker": {},
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -42,17 +50,25 @@ def test_source_line_node_with_marker():
 
     expected = {
         "_type": "source-line",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "line_number": "42",
         "line_content": "somecontent",
         "highlight_style": None,
         "marker": {
             "_type": "source-marker",
-            "_parent_info": {},
-            "_info": NodeInfo.empty().asdict(),
+            "_context": Context.empty().asdict(),
             "value": "somemarker",
+            "named_args": {},
+            "parent": {},
+            "subtype": None,
+            "tags": [],
+            "unnamed_args": [],
         },
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -63,12 +79,16 @@ def test_source_node():
 
     expected = {
         "_type": "source",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "language": "somelanguage",
         "classes": [],
         "content": [],
         "labels": {},
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)

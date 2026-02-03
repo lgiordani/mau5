@@ -2,7 +2,7 @@ from collections.abc import Mapping, Sequence
 
 from mau.nodes.footnote import FootnoteNode
 from mau.nodes.header import HeaderNode
-from mau.nodes.node import Node, NodeContentMixin, NodeInfo, ValueNode
+from mau.nodes.node import Node, NodeArguments, NodeContentMixin, NodeInfo, ValueNode
 
 MACRO_HELP = """
 Syntax:
@@ -68,9 +68,10 @@ class MacroNode(Node):
         unnamed_args: Sequence[str] | None = None,
         named_args: Mapping[str, str] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         self.name = name
         self.unnamed_args = unnamed_args or []
         self.named_args = named_args or {}
@@ -90,9 +91,10 @@ class MacroClassNode(Node, NodeContentMixin):
         classes: Sequence[str],
         content: Sequence[Node] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         self.classes = classes
         NodeContentMixin.__init__(self, content)
 
@@ -107,9 +109,10 @@ class MacroLinkNode(Node, NodeContentMixin):
         target: str,
         content: Sequence[Node] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
 
         self.target = target
         NodeContentMixin.__init__(self, content)
@@ -127,9 +130,10 @@ class MacroImageNode(Node):
         width: str | None = None,
         height: str | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
 
         self.uri = uri
         self.alt_text = alt_text
@@ -148,9 +152,10 @@ class MacroHeaderNode(Node, NodeContentMixin):
         header: HeaderNode | None = None,
         content: Sequence[Node] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
 
         # This is the internal name of the
         # header that we are pointing to.
@@ -171,9 +176,10 @@ class MacroFootnoteNode(Node):
         self,
         footnote: FootnoteNode,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
 
         self.footnote = footnote
 

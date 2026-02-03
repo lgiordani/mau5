@@ -8,7 +8,7 @@ from mau.nodes.footnote import FootnoteNode
 from mau.nodes.inline import TextNode
 from mau.nodes.list import ListItemNode, ListNode
 from mau.nodes.macro import MacroFootnoteNode
-from mau.nodes.node import NodeInfo
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -274,12 +274,14 @@ def test_command_footnotes_supports_boxed_arguments():
         parser.nodes,
         [
             FootnotesNode(
-                info=NodeInfo(
-                    context=generate_context(2, 0, 2, 11),
+                arguments=NodeArguments(
                     named_args={"key1": "value1"},
                     unnamed_args=["arg1"],
                     subtype="subtype1",
                     tags=["tag1"],
+                ),
+                info=NodeInfo(
+                    context=generate_context(2, 0, 2, 11),
                 ),
             ),
         ],
@@ -297,12 +299,14 @@ def test_command_footnotes_supports_inline_arguments():
         parser.nodes,
         [
             FootnotesNode(
-                info=NodeInfo(
-                    context=generate_context(1, 0, 1, 11),
+                arguments=NodeArguments(
                     named_args={"key1": "value1"},
                     unnamed_args=["arg1"],
                     subtype="subtype1",
                     tags=["tag1"],
+                ),
+                info=NodeInfo(
+                    context=generate_context(1, 0, 1, 11),
                 ),
             ),
         ],

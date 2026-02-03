@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from mau.nodes.node import Node, NodeContentMixin, NodeInfo, ValueNode
+from mau.nodes.node import Node, NodeArguments, NodeContentMixin, NodeInfo, ValueNode
 
 
 class WordNode(ValueNode):
@@ -36,9 +36,10 @@ class StyleNode(Node, NodeContentMixin):
         style: str,
         content: Sequence[Node] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         NodeContentMixin.__init__(self, content)
 
         self.style = style

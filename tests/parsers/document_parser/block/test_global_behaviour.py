@@ -4,7 +4,7 @@ from mau.error import MauErrorType, MauException
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNode
 from mau.nodes.inline import TextNode
-from mau.nodes.node import NodeInfo
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     compare_nodes_sequence,
@@ -41,12 +41,14 @@ def test_parse_block_title_and_arguments():
                         )
                     ]
                 },
-                info=NodeInfo(
-                    context=generate_context(3, 0, 4, 4),
+                arguments=NodeArguments(
                     unnamed_args=["arg1"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
+                ),
+                info=NodeInfo(
+                    context=generate_context(3, 0, 4, 4),
                 ),
             ),
         ],
@@ -67,9 +69,11 @@ def test_block_classes_single_class():
         [
             BlockNode(
                 classes=["cls1"],
+                arguments=NodeArguments(
+                    subtype="subtype1",
+                ),
                 info=NodeInfo(
                     context=generate_context(2, 0, 3, 4),
-                    subtype="subtype1",
                 ),
             )
         ],
@@ -90,9 +94,11 @@ def test_block_classes_multiple_classes():
         [
             BlockNode(
                 classes=["cls1", "cls2"],
+                arguments=NodeArguments(
+                    subtype="subtype1",
+                ),
                 info=NodeInfo(
                     context=generate_context(2, 0, 3, 4),
-                    subtype="subtype1",
                 ),
             )
         ],

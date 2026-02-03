@@ -16,16 +16,8 @@ class NodeInfo:
     def __init__(
         self,
         context: Context,
-        unnamed_args: list | None = None,
-        named_args: dict | None = None,
-        tags: list | None = None,
-        subtype: str | None = None,
     ):
         self.context = context
-        self.unnamed_args = unnamed_args or []
-        self.named_args = named_args or {}
-        self.tags = tags or []
-        self.subtype = subtype
 
     @classmethod
     def empty(cls) -> NodeInfo:
@@ -34,6 +26,24 @@ class NodeInfo:
     def asdict(self):
         return {
             "context": self.context.asdict(),
+        }
+
+
+class NodeArguments:
+    def __init__(
+        self,
+        unnamed_args: list | None = None,
+        named_args: dict | None = None,
+        tags: list | None = None,
+        subtype: str | None = None,
+    ):
+        self.unnamed_args = unnamed_args or []
+        self.named_args = named_args or {}
+        self.tags = tags or []
+        self.subtype = subtype
+
+    def asdict(self):
+        return {
             "unnamed_args": self.unnamed_args,
             "named_args": self.named_args,
             "tags": self.tags,
@@ -48,11 +58,13 @@ class Node:
     def __init__(
         self,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
         # Set the parent of this node.
         self.parent: Node | None = parent
 
+        self.arguments: NodeArguments = arguments or NodeArguments()
         self.info: NodeInfo = info or NodeInfo.empty()
 
     def set_parent(self, parent: Node) -> Node:
@@ -105,9 +117,10 @@ class ValueNode(Node):
         self,
         value: str,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
 
         self.value = value
 
@@ -118,8 +131,9 @@ class WrapperNode(Node, NodeContentMixin):
     def __init__(
         self,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
         content: Sequence[Node] | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         NodeContentMixin.__init__(self, content)

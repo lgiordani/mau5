@@ -15,8 +15,7 @@ def create_visitor_exception(
 ):
     context = "unknown"
     if data:
-        data_context = data["_info"]["context"]
-        context = adjust_context_dict(data_context)
+        context = adjust_context_dict(data["_context"])
     elif node:
         context = adjust_context(node.info.context)
 
@@ -138,17 +137,17 @@ class BaseVisitor:
         return {
             "_type": node.type,
             "_context": node.info.context.asdict(),
-            "unnamed_args": node.info.unnamed_args,
-            "named_args": node.info.named_args,
-            "tags": node.info.tags,
-            "subtype": node.info.subtype,
+            "unnamed_args": node.arguments.unnamed_args,
+            "named_args": node.arguments.named_args,
+            "tags": node.arguments.tags,
+            "subtype": node.arguments.subtype,
         }
 
     def _visit_default(self, node: Node, *args, **kwargs) -> dict:
         # This is the default code to visit a node.
 
         data = self._get_node_data(node)
-        data["parent"] = self._get_node_data(node)
+        data["parent"] = self._get_node_data(node.parent)
 
         return data
 

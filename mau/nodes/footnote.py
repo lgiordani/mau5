@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from mau.nodes.node import Node, NodeContentMixin, NodeInfo
+from mau.nodes.node import Node, NodeArguments, NodeContentMixin, NodeInfo
 
 
 class FootnoteNode(Node, NodeContentMixin):
@@ -26,9 +26,10 @@ class FootnoteNode(Node, NodeContentMixin):
         internal_id: str | None = None,
         content: Sequence[Node] | None = None,
         parent: Node | None = None,
+        arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
-        super().__init__(parent=parent, info=info)
+        super().__init__(parent=parent, arguments=arguments, info=info)
         NodeContentMixin.__init__(self, content)
 
         self.name = name

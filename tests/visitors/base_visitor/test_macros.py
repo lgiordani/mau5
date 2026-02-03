@@ -10,8 +10,8 @@ from mau.nodes.macro import (
     MacroRawNode,
     MacroUnicodeNode,
 )
-from mau.nodes.node import NodeInfo
 from mau.test_helpers import check_node_with_content, check_visit_node
+from mau.text_buffer import Context
 
 
 def test_macro_node():
@@ -19,11 +19,13 @@ def test_macro_node():
 
     expected = {
         "_type": "macro",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "name": "somename",
-        "unnamed_args": [],
         "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -34,9 +36,11 @@ def test_macro_node_args():
 
     expected = {
         "_type": "macro",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "name": "somename",
+        "parent": {},
+        "subtype": None,
+        "tags": [],
         "unnamed_args": ["arg1"],
         "named_args": {"key1": "value1"},
     }
@@ -49,10 +53,14 @@ def test_macro_class_node_without_content():
 
     expected = {
         "_type": "macro.class",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "classes": ["class1", "class2"],
         "content": [],
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -68,10 +76,14 @@ def test_macro_link_node_without_content():
 
     expected = {
         "_type": "macro.link",
-        "_info": NodeInfo.empty().asdict(),
-        "_parent_info": {},
+        "_context": Context.empty().asdict(),
         "target": "sometarget",
         "content": [],
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -87,12 +99,16 @@ def test_macro_image_node():
 
     expected = {
         "_type": "macro.image",
-        "_info": NodeInfo.empty().asdict(),
-        "_parent_info": {},
+        "_context": Context.empty().asdict(),
         "uri": "someuri",
         "alt_text": None,
         "width": None,
         "height": None,
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -103,12 +119,16 @@ def test_macro_image_node_parameters():
 
     expected = {
         "_type": "macro.image",
-        "_info": NodeInfo.empty().asdict(),
-        "_parent_info": {},
+        "_context": Context.empty().asdict(),
         "uri": "someuri",
         "alt_text": "alt_text",
         "width": "width",
         "height": "height",
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -119,11 +139,15 @@ def test_macro_header_node():
 
     expected = {
         "_type": "macro.header",
-        "_info": NodeInfo.empty().asdict(),
-        "_parent_info": {},
+        "_context": Context.empty().asdict(),
         "target_name": "someid",
         "content": [],
         "header": {},
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -134,20 +158,28 @@ def test_macro_header_node_with_header():
 
     expected = {
         "_type": "macro.header",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "target_name": "someid",
         "content": [],
         "header": {
             "_type": "header",
-            "_parent_info": {},
-            "_info": NodeInfo.empty().asdict(),
+            "_context": Context.empty().asdict(),
             "name": None,
             "internal_id": None,
             "level": 1,
             "labels": {},
             "content": [],
+            "named_args": {},
+            "parent": {},
+            "subtype": None,
+            "tags": [],
+            "unnamed_args": [],
         },
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -158,11 +190,15 @@ def test_macro_header_node_parameters():
 
     expected = {
         "_type": "macro.header",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "target_name": "somename",
         "content": [],
         "header": {},
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -173,17 +209,25 @@ def test_macro_footnote_node_parameters():
 
     expected = {
         "_type": "macro.footnote",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "footnote": {
             "_type": "footnote",
-            "_parent_info": {},
-            "_info": NodeInfo.empty().asdict(),
+            "_context": Context.empty().asdict(),
             "name": "somename",
             "public_id": None,
             "internal_id": None,
             "content": [],
+            "named_args": {},
+            "parent": {},
+            "subtype": None,
+            "tags": [],
+            "unnamed_args": [],
         },
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -194,9 +238,13 @@ def test_macro_unicode():
 
     expected = {
         "_type": "macro.unicode",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "value": "1F30B",
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)
@@ -207,9 +255,13 @@ def test_macro_raw():
 
     expected = {
         "_type": "macro.raw",
-        "_parent_info": {},
-        "_info": NodeInfo.empty().asdict(),
+        "_context": Context.empty().asdict(),
         "value": "somevalue",
+        "named_args": {},
+        "parent": {},
+        "subtype": None,
+        "tags": [],
+        "unnamed_args": [],
     }
 
     check_visit_node(node, expected)

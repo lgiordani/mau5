@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 from mau.nodes.document import HorizontalRuleNode
-from mau.nodes.node import NodeInfo
+from mau.nodes.node import NodeArguments, NodeInfo
 from mau.token import TokenType
 
 
@@ -24,9 +24,11 @@ def horizontal_rule_processor(parser: DocumentParser):
 
     # Create the node.
     node = HorizontalRuleNode(
+        arguments=NodeArguments(
+            **arguments.asdict(),
+        ),
         info=NodeInfo(
             context=rule.context,
-            **arguments.asdict(),
         ),
     )
 
