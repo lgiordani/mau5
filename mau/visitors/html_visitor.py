@@ -104,7 +104,7 @@ class HtmlVisitor(JinjaVisitor):
             # prefix, and store them in a dictionary.
             node_pygments_config = {
                 k.replace("pygments.", ""): v
-                for k, v in node.aguments.named_args.items()
+                for k, v in node.arguments.named_args.items()
                 if k.startswith("pygments.")
             }
 
