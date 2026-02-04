@@ -12,7 +12,7 @@ from mau import (
     __version__,
     load_environment_files,
     load_environment_variables,
-    load_visitors_dict,
+    load_visitors,
 )
 from mau.environment.environment import Environment
 from mau.error import MauException, RawErrorFormatter
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 # Load a dictionary of all visitors,
 # indexed by the output format.
-visitors: dict[str, Type[BaseVisitor]] = load_visitors_dict()
+visitors: dict[str, Type[BaseVisitor]] = load_visitors()
 
 
 def write_output(output, output_file, postprocess=None):
@@ -132,8 +132,8 @@ def parse_args():
     )
 
     parser.add_argument(
-        "-f",
-        "--output-format",
+        "-t",
+        "--visitor",
         action="store",
         dest="output_format",
         choices=visitors.keys(),

@@ -61,35 +61,35 @@ def load_visitors():  # pragma: no cover
     discovered_plugins = entry_points(group="mau.visitors")
 
     # Load the available visitors.
-    visitors = [i.load() for i in discovered_plugins]
+    visitors = {i.value: i.load() for i in discovered_plugins}
 
     # Add the visitors defined
     # in this codebase.
-    visitors.append(YamlVisitor)
-    visitors.append(JinjaVisitor)
-    visitors.append(HtmlVisitor)
+    visitors["core:YamlVisitor"] = YamlVisitor
+    visitors["core:JinjaVisitor"] = JinjaVisitor
+    visitors["core:HtmlVisitor"] = HtmlVisitor
 
     return visitors
 
 
-def load_visitors_dict():  # pragma: no cover
-    """
-    Loads the visitors as `load_visitors`, but
-    returns a dictionary in the form
-    {format_code: visitor}
-    where `format_code` is the name of the
-    output format as specified inside
-    the visitor. Examples: `python`, `html`.
-    """
+# def load_visitors_dict():  # pragma: no cover
+#     """
+#     Loads the visitors as `load_visitors`, but
+#     returns a dictionary in the form
+#     {format_code: visitor}
+#     where `format_code` is the name of the
+#     output format as specified inside
+#     the visitor. Examples: `python`, `html`.
+#     """
 
-    # Load all the available visitor classes.
-    visitor_classes = load_visitors()
+#     # Load all the available visitor classes.
+#     visitor_classes = load_visitors()
 
-    # Store them in a dictionary
-    # according to their format code.
-    visitors = {i.format_code: i for i in visitor_classes}
+#     # Store them in a dictionary
+#     # according to their format code.
+#     visitors = {i.format_code: i for i in visitor_classes}
 
-    return visitors
+#     return visitors
 
 
 def load_environment_files(
