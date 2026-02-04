@@ -18,6 +18,3 @@ class BaseFormatter(ABC):
 
     @classmethod
     def print_tokens(cls, tokens: list[Token]): ...
-
-    @classmethod
-    def print_nodes(cls, nodes: list[Node], indent: int = 0): ...

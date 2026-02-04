@@ -1,382 +1,365 @@
-_info:
-  context:
+_context:
+  end_column: 48
+  end_line: 36
+  source: e2e/source/17_footnotes.mau
+  start_column: 0
+  start_line: 27
+_type: document
+content:
+- _context:
     end_column: 48
     end_line: 27
     source: e2e/source/17_footnotes.mau
     start_column: 0
     start_line: 27
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 48
-      end_line: 36
-      source: e2e/source/17_footnotes.mau
-      start_column: 0
-      start_line: 27
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: paragraph
-labels: {}
-lines:
-- _info:
-    context:
+  _type: paragraph
+  labels: {}
+  lines:
+  - _context:
       end_column: 48
       end_line: 27
       source: e2e/source/17_footnotes.mau
       start_column: 0
       start_line: 27
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
-        end_column: 48
-        end_line: 27
-        source: e2e/source/17_footnotes.mau
-        start_column: 0
-        start_line: 27
-      named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _type: paragraph
-  _type: paragraph-line
-  content:
-  - _info:
-      context:
+    _type: paragraph-line
+    content:
+    - _context:
         end_column: 29
         end_line: 27
         source: e2e/source/17_footnotes.mau
         start_column: 0
         start_line: 27
+      _type: text
       named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _parent_info:
-      _info:
-        context:
+      parent:
+        _context:
           end_column: 48
           end_line: 27
           source: e2e/source/17_footnotes.mau
           start_column: 0
           start_line: 27
+        _type: paragraph
         named_args: {}
         subtype: null
         tags: []
         unnamed_args: []
-      _type: paragraph
-    _type: text
-    value: This paragraph contain a note
-  - _info:
-      context:
+      subtype: null
+      tags: []
+      unnamed_args: []
+      value: This paragraph contain a note
+    - _context:
         end_column: 47
         end_line: 27
         source: e2e/source/17_footnotes.mau
         start_column: 29
         start_line: 27
-      named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _parent_info:
-      _info:
-        context:
-          end_column: 48
-          end_line: 27
-          source: e2e/source/17_footnotes.mau
-          start_column: 0
-          start_line: 27
-        named_args: {}
-        subtype: null
-        tags: []
-        unnamed_args: []
-      _type: paragraph
-    _type: macro.footnote
-    footnote:
-      _info:
-        context:
+      _type: macro.footnote
+      footnote:
+        _context:
           end_column: 0
           end_line: 0
           source: null
           start_column: 0
           start_line: 0
-        named_args: {}
-        subtype: null
-        tags: []
-        unnamed_args: []
-      _parent_info: {}
-      _type: footnote
-      content:
-      - _info:
-          context:
+        _type: footnote
+        content:
+        - _context:
             end_column: 36
             end_line: 21
             source: e2e/source/17_footnotes.mau
             start_column: 0
             start_line: 21
-          named_args: {}
-          subtype: null
-          tags: []
-          unnamed_args: []
-        _parent_info:
-          _info:
-            context:
-              end_column: 0
-              end_line: 0
-              source: null
-              start_column: 0
-              start_line: 0
-            named_args: {}
-            subtype: null
-            tags: []
-            unnamed_args: []
-          _type: block
-        _type: paragraph
-        labels: {}
-        lines:
-        - _info:
-            context:
+          _type: paragraph
+          labels: {}
+          lines:
+          - _context:
               end_column: 36
               end_line: 21
               source: e2e/source/17_footnotes.mau
               start_column: 0
               start_line: 21
-            named_args: {}
-            subtype: null
-            tags: []
-            unnamed_args: []
-          _parent_info:
-            _info:
-              context:
+            _type: paragraph-line
+            content:
+            - _context:
                 end_column: 36
                 end_line: 21
                 source: e2e/source/17_footnotes.mau
                 start_column: 0
                 start_line: 21
+              _type: text
               named_args: {}
-              subtype: null
-              tags: []
-              unnamed_args: []
-            _type: paragraph
-          _type: paragraph-line
-          content:
-          - _info:
-              context:
-                end_column: 36
-                end_line: 21
-                source: e2e/source/17_footnotes.mau
-                start_column: 0
-                start_line: 21
-              named_args: {}
-              subtype: null
-              tags: []
-              unnamed_args: []
-            _parent_info:
-              _info:
-                context:
+              parent:
+                _context:
                   end_column: 36
                   end_line: 21
                   source: e2e/source/17_footnotes.mau
                   start_column: 0
                   start_line: 21
+                _type: paragraph
                 named_args: {}
                 subtype: null
                 tags: []
                 unnamed_args: []
-              _type: paragraph
-            _type: text
-            value: This is the content of the footnote.
-          labels: {}
-      internal_id: mynote
-      name: mynote
-      public_id: '1'
-  - _info:
-      context:
-        end_column: 48
-        end_line: 27
-        source: e2e/source/17_footnotes.mau
-        start_column: 47
-        start_line: 27
-      named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _parent_info:
-      _info:
-        context:
-          end_column: 48
-          end_line: 27
-          source: e2e/source/17_footnotes.mau
-          start_column: 0
-          start_line: 27
-        named_args: {}
-        subtype: null
-        tags: []
-        unnamed_args: []
-      _type: paragraph
-    _type: text
-    value: .
-  labels: {}
-
-_info:
-  context:
-    end_column: 11
-    end_line: 36
-    source: e2e/source/17_footnotes.mau
-    start_column: 0
-    start_line: 36
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 48
-      end_line: 36
-      source: e2e/source/17_footnotes.mau
-      start_column: 0
-      start_line: 27
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: footnotes
-footnotes:
-- _info:
-    context:
-      end_column: 0
-      end_line: 0
-      source: null
-      start_column: 0
-      start_line: 0
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
-        end_column: 11
-        end_line: 36
-        source: e2e/source/17_footnotes.mau
-        start_column: 0
-        start_line: 36
-      named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _type: footnotes
-  _type: footnotes-item
-  footnote:
-    _info:
-      context:
-        end_column: 0
-        end_line: 0
-        source: null
-        start_column: 0
-        start_line: 0
-      named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _parent_info: {}
-    _type: footnote
-    content:
-    - _info:
-        context:
-          end_column: 36
-          end_line: 21
-          source: e2e/source/17_footnotes.mau
-          start_column: 0
-          start_line: 21
-        named_args: {}
-        subtype: null
-        tags: []
-        unnamed_args: []
-      _parent_info:
-        _info:
-          context:
-            end_column: 0
-            end_line: 0
-            source: null
-            start_column: 0
-            start_line: 0
-          named_args: {}
-          subtype: null
-          tags: []
-          unnamed_args: []
-        _type: block
-      _type: paragraph
-      labels: {}
-      lines:
-      - _info:
-          context:
-            end_column: 36
-            end_line: 21
-            source: e2e/source/17_footnotes.mau
-            start_column: 0
-            start_line: 21
-          named_args: {}
-          subtype: null
-          tags: []
-          unnamed_args: []
-        _parent_info:
-          _info:
-            context:
-              end_column: 36
-              end_line: 21
-              source: e2e/source/17_footnotes.mau
-              start_column: 0
-              start_line: 21
+              subtype: null
+              tags: []
+              unnamed_args: []
+              value: This is the content of the footnote.
+            labels: {}
             named_args: {}
-            subtype: null
-            tags: []
-            unnamed_args: []
-          _type: paragraph
-        _type: paragraph-line
-        content:
-        - _info:
-            context:
-              end_column: 36
-              end_line: 21
-              source: e2e/source/17_footnotes.mau
-              start_column: 0
-              start_line: 21
-            named_args: {}
-            subtype: null
-            tags: []
-            unnamed_args: []
-          _parent_info:
-            _info:
-              context:
+            parent:
+              _context:
                 end_column: 36
                 end_line: 21
                 source: e2e/source/17_footnotes.mau
                 start_column: 0
                 start_line: 21
+              _type: paragraph
               named_args: {}
               subtype: null
               tags: []
               unnamed_args: []
-            _type: paragraph
-          _type: text
-          value: This is the content of the footnote.
+            subtype: null
+            tags: []
+            unnamed_args: []
+          named_args: {}
+          parent:
+            _context:
+              end_column: 0
+              end_line: 0
+              source: null
+              start_column: 0
+              start_line: 0
+            _type: block
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          subtype: null
+          tags: []
+          unnamed_args: []
+        internal_id: mynote
+        name: mynote
+        named_args: {}
+        parent: {}
+        public_id: '1'
+        subtype: null
+        tags: []
+        unnamed_args: []
+      named_args: {}
+      parent:
+        _context:
+          end_column: 48
+          end_line: 27
+          source: e2e/source/17_footnotes.mau
+          start_column: 0
+          start_line: 27
+        _type: paragraph
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      subtype: null
+      tags: []
+      unnamed_args: []
+    - _context:
+        end_column: 48
+        end_line: 27
+        source: e2e/source/17_footnotes.mau
+        start_column: 47
+        start_line: 27
+      _type: text
+      named_args: {}
+      parent:
+        _context:
+          end_column: 48
+          end_line: 27
+          source: e2e/source/17_footnotes.mau
+          start_column: 0
+          start_line: 27
+        _type: paragraph
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      subtype: null
+      tags: []
+      unnamed_args: []
+      value: .
+    labels: {}
+    named_args: {}
+    parent:
+      _context:
+        end_column: 48
+        end_line: 27
+        source: e2e/source/17_footnotes.mau
+        start_column: 0
+        start_line: 27
+      _type: paragraph
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    subtype: null
+    tags: []
+    unnamed_args: []
+  named_args: {}
+  parent:
+    _context:
+      end_column: 48
+      end_line: 36
+      source: e2e/source/17_footnotes.mau
+      start_column: 0
+      start_line: 27
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
+    end_column: 11
+    end_line: 36
+    source: e2e/source/17_footnotes.mau
+    start_column: 0
+    start_line: 36
+  _type: footnotes
+  footnotes:
+  - _context:
+      end_column: 0
+      end_line: 0
+      source: null
+      start_column: 0
+      start_line: 0
+    _type: footnotes-item
+    footnote:
+      _context:
+        end_column: 0
+        end_line: 0
+        source: null
+        start_column: 0
+        start_line: 0
+      _type: footnote
+      content:
+      - _context:
+          end_column: 36
+          end_line: 21
+          source: e2e/source/17_footnotes.mau
+          start_column: 0
+          start_line: 21
+        _type: paragraph
         labels: {}
-    internal_id: mynote
-    name: mynote
-    public_id: '1'
-labels: {}
+        lines:
+        - _context:
+            end_column: 36
+            end_line: 21
+            source: e2e/source/17_footnotes.mau
+            start_column: 0
+            start_line: 21
+          _type: paragraph-line
+          content:
+          - _context:
+              end_column: 36
+              end_line: 21
+              source: e2e/source/17_footnotes.mau
+              start_column: 0
+              start_line: 21
+            _type: text
+            named_args: {}
+            parent:
+              _context:
+                end_column: 36
+                end_line: 21
+                source: e2e/source/17_footnotes.mau
+                start_column: 0
+                start_line: 21
+              _type: paragraph
+              named_args: {}
+              subtype: null
+              tags: []
+              unnamed_args: []
+            subtype: null
+            tags: []
+            unnamed_args: []
+            value: This is the content of the footnote.
+          labels: {}
+          named_args: {}
+          parent:
+            _context:
+              end_column: 36
+              end_line: 21
+              source: e2e/source/17_footnotes.mau
+              start_column: 0
+              start_line: 21
+            _type: paragraph
+            named_args: {}
+            subtype: null
+            tags: []
+            unnamed_args: []
+          subtype: null
+          tags: []
+          unnamed_args: []
+        named_args: {}
+        parent:
+          _context:
+            end_column: 0
+            end_line: 0
+            source: null
+            start_column: 0
+            start_line: 0
+          _type: block
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        subtype: null
+        tags: []
+        unnamed_args: []
+      internal_id: mynote
+      name: mynote
+      named_args: {}
+      parent: {}
+      public_id: '1'
+      subtype: null
+      tags: []
+      unnamed_args: []
+    named_args: {}
+    parent:
+      _context:
+        end_column: 11
+        end_line: 36
+        source: e2e/source/17_footnotes.mau
+        start_column: 0
+        start_line: 36
+      _type: footnotes
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    subtype: null
+    tags: []
+    unnamed_args: []
+  labels: {}
+  named_args: {}
+  parent:
+    _context:
+      end_column: 48
+      end_line: 36
+      source: e2e/source/17_footnotes.mau
+      start_column: 0
+      start_line: 27
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+named_args: {}
+parent: {}
+subtype: null
+tags: []
+unnamed_args: []
 
-Mau stopped after the parsing step as requested

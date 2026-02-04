@@ -1,163 +1,162 @@
-_info:
-  context:
+_context:
+  end_column: 42
+  end_line: 41
+  source: e2e/source/06_control.mau
+  start_column: 0
+  start_line: 19
+_type: document
+content:
+- _context:
     end_column: 32
     end_line: 19
     source: e2e/source/06_control.mau
     start_column: 0
     start_line: 19
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 42
-      end_line: 41
-      source: e2e/source/06_control.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: paragraph
-labels: {}
-lines:
-- _info:
-    context:
+  _type: paragraph
+  labels: {}
+  lines:
+  - _context:
       end_column: 32
       end_line: 19
       source: e2e/source/06_control.mau
       start_column: 0
       start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    _type: paragraph-line
+    content:
+    - _context:
         end_column: 32
         end_line: 19
         source: e2e/source/06_control.mau
         start_column: 0
         start_line: 19
+      _type: text
       named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _type: paragraph
-  _type: paragraph-line
-  content:
-  - _info:
-      context:
-        end_column: 32
-        end_line: 19
-        source: e2e/source/06_control.mau
-        start_column: 0
-        start_line: 19
-      named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _parent_info:
-      _info:
-        context:
+      parent:
+        _context:
           end_column: 32
           end_line: 19
           source: e2e/source/06_control.mau
           start_column: 0
           start_line: 19
+        _type: paragraph
         named_args: {}
         subtype: null
         tags: []
         unnamed_args: []
+      subtype: null
+      tags: []
+      unnamed_args: []
+      value: This paragraph will be rendered.
+    labels: {}
+    named_args: {}
+    parent:
+      _context:
+        end_column: 32
+        end_line: 19
+        source: e2e/source/06_control.mau
+        start_column: 0
+        start_line: 19
       _type: paragraph
-    _type: text
-    value: This paragraph will be rendered.
-  labels: {}
-
-_info:
-  context:
-    end_column: 42
-    end_line: 41
-    source: e2e/source/06_control.mau
-    start_column: 0
-    start_line: 41
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    subtype: null
+    tags: []
+    unnamed_args: []
   named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
+  parent:
+    _context:
       end_column: 42
       end_line: 41
       source: e2e/source/06_control.mau
       start_column: 0
       start_line: 19
+    _type: document
     named_args: {}
     subtype: null
     tags: []
     unnamed_args: []
-  _type: document
-_type: paragraph
-labels: {}
-lines:
-- _info:
-    context:
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
+    end_column: 42
+    end_line: 41
+    source: e2e/source/06_control.mau
+    start_column: 0
+    start_line: 41
+  _type: paragraph
+  labels: {}
+  lines:
+  - _context:
       end_column: 42
       end_line: 41
       source: e2e/source/06_control.mau
       start_column: 0
       start_line: 41
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    _type: paragraph-line
+    content:
+    - _context:
         end_column: 42
         end_line: 41
         source: e2e/source/06_control.mau
         start_column: 0
         start_line: 41
+      _type: text
       named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _type: paragraph
-  _type: paragraph-line
-  content:
-  - _info:
-      context:
-        end_column: 42
-        end_line: 41
-        source: e2e/source/06_control.mau
-        start_column: 0
-        start_line: 41
-      named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _parent_info:
-      _info:
-        context:
+      parent:
+        _context:
           end_column: 42
           end_line: 41
           source: e2e/source/06_control.mau
           start_column: 0
           start_line: 41
+        _type: paragraph
         named_args: {}
         subtype: null
         tags: []
         unnamed_args: []
+      subtype: null
+      tags: []
+      unnamed_args: []
+      value: This paragraph will not receive the title.
+    labels: {}
+    named_args: {}
+    parent:
+      _context:
+        end_column: 42
+        end_line: 41
+        source: e2e/source/06_control.mau
+        start_column: 0
+        start_line: 41
       _type: paragraph
-    _type: text
-    value: This paragraph will not receive the title.
-  labels: {}
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    subtype: null
+    tags: []
+    unnamed_args: []
+  named_args: {}
+  parent:
+    _context:
+      end_column: 42
+      end_line: 41
+      source: e2e/source/06_control.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+named_args: {}
+parent: {}
+subtype: null
+tags: []
+unnamed_args: []
 
-Mau stopped after the parsing step as requested

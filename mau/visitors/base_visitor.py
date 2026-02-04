@@ -40,6 +40,7 @@ def create_visitor_exception(
 class BaseVisitor:
     # The output format that identifies this visitor.
     format_code = "python"
+    extension = ""
 
     def __init__(self, environment: Environment = Environment()):
         self.toc = None

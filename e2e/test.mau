@@ -1,4 +1,3 @@
-[*tip,"Business logic"]
 ----
-Business logic is the specific algorithm or process that you want to implement, the way you transform data to provide a service. It is the most important part of the system.
+Business logic
 ----

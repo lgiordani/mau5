@@ -1,139 +1,138 @@
-_info:
-  context:
+_context:
+  end_column: 3
+  end_line: 31
+  source: e2e/source/10_horizontal-rule.mau
+  start_column: 0
+  start_line: 16
+_type: document
+content:
+- _context:
     end_column: 3
     end_line: 16
     source: e2e/source/10_horizontal-rule.mau
     start_column: 0
     start_line: 16
+  _type: horizontal-rule
+  labels: {}
   named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
+  parent:
+    _context:
       end_column: 3
       end_line: 31
       source: e2e/source/10_horizontal-rule.mau
       start_column: 0
       start_line: 16
+    _type: document
     named_args: {}
     subtype: null
     tags: []
     unnamed_args: []
-  _type: document
-_type: horizontal-rule
-labels: {}
-
-_info:
-  context:
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
     end_column: 3
     end_line: 20
     source: e2e/source/10_horizontal-rule.mau
     start_column: 0
     start_line: 20
+  _type: horizontal-rule
+  labels: {}
   named_args:
     key: value
+  parent:
+    _context:
+      end_column: 3
+      end_line: 31
+      source: e2e/source/10_horizontal-rule.mau
+      start_column: 0
+      start_line: 16
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
   subtype: subtype
   tags:
   - tag
   unnamed_args:
   - arg
-_parent_info:
-  _info:
-    context:
-      end_column: 3
-      end_line: 31
-      source: e2e/source/10_horizontal-rule.mau
-      start_column: 0
-      start_line: 16
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: horizontal-rule
-labels: {}
-
-_info:
-  context:
+- _context:
     end_column: 3
     end_line: 24
     source: e2e/source/10_horizontal-rule.mau
     start_column: 0
     start_line: 24
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 3
-      end_line: 31
-      source: e2e/source/10_horizontal-rule.mau
-      start_column: 0
-      start_line: 16
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: horizontal-rule
-labels:
-  title:
-  - _info:
-      context:
+  _type: horizontal-rule
+  labels:
+    title:
+    - _context:
         end_column: 22
         end_line: 23
         source: e2e/source/10_horizontal-rule.mau
         start_column: 2
         start_line: 23
+      _type: text
       named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _parent_info:
-      _info:
-        context:
+      parent:
+        _context:
           end_column: 3
           end_line: 24
           source: e2e/source/10_horizontal-rule.mau
           start_column: 0
           start_line: 24
+        _type: horizontal-rule
         named_args: {}
         subtype: null
         tags: []
         unnamed_args: []
-      _type: horizontal-rule
-    _type: text
-    value: A title for the rule
-
-_info:
-  context:
-    end_column: 3
-    end_line: 31
-    source: e2e/source/10_horizontal-rule.mau
-    start_column: 0
-    start_line: 31
+      subtype: null
+      tags: []
+      unnamed_args: []
+      value: A title for the rule
   named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
+  parent:
+    _context:
       end_column: 3
       end_line: 31
       source: e2e/source/10_horizontal-rule.mau
       start_column: 0
       start_line: 16
+    _type: document
     named_args: {}
     subtype: null
     tags: []
     unnamed_args: []
-  _type: document
-_type: horizontal-rule
-labels: {}
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
+    end_column: 3
+    end_line: 31
+    source: e2e/source/10_horizontal-rule.mau
+    start_column: 0
+    start_line: 31
+  _type: horizontal-rule
+  labels: {}
+  named_args: {}
+  parent:
+    _context:
+      end_column: 3
+      end_line: 31
+      source: e2e/source/10_horizontal-rule.mau
+      start_column: 0
+      start_line: 16
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+named_args: {}
+parent: {}
+subtype: null
+tags: []
+unnamed_args: []
 
-Mau stopped after the parsing step as requested

@@ -1,557 +1,574 @@
-_info:
-  context:
+_context:
+  end_column: 4
+  end_line: 74
+  source: e2e/source/13_source.mau
+  start_column: 0
+  start_line: 19
+_type: document
+content:
+- _context:
     end_column: 4
     end_line: 22
     source: e2e/source/13_source.mau
     start_column: 0
     start_line: 19
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 4
-      end_line: 74
-      source: e2e/source/13_source.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: source
-classes: []
-content:
-- _info:
-    context:
+  _type: source
+  classes: []
+  content:
+  - _context:
       end_column: 14
       end_line: 20
       source: e2e/source/13_source.mau
       start_column: 0
       start_line: 20
+    _type: source-line
+    highlight_style: null
+    line_content: 'def sum(a, b):'
+    line_number: '1'
+    marker: {}
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 4
         end_line: 22
         source: e2e/source/13_source.mau
         start_column: 0
         start_line: 19
+      _type: source
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: source
-  _type: source-line
-  highlight_style: null
-  line_content: 'def sum(a, b):'
-  line_number: '1'
-  marker: {}
-- _info:
-    context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+  - _context:
       end_column: 16
       end_line: 21
       source: e2e/source/13_source.mau
       start_column: 0
       start_line: 21
+    _type: source-line
+    highlight_style: null
+    line_content: '    return a + b'
+    line_number: '2'
+    marker: {}
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 4
         end_line: 22
         source: e2e/source/13_source.mau
         start_column: 0
         start_line: 19
+      _type: source
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: source
-  _type: source-line
-  highlight_style: null
-  line_content: '    return a + b'
-  line_number: '2'
-  marker: {}
-labels: {}
-language: python
-
-_info:
-  context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+  labels: {}
+  language: python
+  named_args: {}
+  parent:
+    _context:
+      end_column: 4
+      end_line: 74
+      source: e2e/source/13_source.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
     end_column: 4
     end_line: 32
     source: e2e/source/13_source.mau
     start_column: 0
     start_line: 28
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 4
-      end_line: 74
-      source: e2e/source/13_source.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: source
-classes: []
-content:
-- _info:
-    context:
+  _type: source
+  classes: []
+  content:
+  - _context:
       end_column: 4
       end_line: 29
       source: e2e/source/13_source.mau
       start_column: 0
       start_line: 29
+    _type: source-line
+    highlight_style: null
+    line_content: '####'
+    line_number: '1'
+    marker: {}
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 4
         end_line: 32
         source: e2e/source/13_source.mau
         start_column: 0
         start_line: 28
+      _type: source
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: source
-  _type: source-line
-  highlight_style: null
-  line_content: '####'
-  line_number: '1'
-  marker: {}
-- _info:
-    context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+  - _context:
       end_column: 38
       end_line: 30
       source: e2e/source/13_source.mau
       start_column: 0
       start_line: 30
+    _type: source-line
+    highlight_style: null
+    line_content: These is NOT a block within the block.
+    line_number: '2'
+    marker: {}
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 4
         end_line: 32
         source: e2e/source/13_source.mau
         start_column: 0
         start_line: 28
+      _type: source
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: source
-  _type: source-line
-  highlight_style: null
-  line_content: These is NOT a block within the block.
-  line_number: '2'
-  marker: {}
-- _info:
-    context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+  - _context:
       end_column: 4
       end_line: 31
       source: e2e/source/13_source.mau
       start_column: 0
       start_line: 31
+    _type: source-line
+    highlight_style: null
+    line_content: '####'
+    line_number: '3'
+    marker: {}
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 4
         end_line: 32
         source: e2e/source/13_source.mau
         start_column: 0
         start_line: 28
+      _type: source
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: source
-  _type: source-line
-  highlight_style: null
-  line_content: '####'
-  line_number: '3'
-  marker: {}
-labels: {}
-language: text
-
-_info:
-  context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+  labels: {}
+  language: text
+  named_args: {}
+  parent:
+    _context:
+      end_column: 4
+      end_line: 74
+      source: e2e/source/13_source.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
     end_column: 4
     end_line: 43
     source: e2e/source/13_source.mau
     start_column: 0
     start_line: 40
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 4
-      end_line: 74
-      source: e2e/source/13_source.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: source
-classes: []
-content:
-- _info:
-    context:
+  _type: source
+  classes: []
+  content:
+  - _context:
       end_column: 14
       end_line: 41
       source: e2e/source/13_source.mau
       start_column: 0
       start_line: 41
+    _type: source-line
+    highlight_style: null
+    line_content: 'def sum(a, b):'
+    line_number: '1'
+    marker: {}
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 4
         end_line: 43
         source: e2e/source/13_source.mau
         start_column: 0
         start_line: 40
+      _type: source
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: source
-  _type: source-line
-  highlight_style: null
-  line_content: 'def sum(a, b):'
-  line_number: '1'
-  marker: {}
-- _info:
-    context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+  - _context:
       end_column: 16
       end_line: 42
       source: e2e/source/13_source.mau
       start_column: 0
       start_line: 42
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
-        end_column: 4
-        end_line: 43
-        source: e2e/source/13_source.mau
-        start_column: 0
-        start_line: 40
-      named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _type: source
-  _type: source-line
-  highlight_style: null
-  line_content: '    return a + b'
-  line_number: '2'
-  marker:
-    _info:
-      context:
+    _type: source-line
+    highlight_style: null
+    line_content: '    return a + b'
+    line_number: '2'
+    marker:
+      _context:
         end_column: 19
         end_line: 42
         source: e2e/source/13_source.mau
         start_column: 16
         start_line: 42
+      _type: source-marker
+      named_args: {}
+      parent: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+      value: '1'
+    named_args: {}
+    parent:
+      _context:
+        end_column: 4
+        end_line: 43
+        source: e2e/source/13_source.mau
+        start_column: 0
+        start_line: 40
+      _type: source
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _parent_info: {}
-    _type: source-marker
-    value: '1'
-labels: {}
-language: python
-
-_info:
-  context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+  labels: {}
+  language: python
+  named_args: {}
+  parent:
+    _context:
+      end_column: 4
+      end_line: 74
+      source: e2e/source/13_source.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
     end_column: 4
     end_line: 53
     source: e2e/source/13_source.mau
     start_column: 0
     start_line: 50
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 4
-      end_line: 74
-      source: e2e/source/13_source.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: source
-classes: []
-content:
-- _info:
-    context:
+  _type: source
+  classes: []
+  content:
+  - _context:
       end_column: 14
       end_line: 51
       source: e2e/source/13_source.mau
       start_column: 0
       start_line: 51
+    _type: source-line
+    highlight_style: null
+    line_content: 'def sum(a, b):'
+    line_number: '1'
+    marker: {}
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 4
         end_line: 53
         source: e2e/source/13_source.mau
         start_column: 0
         start_line: 50
+      _type: source
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: source
-  _type: source-line
-  highlight_style: null
-  line_content: 'def sum(a, b):'
-  line_number: '1'
-  marker: {}
-- _info:
-    context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+  - _context:
       end_column: 16
       end_line: 52
       source: e2e/source/13_source.mau
       start_column: 0
       start_line: 52
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
-        end_column: 4
-        end_line: 53
-        source: e2e/source/13_source.mau
-        start_column: 0
-        start_line: 50
-      named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _type: source
-  _type: source-line
-  highlight_style: null
-  line_content: '    return a + b'
-  line_number: '2'
-  marker:
-    _info:
-      context:
+    _type: source-line
+    highlight_style: null
+    line_content: '    return a + b'
+    line_number: '2'
+    marker:
+      _context:
         end_column: 19
         end_line: 52
         source: e2e/source/13_source.mau
         start_column: 16
         start_line: 52
+      _type: source-marker
+      named_args: {}
+      parent: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+      value: '1'
+    named_args: {}
+    parent:
+      _context:
+        end_column: 4
+        end_line: 53
+        source: e2e/source/13_source.mau
+        start_column: 0
+        start_line: 50
+      _type: source
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _parent_info: {}
-    _type: source-marker
-    value: '1'
-labels: {}
-language: python
-
-_info:
-  context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+  labels: {}
+  language: python
+  named_args: {}
+  parent:
+    _context:
+      end_column: 4
+      end_line: 74
+      source: e2e/source/13_source.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
     end_column: 4
     end_line: 66
     source: e2e/source/13_source.mau
     start_column: 0
     start_line: 63
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 4
-      end_line: 74
-      source: e2e/source/13_source.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: source
-classes: []
-content:
-- _info:
-    context:
+  _type: source
+  classes: []
+  content:
+  - _context:
       end_column: 14
       end_line: 64
       source: e2e/source/13_source.mau
       start_column: 0
       start_line: 64
+    _type: source-line
+    highlight_style: null
+    line_content: 'def sum(a, b):'
+    line_number: '1'
+    marker: {}
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 4
         end_line: 66
         source: e2e/source/13_source.mau
         start_column: 0
         start_line: 63
+      _type: source
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: source
-  _type: source-line
-  highlight_style: null
-  line_content: 'def sum(a, b):'
-  line_number: '1'
-  marker: {}
-- _info:
-    context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+  - _context:
       end_column: 24
       end_line: 65
       source: e2e/source/13_source.mau
       start_column: 0
       start_line: 65
+    _type: source-line
+    highlight_style: added
+    line_content: '    return a + b'
+    line_number: '2'
+    marker: {}
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 4
         end_line: 66
         source: e2e/source/13_source.mau
         start_column: 0
         start_line: 63
+      _type: source
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: source
-  _type: source-line
-  highlight_style: added
-  line_content: '    return a + b'
-  line_number: '2'
-  marker: {}
-labels: {}
-language: python
-
-_info:
-  context:
-    end_column: 4
-    end_line: 74
-    source: e2e/source/13_source.mau
-    start_column: 0
-    start_line: 72
+    subtype: null
+    tags: []
+    unnamed_args: []
+  labels: {}
+  language: python
   named_args: {}
-  subtype: source
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
+  parent:
+    _context:
       end_column: 4
       end_line: 74
       source: e2e/source/13_source.mau
       start_column: 0
       start_line: 19
+    _type: document
     named_args: {}
     subtype: null
     tags: []
     unnamed_args: []
-  _type: document
-_type: source
-classes: []
-content:
-- _info:
-    context:
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
+    end_column: 4
+    end_line: 74
+    source: e2e/source/13_source.mau
+    start_column: 0
+    start_line: 72
+  _type: block
+  classes: []
+  content:
+  - _context:
       end_column: 16
       end_line: 73
       source: e2e/source/13_source.mau
       start_column: 0
       start_line: 73
+    _type: paragraph
+    labels: {}
+    lines:
+    - _context:
+        end_column: 16
+        end_line: 73
+        source: e2e/source/13_source.mau
+        start_column: 0
+        start_line: 73
+      _type: paragraph-line
+      content:
+      - _context:
+          end_column: 16
+          end_line: 73
+          source: e2e/source/13_source.mau
+          start_column: 0
+          start_line: 73
+        _type: text
+        named_args: {}
+        parent:
+          _context:
+            end_column: 16
+            end_line: 73
+            source: e2e/source/13_source.mau
+            start_column: 0
+            start_line: 73
+          _type: paragraph
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        subtype: null
+        tags: []
+        unnamed_args: []
+        value: 'answer: int = 42'
+      labels: {}
+      named_args: {}
+      parent:
+        _context:
+          end_column: 16
+          end_line: 73
+          source: e2e/source/13_source.mau
+          start_column: 0
+          start_line: 73
+        _type: paragraph
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      subtype: null
+      tags: []
+      unnamed_args: []
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 4
         end_line: 74
         source: e2e/source/13_source.mau
         start_column: 0
         start_line: 72
+      _type: block
       named_args: {}
       subtype: source
       tags: []
-      unnamed_args: []
-    _type: source
-  _type: source-line
-  highlight_style: null
-  line_content: 'answer: int = 42'
-  line_number: '1'
-  marker: {}
-labels: {}
-language: python
+      unnamed_args:
+      - python
+    subtype: null
+    tags: []
+    unnamed_args: []
+  labels: {}
+  named_args: {}
+  parent:
+    _context:
+      end_column: 4
+      end_line: 74
+      source: e2e/source/13_source.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: source
+  tags: []
+  unnamed_args:
+  - python
+named_args: {}
+parent: {}
+subtype: null
+tags: []
+unnamed_args: []
 
-Mau stopped after the parsing step as requested

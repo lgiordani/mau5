@@ -15,6 +15,7 @@ from mau.token import Token
 from mau.visitors.base_visitor import BaseVisitor
 from mau.visitors.html_visitor import HtmlVisitor
 from mau.visitors.jinja_visitor import JinjaVisitor
+from mau.visitors.yaml_visitor import YamlVisitor
 
 # This is the base namespace used by
 # the configuration, by variables defined
@@ -64,6 +65,7 @@ def load_visitors():  # pragma: no cover
 
     # Add the visitors defined
     # in this codebase.
+    visitors.append(YamlVisitor)
     visitors.append(JinjaVisitor)
     visitors.append(HtmlVisitor)
 

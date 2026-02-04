@@ -21,13 +21,3 @@ class RawFormatter(BaseFormatter):
             print(
                 f"{token.type} {repr(token.value)} {cls._adjust_context(token.context)}"
             )
-
-    @classmethod
-    def print_nodes(cls, nodes: list[Node], indent: int = 0):
-        bv = BaseVisitor()
-
-        for node in nodes:
-            result = bv.visit(node)
-
-            # print(result)
-            print(yaml.dump(result, Dumper=NoAliasDumper))

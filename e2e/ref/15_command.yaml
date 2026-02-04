@@ -1,32 +1,42 @@
-_info:
-  context:
+_context:
+  end_column: 8
+  end_line: 26
+  source: e2e/source/15_command.mau
+  start_column: 0
+  start_line: 26
+_type: document
+content:
+- _context:
     end_column: 8
     end_line: 26
     source: e2e/source/15_command.mau
     start_column: 0
     start_line: 26
+  _type: command
+  labels: {}
+  name: custom
   named_args:
     key1: value1
-  subtype: subtype1
-  tags:
-  - tag1
-  unnamed_args:
-  - arg1
-_parent_info:
-  _info:
-    context:
+  parent:
+    _context:
       end_column: 8
       end_line: 26
       source: e2e/source/15_command.mau
       start_column: 0
       start_line: 26
+    _type: document
     named_args: {}
     subtype: null
     tags: []
     unnamed_args: []
-  _type: document
-_type: command
-labels: {}
-name: custom
+  subtype: subtype1
+  tags:
+  - tag1
+  unnamed_args:
+  - arg1
+named_args: {}
+parent: {}
+subtype: null
+tags: []
+unnamed_args: []
 
-Mau stopped after the parsing step as requested

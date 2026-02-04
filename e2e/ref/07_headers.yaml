@@ -1,809 +1,754 @@
-_info:
-  context:
+_context:
+  end_column: 67
+  end_line: 51
+  source: e2e/source/07_headers.mau
+  start_column: 0
+  start_line: 19
+_type: document
+content:
+- _context:
     end_column: 10
     end_line: 19
     source: e2e/source/07_headers.mau
     start_column: 0
     start_line: 19
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 67
-      end_line: 51
-      source: e2e/source/07_headers.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: header
-content:
-- _info:
-    context:
+  _type: header
+  content:
+  - _context:
       end_column: 10
       end_line: 19
       source: e2e/source/07_headers.mau
       start_column: 2
       start_line: 19
+    _type: text
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 10
         end_line: 19
         source: e2e/source/07_headers.mau
         start_column: 0
         start_line: 19
+      _type: header
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: header
-  _type: text
-  value: Header 1
-internal_id: header-1-1aa5
-labels: {}
-level: 1
-name: null
-
-_info:
-  context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+    value: Header 1
+  internal_id: header-1-1aa5
+  labels: {}
+  level: 1
+  name: null
+  named_args: {}
+  parent:
+    _context:
+      end_column: 67
+      end_line: 51
+      source: e2e/source/07_headers.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
     end_column: 11
     end_line: 20
     source: e2e/source/07_headers.mau
     start_column: 0
     start_line: 20
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 67
-      end_line: 51
-      source: e2e/source/07_headers.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: header
-content:
-- _info:
-    context:
+  _type: header
+  content:
+  - _context:
       end_column: 11
       end_line: 20
       source: e2e/source/07_headers.mau
       start_column: 3
       start_line: 20
+    _type: text
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 11
         end_line: 20
         source: e2e/source/07_headers.mau
         start_column: 0
         start_line: 20
+      _type: header
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: header
-  _type: text
-  value: Header 2
-internal_id: header-2-871b
-labels: {}
-level: 2
-name: null
-
-_info:
-  context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+    value: Header 2
+  internal_id: header-2-871b
+  labels: {}
+  level: 2
+  name: null
+  named_args: {}
+  parent:
+    _context:
+      end_column: 67
+      end_line: 51
+      source: e2e/source/07_headers.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
     end_column: 12
     end_line: 21
     source: e2e/source/07_headers.mau
     start_column: 0
     start_line: 21
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 67
-      end_line: 51
-      source: e2e/source/07_headers.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: header
-content:
-- _info:
-    context:
+  _type: header
+  content:
+  - _context:
       end_column: 12
       end_line: 21
       source: e2e/source/07_headers.mau
       start_column: 4
       start_line: 21
+    _type: text
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 12
         end_line: 21
         source: e2e/source/07_headers.mau
         start_column: 0
         start_line: 21
+      _type: header
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: header
-  _type: text
-  value: Header 3
-internal_id: header-3-702d
-labels: {}
-level: 3
-name: null
-
-_info:
-  context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+    value: Header 3
+  internal_id: header-3-702d
+  labels: {}
+  level: 3
+  name: null
+  named_args: {}
+  parent:
+    _context:
+      end_column: 67
+      end_line: 51
+      source: e2e/source/07_headers.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
     end_column: 13
     end_line: 22
     source: e2e/source/07_headers.mau
     start_column: 0
     start_line: 22
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 67
-      end_line: 51
-      source: e2e/source/07_headers.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: header
-content:
-- _info:
-    context:
+  _type: header
+  content:
+  - _context:
       end_column: 13
       end_line: 22
       source: e2e/source/07_headers.mau
       start_column: 5
       start_line: 22
+    _type: text
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 13
         end_line: 22
         source: e2e/source/07_headers.mau
         start_column: 0
         start_line: 22
+      _type: header
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: header
-  _type: text
-  value: Header 4
-internal_id: header-4-6a61
-labels: {}
-level: 4
-name: null
-
-_info:
-  context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+    value: Header 4
+  internal_id: header-4-6a61
+  labels: {}
+  level: 4
+  name: null
+  named_args: {}
+  parent:
+    _context:
+      end_column: 67
+      end_line: 51
+      source: e2e/source/07_headers.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
     end_column: 14
     end_line: 23
     source: e2e/source/07_headers.mau
     start_column: 0
     start_line: 23
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 67
-      end_line: 51
-      source: e2e/source/07_headers.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: header
-content:
-- _info:
-    context:
+  _type: header
+  content:
+  - _context:
       end_column: 14
       end_line: 23
       source: e2e/source/07_headers.mau
       start_column: 6
       start_line: 23
+    _type: text
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 14
         end_line: 23
         source: e2e/source/07_headers.mau
         start_column: 0
         start_line: 23
+      _type: header
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: header
-  _type: text
-  value: Header 5
-internal_id: header-5-3193
-labels: {}
-level: 5
-name: null
-
-_info:
-  context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+    value: Header 5
+  internal_id: header-5-3193
+  labels: {}
+  level: 5
+  name: null
+  named_args: {}
+  parent:
+    _context:
+      end_column: 67
+      end_line: 51
+      source: e2e/source/07_headers.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
     end_column: 15
     end_line: 24
     source: e2e/source/07_headers.mau
     start_column: 0
     start_line: 24
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 67
-      end_line: 51
-      source: e2e/source/07_headers.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: header
-content:
-- _info:
-    context:
+  _type: header
+  content:
+  - _context:
       end_column: 15
       end_line: 24
       source: e2e/source/07_headers.mau
       start_column: 7
       start_line: 24
+    _type: text
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 15
         end_line: 24
         source: e2e/source/07_headers.mau
         start_column: 0
         start_line: 24
+      _type: header
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: header
-  _type: text
-  value: Header 6
-internal_id: header-6-6339
-labels: {}
-level: 6
-name: null
-
-_info:
-  context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+    value: Header 6
+  internal_id: header-6-6339
+  labels: {}
+  level: 6
+  name: null
+  named_args: {}
+  parent:
+    _context:
+      end_column: 67
+      end_line: 51
+      source: e2e/source/07_headers.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
     end_column: 17
     end_line: 28
     source: e2e/source/07_headers.mau
     start_column: 0
     start_line: 28
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 67
-      end_line: 51
-      source: e2e/source/07_headers.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: header
-content:
-- _info:
-    context:
+  _type: header
+  content:
+  - _context:
       end_column: 17
       end_line: 28
       source: e2e/source/07_headers.mau
       start_column: 9
       start_line: 28
+    _type: text
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 17
         end_line: 28
         source: e2e/source/07_headers.mau
         start_column: 0
         start_line: 28
+      _type: header
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: header
-  _type: text
-  value: Header 8
-internal_id: header-8-e458
-labels: {}
-level: 8
-name: null
-
-_info:
-  context:
-    end_column: 10
-    end_line: 33
-    source: e2e/source/07_headers.mau
-    start_column: 0
-    start_line: 33
+    subtype: null
+    tags: []
+    unnamed_args: []
+    value: Header 8
+  internal_id: header-8-e458
+  labels: {}
+  level: 8
+  name: null
   named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args:
-  - arg1
-  - arg2
-_parent_info:
-  _info:
-    context:
+  parent:
+    _context:
       end_column: 67
       end_line: 51
       source: e2e/source/07_headers.mau
       start_column: 0
       start_line: 19
+    _type: document
     named_args: {}
     subtype: null
     tags: []
     unnamed_args: []
-  _type: document
-_type: header
-content:
-- _info:
-    context:
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
+    end_column: 10
+    end_line: 33
+    source: e2e/source/07_headers.mau
+    start_column: 0
+    start_line: 33
+  _type: header
+  content:
+  - _context:
       end_column: 10
       end_line: 33
       source: e2e/source/07_headers.mau
       start_column: 2
       start_line: 33
+    _type: text
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 10
         end_line: 33
         source: e2e/source/07_headers.mau
         start_column: 0
         start_line: 33
+      _type: header
       named_args: {}
       subtype: null
       tags: []
       unnamed_args:
       - arg1
       - arg2
-    _type: header
-  _type: text
-  value: Header 1
-internal_id: header-1-1aa5
-labels:
-  details:
-  - _info:
-      context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+    value: Header 1
+  internal_id: header-1-1aa5
+  labels:
+    details:
+    - _context:
         end_column: 21
         end_line: 32
         source: e2e/source/07_headers.mau
         start_column: 9
         start_line: 32
+      _type: text
       named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _parent_info:
-      _info:
-        context:
+      parent:
+        _context:
           end_column: 10
           end_line: 33
           source: e2e/source/07_headers.mau
           start_column: 0
           start_line: 33
+        _type: header
         named_args: {}
         subtype: null
         tags: []
         unnamed_args:
         - arg1
         - arg2
-      _type: header
-    _type: text
-    value: Some details
-level: 1
-name: null
-
-_info:
-  context:
+      subtype: null
+      tags: []
+      unnamed_args: []
+      value: Some details
+  level: 1
+  name: null
+  named_args: {}
+  parent:
+    _context:
+      end_column: 67
+      end_line: 51
+      source: e2e/source/07_headers.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args:
+  - arg1
+  - arg2
+- _context:
     end_column: 47
     end_line: 43
     source: e2e/source/07_headers.mau
     start_column: 0
     start_line: 43
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 67
-      end_line: 51
-      source: e2e/source/07_headers.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: header
-content:
-- _info:
-    context:
+  _type: header
+  content:
+  - _context:
       end_column: 47
       end_line: 43
       source: e2e/source/07_headers.mau
       start_column: 2
       start_line: 43
+    _type: text
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 47
         end_line: 43
         source: e2e/source/07_headers.mau
         start_column: 0
         start_line: 43
+      _type: header
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: header
-  _type: text
-  value: This header won't receive arguments or labels
-internal_id: this-header-wont-receive-arguments-or-labels-b478
-labels: {}
-level: 1
-name: null
-
-_info:
-  context:
+    subtype: null
+    tags: []
+    unnamed_args: []
+    value: This header won't receive arguments or labels
+  internal_id: this-header-wont-receive-arguments-or-labels-b478
+  labels: {}
+  level: 1
+  name: null
+  named_args: {}
+  parent:
+    _context:
+      end_column: 67
+      end_line: 51
+      source: e2e/source/07_headers.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
     end_column: 35
     end_line: 49
     source: e2e/source/07_headers.mau
     start_column: 0
     start_line: 49
-  named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
-      end_column: 67
-      end_line: 51
-      source: e2e/source/07_headers.mau
-      start_column: 0
-      start_line: 19
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _type: document
-_type: header
-content:
-- _info:
-    context:
+  _type: header
+  content:
+  - _context:
       end_column: 35
       end_line: 49
       source: e2e/source/07_headers.mau
       start_column: 2
       start_line: 49
+    _type: text
     named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
+    parent:
+      _context:
         end_column: 35
         end_line: 49
         source: e2e/source/07_headers.mau
         start_column: 0
         start_line: 49
+      _type: header
       named_args: {}
       subtype: null
       tags: []
       unnamed_args: []
-    _type: header
-  _type: text
-  value: This header has the name myheader
-internal_id: this-header-has-the-name-myheader-ffd2
-labels: {}
-level: 1
-name: myheader
-
-_info:
-  context:
-    end_column: 67
-    end_line: 51
-    source: e2e/source/07_headers.mau
-    start_column: 0
-    start_line: 51
+    subtype: null
+    tags: []
+    unnamed_args: []
+    value: This header has the name myheader
+  internal_id: this-header-has-the-name-myheader-ffd2
+  labels: {}
+  level: 1
+  name: myheader
   named_args: {}
-  subtype: null
-  tags: []
-  unnamed_args: []
-_parent_info:
-  _info:
-    context:
+  parent:
+    _context:
       end_column: 67
       end_line: 51
       source: e2e/source/07_headers.mau
       start_column: 0
       start_line: 19
+    _type: document
     named_args: {}
     subtype: null
     tags: []
     unnamed_args: []
-  _type: document
-_type: paragraph
-labels: {}
-lines:
-- _info:
-    context:
+  subtype: null
+  tags: []
+  unnamed_args: []
+- _context:
+    end_column: 67
+    end_line: 51
+    source: e2e/source/07_headers.mau
+    start_column: 0
+    start_line: 51
+  _type: paragraph
+  labels: {}
+  lines:
+  - _context:
       end_column: 67
       end_line: 51
       source: e2e/source/07_headers.mau
       start_column: 0
       start_line: 51
-    named_args: {}
-    subtype: null
-    tags: []
-    unnamed_args: []
-  _parent_info:
-    _info:
-      context:
-        end_column: 67
-        end_line: 51
-        source: e2e/source/07_headers.mau
-        start_column: 0
-        start_line: 51
-      named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _type: paragraph
-  _type: paragraph-line
-  content:
-  - _info:
-      context:
+    _type: paragraph-line
+    content:
+    - _context:
         end_column: 26
         end_line: 51
         source: e2e/source/07_headers.mau
         start_column: 0
         start_line: 51
+      _type: text
       named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _parent_info:
-      _info:
-        context:
+      parent:
+        _context:
           end_column: 67
           end_line: 51
           source: e2e/source/07_headers.mau
           start_column: 0
           start_line: 51
+        _type: paragraph
         named_args: {}
         subtype: null
         tags: []
         unnamed_args: []
-      _type: paragraph
-    _type: text
-    value: 'This paragraph contains a '
-  - _info:
-      context:
+      subtype: null
+      tags: []
+      unnamed_args: []
+      value: 'This paragraph contains a '
+    - _context:
         end_column: 66
         end_line: 51
         source: e2e/source/07_headers.mau
         start_column: 26
         start_line: 51
-      named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _parent_info:
-      _info:
-        context:
-          end_column: 67
-          end_line: 51
-          source: e2e/source/07_headers.mau
-          start_column: 0
-          start_line: 51
-        named_args: {}
-        subtype: null
-        tags: []
-        unnamed_args: []
-      _type: paragraph
-    _type: macro.header
-    content:
-    - _info:
-        context:
+      _type: macro.header
+      content:
+      - _context:
           end_column: 64
           end_line: 51
           source: e2e/source/07_headers.mau
           start_column: 46
           start_line: 51
+        _type: text
         named_args: {}
+        parent: {}
         subtype: null
         tags: []
         unnamed_args: []
-      _parent_info: {}
-      _type: text
-      value: Link to the header
-    header:
-      _info:
-        context:
+        value: Link to the header
+      header:
+        _context:
           end_column: 35
           end_line: 49
           source: e2e/source/07_headers.mau
           start_column: 0
           start_line: 49
-        named_args: {}
-        subtype: null
-        tags: []
-        unnamed_args: []
-      _parent_info:
-        _info:
-          context:
-            end_column: 67
-            end_line: 51
-            source: e2e/source/07_headers.mau
-            start_column: 0
-            start_line: 19
-          named_args: {}
-          subtype: null
-          tags: []
-          unnamed_args: []
-        _type: document
-      _type: header
-      content:
-      - _info:
-          context:
+        _type: header
+        content:
+        - _context:
             end_column: 35
             end_line: 49
             source: e2e/source/07_headers.mau
             start_column: 2
             start_line: 49
+          _type: text
           named_args: {}
-          subtype: null
-          tags: []
-          unnamed_args: []
-        _parent_info:
-          _info:
-            context:
+          parent:
+            _context:
               end_column: 35
               end_line: 49
               source: e2e/source/07_headers.mau
               start_column: 0
               start_line: 49
+            _type: header
             named_args: {}
             subtype: null
             tags: []
             unnamed_args: []
-          _type: header
-        _type: text
-        value: This header has the name myheader
-      internal_id: this-header-has-the-name-myheader-ffd2
-      labels: {}
-      level: 1
-      name: myheader
-    target_name: myheader
-  - _info:
-      context:
-        end_column: 67
-        end_line: 51
-        source: e2e/source/07_headers.mau
-        start_column: 66
-        start_line: 51
+          subtype: null
+          tags: []
+          unnamed_args: []
+          value: This header has the name myheader
+        internal_id: this-header-has-the-name-myheader-ffd2
+        labels: {}
+        level: 1
+        name: myheader
+        named_args: {}
+        parent:
+          _context:
+            end_column: 67
+            end_line: 51
+            source: e2e/source/07_headers.mau
+            start_column: 0
+            start_line: 19
+          _type: document
+          named_args: {}
+          subtype: null
+          tags: []
+          unnamed_args: []
+        subtype: null
+        tags: []
+        unnamed_args: []
       named_args: {}
-      subtype: null
-      tags: []
-      unnamed_args: []
-    _parent_info:
-      _info:
-        context:
+      parent:
+        _context:
           end_column: 67
           end_line: 51
           source: e2e/source/07_headers.mau
           start_column: 0
           start_line: 51
+        _type: paragraph
         named_args: {}
         subtype: null
         tags: []
         unnamed_args: []
+      subtype: null
+      tags: []
+      target_name: myheader
+      unnamed_args: []
+    - _context:
+        end_column: 67
+        end_line: 51
+        source: e2e/source/07_headers.mau
+        start_column: 66
+        start_line: 51
+      _type: text
+      named_args: {}
+      parent:
+        _context:
+          end_column: 67
+          end_line: 51
+          source: e2e/source/07_headers.mau
+          start_column: 0
+          start_line: 51
+        _type: paragraph
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      subtype: null
+      tags: []
+      unnamed_args: []
+      value: .
+    labels: {}
+    named_args: {}
+    parent:
+      _context:
+        end_column: 67
+        end_line: 51
+        source: e2e/source/07_headers.mau
+        start_column: 0
+        start_line: 51
       _type: paragraph
-    _type: text
-    value: .
-  labels: {}
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    subtype: null
+    tags: []
+    unnamed_args: []
+  named_args: {}
+  parent:
+    _context:
+      end_column: 67
+      end_line: 51
+      source: e2e/source/07_headers.mau
+      start_column: 0
+      start_line: 19
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+named_args: {}
+parent: {}
+subtype: null
+tags: []
+unnamed_args: []
 
-Mau stopped after the parsing step as requested

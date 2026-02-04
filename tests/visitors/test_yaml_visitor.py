@@ -1,0 +1,50 @@
+
+import yaml
+
+from mau.environment.environment import Environment
+from mau.nodes.node import NodeInfo
+from mau.nodes.node_arguments import NodeArguments
+from mau.test_helpers import ATestNode, generate_context
+from mau.visitors.yaml_visitor import YamlVisitor
+
+
+def test_yaml_visitor_class_attributes():
+    bv = YamlVisitor(Environment())
+
+    assert bv.format_code == "yaml"
+    assert bv.extension == "yaml"
+
+
+def test_yaml_visitor_no_node():
+    bv = YamlVisitor(Environment())
+    result = bv.visit(None, "arg1", key1="value1")
+
+    assert result == "{}\n"
+
+
+def test_yaml_visitor_generic_node():
+    node = ATestNode(
+        "Some test content",
+        arguments=NodeArguments(
+            unnamed_args=["arg1"],
+            named_args={"key1": "value1"},
+            tags=["tag1"],
+            subtype="subtype1",
+        ),
+        info=NodeInfo(
+            context=generate_context(1, 2, 3, 4),
+        ),
+    )
+
+    bv = YamlVisitor(Environment())
+    result = bv.visit(node)
+
+    assert yaml.load(result, Loader=yaml.SafeLoader) == {
+        "_type": "test",
+        "_context": generate_context(1, 2, 3, 4).asdict(),
+        "unnamed_args": ["arg1"],
+        "named_args": {"key1": "value1"},
+        "subtype": "subtype1",
+        "tags": ["tag1"],
+        "parent": {},
+    }

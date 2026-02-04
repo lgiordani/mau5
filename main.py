@@ -17,7 +17,7 @@ from mau import (
 from mau.environment.environment import Environment
 from mau.error import MauException, RawErrorFormatter
 from mau.formatter.raw_formatter import RawFormatter
-from mau.visitors.jinja_visitor import JinjaVisitor
+from mau.visitors.base_visitor import BaseVisitor
 
 default_formatter = RawFormatter.type
 available_formatters = {formatter.type: formatter for formatter in [RawFormatter]}
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 # Load a dictionary of all visitors,
 # indexed by the output format.
-visitors: dict[str, Type[JinjaVisitor]] = load_visitors_dict()
+visitors: dict[str, Type[BaseVisitor]] = load_visitors_dict()
 
 
 def write_output(output, output_file, postprocess=None):
@@ -163,20 +163,6 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--parser-print-output",
-        dest="parser_print_output",
-        help="print the output of the parser",
-        action="store_true",
-    )
-
-    parser.add_argument(
-        "--parser-only",
-        dest="parser_only",
-        help="stop after parsing",
-        action="store_true",
-    )
-
-    parser.add_argument(
         "--version", action="version", version=f"Mau version {__version__}"
     )
 
@@ -282,16 +268,6 @@ def main():
     except MauException as exc:
         error_formatter.process_mau_exception(exc)
         sys.exit(1)
-
-    # The user wants us print the resulting nodes.
-    if args.parser_print_output:
-        # Print the nodes collected by the parser.
-        formatter.print_nodes(parser.nodes)
-
-    # The user wants us to run the parser only.
-    if args.parser_only:
-        print("Mau stopped after the parsing step as requested")
-        sys.exit(0)
 
     ###############################################
     # VISITOR

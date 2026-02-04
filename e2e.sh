@@ -16,7 +16,7 @@ do
     echo "Processing ${source_file}"
     
     output_file=${source_file/.mau/.yaml}
-    mau -i ${SOURCE_DIR}/${source_file} --parser-only --parser-print-output > ${OUTPUT_DIR}/${output_file}
+    mau -i ${SOURCE_DIR}/${source_file} -f yaml -o ${OUTPUT_DIR}/${output_file}
 
     echo "Diffing..."
     diff ${REF_DIR}/${output_file} ${OUTPUT_DIR}/${output_file}
