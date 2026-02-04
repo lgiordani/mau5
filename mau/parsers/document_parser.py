@@ -71,7 +71,7 @@ class DocumentParser(BaseParser):
                     "names": ["language"],
                 },
             },
-            "mau.parser.subtypes",
+            "mau.parser.aliases",
         )
 
         # Update the environment without

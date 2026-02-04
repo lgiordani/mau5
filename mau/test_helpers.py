@@ -119,7 +119,7 @@ def compare_nodes(node: Node, expected: Node):
     bv = BaseVisitor()
 
     visit_node = bv.visit(node)
-    visit_expected = bv.visit(node)
+    visit_expected = bv.visit(expected)
 
     assert visit_node == visit_expected
 

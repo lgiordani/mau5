@@ -644,20 +644,24 @@ def test_arguments():
     )
 
 
-def test_process_arguments_subtype_replacement():
-    # Test that a given subtype can be configured
+def test_process_arguments_alias_replacement():
+    # Test that a given alias can be configured
     # to be used to add named arguments.
     # In this test,
-    # "arg1, *subtype1"
+    # "arg1, @alias1"
     # is replaced with
-    # "arg1, *subtype1, key1=value1, key2=value2"
+    # "arg1, @alias1, key1=value1, key2=value2"
 
     environment = Environment()
-    environment["mau.parser.subtypes"] = {
-        "subtype1": {"args": {"key1": "value1", "key2": "value2"}, "names": []}
+    environment["mau.parser.aliases"] = {
+        "alias1": {
+            "args": {"key1": "value1", "key2": "value2"},
+            "names": [],
+            "subtype": None,
+        }
     }
 
-    source = "arg1, *subtype1"
+    source = "arg1, @alias1"
 
     expected_unnamed_nodes = [
         ValueNode(
@@ -669,41 +673,111 @@ def test_process_arguments_subtype_replacement():
     expected_named_nodes = {
         "key1": ValueNode(
             "value1",
-            info=NodeInfo(context=generate_context(0, 6, 0, 15)),
+            info=NodeInfo(context=generate_context(0, 6, 0, 13)),
         ),
         "key2": ValueNode(
             "value2",
-            info=NodeInfo(context=generate_context(0, 6, 0, 15)),
+            info=NodeInfo(context=generate_context(0, 6, 0, 13)),
         ),
     }
-
-    expected_subtype = ValueNode(
-        "subtype1",
-        info=NodeInfo(context=generate_context(0, 6, 0, 15)),
-    )
 
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.unnamed_argument_nodes, expected_unnamed_nodes)
     compare_nodes_map(parser.named_argument_nodes, expected_named_nodes)
     compare_nodes_sequence(parser.tag_nodes, [])
-    compare_nodes(parser.subtype, expected_subtype)
+    assert parser.subtype is None
 
 
-def test_process_arguments_subtype_replacement_does_not_overwrite_arguments():
-    # Test that existing arguments are not replaced
-    # when the subtype is expanded.
-    # In this test,
-    # "arg1, *subtype1, key1=originalvalue1"
-    # is replaced with
-    # "arg1, *subtype1, key1=originalvalue1, key2=value2"
+def test_process_arguments_alias_replacement_names_and_subtype_default():
+    # Test that replacement names and subtype
+    # have a sensible default.
 
     environment = Environment()
-    environment["mau.parser.subtypes"] = {
-        "subtype1": {"args": {"key1": "value1", "key2": "value2"}, "names": []}
+    environment["mau.parser.aliases"] = {
+        "alias1": {
+            "args": {"key1": "value1", "key2": "value2"},
+        }
     }
 
-    source = "arg1, *subtype1, key1=originalvalue1"
+    source = "arg1, @alias1"
+
+    expected_unnamed_nodes = [
+        ValueNode(
+            "arg1",
+            info=NodeInfo(context=generate_context(0, 0, 0, 4)),
+        ),
+    ]
+
+    expected_named_nodes = {
+        "key1": ValueNode(
+            "value1",
+            info=NodeInfo(context=generate_context(0, 6, 0, 13)),
+        ),
+        "key2": ValueNode(
+            "value2",
+            info=NodeInfo(context=generate_context(0, 6, 0, 13)),
+        ),
+    }
+
+    parser = runner(source, environment)
+
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected_unnamed_nodes)
+    compare_nodes_map(parser.named_argument_nodes, expected_named_nodes)
+    compare_nodes_sequence(parser.tag_nodes, [])
+    assert parser.subtype is None
+
+
+def test_process_arguments_empty_alias_replacement_leaves_arguments_untouched():
+    # Test that replacement names and subtype
+    # have a sensible default.
+
+    environment = Environment()
+    environment["mau.parser.aliases"] = {"alias1": {}}
+
+    source = "arg1, @alias1"
+
+    expected_unnamed_nodes = [
+        ValueNode(
+            "arg1",
+            info=NodeInfo(context=generate_context(0, 0, 0, 4)),
+        ),
+    ]
+
+    parser = runner(source, environment)
+
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected_unnamed_nodes)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
+    assert parser.subtype is None
+
+
+def test_process_arguments_alias_not_present():
+    # Test that if the alias is not present
+    # we receive an error.
+
+    source = "arg1, @alias1"
+
+    with pytest.raises(MauException) as exc:
+        runner(source)
+
+    assert exc.value.error.type == MauErrorType.PARSER
+
+
+def test_process_arguments_alias_replacement_does_not_overwrite_arguments():
+    # Test that existing arguments are not replaced
+    # when the alias is expanded.
+    # In this test,
+    # "arg1, @alias1, key1=originalvalue1"
+    # is replaced with
+    # "arg1, key1=originalvalue1, key2=value2"
+
+    environment = Environment()
+    environment["mau.parser.aliases"] = {
+        "alias1": {"args": {"key1": "value1", "key2": "value2"}, "names": []}
+    }
+
+    source = "arg1, @alias1, key1=originalvalue1"
 
     expected_unnamed_nodes = [
         ValueNode(
@@ -715,38 +789,33 @@ def test_process_arguments_subtype_replacement_does_not_overwrite_arguments():
     expected_named_nodes = {
         "key1": ValueNode(
             "originalvalue1",
-            info=NodeInfo(context=generate_context(0, 22, 0, 36)),
+            info=NodeInfo(context=generate_context(0, 20, 0, 34)),
         ),
         "key2": ValueNode(
             "value2",
-            info=NodeInfo(context=generate_context(0, 6, 0, 15)),
+            info=NodeInfo(context=generate_context(0, 6, 0, 13)),
         ),
     }
-
-    expected_subtype = ValueNode(
-        "subtype1",
-        info=NodeInfo(context=generate_context(0, 6, 0, 15)),
-    )
 
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.unnamed_argument_nodes, expected_unnamed_nodes)
     compare_nodes_map(parser.named_argument_nodes, expected_named_nodes)
     compare_nodes_sequence(parser.tag_nodes, [])
-    compare_nodes(parser.subtype, expected_subtype)
+    assert parser.subtype is None
 
 
-def test_process_arguments_subtype_replacement_supports_names():
+def test_process_arguments_alias_replacement_supports_names():
     # Test that the replacement can provide names
     # for unnamed arguments, and that they are applied.
     # In this test,
-    # "arg1, *subtype1"
+    # "arg1, @alias1"
     # is replaced with
-    # "*subtype1, somename=arg1, key1=value1, key2=value2"
+    # "somename=arg1, key1=value1, key2=value2"
 
     environment = Environment()
-    environment["mau.parser.subtypes"] = {
-        "subtype1": {
+    environment["mau.parser.aliases"] = {
+        "alias1": {
             "args": {"key1": "value1", "key2": "value2"},
             "names": ["somename"],
         }
@@ -756,85 +825,149 @@ def test_process_arguments_subtype_replacement_supports_names():
     # that names are applied to actual
     # unnamed arguments and not to
     # the first argument.
-    source = "*subtype1, arg1"
+    source = "@alias1, arg1"
 
     expected_named_nodes = {
         "key1": ValueNode(
             "value1",
-            info=NodeInfo(context=generate_context(0, 0, 0, 9)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 7)),
         ),
         "key2": ValueNode(
             "value2",
-            info=NodeInfo(context=generate_context(0, 0, 0, 9)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 7)),
         ),
         "somename": ValueNode(
             "arg1",
-            info=NodeInfo(context=generate_context(0, 11, 0, 15)),
+            info=NodeInfo(context=generate_context(0, 9, 0, 13)),
         ),
     }
-
-    expected_subtype = ValueNode(
-        "subtype1",
-        info=NodeInfo(context=generate_context(0, 0, 0, 9)),
-    )
 
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.unnamed_argument_nodes, [])
     compare_nodes_map(parser.named_argument_nodes, expected_named_nodes)
     compare_nodes_sequence(parser.tag_nodes, [])
-    compare_nodes(parser.subtype, expected_subtype)
+    assert parser.subtype is None
 
 
-def test_process_arguments_subtype_replacement_names_do_not_override():
+def test_process_arguments_alias_replacement_names_do_not_override():
     # Test that provided names do not override
     # existing named arguments with the same name.
     # In this test,
-    # "arg1, *subtype1, somename=somearg"
+    # "arg1, @alias1, somename=somearg"
     # is replaced with
-    # "arg1, *subtype1, somename=somearg, key1=value1, key2=value2"
+    # "arg1, somename=somearg, key1=value1, key2=value2"
 
     environment = Environment()
-    environment["mau.parser.subtypes"] = {
-        "subtype1": {
+    environment["mau.parser.aliases"] = {
+        "alias1": {
             "args": {"key1": "value1", "key2": "value2"},
             "names": ["somename"],
         }
     }
 
-    source = "*subtype1, arg1, somename=somearg"
+    source = "@alias1, arg1, somename=somearg"
 
     expected_unnamed_nodes = [
         ValueNode(
             "arg1",
-            info=NodeInfo(context=generate_context(0, 11, 0, 15)),
+            info=NodeInfo(context=generate_context(0, 9, 0, 13)),
         ),
     ]
 
     expected_named_nodes = {
         "key1": ValueNode(
             "value1",
-            info=NodeInfo(context=generate_context(0, 0, 0, 9)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 7)),
         ),
         "key2": ValueNode(
             "value2",
-            info=NodeInfo(context=generate_context(0, 0, 0, 9)),
+            info=NodeInfo(context=generate_context(0, 0, 0, 7)),
         ),
         "somename": ValueNode(
             "somearg",
-            info=NodeInfo(context=generate_context(0, 26, 0, 33)),
+            info=NodeInfo(context=generate_context(0, 24, 0, 31)),
         ),
     }
-
-    expected_subtype = ValueNode(
-        "subtype1",
-        info=NodeInfo(context=generate_context(0, 0, 0, 9)),
-    )
 
     parser = runner(source, environment)
 
     compare_nodes_sequence(parser.unnamed_argument_nodes, expected_unnamed_nodes)
     compare_nodes_map(parser.named_argument_nodes, expected_named_nodes)
+    compare_nodes_sequence(parser.tag_nodes, [])
+    assert parser.subtype is None
+
+
+def test_process_arguments_alias_can_add_subtype():
+    # Test that the replacement can provide a subtype.
+    # In this test,
+    # "arg1, @alias1"
+    # is replaced with
+    # "arg1, *subtype1"
+
+    environment = Environment()
+    environment["mau.parser.aliases"] = {"alias1": {"subtype": "subtype1"}}
+
+    # These are out of order to check
+    # that names are applied to actual
+    # unnamed arguments and not to
+    # the first argument.
+    source = "@alias1, arg1"
+
+    expected_unnamed_nodes = [
+        ValueNode(
+            "arg1",
+            info=NodeInfo(context=generate_context(0, 9, 0, 13)),
+        ),
+    ]
+
+    expected_subtype = ValueNode(
+        "subtype1",
+        info=NodeInfo(context=generate_context(0, 0, 0, 7)),
+    )
+
+    parser = runner(source, environment)
+
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected_unnamed_nodes)
+    compare_nodes_map(parser.named_argument_nodes, {})
+    compare_nodes_sequence(parser.tag_nodes, [])
+    compare_nodes(parser.subtype, expected_subtype)
+
+
+def test_process_arguments_alias_does_not_replace_existing_subtype():
+    # Test that the subtype provided by the replacement
+    # does not override an existing subtype.
+    # a subtype.
+    # In this test,
+    # "arg1, @alias1"
+    # is replaced with
+    # "arg1, *originalsubtype"
+
+    environment = Environment()
+    environment["mau.parser.aliases"] = {"alias1": {"subtype": "subtype1"}}
+
+    # These are out of order to check
+    # that names are applied to actual
+    # unnamed arguments and not to
+    # the first argument.
+    source = "@alias1, arg1, *originalsubtype"
+
+    expected_unnamed_nodes = [
+        ValueNode(
+            "arg1",
+            info=NodeInfo(context=generate_context(0, 9, 0, 13)),
+        ),
+    ]
+
+    expected_subtype = ValueNode(
+        "originalsubtype",
+        info=NodeInfo(context=generate_context(0, 15, 0, 31)),
+    )
+
+    parser = runner(source, environment)
+
+    compare_nodes_sequence(parser.unnamed_argument_nodes, expected_unnamed_nodes)
+    compare_nodes_map(parser.named_argument_nodes, {})
     compare_nodes_sequence(parser.tag_nodes, [])
     compare_nodes(parser.subtype, expected_subtype)
 

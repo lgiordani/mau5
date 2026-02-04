@@ -19,7 +19,6 @@ def test_arguments():
         named_args={"key1": "value1"},
         tags=["tag1"],
         subtype="subtype1",
-        alias="alias1",
     )
 
     assert arguments.asdict() == {
@@ -27,7 +26,6 @@ def test_arguments():
         "named_args": {"key1": "value1"},
         "tags": ["tag1"],
         "subtype": "subtype1",
-        "alias": "alias1",
     }
 
 

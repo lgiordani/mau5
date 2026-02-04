@@ -95,9 +95,9 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
         ],
     )
 
-    compare_nodes(
-        parser.footnotes_manager.bodies["somename"],
-        footnote_block_data,
+    compare_nodes_sequence(
+        [parser.footnotes_manager.bodies["somename"]],
+        [footnote_block_data],
     )
 
     compare_nodes_sequence(
@@ -178,9 +178,9 @@ def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
         ],
     )
 
-    compare_nodes(
-        parser.footnotes_manager.bodies["somename"],
-        footnote_block_data,
+    compare_nodes_sequence(
+        [parser.footnotes_manager.bodies["somename"]],
+        [footnote_block_data],
     )
 
     compare_nodes_sequence(
@@ -367,7 +367,7 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
     source = """
     This contains a footnote[footnote](somename).
 
-    [*footnote, somename]
+    [@footnote, somename]
     ----
     Some text.
     ----
@@ -429,9 +429,9 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
         ],
     )
 
-    compare_nodes(
-        parser.footnotes_manager.bodies["somename"],
-        footnote_block_data,
+    compare_nodes_sequence(
+        [parser.footnotes_manager.bodies["somename"]],
+        [footnote_block_data],
     )
 
     compare_nodes_sequence(

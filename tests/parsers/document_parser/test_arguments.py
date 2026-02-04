@@ -17,7 +17,7 @@ runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 def test_arguments():
     source = """
-    [attr1, attr2, #tag1, *subtype1, @alias1, key1=value1]
+    [attr1, attr2, #tag1, *subtype1, key1=value1]
     """
 
     parser = runner(source)
@@ -28,7 +28,6 @@ def test_arguments():
         named_args={"key1": "value1"},
         tags=["tag1"],
         subtype="subtype1",
-        alias="alias1",
     )
 
 

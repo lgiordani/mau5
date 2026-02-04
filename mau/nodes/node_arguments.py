@@ -51,7 +51,6 @@ class NodeArguments:
     named_args: Mapping[str, str] = field(default_factory=dict)
     tags: Sequence[str] = field(default_factory=list)
     subtype: str | None = None
-    alias: str | None = None
 
     def asdict(self):
         return asdict(self)

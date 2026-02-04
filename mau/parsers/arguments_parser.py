@@ -199,33 +199,44 @@ class ArgumentsParser(BaseParser):
             if i not in self.tag_nodes + subtypes + aliases
         ]
 
-        if self.subtype:
-            # Check if the subtype contains
-            # additional named_arguments.
-            subtype_replacements = self.environment.get(
-                "mau.parser.subtypes", Environment()
+        if self.alias:
+            # Get all aliases.
+            replacements = self.environment.get(
+                "mau.parser.aliases", Environment()
             ).asdict()
-            subtype_replacement = subtype_replacements.get(
-                self.subtype.value,
-                {},
-            )
-            subtype_args = subtype_replacement.get("args", {})
-            subtype_names = subtype_replacement.get("names", [])
+
+            # Get the current alias if present.
+            replacement = replacements.get(self.alias.value)
+
+            if replacement is None:
+                raise create_parser_exception(
+                    message=f"Alias {self.alias.value} cannot be found in mau.parser.aliases {replacements}",
+                    context=self.context,
+                )
+
+            # Get the replacement named arguments.
+            replacement_args = replacement.get("args", {})
+
+            # Get the replacement names.
+            replacement_names = replacement.get("names", [])
+
+            # Get the replacement subtype.
+            replacement_subtype = replacement.get("subtype", None)
 
             # We need to add those arguments as nodes
-            # with the same context as the subtype.
+            # with the same context as the alias.
             # However, if the arguments are already there
             # we must not overwrite them.
 
-            # These are the keys added by the subtype
+            # These are the keys added by the alias
             # that are not already in the processed arguments.
-            missing_keys = set(subtype_args.keys()) - set(
+            missing_keys = set(replacement_args.keys()) - set(
                 self.named_argument_nodes.keys()
             )
 
             for key in missing_keys:
-                context = self.subtype.info.context
-                value = subtype_args[key]
+                context = self.alias.info.context
+                value = replacement_args[key]
 
                 self.named_argument_nodes[key] = ValueNode(
                     value,
@@ -233,7 +244,14 @@ class ArgumentsParser(BaseParser):
                     parent=self.parent_node,
                 )
 
-            self.set_names(subtype_names)
+            self.set_names(replacement_names)
+
+            if not self.subtype and replacement_subtype:
+                self.subtype = ValueNode(
+                    replacement_subtype,
+                    info=NodeInfo(context=self.alias.info.context),
+                    parent=self.parent_node,
+                )
 
     def set_names(self, positional_names: list[str]):
         self.unnamed_argument_nodes, self.named_argument_nodes = set_names(
@@ -249,7 +267,6 @@ class ArgumentsParser(BaseParser):
             },
             tags=[node.value for node in self.tag_nodes],
             subtype=self.subtype.value if self.subtype else None,
-            alias=self.alias.value if self.alias else None,
         )
 
     def parse(self):
