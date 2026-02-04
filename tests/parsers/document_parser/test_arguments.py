@@ -17,14 +17,18 @@ runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 def test_arguments():
     source = """
-    [attr1, attr2, #tag1, *subtype1, key1=value1]
+    [attr1, attr2, #tag1, *subtype1, @alias1, key1=value1]
     """
 
     parser = runner(source)
 
     # This checks that attributes are correctly stored.
     assert parser.arguments_buffer.pop() == NodeArguments(
-        ["attr1", "attr2"], {"key1": "value1"}, ["tag1"], "subtype1"
+        unnamed_args=["attr1", "attr2"],
+        named_args={"key1": "value1"},
+        tags=["tag1"],
+        subtype="subtype1",
+        alias="alias1",
     )
 
 
@@ -41,6 +45,17 @@ def test_arguments_empty():
 def test_arguments_multiple_subtypes():
     source = """
     [*subtype1, *subtype2]
+    """
+
+    with pytest.raises(MauException) as exc:
+        runner(source)
+
+    assert exc.value.error.type == MauErrorType.PARSER
+
+
+def test_arguments_multiple_aliases():
+    source = """
+    [*alias1, *alias2]
     """
 
     with pytest.raises(MauException) as exc:

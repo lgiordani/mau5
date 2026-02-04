@@ -644,7 +644,14 @@ def test_arguments():
     )
 
 
-def test_process_arguments_subtype_as_alias():
+def test_process_arguments_subtype_replacement():
+    # Test that a given subtype can be configured
+    # to be used to add named arguments.
+    # In this test,
+    # "arg1, *subtype1"
+    # is replaced with
+    # "arg1, *subtype1, key1=value1, key2=value2"
+
     environment = Environment()
     environment["mau.parser.subtypes"] = {
         "subtype1": {"args": {"key1": "value1", "key2": "value2"}, "names": []}
@@ -683,7 +690,14 @@ def test_process_arguments_subtype_as_alias():
     compare_nodes(parser.subtype, expected_subtype)
 
 
-def test_process_arguments_subtype_does_not_overwrite_arguments():
+def test_process_arguments_subtype_replacement_does_not_overwrite_arguments():
+    # Test that existing arguments are not replaced
+    # when the subtype is expanded.
+    # In this test,
+    # "arg1, *subtype1, key1=originalvalue1"
+    # is replaced with
+    # "arg1, *subtype1, key1=originalvalue1, key2=value2"
+
     environment = Environment()
     environment["mau.parser.subtypes"] = {
         "subtype1": {"args": {"key1": "value1", "key2": "value2"}, "names": []}
@@ -722,7 +736,14 @@ def test_process_arguments_subtype_does_not_overwrite_arguments():
     compare_nodes(parser.subtype, expected_subtype)
 
 
-def test_process_arguments_subtype_as_alias_supports_names():
+def test_process_arguments_subtype_replacement_supports_names():
+    # Test that the replacement can provide names
+    # for unnamed arguments, and that they are applied.
+    # In this test,
+    # "arg1, *subtype1"
+    # is replaced with
+    # "*subtype1, somename=arg1, key1=value1, key2=value2"
+
     environment = Environment()
     environment["mau.parser.subtypes"] = {
         "subtype1": {
@@ -731,6 +752,10 @@ def test_process_arguments_subtype_as_alias_supports_names():
         }
     }
 
+    # These are out of order to check
+    # that names are applied to actual
+    # unnamed arguments and not to
+    # the first argument.
     source = "*subtype1, arg1"
 
     expected_named_nodes = {
@@ -761,7 +786,14 @@ def test_process_arguments_subtype_as_alias_supports_names():
     compare_nodes(parser.subtype, expected_subtype)
 
 
-def test_process_arguments_subtype_as_alias_names_do_not_override():
+def test_process_arguments_subtype_replacement_names_do_not_override():
+    # Test that provided names do not override
+    # existing named arguments with the same name.
+    # In this test,
+    # "arg1, *subtype1, somename=somearg"
+    # is replaced with
+    # "arg1, *subtype1, somename=somearg, key1=value1, key2=value2"
+
     environment = Environment()
     environment["mau.parser.subtypes"] = {
         "subtype1": {

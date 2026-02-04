@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections.abc import Sequence
 
 from mau.environment.environment import Environment
 from mau.lexers.arguments_lexer import ArgumentsLexer
@@ -40,6 +41,9 @@ class ArgumentsParser(BaseParser):
 
         # This is the subtype node.
         self.subtype: ValueNode | None = None
+
+        # This is the alias node.
+        self.alias: ValueNode | None = None
 
     def _process_functions(self):
         return [
@@ -147,48 +151,52 @@ class ArgumentsParser(BaseParser):
 
         return True
 
-    def _isolate_tags_and_subtype(self):
-        # Isolate tags.
-        self.tag_nodes = []
-        for i in self.unnamed_argument_nodes:
-            # Discard arguments that do not start with `#`.
-            if not i.value.startswith("#"):  # type: ignore[attr-defined]
-                continue
+    def _isolate_by_prefix(
+        self, prefix: str, nodes: Sequence[ValueNode], unique=False
+    ) -> Sequence[ValueNode]:
+        # Isolate unnamed arguments
+        # whose value starts with the
+        # given prefix.
 
-            # Remove the initial `#`.
-            i.value = i.value[1:]  # type: ignore[attr-defined]
+        # Find all nodes we are interested in.
+        nodes = [i for i in nodes if i.value.startswith(prefix)]
 
-            # Append the node to the list of tags.
-            self.tag_nodes.append(i)
+        # Remove the prefix from their value.
+        for i in nodes:
+            i.value = i.value.removeprefix(prefix)
 
-        # Isolate subtypes.
-        subtypes = []
-        for i in self.unnamed_argument_nodes:
-            # Discard arguments that do not start with `*`.
-            if not i.value.startswith("*"):  # type: ignore[attr-defined]
-                continue
-
-            # Remove the initial `*`.
-            i.value = i.value[1:]  # type: ignore[attr-defined]
-
-            # Append the node to the list of subtypes.
-            subtypes.append(i)
-
-        # There can be only one subtype.
-        if len(subtypes) > 1:
+        # Check if We need to enforce the presence of a single node.
+        if unique and len(nodes) > 1:
             raise create_parser_exception(
-                message="Multiple subtypes detected",
+                message=f"Multiple nodes with prefix {prefix} detected",
                 context=self.context,
             )
 
+        return nodes
+
+    def _isolate_tags_and_subtype(self):
+        # Isolate all tags.
+        self.tag_nodes = self._isolate_by_prefix("#", self.unnamed_argument_nodes)
+
+        # Isolate all subtypes.
+        subtypes = self._isolate_by_prefix(
+            "*", self.unnamed_argument_nodes, unique=True
+        )
+
+        # Isolate all aliases.
+        aliases = self._isolate_by_prefix("@", self.unnamed_argument_nodes, unique=True)
+
         # Extract the subtype if present.
-        if len(subtypes) == 1:
-            # Get the only subtype and remove the leading "*"
-            self.subtype = subtypes[0]
+        self.subtype = next(iter(subtypes), None)
+
+        # Extract the alias if present.
+        self.alias = next(iter(aliases), None)
 
         # Remove tags and subtype from unnamed arguments.
         self.unnamed_argument_nodes = [
-            i for i in self.unnamed_argument_nodes if i not in self.tag_nodes + subtypes
+            i
+            for i in self.unnamed_argument_nodes
+            if i not in self.tag_nodes + subtypes + aliases
         ]
 
         if self.subtype:
@@ -198,7 +206,7 @@ class ArgumentsParser(BaseParser):
                 "mau.parser.subtypes", Environment()
             ).asdict()
             subtype_replacement = subtype_replacements.get(
-                self.subtype.value,  # type:ignore[attr-defined]
+                self.subtype.value,
                 {},
             )
             subtype_args = subtype_replacement.get("args", {})
@@ -235,13 +243,13 @@ class ArgumentsParser(BaseParser):
     @property
     def arguments(self):
         return NodeArguments(
-            unnamed_args=[node.value for node in self.unnamed_argument_nodes],  # type: ignore[attr-defined]
+            unnamed_args=[node.value for node in self.unnamed_argument_nodes],
             named_args={
-                key: node.value  # type: ignore[attr-defined]
-                for key, node in self.named_argument_nodes.items()
+                key: node.value for key, node in self.named_argument_nodes.items()
             },
-            tags=[node.value for node in self.tag_nodes],  # type: ignore[attr-defined]
-            subtype=self.subtype.value if self.subtype else None,  # type: ignore[attr-defined]
+            tags=[node.value for node in self.tag_nodes],
+            subtype=self.subtype.value if self.subtype else None,
+            alias=self.alias.value if self.alias else None,
         )
 
     def parse(self):
