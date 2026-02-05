@@ -3,7 +3,7 @@ import re
 from typing import Callable
 
 from mau.environment.environment import Environment
-from mau.error import MauException, MauLexerErrorMessage
+from mau.error import MauException, MauLexerErrorMessage, BaseMessageHandler
 from mau.text_buffer import Context, Position, TextBuffer
 from mau.token import Token, TokenType
 
@@ -33,7 +33,12 @@ class BaseLexer:
     successfully identifies a token.
     """
 
-    def __init__(self, text_buffer: TextBuffer, environment: Environment | None = None):
+    def __init__(
+        self,
+        text_buffer: TextBuffer,
+        message_handler: BaseMessageHandler,
+        environment: Environment | None = None,
+    ):
         self.text_buffer: TextBuffer = text_buffer
 
         # This is the list of the tokens that
@@ -42,6 +47,9 @@ class BaseLexer:
 
         # The last visited position. Used to detect loops.
         self._last_position: Position | None = None
+
+        # The message handler instamce.
+        self.message_handler = message_handler
 
         # The configuration environment.
         self.environment: Environment = environment or Environment()

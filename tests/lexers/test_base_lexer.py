@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauException, MauMessageType
+from mau.error import MauException, MauMessageType, NullMessageHandler
 from mau.lexers.base_lexer import (
     BaseLexer,
     rematch,
@@ -40,7 +40,11 @@ def test_text_buffer_properties():
     mock_text_buffer = Mock()
     test_environment = Environment()
 
-    lex = BaseLexer(mock_text_buffer, test_environment)
+    lex = BaseLexer(
+        mock_text_buffer,
+        NullMessageHandler(),
+        test_environment,
+    )
 
     assert lex.text_buffer == mock_text_buffer
     assert lex.tokens == []
@@ -61,7 +65,10 @@ def test_text_buffer_properties():
 def test_create_token_and_skip():
     text_buffer = TextBuffer("somevalue", source_filename=TEST_CONTEXT_SOURCE)
 
-    lex = BaseLexer(text_buffer)
+    lex = BaseLexer(
+        text_buffer,
+        NullMessageHandler(),
+    )
     token = lex._create_token_and_skip(TokenType.TEXT, "somevalue")
 
     assert token == Token(TokenType.TEXT, "somevalue", generate_context(0, 0, 0, 9))
@@ -70,7 +77,10 @@ def test_create_token_and_skip():
 def test_create_token_and_skip_with_no_value():
     text_buffer = TextBuffer("somevalue", source_filename=TEST_CONTEXT_SOURCE)
 
-    lex = BaseLexer(text_buffer)
+    lex = BaseLexer(
+        text_buffer,
+        NullMessageHandler(),
+    )
     token = lex._create_token_and_skip(TokenType.TEXT)
 
     assert token == Token(TokenType.TEXT, "", generate_context(0, 0, 0, 0))
@@ -79,7 +89,10 @@ def test_create_token_and_skip_with_no_value():
 def test_create_token_and_skip_with_value_none():
     text_buffer = TextBuffer("somevalue", source_filename=TEST_CONTEXT_SOURCE)
 
-    lex = BaseLexer(text_buffer)
+    lex = BaseLexer(
+        text_buffer,
+        NullMessageHandler(),
+    )
     token = lex._create_token_and_skip(TokenType.TEXT, None)
 
     assert token == Token(TokenType.TEXT, "", generate_context(0, 0, 0, 0))
@@ -87,7 +100,10 @@ def test_create_token_and_skip_with_value_none():
 
 def test_process_error():
     mock_text_buffer = Mock()
-    lex = BaseLexer(mock_text_buffer)
+    lex = BaseLexer(
+        mock_text_buffer,
+        NullMessageHandler(),
+    )
 
     with pytest.raises(MauException) as exc:
         lex._process_error()
@@ -98,7 +114,10 @@ def test_process_error():
 def test_process_eof_if_true():
     text_buffer = TextBuffer("", source_filename=TEST_CONTEXT_SOURCE)
 
-    lex = BaseLexer(text_buffer)
+    lex = BaseLexer(
+        text_buffer,
+        NullMessageHandler(),
+    )
     tokens = lex._process_eof()
 
     compare_asdict_list(
@@ -112,7 +131,10 @@ def test_process_eof_if_true():
 def test_process_eof_if_false():
     text_buffer = TextBuffer("somevalue", source_filename=TEST_CONTEXT_SOURCE)
 
-    lex = BaseLexer(text_buffer)
+    lex = BaseLexer(
+        text_buffer,
+        NullMessageHandler(),
+    )
     tokens = lex._process_eof()
 
     assert tokens is None
@@ -122,7 +144,10 @@ def test_process_empty_line_empty():
     test_text = ""
     text_buffer = TextBuffer(test_text, source_filename=TEST_CONTEXT_SOURCE)
 
-    lex = BaseLexer(text_buffer)
+    lex = BaseLexer(
+        text_buffer,
+        NullMessageHandler(),
+    )
     tokens = lex._process_empty_line()
 
     compare_asdict_list(
@@ -138,7 +163,10 @@ def test_process_empty_line_with_spaces():
     test_text = "   "
     text_buffer = TextBuffer(test_text, source_filename=TEST_CONTEXT_SOURCE)
 
-    lex = BaseLexer(text_buffer)
+    lex = BaseLexer(
+        text_buffer,
+        NullMessageHandler(),
+    )
     tokens = lex._process_empty_line()
 
     compare_asdict_list(
@@ -154,7 +182,10 @@ def test_process_empty_line_not_empty():
     test_text = "sometext"
     text_buffer = TextBuffer(test_text, source_filename=TEST_CONTEXT_SOURCE)
 
-    lex = BaseLexer(text_buffer)
+    lex = BaseLexer(
+        text_buffer,
+        NullMessageHandler(),
+    )
     tokens = lex._process_empty_line()
 
     assert tokens is None
@@ -168,7 +199,10 @@ def test_process_trailing_spaces():
     # This skips the text.
     text_buffer.column = 8
 
-    lex = BaseLexer(text_buffer)
+    lex = BaseLexer(
+        text_buffer,
+        NullMessageHandler(),
+    )
     tokens = lex._process_trailing_spaces()
 
     compare_asdict_list(tokens, [])
@@ -182,7 +216,10 @@ def test_process_trailing_spaces_no_spaces():
     # This skips the text.
     text_buffer.column = 8
 
-    lex = BaseLexer(text_buffer)
+    lex = BaseLexer(
+        text_buffer,
+        NullMessageHandler(),
+    )
     tokens = lex._process_trailing_spaces()
 
     compare_asdict_list(tokens, [])
@@ -198,7 +235,10 @@ def test_process_trailing_spaces_not_eol():
     # more words.
     text_buffer.column = 8
 
-    lex = BaseLexer(text_buffer)
+    lex = BaseLexer(
+        text_buffer,
+        NullMessageHandler(),
+    )
     tokens = lex._process_trailing_spaces()
 
     assert tokens is None
@@ -209,7 +249,10 @@ def test_process_text():
     test_text = "sometext"
     text_buffer = TextBuffer(test_text, source_filename=TEST_CONTEXT_SOURCE)
 
-    lex = BaseLexer(text_buffer)
+    lex = BaseLexer(
+        text_buffer,
+        NullMessageHandler(),
+    )
     tokens = lex._process_text()
 
     compare_asdict_list(
@@ -228,7 +271,10 @@ def test_process_text_just_tail():
     # This skips the initial word
     text_buffer.column = 8
 
-    lex = BaseLexer(text_buffer)
+    lex = BaseLexer(
+        text_buffer,
+        NullMessageHandler(),
+    )
     tokens = lex._process_text()
 
     compare_asdict_list(
