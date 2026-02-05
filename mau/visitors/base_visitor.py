@@ -1,7 +1,6 @@
 from collections.abc import Mapping, Sequence
 
 from mau.environment.environment import Environment
-
 from mau.error import MauException, MauVisitorErrorMessage
 from mau.nodes.node import Node
 from mau.text_buffer import adjust_context, adjust_context_dict

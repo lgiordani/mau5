@@ -7,7 +7,6 @@ if TYPE_CHECKING:
 
 
 from mau.nodes.command import (
-    COMMAND_HELP,
     BlockGroupNode,
     CommandNode,
     FootnotesNode,

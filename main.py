@@ -15,7 +15,7 @@ from mau import (
     load_visitors,
 )
 from mau.environment.environment import Environment
-from mau.error import MauException, LogMessageHandler
+from mau.error import LogMessageHandler, MauException
 from mau.formatter.raw_formatter import RawFormatter
 from mau.visitors.base_visitor import BaseVisitor
 
@@ -48,7 +48,7 @@ def write_output(output, output_file, postprocess=None):
         out.write("\n")
 
 
-def parse_args():
+def create_parser():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
@@ -166,7 +166,7 @@ def parse_args():
         "--version", action="version", version=f"Mau version {__version__}"
     )
 
-    return parser.parse_args()
+    return parser
 
 
 def setup_logging(loglevel):
@@ -181,8 +181,11 @@ def main():
     # INITIAL SETUP
     ###############################################
 
+    # Create the parser.
+    argparser = create_parser()
+
     # Get arguments and logging set up.
-    args = parse_args()
+    args = argparser.parse_args()
     setup_logging(args.loglevel)
 
     # Initialise the formatter.
@@ -267,41 +270,41 @@ def main():
     # Run the parser.
     try:
         parser = mau.run_parser(lexer.tokens)
-    except MauException as exc:
+    except MauException:
         sys.exit(1)
 
-    # ###############################################
-    # # VISITOR
-    # ###############################################
+    ###############################################
+    # VISITOR
+    ###############################################
 
-    # if not args.output_format:
-    #     args.print_help()
-    #     sys.exit(1)
+    if not args.output_format:
+        argparser.print_help()
+        sys.exit(1)
 
-    # # Run the visitor.
-    # try:
-    #     # Select the visitor according
-    #     # to the required output format.
-    #     visitor_class = visitors[args.output_format]
+    # Run the visitor.
 
-    #     # Get the main output node
-    #     # from the parser.
-    #     document = parser.output.document
+    # Select the visitor according
+    # to the required output format.
+    visitor_class = visitors[args.output_format]
 
-    #     # Process the node.
-    #     rendered = mau.run_visitor(visitor_class, document)
-    # except MauException as exc:
-    #     error_formatter.process_mau_exception(exc)
-    #     sys.exit(1)
+    # Get the main output node
+    # from the parser.
+    document = parser.output.document
 
-    # # Find out the name of the output file
-    # output_file = args.output_file or args.input_file.replace(
-    #     ".mau", f".{visitor_class.extension}"
-    # )
+    try:
+        # Process the node.
+        rendered = mau.run_visitor(visitor_class, document)
+    except MauException:
+        sys.exit(1)
 
-    # # Write the rendered text to
-    # # the selected output file.
-    # write_output(rendered, output_file)
+    # Find out the name of the output file
+    output_file = args.output_file or args.input_file.replace(
+        ".mau", f".{visitor_class.extension}"
+    )
+
+    # Write the rendered text to
+    # the selected output file.
+    write_output(rendered, output_file)
 
 
 if __name__ == "__main__":

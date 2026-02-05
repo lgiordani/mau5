@@ -7,9 +7,9 @@ import yaml
 __version__ = metadata.version("mau")
 
 from mau.environment.environment import Environment
+from mau.error import BaseMessageHandler, MauException
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.node import Node
-from mau.error import MauException, BaseMessageHandler
 from mau.parsers.document_parser import DocumentParser
 from mau.text_buffer import TextBuffer
 from mau.token import Token
@@ -228,10 +228,14 @@ class Mau:  # pragma: no cover
     def run_visitor(self, visitor_class: Type, node: Node | None) -> dict:
         # Initialise the visitor with the
         # current environment.
-        visitor = visitor_class(environment=self.environment)
+        try:
+            visitor = visitor_class(environment=self.environment)
 
-        # Visit the given node and all its children.
-        return visitor.process(node)
+            # Visit the given node and all its children.
+            return visitor.process(node)
+        except MauException as exc:
+            self.message_handler.process(exc.message)
+            raise
 
     def process(
         self,

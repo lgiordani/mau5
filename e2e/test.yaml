@@ -1,0 +1,88 @@
+_context:
+  end_column: 13
+  end_line: 0
+  source: e2e/test.mau
+  start_column: 0
+  start_line: 0
+_type: document
+content:
+- _context:
+    end_column: 13
+    end_line: 0
+    source: e2e/test.mau
+    start_column: 0
+    start_line: 0
+  _type: paragraph
+  labels: {}
+  lines:
+  - _context:
+      end_column: 13
+      end_line: 0
+      source: e2e/test.mau
+      start_column: 0
+      start_line: 0
+    _type: paragraph-line
+    content:
+    - _context:
+        end_column: 13
+        end_line: 0
+        source: e2e/test.mau
+        start_column: 0
+        start_line: 0
+      _type: text
+      named_args: {}
+      parent:
+        _context:
+          end_column: 13
+          end_line: 0
+          source: e2e/test.mau
+          start_column: 0
+          start_line: 0
+        _type: paragraph
+        named_args: {}
+        subtype: null
+        tags: []
+        unnamed_args: []
+      subtype: null
+      tags: []
+      unnamed_args: []
+      value: This is text.
+    labels: {}
+    named_args: {}
+    parent:
+      _context:
+        end_column: 13
+        end_line: 0
+        source: e2e/test.mau
+        start_column: 0
+        start_line: 0
+      _type: paragraph
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    subtype: null
+    tags: []
+    unnamed_args: []
+  named_args: {}
+  parent:
+    _context:
+      end_column: 13
+      end_line: 0
+      source: e2e/test.mau
+      start_column: 0
+      start_line: 0
+    _type: document
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+named_args: {}
+parent: {}
+subtype: null
+tags: []
+unnamed_args: []
+

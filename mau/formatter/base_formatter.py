@@ -1,6 +1,5 @@
 from abc import ABC
 
-from mau.nodes.node import Node
 from mau.text_buffer import Context, Position
 from mau.token import Token
 

@@ -4,8 +4,7 @@ from enum import Enum
 from logging import Logger
 
 from mau.environment.environment import Environment
-from mau.nodes.node import Node
-from mau.text_buffer import adjust_context, adjust_position, Position, Context
+from mau.text_buffer import Context, Position, adjust_context, adjust_position
 
 
 class MauMessageType(Enum):

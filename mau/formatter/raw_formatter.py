@@ -1,8 +1,6 @@
 import yaml
 
-from mau.nodes.node import Node
 from mau.token import Token
-from mau.visitors.base_visitor import BaseVisitor
 
 from .base_formatter import BaseFormatter
 
