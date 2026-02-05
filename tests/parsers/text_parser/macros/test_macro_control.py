@@ -1,7 +1,7 @@
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauErrorType, MauException
+from mau.error import MauException, MauMessageType
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.inline import StyleNode, TextNode
 from mau.nodes.node import NodeInfo
@@ -94,7 +94,7 @@ def test_macro_control_wrong_name_format():
     with pytest.raises(MauException) as exc:
         runner(source, environment=environment)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_macro_control_unsupported_operator():
@@ -105,7 +105,7 @@ def test_macro_control_unsupported_operator():
     with pytest.raises(MauException) as exc:
         runner(source, environment=environment)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_macro_control_undefined_variable():
@@ -114,7 +114,7 @@ def test_macro_control_undefined_variable():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_macro_control_invalid_boolean():
@@ -125,7 +125,7 @@ def test_macro_control_invalid_boolean():
     with pytest.raises(MauException) as exc:
         runner(source, environment)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_macro_control_invalid_test():
@@ -136,7 +136,7 @@ def test_macro_control_invalid_test():
     with pytest.raises(MauException) as exc:
         runner(source, environment)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_macro_control_ifeval_true():
@@ -263,7 +263,7 @@ def test_macro_control_ifeval_undefined_variable():
     with pytest.raises(MauException) as exc:
         runner(source, environment)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_macro_control_ifeval_true_not_defined():
@@ -279,7 +279,7 @@ def test_macro_control_ifeval_true_not_defined():
     with pytest.raises(MauException) as exc:
         runner(source, environment)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_macro_control_ifeval_false_not_defined():
@@ -295,7 +295,7 @@ def test_macro_control_ifeval_false_not_defined():
     with pytest.raises(MauException) as exc:
         runner(source, environment)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_macro_control_default_false():
@@ -314,8 +314,8 @@ def test_macro_control_without_true_case():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
-    assert exc.value.error.content["context"] == generate_context(0, 0, 0, 19)
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.context == generate_context(0, 0, 0, 19)
 
 
 def test_macro_control_without_value():
@@ -324,8 +324,8 @@ def test_macro_control_without_value():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
-    assert exc.value.error.content["context"] == generate_context(0, 0, 0, 11)
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.context == generate_context(0, 0, 0, 11)
 
 
 def test_macro_control_without_variable():
@@ -334,5 +334,5 @@ def test_macro_control_without_variable():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
-    assert exc.value.error.content["context"] == generate_context(0, 0, 0, 7)
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.context == generate_context(0, 0, 0, 7)

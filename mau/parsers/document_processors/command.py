@@ -49,7 +49,6 @@ def command_processor(parser: DocumentParser):
             raise create_parser_exception(
                 "Syntax error. You cannot specify both boxed and inline arguments.",
                 context,
-                COMMAND_HELP,
             )
 
         # Get the colon.
@@ -59,7 +58,6 @@ def command_processor(parser: DocumentParser):
             raise create_parser_exception(
                 f"Syntax error. If you use the colon after {name.value} you need to specify arguments.",
                 context,
-                COMMAND_HELP,
             )
 
         # Get the inline arguments.

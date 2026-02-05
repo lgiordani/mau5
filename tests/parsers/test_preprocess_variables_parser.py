@@ -1,7 +1,7 @@
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauErrorType, MauException
+from mau.error import MauException, MauMessageType
 from mau.lexers.preprocess_variables_lexer import PreprocessVariablesLexer
 from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo
@@ -369,8 +369,8 @@ def test_variable_not_existing():
     with pytest.raises(MauException) as exc:
         runner(source, environment)
 
-    assert exc.value.error.type == MauErrorType.PARSER
-    assert exc.value.error.content["context"] == generate_context(0, 15, 0, 21)
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.context == generate_context(0, 15, 0, 21)
 
 
 def test_variables_can_contain_markers():

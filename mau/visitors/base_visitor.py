@@ -1,40 +1,35 @@
 from collections.abc import Mapping, Sequence
 
 from mau.environment.environment import Environment
-from mau.error import MauError, MauErrorType, MauException
+
+from mau.error import MauException, MauVisitorErrorMessage
 from mau.nodes.node import Node
 from mau.text_buffer import adjust_context, adjust_context_dict
 
 
 def create_visitor_exception(
-    message: str,
+    text: str,
     node: Node | None = None,
     data: dict | None = None,
     environment: Environment | None = None,
     additional_info: dict[str, str] | None = None,
 ):
-    context = "unknown"
+    context = None
     if data:
         context = adjust_context_dict(data["_context"])
     elif node:
         context = adjust_context(node.info.context)
 
-    content = {
-        "Context": context,
-    }
+    message = MauVisitorErrorMessage(
+        text=text,
+        context=context,
+        node_type=node.type if node else None,
+        data=data,
+        environment=environment,
+        additional_info=additional_info,
+    )
 
-    if node:
-        content["Node type"] = node.type
-
-    if data:
-        content["Template data"] = data
-
-    if additional_info:
-        content.update(additional_info)
-
-    error = MauError(type=MauErrorType.VISITOR, content=content)
-
-    return MauException(message, error)
+    return MauException(message)
 
 
 class BaseVisitor:

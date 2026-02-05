@@ -471,7 +471,7 @@ class TextParser(BaseParser):
             target = parser.named_argument_nodes["target"]
         except KeyError as exc:
             raise create_parser_exception(
-                message="Syntax: [link](TARGET, text)", context=context
+                text="Syntax: [link](TARGET, text)", context=context
             ) from exc
 
         # Extract the text of the link if present.
@@ -528,7 +528,7 @@ class TextParser(BaseParser):
             header_id = parser.named_argument_nodes["header_id"]
         except KeyError as exc:
             raise create_parser_exception(
-                message="Syntax: [header](ID, text)", context=context
+                text="Syntax: [header](ID, text)", context=context
             ) from exc
 
         # Extract the text of the link if present.
@@ -581,7 +581,7 @@ class TextParser(BaseParser):
             target = parser.named_argument_nodes["email"]
         except KeyError as exc:
             raise create_parser_exception(
-                message="Syntax: [mailto](EMAIL, text)", context=context
+                text="Syntax: [mailto](EMAIL, text)", context=context
             ) from exc
 
         # Extract the text of the link if present.
@@ -640,7 +640,7 @@ class TextParser(BaseParser):
             text = parser.named_argument_nodes["text"]
         except KeyError as exc:
             raise create_parser_exception(
-                message="Syntax: [class](TEXT, class1, class2, ...)", context=context
+                text="Syntax: [class](TEXT, class1, class2, ...)", context=context
             ) from exc
 
         # Unpack the text initial position.
@@ -680,7 +680,7 @@ class TextParser(BaseParser):
             value = parser.named_argument_nodes["value"]
         except KeyError as exc:
             raise create_parser_exception(
-                message="Syntax: [unicode](VALUE)", context=context
+                text="Syntax: [unicode](VALUE)", context=context
             ) from exc
 
         node = MacroUnicodeNode(
@@ -702,7 +702,7 @@ class TextParser(BaseParser):
             value = parser.named_argument_nodes["value"]
         except KeyError as exc:
             raise create_parser_exception(
-                message="Syntax: [raw](VALUE)", context=context
+                text="Syntax: [raw](VALUE)", context=context
             ) from exc
 
         node = MacroRawNode(
@@ -726,7 +726,7 @@ class TextParser(BaseParser):
             uri = parser.named_argument_nodes["uri"]
         except KeyError as exc:
             raise create_parser_exception(
-                message="Syntax: [image](URI, alt_text, width, height)", context=context
+                text="Syntax: [image](URI, alt_text, width, height)", context=context
             ) from exc
 
         # Get the remaining parameters
@@ -763,7 +763,7 @@ class TextParser(BaseParser):
             name_node = parser.named_argument_nodes["name"]
         except KeyError as exc:
             raise create_parser_exception(
-                message="Syntax: [footnote](NAME)", context=context
+                text="Syntax: [footnote](NAME)", context=context
             ) from exc
 
         name = name_node.value
@@ -841,7 +841,7 @@ class TextParser(BaseParser):
             true_case = parser.named_argument_nodes["true_case"]
         except KeyError as exc:
             raise create_parser_exception(
-                message=f"Syntax: [{macro_name}](VARIABLE, TEST, TRUE_CASE, false_case)",
+                text=f"Syntax: [{macro_name}](VARIABLE, TEST, TRUE_CASE, false_case)",
                 context=context,
             ) from exc
 

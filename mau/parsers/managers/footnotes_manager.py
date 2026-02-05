@@ -3,6 +3,7 @@ from __future__ import annotations
 from mau.nodes.block import BlockNode
 from mau.nodes.command import FootnotesItemNode, FootnotesNode
 from mau.nodes.footnote import FootnoteNode
+from mau.parsers.base_parser import create_parser_exception
 
 
 def default_footnote_unique_id(
@@ -77,8 +78,13 @@ class FootnotesManager:
         # the public and explicit IDs, then
         # connect footnote and content.
         for number, footnote in enumerate(self.footnotes, start=1):
-            # Find the content for this footnote.
-            body = self.bodies[footnote.name]
+            try:
+                # Find the content for this footnote.
+                body = self.bodies[footnote.name]
+            except KeyError:
+                raise create_parser_exception(
+                    text=f"Footnote {footnote.name} has not been defined",
+                )
 
             # Store the body inside the footnote.
             footnote.content = body.content

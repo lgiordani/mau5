@@ -26,7 +26,10 @@ class BlockGroupManager:
         # Check if the position in the
         # block is already taken.
         if block_group.get(position):
-            raise ValueError(f"Position {position} is already taken in group {group}")
+            raise create_parser_exception(
+                text=f"Position {position} is already taken in group {group}",
+                context=node.info.context,
+            )
 
         block_group[position] = node
 

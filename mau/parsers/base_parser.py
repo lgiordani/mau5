@@ -1,5 +1,6 @@
 from mau.environment.environment import Environment
-from mau.error import MauError, MauErrorType, MauException
+
+from mau.error import MauParserErrorMessage, MauException
 from mau.lexers.base_lexer import BaseLexer
 from mau.nodes.node import Node
 from mau.text_buffer import Context, TextBuffer
@@ -9,18 +10,12 @@ from .managers.tokens_manager import TokensManager
 
 
 def create_parser_exception(
-    message: str,
+    text: str,
     context: Context | None = None,
-    long_help: str | None = None,
 ):
-    content = {
-        "context": context,
-        "long_help": long_help,
-    }
+    message = MauParserErrorMessage(text=text, context=context)
 
-    error = MauError(type=MauErrorType.PARSER, content=content)
-
-    return MauException(message, error)
+    return MauException(message)
 
 
 class BaseParser:

@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauErrorType, MauException
+from mau.error import MauException, MauMessageType
 from mau.lexers.arguments_lexer import ArgumentsLexer
 from mau.nodes.node import NodeInfo, ValueNode
 from mau.nodes.node_arguments import NodeArguments
@@ -567,7 +567,7 @@ def test_named_arguments_followed_by_unnamed():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_process_arguments_subtype():
@@ -631,7 +631,7 @@ def test_process_arguments_multiple_subtypes():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_arguments():
@@ -761,7 +761,7 @@ def test_process_arguments_alias_not_present():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_process_arguments_alias_replacement_does_not_overwrite_arguments():

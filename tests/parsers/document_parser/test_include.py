@@ -3,7 +3,7 @@ from unittest.mock import mock_open, patch
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauErrorType, MauException
+from mau.error import MauException, MauMessageType
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.include import IncludeImageNode, IncludeMauNode, IncludeNode
 from mau.nodes.inline import TextNode
@@ -90,12 +90,12 @@ def test_include_content_boxed_and_inline_arguments_are_forbidden():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
     assert (
-        exc.value.message
+        exc.value.message.text
         == "Syntax error. You cannot specify both boxed and inline arguments."
     )
-    assert exc.value.error.content["context"] == generate_context(2, 0, 2, 9)
+    assert exc.value.message.context == generate_context(2, 0, 2, 9)
 
 
 def test_include_content_without_arguments_is_forbidden():
@@ -106,9 +106,9 @@ def test_include_content_without_arguments_is_forbidden():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
-    assert exc.value.message == "Syntax error. You need to specify a list of URIs."
-    assert exc.value.error.content["context"] == generate_context(1, 0, 1, 9)
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Syntax error. You need to specify a list of URIs."
+    assert exc.value.message.context == generate_context(1, 0, 1, 9)
 
 
 def test_include_content_without_unnamed_arguments_is_forbidden():
@@ -119,9 +119,9 @@ def test_include_content_without_unnamed_arguments_is_forbidden():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
-    assert exc.value.message == "Syntax error. You need to specify a list of URIs."
-    assert exc.value.error.content["context"] == generate_context(1, 0, 1, 9)
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Syntax error. You need to specify a list of URIs."
+    assert exc.value.message.context == generate_context(1, 0, 1, 9)
 
 
 def test_include_content_with_label():
@@ -261,8 +261,8 @@ def test_include_image_without_uri():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
-    assert exc.value.error.content["context"] == generate_context(1, 0, 1, 8)
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.context == generate_context(1, 0, 1, 8)
 
 
 def test_include_parenthood():

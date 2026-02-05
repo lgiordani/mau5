@@ -1,7 +1,7 @@
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauErrorType, MauException
+from mau.error import MauException, MauMessageType
 from mau.parsers.buffers.control_buffer import Control, ControlBuffer
 from mau.test_helpers import (
     generate_context,
@@ -60,8 +60,8 @@ def test_control_process_wrong_operator():
             "notanoperator", "answer", "==", "42", context=generate_context(1, 2, 1, 20)
         )
 
-    assert exc.value.error.content["context"] == generate_context(1, 2, 1, 20)
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.context == generate_context(1, 2, 1, 20)
 
 
 def test_control_process_if_operator_variable_not_defined_equality():
@@ -72,7 +72,7 @@ def test_control_process_if_operator_variable_not_defined_equality():
     with pytest.raises(MauException) as exc:
         c.process(environment)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_control_process_if_operator_variable_defined_equality():
@@ -91,7 +91,7 @@ def test_control_process_if_operator_variable_not_defined_inequality():
     with pytest.raises(MauException) as exc:
         c.process(environment)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_control_process_if_operator_variable_defined_inequality():

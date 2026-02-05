@@ -1,5 +1,7 @@
+import pytest
 from unittest.mock import patch
 
+from mau.error import MauException, MauMessageType
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNode
@@ -488,3 +490,14 @@ def test_footnotes_parenthood_labels():
     # block group it has been assigned to.
     check_parent(footnotes_node, label_title_nodes)
     check_parent(footnotes_node, label_role_nodes)
+
+
+def test_footnotes_undefined_footnote():
+    source = """
+    This is a non existing [footnote](nope).
+    """
+
+    with pytest.raises(MauException) as exc:
+        runner(source)
+
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER

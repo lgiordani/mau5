@@ -208,7 +208,7 @@ def load_templates_from_providers(environment: Environment) -> Environment:
         # Check if the provider is available.
         if provider not in available_providers:
             raise create_visitor_exception(
-                f"Template provider {provider} is not available"
+                text=f"Template provider {provider} is not available"
             )
 
         templates.dupdate(available_providers[provider].templates)
@@ -380,7 +380,7 @@ class JinjaVisitor(BaseVisitor):
             )
         except jinja2.exceptions.UndefinedError as exception:
             raise create_visitor_exception(
-                message=f"Error rendering node with template {template_full_name}: {str(exception)}",
+                text=f"Error rendering node with template {template_full_name}: {str(exception)}",
                 node=node,
                 data=kwargs,
                 environment=environment,
@@ -444,7 +444,7 @@ class JinjaVisitor(BaseVisitor):
 
         # No templates were found, stop with an error.
         raise create_visitor_exception(
-            message="Cannot find a suitable template.",
+            text="Cannot find a suitable template.",
             data=result,
             environment=self.environment,
             additional_info={

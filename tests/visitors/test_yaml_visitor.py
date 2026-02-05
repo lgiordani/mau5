@@ -1,4 +1,3 @@
-
 import yaml
 
 from mau.environment.environment import Environment
@@ -17,7 +16,7 @@ def test_yaml_visitor_class_attributes():
 
 def test_yaml_visitor_no_node():
     bv = YamlVisitor(Environment())
-    result = bv.visit(None, "arg1", key1="value1")
+    result = bv.process(None)
 
     assert result == "{}\n"
 
@@ -37,7 +36,7 @@ def test_yaml_visitor_generic_node():
     )
 
     bv = YamlVisitor(Environment())
-    result = bv.visit(node)
+    result = bv.process(node)
 
     assert yaml.load(result, Loader=yaml.SafeLoader) == {
         "_type": "test",

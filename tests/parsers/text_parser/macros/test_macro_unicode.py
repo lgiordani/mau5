@@ -1,6 +1,6 @@
 import pytest
 
-from mau.error import MauErrorType, MauException
+from mau.error import MauException, MauMessageType
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.macro import MacroUnicodeNode
 from mau.nodes.node import NodeInfo
@@ -38,5 +38,5 @@ def test_macro_unicode_without_value():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
-    assert exc.value.error.content["context"] == generate_context(0, 0, 0, 11)
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.context == generate_context(0, 0, 0, 11)

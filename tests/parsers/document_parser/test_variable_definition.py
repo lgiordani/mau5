@@ -1,6 +1,6 @@
 import pytest
 
-from mau.error import MauErrorType, MauException
+from mau.error import MauException, MauMessageType
 from mau.lexers.document_lexer import DocumentLexer
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -22,12 +22,12 @@ def test_variable_definition_without_value_is_empty():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
     assert (
-        exc.value.message
+        exc.value.message.text
         == "Error in variable definition. Variable 'attr' has no value."
     )
-    assert exc.value.error.content["context"] == generate_context(1, 0, 1, 6)
+    assert exc.value.message.context == generate_context(1, 0, 1, 6)
 
 
 def test_variable_definition_with_plus_is_true():

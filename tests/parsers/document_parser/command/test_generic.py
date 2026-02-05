@@ -1,6 +1,6 @@
 import pytest
 
-from mau.error import MauErrorType, MauException
+from mau.error import MauException, MauMessageType
 from mau.lexers.document_lexer import DocumentLexer
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
@@ -24,12 +24,12 @@ def test_command_boxed_and_inline_arguments_are_forbidden():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
     assert (
-        exc.value.message
+        exc.value.message.text
         == "Syntax error. You cannot specify both boxed and inline arguments."
     )
-    assert exc.value.error.content["context"] == generate_context(2, 0, 2, 5)
+    assert exc.value.message.context == generate_context(2, 0, 2, 5)
 
 
 def test_command_colon_after_command_requires_arguments():
@@ -40,12 +40,12 @@ def test_command_colon_after_command_requires_arguments():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
     assert (
-        exc.value.message
+        exc.value.message.text
         == "Syntax error. If you use the colon after cmd you need to specify arguments."
     )
-    assert exc.value.error.content["context"] == generate_context(1, 0, 1, 5)
+    assert exc.value.message.context == generate_context(1, 0, 1, 5)
 
 
 def test_command_control():

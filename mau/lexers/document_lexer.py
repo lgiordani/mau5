@@ -50,8 +50,8 @@ class DocumentLexer(BaseLexer):
             # If we reached the EOF we have a problem.
             if self.text_buffer.eof:
                 raise create_lexer_exception(
-                    "Unclosed multiline comment.",
-                    initial_position,
+                    text="Unclosed multiline comment.",
+                    position=initial_position,
                 )
 
             # If reached the closing slashes
@@ -148,8 +148,8 @@ class DocumentLexer(BaseLexer):
             # Check if we reached the EOF.
             if self.text_buffer.eof:
                 raise create_lexer_exception(
-                    "Unclosed block.",
-                    delimiter.context.start_position,
+                    text="Unclosed block.",
+                    position=delimiter.context.start_position,
                 )
 
             # If the current line contains only the

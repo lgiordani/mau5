@@ -1,7 +1,7 @@
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauErrorType, MauException
+from mau.error import MauException, MauMessageType
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.node_arguments import NodeArguments
 from mau.parsers.document_parser import DocumentParser
@@ -49,7 +49,7 @@ def test_arguments_multiple_subtypes():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_arguments_multiple_aliases():
@@ -60,7 +60,7 @@ def test_arguments_multiple_aliases():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_arguments_support_variables():

@@ -1,6 +1,6 @@
 import pytest
 
-from mau.error import MauErrorType, MauException
+from mau.error import MauException, MauMessageType
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.block import BlockNode
 from mau.nodes.inline import TextNode
@@ -116,5 +116,5 @@ def test_block_engine():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
-    assert exc.value.error.content["context"] == generate_context(2, 0, 3, 4)
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.context == generate_context(2, 0, 3, 4)

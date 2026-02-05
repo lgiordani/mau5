@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauErrorType, MauException
+from mau.error import MauException, MauMessageType
 from mau.lexers.base_lexer import (
     BaseLexer,
     rematch,
@@ -92,7 +92,7 @@ def test_process_error():
     with pytest.raises(MauException) as exc:
         lex._process_error()
 
-    assert exc.value.error.type == MauErrorType.LEXER
+    assert exc.value.message.type == MauMessageType.ERROR_LEXER
 
 
 def test_process_eof_if_true():

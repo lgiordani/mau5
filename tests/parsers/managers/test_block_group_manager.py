@@ -1,6 +1,6 @@
 import pytest
 
-from mau.error import MauErrorType, MauException
+from mau.error import MauException, MauMessageType
 from mau.nodes.block import BlockNode
 from mau.nodes.command import BlockGroupNode
 from mau.parsers.managers.block_group_manager import (
@@ -39,8 +39,10 @@ def test_block_group_manager_same_position():
 
     bgm.add_block("group1", "position1", block_node1)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(MauException) as exc:
         bgm.add_block("group1", "position1", block_node2)
+
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_block_group_manager_add_group_node():
@@ -87,4 +89,4 @@ def test_block_group_manager_process_group_does_not_exist():
     with pytest.raises(MauException) as exc:
         bgm.process()
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER

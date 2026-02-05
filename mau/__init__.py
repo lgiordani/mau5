@@ -9,6 +9,7 @@ __version__ = metadata.version("mau")
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.node import Node
+from mau.error import MauException, BaseMessageHandler
 from mau.parsers.document_parser import DocumentParser
 from mau.text_buffer import TextBuffer
 from mau.token import Token
@@ -184,8 +185,14 @@ def load_environment_variables(
 class Mau:  # pragma: no cover
     def __init__(
         self,
+        message_handler: BaseMessageHandler,
         environment: Environment | None = None,
     ):
+        # This is the message handler that
+        # can process any message created
+        # inside Mau.
+        self.message_handler = message_handler
+
         # This will contain all the variables declared
         # in the text and in the configuration.
         self.environment = environment or Environment()
@@ -198,15 +205,23 @@ class Mau:  # pragma: no cover
         return TextBuffer(text, source_filename=source_filename)
 
     def run_lexer(self, text_buffer: TextBuffer) -> DocumentLexer:
-        lexer = DocumentLexer(text_buffer, self.environment)
-        lexer.process()
+        try:
+            lexer = DocumentLexer(text_buffer, self.environment)
+            lexer.process()
+        except MauException as exc:
+            self.message_handler.process(exc.message)
+            raise
 
         return lexer
 
     def run_parser(self, tokens: list[Token]) -> DocumentParser:
-        parser = DocumentParser(tokens, self.environment)
-        parser.parse()
-        parser.finalise()
+        try:
+            parser = DocumentParser(tokens, self.environment)
+            parser.parse()
+            parser.finalise()
+        except MauException as exc:
+            self.message_handler.process(exc.message)
+            raise
 
         return parser
 

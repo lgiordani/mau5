@@ -40,7 +40,6 @@ def include_processor(parser: DocumentParser):
             raise create_parser_exception(
                 "Syntax error. You cannot specify both boxed and inline arguments.",
                 context,
-                IncludeNode.long_help,
             )
 
         # Get the colon.
@@ -64,7 +63,6 @@ def include_processor(parser: DocumentParser):
         raise create_parser_exception(
             "Syntax error. You need to specify a list of URIs.",
             context,
-            IncludeNode.long_help,
         )
 
     # Check the stored control
@@ -112,7 +110,6 @@ def _parse_generic(
         raise create_parser_exception(
             "Syntax error. You need to specify a list of URIs.",
             context,
-            IncludeNode.long_help,
         )
 
     return IncludeNode(content_type, uris)

@@ -15,7 +15,7 @@ from mau import (
     load_visitors,
 )
 from mau.environment.environment import Environment
-from mau.error import MauException, RawErrorFormatter
+from mau.error import MauException, LogMessageHandler
 from mau.formatter.raw_formatter import RawFormatter
 from mau.visitors.base_visitor import BaseVisitor
 
@@ -188,8 +188,8 @@ def main():
     # Initialise the formatter.
     formatter = available_formatters[args.formatter]
 
-    # Initialise the error formatter.
-    error_formatter = RawErrorFormatter()
+    # Initialise the message handler.
+    message_handler = LogMessageHandler(logger)
 
     ###############################################
     # CONFIGURATION
@@ -232,7 +232,10 @@ def main():
 
     # Create the Mau object, passing the environment that
     # we built in the previous section.
-    mau = Mau(environment=environment)
+    mau = Mau(
+        message_handler=message_handler,
+        environment=environment,
+    )
 
     # Initialise the Text Buffer.
     text_buffer = mau.init_text_buffer(text, args.input_file)
@@ -244,8 +247,7 @@ def main():
     # Run the lexer.
     try:
         lexer = mau.run_lexer(text_buffer)
-    except MauException as exc:
-        error_formatter.process_mau_exception(exc)
+    except MauException:
         sys.exit(1)
 
     # The user wants us print the resulting tokens.
@@ -266,41 +268,40 @@ def main():
     try:
         parser = mau.run_parser(lexer.tokens)
     except MauException as exc:
-        error_formatter.process_mau_exception(exc)
         sys.exit(1)
 
-    ###############################################
-    # VISITOR
-    ###############################################
+    # ###############################################
+    # # VISITOR
+    # ###############################################
 
-    if not args.output_format:
-        args.print_help()
-        sys.exit(1)
+    # if not args.output_format:
+    #     args.print_help()
+    #     sys.exit(1)
 
-    # Run the visitor.
-    try:
-        # Select the visitor according
-        # to the required output format.
-        visitor_class = visitors[args.output_format]
+    # # Run the visitor.
+    # try:
+    #     # Select the visitor according
+    #     # to the required output format.
+    #     visitor_class = visitors[args.output_format]
 
-        # Get the main output node
-        # from the parser.
-        document = parser.output.document
+    #     # Get the main output node
+    #     # from the parser.
+    #     document = parser.output.document
 
-        # Process the node.
-        rendered = mau.run_visitor(visitor_class, document)
-    except MauException as exc:
-        error_formatter.process_mau_exception(exc)
-        sys.exit(1)
+    #     # Process the node.
+    #     rendered = mau.run_visitor(visitor_class, document)
+    # except MauException as exc:
+    #     error_formatter.process_mau_exception(exc)
+    #     sys.exit(1)
 
-    # Find out the name of the output file
-    output_file = args.output_file or args.input_file.replace(
-        ".mau", f".{visitor_class.extension}"
-    )
+    # # Find out the name of the output file
+    # output_file = args.output_file or args.input_file.replace(
+    #     ".mau", f".{visitor_class.extension}"
+    # )
 
-    # Write the rendered text to
-    # the selected output file.
-    write_output(rendered, output_file)
+    # # Write the rendered text to
+    # # the selected output file.
+    # write_output(rendered, output_file)
 
 
 if __name__ == "__main__":

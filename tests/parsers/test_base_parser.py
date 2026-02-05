@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauErrorType, MauException
+from mau.error import MauException, MauMessageType
 from mau.lexers.base_lexer import BaseLexer
 from mau.parsers.base_parser import (
     BaseParser,
@@ -38,9 +38,9 @@ def test_unknown_token():
     with pytest.raises(MauException) as exc:
         parser.parse()
 
-    assert exc.value.error.type == MauErrorType.PARSER
-    assert exc.value.message == "Cannot parse token"
-    assert exc.value.error.content["context"] is test_context
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Cannot parse token"
+    assert exc.value.message.context == generate_context(0, 0, 0, 0)
 
 
 def test_process_functions_token_error():
@@ -59,7 +59,7 @@ def test_process_functions_token_error():
     with pytest.raises(MauException) as exc:
         parser.parse()
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
     process_test.assert_called()
 
 
@@ -79,5 +79,5 @@ def test_process_functions_success():
     with pytest.raises(MauException) as exc:
         parser.parse()
 
-    assert exc.value.error.type == MauErrorType.PARSER
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
     process_test.assert_called()

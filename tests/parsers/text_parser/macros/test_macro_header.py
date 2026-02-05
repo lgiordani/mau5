@@ -1,6 +1,6 @@
 import pytest
 
-from mau.error import MauErrorType, MauException
+from mau.error import MauException, MauMessageType
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.inline import TextNode
 from mau.nodes.macro import MacroHeaderNode
@@ -62,5 +62,5 @@ def test_macro_header_without_target():
     with pytest.raises(MauException) as exc:
         runner(source)
 
-    assert exc.value.error.type == MauErrorType.PARSER
-    assert exc.value.error.content["context"] == generate_context(0, 0, 0, 10)
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.context == generate_context(0, 0, 0, 10)
