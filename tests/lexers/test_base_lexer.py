@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauException, MauMessageType, NullMessageHandler
+from mau.error import MauException, MauMessageType
 from mau.lexers.base_lexer import (
     BaseLexer,
     rematch,
@@ -16,6 +16,7 @@ from mau.test_helpers import (
     generate_context,
     init_lexer_factory,
     lexer_runner_factory,
+    NullMessageHandler,
 )
 from mau.text_buffer import TextBuffer
 from mau.token import Token, TokenType

@@ -26,6 +26,7 @@ def test_header_node_without_content():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 

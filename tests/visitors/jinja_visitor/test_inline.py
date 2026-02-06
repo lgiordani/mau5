@@ -1,4 +1,4 @@
-from mau.error import NullMessageHandler
+from mau.test_helpers import NullMessageHandler
 from mau.environment.environment import Environment
 from mau.nodes.footnote import FootnoteNode
 from mau.nodes.header import HeaderNode

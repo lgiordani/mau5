@@ -1,7 +1,14 @@
 import textwrap
 from collections.abc import MutableMapping, MutableSequence, Sequence
 
-from mau.error import NullMessageHandler
+
+from mau.error import (
+    BaseMessageHandler,
+    MauLexerErrorMessage,
+    MauParserErrorMessage,
+    MauVisitorErrorMessage,
+    MauVisitorDebugMessage,
+)
 from mau.environment.environment import Environment
 from mau.nodes.node import (
     Node,
@@ -55,6 +62,7 @@ def check_node_with_content(node):
             "parent": {},
             "subtype": None,
             "tags": [],
+            "internal_tags": [],
             "unnamed_args": [],
         },
         {
@@ -64,6 +72,7 @@ def check_node_with_content(node):
             "parent": {},
             "subtype": None,
             "tags": [],
+            "internal_tags": [],
             "unnamed_args": [],
         },
     ]
@@ -85,6 +94,7 @@ def check_node_with_labels(node):
                 "parent": {},
                 "subtype": None,
                 "tags": [],
+                "internal_tags": [],
                 "unnamed_args": [],
             },
             {
@@ -94,6 +104,7 @@ def check_node_with_labels(node):
                 "parent": {},
                 "subtype": None,
                 "tags": [],
+                "internal_tags": [],
                 "unnamed_args": [],
             },
         ],
@@ -105,6 +116,7 @@ def check_node_with_labels(node):
                 "parent": {},
                 "subtype": None,
                 "tags": [],
+                "internal_tags": [],
                 "unnamed_args": [],
             },
         ],
@@ -290,3 +302,19 @@ class ATestNode(Node, NodeLabelsMixin, NodeContentMixin):
 
         NodeContentMixin.__init__(self, content)
         NodeLabelsMixin.__init__(self, labels)
+
+
+class NullMessageHandler(BaseMessageHandler):
+    type = "null"
+
+    def process_lexer_error(self, message: MauLexerErrorMessage):
+        pass
+
+    def process_parser_error(self, message: MauParserErrorMessage):
+        pass
+
+    def process_visitor_error(self, message: MauVisitorErrorMessage):
+        pass
+
+    def process_visitor_debug(self, message: MauVisitorDebugMessage):
+        pass

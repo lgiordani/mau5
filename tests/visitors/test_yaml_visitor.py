@@ -3,19 +3,19 @@ import yaml
 from mau.environment.environment import Environment
 from mau.nodes.node import NodeInfo
 from mau.nodes.node_arguments import NodeArguments
-from mau.test_helpers import ATestNode, generate_context
+from mau.test_helpers import ATestNode, generate_context, NullMessageHandler
 from mau.visitors.yaml_visitor import YamlVisitor
 
 
 def test_yaml_visitor_class_attributes():
-    bv = YamlVisitor(Environment())
+    bv = YamlVisitor(NullMessageHandler(), Environment())
 
     assert bv.format_code == "yaml"
     assert bv.extension == "yaml"
 
 
 def test_yaml_visitor_no_node():
-    bv = YamlVisitor(Environment())
+    bv = YamlVisitor(NullMessageHandler(), Environment())
     result = bv.process(None)
 
     assert result == "{}\n"
@@ -28,6 +28,7 @@ def test_yaml_visitor_generic_node():
             unnamed_args=["arg1"],
             named_args={"key1": "value1"},
             tags=["tag1"],
+            internal_tags=["tag2"],
             subtype="subtype1",
         ),
         info=NodeInfo(
@@ -35,7 +36,7 @@ def test_yaml_visitor_generic_node():
         ),
     )
 
-    bv = YamlVisitor(Environment())
+    bv = YamlVisitor(NullMessageHandler(), Environment())
     result = bv.process(node)
 
     assert yaml.load(result, Loader=yaml.SafeLoader) == {
@@ -45,5 +46,6 @@ def test_yaml_visitor_generic_node():
         "named_args": {"key1": "value1"},
         "subtype": "subtype1",
         "tags": ["tag1"],
+        "internal_tags": ["tag2"],
         "parent": {},
     }

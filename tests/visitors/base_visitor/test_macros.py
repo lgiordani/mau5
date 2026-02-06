@@ -25,6 +25,7 @@ def test_macro_node():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -41,6 +42,7 @@ def test_macro_node_args():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": ["arg1"],
         "named_args": {"key1": "value1"},
     }
@@ -60,6 +62,7 @@ def test_macro_class_node_without_content():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -83,6 +86,7 @@ def test_macro_link_node_without_content():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -108,6 +112,7 @@ def test_macro_image_node():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -128,6 +133,7 @@ def test_macro_image_node_parameters():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -147,6 +153,7 @@ def test_macro_header_node():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -173,12 +180,14 @@ def test_macro_header_node_with_header():
             "parent": {},
             "subtype": None,
             "tags": [],
+            "internal_tags": [],
             "unnamed_args": [],
         },
         "named_args": {},
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -198,6 +207,7 @@ def test_macro_header_node_parameters():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -221,12 +231,14 @@ def test_macro_footnote_node_parameters():
             "parent": {},
             "subtype": None,
             "tags": [],
+            "internal_tags": [],
             "unnamed_args": [],
         },
         "named_args": {},
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -244,6 +256,7 @@ def test_macro_unicode():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -261,6 +274,7 @@ def test_macro_raw():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 

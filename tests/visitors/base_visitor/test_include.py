@@ -16,6 +16,7 @@ def test_include_node():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -36,6 +37,7 @@ def test_include_image_node():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -56,6 +58,7 @@ def test_include_image_node_alt_text_classes():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 

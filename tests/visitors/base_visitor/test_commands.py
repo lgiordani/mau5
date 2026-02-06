@@ -24,6 +24,7 @@ def test_footnotes_node_empty():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -56,12 +57,14 @@ def test_footnotes_node():
                     "public_id": None,
                     "subtype": None,
                     "tags": [],
+                    "internal_tags": [],
                     "unnamed_args": [],
                 },
                 "named_args": {},
                 "parent": {},
                 "subtype": None,
                 "tags": [],
+                "internal_tags": [],
                 "unnamed_args": [],
             },
             {
@@ -78,12 +81,14 @@ def test_footnotes_node():
                     "public_id": None,
                     "subtype": None,
                     "tags": [],
+                    "internal_tags": [],
                     "unnamed_args": [],
                 },
                 "named_args": {},
                 "parent": {},
                 "subtype": None,
                 "tags": [],
+                "internal_tags": [],
                 "unnamed_args": [],
             },
         ],
@@ -92,6 +97,7 @@ def test_footnotes_node():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -120,12 +126,14 @@ def test_toc_item_node_without_entries():
             "parent": {},
             "subtype": None,
             "tags": [],
+            "internal_tags": [],
             "unnamed_args": [],
         },
         "named_args": {},
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -163,12 +171,14 @@ def test_toc_item_node_with_entries():
                     "parent": {},
                     "subtype": None,
                     "tags": [],
+                    "internal_tags": [],
                     "unnamed_args": [],
                 },
                 "named_args": {},
                 "parent": {},
                 "subtype": None,
                 "tags": [],
+                "internal_tags": [],
                 "unnamed_args": [],
             }
         ],
@@ -184,12 +194,14 @@ def test_toc_item_node_with_entries():
             "parent": {},
             "subtype": None,
             "tags": [],
+            "internal_tags": [],
             "unnamed_args": [],
         },
         "named_args": {},
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -209,6 +221,7 @@ def test_toc_node():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -228,6 +241,7 @@ def test_block_group_node_empty():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -258,6 +272,7 @@ def test_block_group_node_with_blocks():
                 "parent": {},
                 "subtype": None,
                 "tags": [],
+                "internal_tags": [],
                 "unnamed_args": [],
             },
             "position2": {
@@ -270,6 +285,7 @@ def test_block_group_node_with_blocks():
                 "parent": {},
                 "subtype": None,
                 "tags": [],
+                "internal_tags": [],
                 "unnamed_args": [],
             },
         },
@@ -277,6 +293,7 @@ def test_block_group_node_with_blocks():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 

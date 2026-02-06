@@ -1,16 +1,20 @@
+from typing import Type
 from collections.abc import Mapping, Sequence
 
 from mau.environment.environment import Environment
 from mau.error import (
+    MauMessage,
     MauException,
     BaseMessageHandler,
     MauVisitorDebugMessage,
+    MauVisitorErrorMessage,
 )
 from mau.nodes.node import Node
 from mau.text_buffer import adjust_context, adjust_context_dict
 
 
-def create_visitor_debug_message(
+def create_visitor_message(
+    message_class: Type[MauMessage],
     text: str,
     node: Node | None = None,
     data: dict | None = None,
@@ -23,13 +27,30 @@ def create_visitor_debug_message(
     elif node:
         context = adjust_context(node.info.context)
 
-    return MauVisitorDebugMessage(
+    return message_class(
         text=text,
         context=context,
         node_type=node.type if node else None,
         data=data,
         environment=environment,
         additional_info=additional_info,
+    )
+
+
+def create_visitor_debug_message(
+    text: str,
+    node: Node | None = None,
+    data: dict | None = None,
+    environment: Environment | None = None,
+    additional_info: dict[str, str] | None = None,
+):
+    return create_visitor_message(
+        MauVisitorDebugMessage,
+        text,
+        node,
+        data,
+        environment,
+        additional_info,
     )
 
 
@@ -40,7 +61,8 @@ def create_visitor_exception(
     environment: Environment | None = None,
     additional_info: dict[str, str] | None = None,
 ):
-    message = create_visitor_debug_message(
+    message = create_visitor_message(
+        MauVisitorErrorMessage,
         text,
         node,
         data,
@@ -137,10 +159,10 @@ class BaseVisitor:
 
         result = node.accept(self, **kwargs)
 
-        # Remove the internal tags from
+        # Get the internal tags from
         # the output. Check if they activate
         # debugging for the present node.
-        if "debug" in result.pop("internal_tags"):
+        if "debug" in result.get("internal_tags"):
             self._debug_result(node, result)
 
         if transformer := kwargs.get("transformer"):

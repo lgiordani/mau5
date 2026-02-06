@@ -17,6 +17,7 @@ def test_horizontal_rule_node():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -34,6 +35,7 @@ def test_document_node():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 

@@ -14,6 +14,7 @@ def test_raw_content_line_node():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -39,6 +40,7 @@ def test_raw_content_node():
                 "parent": {},
                 "subtype": None,
                 "tags": [],
+                "internal_tags": [],
                 "unnamed_args": [],
             },
             {
@@ -49,6 +51,7 @@ def test_raw_content_node():
                 "parent": {},
                 "subtype": None,
                 "tags": [],
+                "internal_tags": [],
                 "unnamed_args": [],
             },
         ],
@@ -56,6 +59,7 @@ def test_raw_content_node():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 

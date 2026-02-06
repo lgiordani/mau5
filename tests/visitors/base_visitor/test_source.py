@@ -18,6 +18,7 @@ def test_source_line_marker_node():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -38,6 +39,7 @@ def test_source_line_node():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -62,12 +64,14 @@ def test_source_line_node_with_marker():
             "parent": {},
             "subtype": None,
             "tags": [],
+            "internal_tags": [],
             "unnamed_args": [],
         },
         "named_args": {},
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -88,6 +92,7 @@ def test_source_node():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 

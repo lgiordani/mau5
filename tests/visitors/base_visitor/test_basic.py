@@ -3,13 +3,22 @@ from unittest.mock import Mock
 from mau.environment.environment import Environment
 from mau.nodes.node import NodeInfo
 from mau.nodes.node_arguments import NodeArguments
-from mau.test_helpers import ATestNode, generate_context
+from mau.test_helpers import ATestNode, generate_context, NullMessageHandler
 from mau.visitors.base_visitor import BaseVisitor
-from mau.error import NullMessageHandler
 
 
 def test_visitor_node_accept():
     node = Mock()
+    node.accept.return_value = {
+        "_type": "test",
+        "_context": generate_context(1, 2, 3, 4).asdict(),
+        "unnamed_args": ["arg1"],
+        "named_args": {"key1": "value1"},
+        "subtype": "subtype1",
+        "tags": ["tag1"],
+        "internal_tags": ["tag2"],
+        "parent": {},
+    }
 
     bv = BaseVisitor(NullMessageHandler(), Environment())
     result = bv.visit(node, key1="value1")
@@ -32,6 +41,7 @@ def test_generic_node():
             unnamed_args=["arg1"],
             named_args={"key1": "value1"},
             tags=["tag1"],
+            internal_tags=["tag2"],
             subtype="subtype1",
         ),
         info=NodeInfo(
@@ -49,5 +59,6 @@ def test_generic_node():
         "named_args": {"key1": "value1"},
         "subtype": "subtype1",
         "tags": ["tag1"],
+        "internal_tags": ["tag2"],
         "parent": {},
     }

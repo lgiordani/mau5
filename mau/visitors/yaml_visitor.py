@@ -12,7 +12,7 @@ class YamlVisitor(BaseVisitor):
     format_code = "yaml"
     extension = "yaml"
 
-    def postprocess(self, result, *args, **kwargs):
-        result = super().postprocess(result, *args, **kwargs)
+    def _postprocess(self, result, *args, **kwargs):
+        result = super()._postprocess(result, *args, **kwargs)
 
         return yaml.dump(result, Dumper=NoAliasDumper)

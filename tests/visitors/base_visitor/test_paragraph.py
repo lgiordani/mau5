@@ -16,6 +16,7 @@ def test_paragraph_line_node_without_content():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -39,6 +40,7 @@ def test_paragraph_line_node_with_content():
                 "parent": {},
                 "subtype": None,
                 "tags": [],
+                "internal_tags": [],
                 "unnamed_args": [],
             },
             {
@@ -48,6 +50,7 @@ def test_paragraph_line_node_with_content():
                 "parent": {},
                 "subtype": None,
                 "tags": [],
+                "internal_tags": [],
                 "unnamed_args": [],
             },
         ],
@@ -60,6 +63,7 @@ def test_paragraph_line_node_with_content():
                     "parent": {},
                     "subtype": None,
                     "tags": [],
+                    "internal_tags": [],
                     "unnamed_args": [],
                 }
             ],
@@ -68,6 +72,7 @@ def test_paragraph_line_node_with_content():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -86,6 +91,7 @@ def test_paragraph_node_without_content():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 
@@ -111,6 +117,7 @@ def test_paragraph_node_with_content():
                 "parent": {},
                 "subtype": None,
                 "tags": [],
+                "internal_tags": [],
                 "unnamed_args": [],
             },
             {
@@ -122,6 +129,7 @@ def test_paragraph_node_with_content():
                 "parent": {},
                 "subtype": None,
                 "tags": [],
+                "internal_tags": [],
                 "unnamed_args": [],
             },
         ],
@@ -134,6 +142,7 @@ def test_paragraph_node_with_content():
                     "parent": {},
                     "subtype": None,
                     "tags": [],
+                    "internal_tags": [],
                     "unnamed_args": [],
                 }
             ],
@@ -142,6 +151,7 @@ def test_paragraph_node_with_content():
         "parent": {},
         "subtype": None,
         "tags": [],
+        "internal_tags": [],
         "unnamed_args": [],
     }
 

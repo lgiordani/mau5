@@ -87,22 +87,6 @@ class BaseMessageHandler(ABC):
                 return self.process_visitor_debug(message)
 
 
-class NullMessageHandler(BaseMessageHandler):
-    type = "null"
-
-    def process_lexer_error(self, message: MauLexerErrorMessage):
-        pass
-
-    def process_parser_error(self, message: MauParserErrorMessage):
-        pass
-
-    def process_visitor_error(self, message: MauVisitorErrorMessage):
-        pass
-
-    def process_visitor_debug(self, message: MauVisitorDebugMessage):
-        pass
-
-
 class LogMessageHandler(BaseMessageHandler):
     type = "log"
 

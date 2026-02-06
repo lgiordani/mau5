@@ -16,6 +16,7 @@ def test_block_node():
         "unnamed_args": [],
         "named_args": {},
         "tags": [],
+        "internal_tags": [],
         "subtype": None,
     }
 
