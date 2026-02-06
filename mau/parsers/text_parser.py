@@ -3,6 +3,7 @@
 import itertools
 import logging
 
+from mau.error import BaseMessageHandler
 from mau.environment.environment import Environment
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.footnote import FootnoteNode
@@ -44,10 +45,11 @@ class TextParser(BaseParser):
     def __init__(
         self,
         tokens: list[Token],
+        message_handler: BaseMessageHandler,
         environment: Environment | None = None,
         parent_node=None,
     ):
-        super().__init__(tokens, environment, parent_node)
+        super().__init__(tokens, message_handler, environment, parent_node)
 
         # These are the footnotes found in this piece of text.
         self.footnotes: list[FootnoteNode] = []
@@ -300,6 +302,7 @@ class TextParser(BaseParser):
         # Parse the arguments.
         parser = ArgumentsParser.lex_and_parse(
             arguments_token.value,
+            self.message_handler,
             self.environment,
             *arguments_token.context.start_position,
             arguments_token.context.source,
@@ -491,6 +494,7 @@ class TextParser(BaseParser):
             # Parse the text.
             parser = self.lex_and_parse(
                 text.value,
+                self.message_handler,
                 self.environment,
                 start_line=start_line,
                 start_column=start_column,
@@ -549,6 +553,7 @@ class TextParser(BaseParser):
             # Parse the text
             parser = self.lex_and_parse(
                 text.value,
+                self.message_handler,
                 self.environment,
                 start_line=start_line,
                 start_column=start_column,
@@ -601,6 +606,7 @@ class TextParser(BaseParser):
             # Parse the text
             parser = self.lex_and_parse(
                 text.value,
+                self.message_handler,
                 self.environment,
                 start_line=start_line,
                 start_column=start_column,
@@ -652,6 +658,7 @@ class TextParser(BaseParser):
         # Parse the text
         parser = self.lex_and_parse(
             text.value,
+            self.message_handler,
             self.environment,
             start_line=start_line,
             start_column=start_column,
@@ -889,6 +896,7 @@ class TextParser(BaseParser):
         if result is not None:
             parser = self.lex_and_parse(
                 result.value,
+                self.message_handler,
                 self.environment,
                 *result.info.context.start_position,
                 result.info.context.source,

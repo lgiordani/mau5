@@ -32,8 +32,9 @@ def arguments_processor(parser: DocumentParser):
 
     # Replace variables in the text.
     preprocess_parser = PreprocessVariablesParser.lex_and_parse(
-        text_token.value,
-        parser.environment,
+        text=text_token.value,
+        message_handler=parser.message_handler,
+        environment=parser.environment,
         start_line=start_line,
         start_column=start_column,
         source_filename=source_filename,
@@ -56,6 +57,7 @@ def arguments_processor(parser: DocumentParser):
     # Parse the arguments.
     arguments_parser = ArgumentsParser.lex_and_parse(
         text=text_token.value,
+        message_handler=parser.message_handler,
         environment=parser.environment,
         start_line=start_line,
         start_column=start_column,

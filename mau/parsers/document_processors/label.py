@@ -36,8 +36,9 @@ def label_processor(parser: DocumentParser):
 
     # Parse the text of the label.
     text_parser = TextParser.lex_and_parse(
-        text_token.value,
-        parser.environment,
+        text=text_token.value,
+        message_handler=parser.message_handler,
+        environment=parser.environment,
         start_line=start_line,
         start_column=start_column,
         source_filename=source_filename,

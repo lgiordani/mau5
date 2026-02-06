@@ -43,8 +43,9 @@ def parse_block_content(
     source_filename = content.context.source
 
     content_parser = parser.lex_and_parse(
-        content.value,
-        environment,
+        text=content.value,
+        message_handler=parser.message_handler,
+        environment=environment,
         start_line=start_line,
         start_column=start_column,
         source_filename=source_filename,

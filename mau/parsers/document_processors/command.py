@@ -62,13 +62,18 @@ def command_processor(parser: DocumentParser):
         # Get the inline arguments.
         arguments_token = parser.tm.get_token(TokenType.TEXT)
 
+        # Unpack the token initial position.
+        start_line, start_column = arguments_token.context.start_position
+
         # Parse the arguments.
         with parser.tm:
             arguments_parser = ArgumentsParser.lex_and_parse(
-                arguments_token.value,
-                parser.environment,
-                *arguments_token.context.start_position,
-                arguments_token.context.source,
+                text=arguments_token.value,
+                message_handler=parser.message_handler,
+                environment=parser.environment,
+                start_line=start_line,
+                start_column=start_column,
+                source_filename=arguments_token.context.source,
             )
 
         arguments = arguments_parser.arguments

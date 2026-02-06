@@ -8,6 +8,7 @@ from mau.nodes.node import NodeInfo, ValueNode
 from mau.nodes.node_arguments import NodeArguments, set_names
 from mau.parsers.base_parser import BaseParser, create_parser_exception
 from mau.token import Token, TokenType
+from mau.error import BaseMessageHandler
 
 
 class ArgumentsParser(BaseParser):
@@ -16,10 +17,11 @@ class ArgumentsParser(BaseParser):
     def __init__(
         self,
         tokens: list[Token],
+        message_handler: BaseMessageHandler,
         environment: Environment | None = None,
         parent_node=None,
     ):
-        super().__init__(tokens, environment, parent_node)
+        super().__init__(tokens, message_handler, environment, parent_node)
 
         # Save the context of the first token
         # to make exceptions more useful.

@@ -35,6 +35,7 @@ from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.parsers.text_parser import TextParser
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
+from mau.error import MauException, MauParserErrorMessage, BaseMessageHandler
 
 
 @dataclass
@@ -54,10 +55,11 @@ class DocumentParser(BaseParser):
     def __init__(
         self,
         tokens: list[Token],
+        message_handler: BaseMessageHandler,
         environment: Environment | None = None,
         parent_node=None,
     ):
-        super().__init__(tokens, environment, parent_node)
+        super().__init__(tokens, message_handler, environment, parent_node)
 
         # Define the default block aliases.
         base_environment = Environment.from_dict(
@@ -146,6 +148,7 @@ class DocumentParser(BaseParser):
         # Replace variables
         preprocess_parser = PreprocessVariablesParser.lex_and_parse(
             text,
+            self.message_handler,
             self.environment,
             start_line=start_line,
             start_column=start_column,
@@ -163,6 +166,7 @@ class DocumentParser(BaseParser):
         # Parse the text
         text_parser = TextParser.lex_and_parse(
             text,
+            self.message_handler,
             self.environment,
             start_line=start_line,
             start_column=start_column,

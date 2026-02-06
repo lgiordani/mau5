@@ -1,6 +1,7 @@
 import textwrap
 from collections.abc import MutableMapping, MutableSequence, Sequence
 
+from mau.error import NullMessageHandler
 from mau.environment.environment import Environment
 from mau.nodes.node import (
     Node,
@@ -170,7 +171,7 @@ def init_lexer_factory(lexer_class):
     """
 
     def _init_lexer(text_buffer: TextBuffer, environment: Environment | None = None):
-        return lexer_class(text_buffer, environment)
+        return lexer_class(text_buffer, NullMessageHandler(), environment)
 
     return _init_lexer
 
@@ -229,10 +230,20 @@ def init_parser_factory(lexer_class, parser_class):
             source_filename=TEST_CONTEXT_SOURCE,
         )
 
-        lex = lexer_class(text_buffer, environment)
+        lex = lexer_class(
+            text_buffer,
+            NullMessageHandler(),
+            environment,
+        )
         lex.process()
 
-        par = parser_class(lex.tokens, environment, *args, **kwargs)
+        par = parser_class(
+            lex.tokens,
+            NullMessageHandler(),
+            environment,
+            *args,
+            **kwargs,
+        )
 
         return par
 
@@ -253,6 +264,7 @@ def parser_runner_factory(lexer_class, parser_class, *args, **kwds):
         environment = environment or Environment()
 
         parser = init_parser(source, environment, *args, **kwds)
+
         parser.parse()
         parser.finalise()
 

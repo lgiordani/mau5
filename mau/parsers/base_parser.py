@@ -1,5 +1,5 @@
 from mau.environment.environment import Environment
-from mau.error import MauException, MauParserErrorMessage
+from mau.error import MauException, MauParserErrorMessage, BaseMessageHandler
 from mau.lexers.base_lexer import BaseLexer
 from mau.nodes.node import Node
 from mau.text_buffer import Context, TextBuffer
@@ -24,6 +24,7 @@ class BaseParser:
     def __init__(
         self,
         tokens: list[Token],
+        message_handler: BaseMessageHandler,
         environment: Environment | None = None,
         parent_node=None,
     ):
@@ -34,6 +35,9 @@ class BaseParser:
 
         # The last processed token. Used to detect loops.
         self.last_processed_token: Token = Token(TokenType.EOF, "", Context.empty())
+
+        # The message handler instamce.
+        self.message_handler = message_handler
 
         # The configuration environment
         self.environment: Environment = environment or Environment()
@@ -111,6 +115,7 @@ class BaseParser:
     def lex_and_parse(
         cls,
         text: str,
+        message_handler: BaseMessageHandler,
         environment: Environment | None,
         start_line: int = 0,
         start_column: int = 0,
@@ -121,10 +126,10 @@ class BaseParser:
             text, start_line, start_column, source_filename
         )
 
-        lexer = cls.lexer_class(text_buffer, environment)
+        lexer = cls.lexer_class(text_buffer, message_handler, environment)
         lexer.process()
 
-        parser = cls(lexer.tokens, environment, **kwargs)
+        parser = cls(lexer.tokens, message_handler, environment, **kwargs)
         parser.parse()
         parser.finalise()
 

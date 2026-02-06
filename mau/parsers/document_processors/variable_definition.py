@@ -57,11 +57,20 @@ def variable_definition_processor(parser: DocumentParser):
         # The variable value might contain
         # other variables, so we need to
         # replace them.
+
+        # Unpack the text initial position.
+        start_line, start_column = context.start_position
+
+        # Get the text source.
+        source_filename = context.source
+
         preprocess_parser = PreprocessVariablesParser.lex_and_parse(
-            value,
-            parser.environment,
-            *context.start_position,
-            context.source,
+            text=value,
+            message_handler=parser.message_handler,
+            environment=parser.environment,
+            start_line=start_line,
+            start_column=start_column,
+            source_filename=source_filename,
         )
 
         # The preprocess parser returns always
