@@ -72,8 +72,9 @@ def test_arguments_support_variables():
     parser = runner(source, environment)
 
     assert parser.arguments_buffer.pop() == NodeArguments(
-        ["number1"],
-        {"key1": "42"},
-        [],
-        None,
+        unnamed_args=["number1"],
+        named_args={"key1": "42"},
+        tags=[],
+        internal_tags=[],
+        subtype=None,
     )

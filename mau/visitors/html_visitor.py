@@ -34,7 +34,7 @@ class HtmlVisitor(JinjaVisitor):
 
     default_templates = Environment.from_dict(templates)
 
-    def postprocess(self, result, *args, **kwargs):
+    def _postprocess(self, result, *args, **kwargs):
         # Check if the visitor settings enable
         # postprocessing of the resulting HTML.
         if not self.environment.get("mau.visitor.html.pretty", False):

@@ -5,6 +5,7 @@ from mau.nodes.node_arguments import NodeArguments
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.test_helpers import generate_context
 from mau.visitors.jinja_visitor import JinjaVisitor
+from mau.error import NullMessageHandler
 
 
 def test_page_paragraph_node():
@@ -21,7 +22,7 @@ def test_page_paragraph_node():
 
     environment = Environment()
     environment.dupdate(templates, "mau.visitor.templates.custom")
-    visitor = JinjaVisitor(environment)
+    visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     unnamed_args = ["arg1", "arg2"]
     named_args = {"key1": "value1"}

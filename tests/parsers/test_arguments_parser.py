@@ -635,12 +635,16 @@ def test_process_arguments_multiple_subtypes():
 
 
 def test_arguments():
-    source = "value1, #tag1, *subtype1, name=value2"
+    source = "value1, #tag1, #mau:tag2, *subtype1, name=value2"
 
     parser = runner(source)
 
     assert parser.arguments == NodeArguments(
-        ["value1"], {"name": "value2"}, ["tag1"], "subtype1"
+        unnamed_args=["value1"],
+        named_args={"name": "value2"},
+        tags=["tag1"],
+        internal_tags=["tag2"],
+        subtype="subtype1",
     )
 
 
@@ -977,7 +981,13 @@ def test_arguments_empty():
 
     parser = runner(source)
 
-    assert parser.arguments == NodeArguments([], {}, [], None)
+    assert parser.arguments == NodeArguments(
+        unnamed_args=[],
+        named_args={},
+        tags=[],
+        internal_tags=[],
+        subtype=None,
+    )
 
 
 def test_set_names_use_positional_names():

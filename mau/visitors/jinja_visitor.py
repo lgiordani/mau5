@@ -9,7 +9,12 @@ import jinja2
 
 from mau.environment.environment import Environment
 from mau.nodes.node import Node
-from mau.visitors.base_visitor import BaseVisitor, create_visitor_exception
+from mau.visitors.base_visitor import (
+    BaseVisitor,
+    create_visitor_exception,
+    create_visitor_debug_message,
+)
+from mau.error import MauException, MauVisitorErrorMessage, BaseMessageHandler
 
 logger = logging.getLogger(__name__)
 
@@ -325,8 +330,12 @@ class JinjaVisitor(BaseVisitor):
         }
     )
 
-    def __init__(self, environment: Environment, *args, **kwds):
-        super().__init__(environment)
+    def __init__(
+        self,
+        message_handler: BaseMessageHandler,
+        environment: Environment | None = None,
+    ):
+        super().__init__(message_handler, environment)
 
         # Load the template prefixes from the configuration.
         self.template_prefixes = load_template_prefixes(self.environment)
@@ -388,7 +397,29 @@ class JinjaVisitor(BaseVisitor):
 
         return rendered_template
 
-    def visit(self, node, *args, **kwargs):
+    def _create_node_templates(self, node: Node):
+        parent_prefix = None
+        if node.parent:
+            parent_prefix = f"{node.parent.type}"
+
+        # Create the template names for the
+        # current node.
+        templates = _create_templates(
+            node.type,
+            self.extension,
+            node.arguments.subtype,
+            node.arguments.tags,
+            node.custom_attributes,
+            self.template_prefixes,
+            parent_prefix,
+        )
+
+        return templates
+
+    def _debug_additional_info(self, node: Node, result: dict):
+        return {"Templates": self._create_node_templates(node)}
+
+    def visit(self, node, **kwargs):
         # The visitor has to define functions for each node type
         # and those shall return a dictionary of keys.
         #
@@ -414,24 +445,11 @@ class JinjaVisitor(BaseVisitor):
         if node is None:
             return ""
 
+        # Create the template names for the current node.
+        templates = self._create_node_templates(node)
+
         # Visit the node.
-        result = super().visit(node, *args, **kwargs)
-
-        parent_prefix = None
-        if node.parent:
-            parent_prefix = f"{node.parent.type}"
-
-        # Create the template names for the
-        # current node.
-        templates = _create_templates(
-            node.type,
-            self.extension,
-            node.arguments.subtype,
-            node.arguments.tags,
-            node.custom_attributes,
-            self.template_prefixes,
-            parent_prefix,
-        )
+        result = super().visit(node, **kwargs)
 
         # Scan all potential templates, trying to render
         # the given data with each of them.
@@ -452,15 +470,13 @@ class JinjaVisitor(BaseVisitor):
             },
         )
 
-    def visitlist(
-        self, current_node: Node, nodes_list: Sequence[Node], *args, **kwargs
-    ):
+    def visitlist(self, current_node: Node, nodes_list: Sequence[Node], **kwargs):
         # Find the string this visitor uses to join
         # children according to the current node type.
         join_with = self.join_with.get(current_node.type, self.join_with_default)
 
         # Visit all nodes in the list.
-        visited_nodes = [self.visit(node, *args, **kwargs) for node in nodes_list]
+        visited_nodes = [self.visit(node, **kwargs) for node in nodes_list]
 
         # Join the results if needed.
         if join_with is not None:

@@ -206,7 +206,7 @@ class Mau:  # pragma: no cover
 
     def run_lexer(self, text_buffer: TextBuffer) -> DocumentLexer:
         try:
-            lexer = DocumentLexer(text_buffer, self.environment)
+            lexer = DocumentLexer(text_buffer, self.message_handler, self.environment)
             lexer.process()
         except MauException as exc:
             self.message_handler.process(exc.message)
@@ -216,7 +216,7 @@ class Mau:  # pragma: no cover
 
     def run_parser(self, tokens: list[Token]) -> DocumentParser:
         try:
-            parser = DocumentParser(tokens, self.environment)
+            parser = DocumentParser(tokens, self.message_handler, self.environment)
             parser.parse()
             parser.finalise()
         except MauException as exc:
@@ -229,7 +229,7 @@ class Mau:  # pragma: no cover
         # Initialise the visitor with the
         # current environment.
         try:
-            visitor = visitor_class(environment=self.environment)
+            visitor = visitor_class(self.message_handler, self.environment)
 
             # Visit the given node and all its children.
             return visitor.process(node)

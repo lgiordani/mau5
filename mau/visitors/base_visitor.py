@@ -1,12 +1,16 @@
 from collections.abc import Mapping, Sequence
 
 from mau.environment.environment import Environment
-from mau.error import MauException, MauVisitorErrorMessage
+from mau.error import (
+    MauException,
+    BaseMessageHandler,
+    MauVisitorDebugMessage,
+)
 from mau.nodes.node import Node
 from mau.text_buffer import adjust_context, adjust_context_dict
 
 
-def create_visitor_exception(
+def create_visitor_debug_message(
     text: str,
     node: Node | None = None,
     data: dict | None = None,
@@ -19,13 +23,29 @@ def create_visitor_exception(
     elif node:
         context = adjust_context(node.info.context)
 
-    message = MauVisitorErrorMessage(
+    return MauVisitorDebugMessage(
         text=text,
         context=context,
         node_type=node.type if node else None,
         data=data,
         environment=environment,
         additional_info=additional_info,
+    )
+
+
+def create_visitor_exception(
+    text: str,
+    node: Node | None = None,
+    data: dict | None = None,
+    environment: Environment | None = None,
+    additional_info: dict[str, str] | None = None,
+):
+    message = create_visitor_debug_message(
+        text,
+        node,
+        data,
+        environment,
+        additional_info,
     )
 
     return MauException(message)
@@ -36,35 +56,71 @@ class BaseVisitor:
     format_code = "python"
     extension = ""
 
-    def __init__(self, environment: Environment = Environment()):
+    def __init__(
+        self,
+        message_handler: BaseMessageHandler,
+        environment: Environment | None = None,
+    ):
         self.toc = None
         self.footnotes = None
 
-        self.environment = environment
+        # The message handler instamce.
+        self.message_handler = message_handler
 
-    def process(self, node: Node | None, *args, **kwargs):
-        # This is a wrapper around the method visit
-        # that allows the visitor to preprocess
-        # the input data and postprocess the output.
+        # The configuration environment
+        self.environment: Environment = environment or Environment()
+
+    def process(self, node: Node | None, **kwargs):
+        # This function is the entry point of the visitor.
+        # It visits a node, and the subnodes
+        # recursively, but allows the visitor to
+        # preprocess the input and postprocess
+        # the output.
 
         # Preprocess the input node.
-        node = self.preprocess(node, *args, **kwargs)
+        node = self._preprocess(node, **kwargs)
 
         # Visit the node.
-        result = self.visit(node, *args, **kwargs)
+        result = self.visit(node, **kwargs)
 
         # Postprocess the result.
-        result = self.postprocess(result, *args, **kwargs)
+        result = self._postprocess(result, **kwargs)
 
         return result
 
-    def preprocess(self, node: Node | None, *args, **kwargs):
+    def _preprocess(self, node: Node | None, **kwargs):
+        # The base visitor has no
+        # preprocess code.
         return node
 
-    def postprocess(self, result, *args, **kwargs):
+    def _postprocess(self, result, **kwargs):
+        # The base visitor has no
+        # postprocess code.
         return result
 
-    def visit(self, node: Node | None, *args, **kwargs):
+    def _debug_additional_info(self, node: Node, result: dict):
+        # This function provides additional
+        # debug information for a node and
+        # it's visited output.
+        return {}
+
+    def _debug_result(self, node: Node, result: dict):
+        # This function creates a debug
+        # message from the visitor.
+
+        # Create the message.
+        message = create_visitor_debug_message(
+            text="This is a debug message activated by a Mau internal tag.",
+            node=node,
+            data=result,
+            environment=self.environment,
+            additional_info=self._debug_additional_info(node, result),
+        )
+
+        # Send the message through the handler.
+        self.message_handler.process(message)
+
+    def visit(self, node: Node | None, **kwargs):
         # Simple implementation of the visitor pattern.
         # Here, the visitor passes itself to the node
         # through the method `accept`
@@ -79,53 +135,54 @@ class BaseVisitor:
         if node is None:
             return {}
 
-        result = node.accept(self, *args, **kwargs)
+        result = node.accept(self, **kwargs)
+
+        # Remove the internal tags from
+        # the output. Check if they activate
+        # debugging for the present node.
+        if "debug" in result.pop("internal_tags"):
+            self._debug_result(node, result)
 
         if transformer := kwargs.get("transformer"):
             result = transformer(result)
 
         return result
 
-    def visitlist(
-        self, current_node: Node, nodes_list: Sequence[Node], *args, **kwargs
-    ):
+    def visitlist(self, current_node: Node, nodes_list: Sequence[Node], **kwargs):
         # Visit all the nodes in the given sequence.
-        return [self.visit(node, *args, **kwargs) for node in nodes_list]
+        return [self.visit(node, **kwargs) for node in nodes_list]
 
-    def visitdict(
-        self, current_node: Node, nodes_dict: Mapping[str, Node], *args, **kwargs
-    ):
+    def visitdict(self, current_node: Node, nodes_dict: Mapping[str, Node], **kwargs):
         # Visit all the nodes in the given dictionary.
-        return {k: self.visit(node, *args, **kwargs) for k, node in nodes_dict.items()}
+        return {k: self.visit(node, **kwargs) for k, node in nodes_dict.items()}
 
     def visitdictlist(
         self,
         current_node: Node,
         nodes_dict: Mapping[str, Sequence[Node]],
-        *args,
         **kwargs,
     ):
         # Visit all the nodes in the given dictionary.
         return {
-            k: self.visitlist(current_node, nodes, *args, **kwargs)
+            k: self.visitlist(current_node, nodes, **kwargs)
             for k, nodes in nodes_dict.items()
         }
 
-    def _add_visit_content(self, result: dict, node: Node, *args, **kwargs):
+    def _add_visit_content(self, result: dict, node: Node, **kwargs):
         result.update(
             {
-                "content": self.visitlist(node, node.content, *args, **kwargs),
+                "content": self.visitlist(node, node.content, **kwargs),
             }
         )
 
-    def _add_visit_labels(self, result: dict, node: Node, *args, **kwargs):
+    def _add_visit_labels(self, result: dict, node: Node, **kwargs):
         result.update(
             {
-                "labels": self.visitdictlist(node, node.labels, *args, **kwargs),
+                "labels": self.visitdictlist(node, node.labels, **kwargs),
             }
         )
 
-    def _get_node_data(self, node: Node, *args, **kwargs) -> dict:
+    def _get_node_data(self, node: Node, **kwargs) -> dict:
         if not node:
             return {}
 
@@ -135,10 +192,11 @@ class BaseVisitor:
             "unnamed_args": node.arguments.unnamed_args,
             "named_args": node.arguments.named_args,
             "tags": node.arguments.tags,
+            "internal_tags": node.arguments.internal_tags,
             "subtype": node.arguments.subtype,
         }
 
-    def _visit_default(self, node: Node, *args, **kwargs) -> dict:
+    def _visit_default(self, node: Node, **kwargs) -> dict:
         # This is the default code to visit a node.
 
         data = self._get_node_data(node)
@@ -146,8 +204,8 @@ class BaseVisitor:
 
         return data
 
-    def _visit_value(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_value(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -157,17 +215,17 @@ class BaseVisitor:
 
         return result
 
-    def _visit_text(self, node: Node, *args, **kwargs) -> dict:
-        return self._visit_value(node, *args, **kwargs)
+    def _visit_text(self, node: Node, **kwargs) -> dict:
+        return self._visit_value(node, **kwargs)
 
-    def _visit_verbatim(self, node: Node, *args, **kwargs) -> dict:
-        return self._visit_value(node, *args, **kwargs)
+    def _visit_verbatim(self, node: Node, **kwargs) -> dict:
+        return self._visit_value(node, **kwargs)
 
-    def _visit_word(self, node: Node, *args, **kwargs) -> dict:
-        return self._visit_value(node, *args, **kwargs)
+    def _visit_word(self, node: Node, **kwargs) -> dict:
+        return self._visit_value(node, **kwargs)
 
-    def _visit_style(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_style(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -175,12 +233,12 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_content(result, node, *args, **kwargs)
+        self._add_visit_content(result, node, **kwargs)
 
         return result
 
-    def _get_header_data(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _get_header_data(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -190,16 +248,16 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_content(result, node, *args, **kwargs)
-        self._add_visit_labels(result, node, *args, **kwargs)
+        self._add_visit_content(result, node, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result
 
-    def _visit_header(self, node: Node, *args, **kwargs) -> dict:
-        return self._get_header_data(node, *args, **kwargs)
+    def _visit_header(self, node: Node, **kwargs) -> dict:
+        return self._get_header_data(node, **kwargs)
 
-    def _visit_macro(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_macro(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -211,8 +269,8 @@ class BaseVisitor:
 
         return result
 
-    def _visit_macro__class(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_macro__class(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -220,12 +278,12 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_content(result, node, *args, **kwargs)
+        self._add_visit_content(result, node, **kwargs)
 
         return result
 
-    def _visit_macro__link(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_macro__link(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -233,12 +291,12 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_content(result, node, *args, **kwargs)
+        self._add_visit_content(result, node, **kwargs)
 
         return result
 
-    def _visit_macro__unicode(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_macro__unicode(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -248,8 +306,8 @@ class BaseVisitor:
 
         return result
 
-    def _visit_macro__raw(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_macro__raw(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -259,8 +317,8 @@ class BaseVisitor:
 
         return result
 
-    def _visit_macro__image(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_macro__image(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -273,11 +331,11 @@ class BaseVisitor:
 
         return result
 
-    def _visit_macro__header(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_macro__header(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         header_data = (
-            self._get_header_data(node.header, *args, **kwargs) if node.header else {}
+            self._get_header_data(node.header, **kwargs) if node.header else {}
         )
 
         result.update(
@@ -287,12 +345,12 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_content(result, node, *args, **kwargs)
+        self._add_visit_content(result, node, **kwargs)
 
         return result
 
-    def _get_footnote_data(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _get_footnote_data(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -302,17 +360,15 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_content(result, node, *args, **kwargs)
+        self._add_visit_content(result, node, **kwargs)
 
         return result
 
-    def _visit_macro__footnote(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_macro__footnote(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         footnote_data = (
-            self._get_footnote_data(node.footnote, *args, **kwargs)
-            if node.footnote
-            else None
+            self._get_footnote_data(node.footnote, **kwargs) if node.footnote else None
         )
 
         result.update(
@@ -323,76 +379,72 @@ class BaseVisitor:
 
         return result
 
-    def _visit_footnotes_item(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_footnotes_item(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
-                "footnote": self._get_footnote_data(node.footnote, *args, **kwargs),
+                "footnote": self._get_footnote_data(node.footnote, **kwargs),
             }
         )
 
         return result
 
-    def _visit_footnotes(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_footnotes(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
-                "footnotes": self.visitlist(node, node.footnotes, *args, **kwargs),
+                "footnotes": self.visitlist(node, node.footnotes, **kwargs),
             }
         )
 
-        self._add_visit_labels(result, node, *args, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result
 
-    def _visit_toc_item(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_toc_item(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
-                "header": self.visit(node.header, *args, **kwargs),
-                "entries": self.visitlist(node, node.entries, *args, **kwargs),
+                "header": self.visit(node.header, **kwargs),
+                "entries": self.visitlist(node, node.entries, **kwargs),
             }
         )
 
         return result
 
-    def _visit_toc(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_toc(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
-                "plain_entries": self.visitlist(
-                    node, node.plain_entries, *args, **kwargs
-                ),
-                "nested_entries": self.visitlist(
-                    node, node.nested_entries, *args, **kwargs
-                ),
+                "plain_entries": self.visitlist(node, node.plain_entries, **kwargs),
+                "nested_entries": self.visitlist(node, node.nested_entries, **kwargs),
             }
         )
 
-        self._add_visit_labels(result, node, *args, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result
 
-    def _visit_block_group(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_block_group(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
                 "name": node.name,
-                "blocks": self.visitdict(node, node.blocks, *args, **kwargs),
+                "blocks": self.visitdict(node, node.blocks, **kwargs),
             }
         )
 
-        self._add_visit_labels(result, node, *args, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result
 
-    def _visit_command(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_command(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -400,12 +452,12 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_labels(result, node, *args, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result
 
-    def _visit_block(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_block(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -413,27 +465,27 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_content(result, node, *args, **kwargs)
-        self._add_visit_labels(result, node, *args, **kwargs)
+        self._add_visit_content(result, node, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result
 
-    def _visit_horizontal_rule(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_horizontal_rule(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
-        self._add_visit_labels(result, node, *args, **kwargs)
-
-        return result
-
-    def _visit_document(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
-
-        self._add_visit_content(result, node, *args, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result
 
-    def _visit_include(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_document(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
+
+        self._add_visit_content(result, node, **kwargs)
+
+        return result
+
+    def _visit_include(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -442,12 +494,12 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_labels(result, node, *args, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result
 
-    def _visit_include_image(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_include_image(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -457,12 +509,12 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_labels(result, node, *args, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result
 
-    def _visit_include_mau(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_include_mau(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -470,13 +522,13 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_content(result, node, *args, **kwargs)
-        self._add_visit_labels(result, node, *args, **kwargs)
+        self._add_visit_content(result, node, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result
 
-    def _visit_list_item(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_list_item(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -484,12 +536,12 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_content(result, node, *args, **kwargs)
+        self._add_visit_content(result, node, **kwargs)
 
         return result
 
-    def _visit_list(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_list(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -499,51 +551,51 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_content(result, node, *args, **kwargs)
-        self._add_visit_labels(result, node, *args, **kwargs)
+        self._add_visit_content(result, node, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result
 
-    def _visit_paragraph(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_paragraph(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
-                "lines": self.visitlist(node, node.lines, *args, **kwargs),
+                "lines": self.visitlist(node, node.lines, **kwargs),
             }
         )
 
-        self._add_visit_labels(result, node, *args, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result
 
-    def _visit_paragraph_line(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_paragraph_line(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
-        self._add_visit_content(result, node, *args, **kwargs)
-        self._add_visit_labels(result, node, *args, **kwargs)
+        self._add_visit_content(result, node, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result
 
-    def _visit_source_marker(self, node: Node, *args, **kwargs) -> dict:
-        return self._visit_value(node, *args, **kwargs)
+    def _visit_source_marker(self, node: Node, **kwargs) -> dict:
+        return self._visit_value(node, **kwargs)
 
-    def _visit_source_line(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_source_line(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
                 "line_number": node.line_number,
                 "line_content": node.line_content,
                 "highlight_style": node.highlight_style,
-                "marker": self.visit(node.marker, *args, **kwargs),
+                "marker": self.visit(node.marker, **kwargs),
             }
         )
 
         return result
 
-    def _visit_source(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_source(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
         result.update(
             {
                 "language": node.language,
@@ -551,13 +603,13 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_content(result, node, *args, **kwargs)
-        self._add_visit_labels(result, node, *args, **kwargs)
+        self._add_visit_content(result, node, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result
 
-    def _visit_raw_line(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_raw_line(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -567,8 +619,8 @@ class BaseVisitor:
 
         return result
 
-    def _visit_raw(self, node: Node, *args, **kwargs) -> dict:
-        result = self._visit_default(node, *args, **kwargs)
+    def _visit_raw(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
 
         result.update(
             {
@@ -576,7 +628,7 @@ class BaseVisitor:
             }
         )
 
-        self._add_visit_content(result, node, *args, **kwargs)
-        self._add_visit_labels(result, node, *args, **kwargs)
+        self._add_visit_content(result, node, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
 
         return result

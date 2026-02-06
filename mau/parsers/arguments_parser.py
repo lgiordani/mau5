@@ -10,6 +10,8 @@ from mau.parsers.base_parser import BaseParser, create_parser_exception
 from mau.token import Token, TokenType
 from mau.error import BaseMessageHandler
 
+INTERNAL_TAG_PREFIX = "mau:"
+
 
 class ArgumentsParser(BaseParser):
     lexer_class = ArgumentsLexer
@@ -263,12 +265,26 @@ class ArgumentsParser(BaseParser):
 
     @property
     def arguments(self):
+        # Isolate internal tags.
+        internal_tag_nodes = [
+            node
+            for node in self.tag_nodes
+            if node.value.startswith(INTERNAL_TAG_PREFIX)
+        ]
+        internal_tags = [
+            node.value.removeprefix(INTERNAL_TAG_PREFIX) for node in internal_tag_nodes
+        ]
+
+        tag_nodes = [node for node in self.tag_nodes if node not in internal_tag_nodes]
+        tags = [node.value for node in tag_nodes]
+
         return NodeArguments(
             unnamed_args=[node.value for node in self.unnamed_argument_nodes],
             named_args={
                 key: node.value for key, node in self.named_argument_nodes.items()
             },
-            tags=[node.value for node in self.tag_nodes],
+            tags=tags,
+            internal_tags=internal_tags,
             subtype=self.subtype.value if self.subtype else None,
         )
 

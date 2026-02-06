@@ -50,6 +50,7 @@ class NodeArguments:
     unnamed_args: Sequence[str] = field(default_factory=list)
     named_args: Mapping[str, str] = field(default_factory=dict)
     tags: Sequence[str] = field(default_factory=list)
+    internal_tags: Sequence[str] = field(default_factory=list)
     subtype: str | None = None
 
     def asdict(self):

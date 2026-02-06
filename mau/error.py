@@ -11,6 +11,7 @@ class MauMessageType(Enum):
     ERROR_LEXER = "error-lexer"
     ERROR_PARSER = "error-parser"
     ERROR_VISITOR = "error-visitor"
+    DEBUG_VISITOR = "debug-visitor"
 
 
 @dataclass
@@ -41,6 +42,16 @@ class MauVisitorErrorMessage(MauMessage):
     additional_info: dict[str, str] | None = None
 
 
+@dataclass
+class MauVisitorDebugMessage(MauMessage):
+    type: MauMessageType = field(init=False, default=MauMessageType.DEBUG_VISITOR)
+    context: Context | None
+    node_type: str | None
+    data: dict | None = None
+    environment: Environment | None = None
+    additional_info: dict[str, str] | None = None
+
+
 class MauException(ValueError):
     def __init__(self, message: MauMessage):
         self.message = message
@@ -58,6 +69,9 @@ class BaseMessageHandler(ABC):
     @abstractmethod
     def process_visitor_error(self, message: MauVisitorErrorMessage): ...
 
+    @abstractmethod
+    def process_visitor_debug(self, message: MauVisitorDebugMessage): ...
+
     def process(self, message: MauMessage):
         match message.type:
             case MauMessageType.ERROR_LEXER:
@@ -68,6 +82,9 @@ class BaseMessageHandler(ABC):
 
             case MauMessageType.ERROR_VISITOR:
                 return self.process_visitor_error(message)
+
+            case MauMessageType.DEBUG_VISITOR:
+                return self.process_visitor_debug(message)
 
 
 class NullMessageHandler(BaseMessageHandler):
@@ -82,46 +99,8 @@ class NullMessageHandler(BaseMessageHandler):
     def process_visitor_error(self, message: MauVisitorErrorMessage):
         pass
 
-
-# class RawErrorFormatter(BaseErrorFormatter):
-#     type = "raw"
-
-#     def __init__(self):
-#         super().__init__()
-
-#     def process_lexer_exception(self, exc: MauException):
-#         message = exc.message
-#         error = exc.error
-
-#         position = error.content["position"]
-
-#         print(f"ERROR: {message}")
-#         if position:
-#             print(f"POSITION: {adjust_position(position)}")
-#         print()
-
-#     def process_parser_exception(self, exc: MauException):
-#         message = exc.message
-#         error = exc.error
-
-#         context = error.content["context"]
-
-#         print(f"ERROR: {message}")
-#         if context:
-#             print(f"CONTEXT: {adjust_context(context)}")
-#         print()
-
-#     def process_visitor_exception(self, exc: MauException):
-#         message = exc.message
-#         error = exc.error
-
-#         message = exc.message
-#         error = exc.error
-
-#         print("(Mau) # MAU ERROR")
-#         print(f"(Mau) Message: {message}")
-#         for k, v in error.content.items():
-#             print(f"(Mau) {k}: {v}")
+    def process_visitor_debug(self, message: MauVisitorDebugMessage):
+        pass
 
 
 class LogMessageHandler(BaseMessageHandler):
@@ -140,9 +119,7 @@ class LogMessageHandler(BaseMessageHandler):
         if message.context:
             self.logger.error(f"Context: {adjust_context(message.context)}")
 
-    def process_visitor_error(self, message: MauVisitorErrorMessage):
-        self.logger.error("Visitor error")
-
+    def _process_visitor_debug_message(self, message: MauVisitorErrorMessage):
         values = {}
 
         values["Message"] = message.text
@@ -157,5 +134,18 @@ class LogMessageHandler(BaseMessageHandler):
         if message.additional_info:
             values.update(message.additional_info)
 
+        return values
+
+    def process_visitor_error(self, message: MauVisitorErrorMessage):
+        values = self._process_visitor_debug_message(message)
+
+        self.logger.error("Visitor error")
         for k, v in values.items():
             self.logger.error(f"{k}: {v}")
+
+    def process_visitor_debug(self, message: MauVisitorDebugMessage):
+        values = self._process_visitor_debug_message(message)
+
+        self.logger.info("Visitor error")
+        for k, v in values.items():
+            self.logger.info(f"{k}: {v}")

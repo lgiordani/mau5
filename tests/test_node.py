@@ -18,6 +18,7 @@ def test_arguments():
         unnamed_args=["arg1"],
         named_args={"key1": "value1"},
         tags=["tag1"],
+        internal_tags=["tag2"],
         subtype="subtype1",
     )
 
@@ -25,6 +26,7 @@ def test_arguments():
         "unnamed_args": ["arg1"],
         "named_args": {"key1": "value1"},
         "tags": ["tag1"],
+        "internal_tags": ["tag2"],
         "subtype": "subtype1",
     }
 

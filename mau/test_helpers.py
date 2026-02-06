@@ -33,7 +33,7 @@ def compare_asdict_list(objs_left: MutableSequence, objs_right: MutableSequence)
 
 
 def check_visit_node(node, expected):
-    bv = BaseVisitor()
+    bv = BaseVisitor(message_handler=NullMessageHandler)
 
     result = bv.visit(node)
 
@@ -43,7 +43,7 @@ def check_visit_node(node, expected):
 def check_node_with_content(node):
     node.content = [Node(), Node()]
 
-    bv = BaseVisitor()
+    bv = BaseVisitor(message_handler=NullMessageHandler)
 
     result = bv.visit(node)
 
@@ -72,7 +72,7 @@ def check_node_with_content(node):
 def check_node_with_labels(node):
     node.labels = {"label1": [Node(), Node()], "label2": [Node()]}
 
-    bv = BaseVisitor()
+    bv = BaseVisitor(message_handler=NullMessageHandler)
 
     result = bv.visit(node)
 
@@ -117,7 +117,7 @@ def check_parent(node: Node | None, nodes: Sequence[Node]):
 
 
 def compare_nodes(node: Node, expected: Node):
-    bv = BaseVisitor()
+    bv = BaseVisitor(message_handler=NullMessageHandler)
 
     visit_node = bv.visit(node)
     visit_expected = bv.visit(expected)
@@ -126,7 +126,7 @@ def compare_nodes(node: Node, expected: Node):
 
 
 def compare_nodes_sequence(nodes: Sequence[Node], expected: Sequence[Node]):
-    bv = BaseVisitor()
+    bv = BaseVisitor(message_handler=NullMessageHandler)
 
     # This function removes the parent
     # info if present. This is done
@@ -151,7 +151,7 @@ def compare_nodes_sequence(nodes: Sequence[Node], expected: Sequence[Node]):
 def compare_nodes_map(
     nodes: MutableMapping[str, Node], expected: MutableMapping[str, Node]
 ):
-    bv = BaseVisitor()
+    bv = BaseVisitor(message_handler=NullMessageHandler)
 
     visit_nodes = {k: bv.visit(node) for k, node in nodes.items()}
     visit_expected = {k: bv.visit(node) for k, node in expected.items()}

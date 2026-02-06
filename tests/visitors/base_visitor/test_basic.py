@@ -5,21 +5,22 @@ from mau.nodes.node import NodeInfo
 from mau.nodes.node_arguments import NodeArguments
 from mau.test_helpers import ATestNode, generate_context
 from mau.visitors.base_visitor import BaseVisitor
+from mau.error import NullMessageHandler
 
 
 def test_visitor_node_accept():
     node = Mock()
 
-    bv = BaseVisitor(Environment())
-    result = bv.visit(node, "arg1", key1="value1")
+    bv = BaseVisitor(NullMessageHandler(), Environment())
+    result = bv.visit(node, key1="value1")
 
-    node.accept.assert_called_with(bv, "arg1", key1="value1")
+    node.accept.assert_called_with(bv, key1="value1")
     assert result == node.accept.return_value
 
 
 def test_visitor_no_node():
-    bv = BaseVisitor(Environment())
-    result = bv.visit(None, "arg1", key1="value1")
+    bv = BaseVisitor(NullMessageHandler(), Environment())
+    result = bv.visit(None, key1="value1")
 
     assert result == {}
 
@@ -38,7 +39,7 @@ def test_generic_node():
         ),
     )
 
-    bv = BaseVisitor(Environment())
+    bv = BaseVisitor(NullMessageHandler(), Environment())
     result = bv.visit(node)
 
     assert result == {

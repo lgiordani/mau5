@@ -1,3 +1,4 @@
+from mau.error import NullMessageHandler
 from mau.environment.environment import Environment
 from mau.nodes.footnote import FootnoteNode
 from mau.nodes.header import HeaderNode
@@ -14,7 +15,7 @@ from mau.visitors.jinja_visitor import JinjaVisitor
 
 
 def test_inline_text_node():
-    visitor = JinjaVisitor(Environment())
+    visitor = JinjaVisitor(NullMessageHandler(), Environment())
 
     node = TextNode("Just some text.")
 
@@ -30,7 +31,7 @@ def test_inline_text_node_custom_template():
 
     environment = Environment()
     environment.dupdate(templates, "mau.visitor.templates.custom")
-    visitor = JinjaVisitor(environment)
+    visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     node = TextNode("Just some text.")
 
@@ -46,7 +47,7 @@ def test_inline_verbatim_node():
 
     environment = Environment()
     environment.dupdate(templates, "mau.visitor.templates.custom")
-    visitor = JinjaVisitor(environment)
+    visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     node = VerbatimNode("Just some text.")
 
@@ -63,7 +64,7 @@ def test_inline_style_node_star():
 
     environment = Environment()
     environment.dupdate(templates, "mau.visitor.templates.custom")
-    visitor = JinjaVisitor(environment)
+    visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     node = StyleNode("star", content=[TextNode("Just some text.")])
 
@@ -80,7 +81,7 @@ def test_inline_style_node_underscore():
 
     environment = Environment()
     environment.dupdate(templates, "mau.visitor.templates.custom")
-    visitor = JinjaVisitor(environment)
+    visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     node = StyleNode("underscore", content=[TextNode("Just some text.")])
 
@@ -97,7 +98,7 @@ def test_inline_style_node_tilde():
 
     environment = Environment()
     environment.dupdate(templates, "mau.visitor.templates.custom")
-    visitor = JinjaVisitor(environment)
+    visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     node = StyleNode("tilde", content=[TextNode("Just some text.")])
 
@@ -114,7 +115,7 @@ def test_inline_style_node_caret():
 
     environment = Environment()
     environment.dupdate(templates, "mau.visitor.templates.custom")
-    visitor = JinjaVisitor(environment)
+    visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     node = StyleNode("caret", content=[TextNode("Just some text.")])
 
@@ -134,7 +135,7 @@ def test_inline_macro_node():
 
     environment = Environment()
     environment.dupdate(templates, "mau.visitor.templates.custom")
-    visitor = JinjaVisitor(environment)
+    visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     node = MacroNode(
         "somename", unnamed_args=["arg1", "arg2"], named_args={"key1": "value1"}
@@ -156,7 +157,7 @@ def test_inline_macro_footnote_node():
 
     environment = Environment()
     environment.dupdate(templates, "mau.visitor.templates.custom")
-    visitor = JinjaVisitor(environment)
+    visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     node = MacroFootnoteNode(
         footnote=FootnoteNode(
@@ -180,7 +181,7 @@ def test_inline_class_node():
 
     environment = Environment()
     environment.dupdate(templates, "mau.visitor.templates.custom")
-    visitor = JinjaVisitor(environment)
+    visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     node = MacroClassNode(["class1", "class2"], content=[TextNode("Just some text.")])
 
@@ -197,7 +198,7 @@ def test_inline_link_node():
 
     environment = Environment()
     environment.dupdate(templates, "mau.visitor.templates.custom")
-    visitor = JinjaVisitor(environment)
+    visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     node = MacroLinkNode(target="sometarget", content=[TextNode("sometext")])
 
@@ -216,7 +217,7 @@ def test_inline_header_node():
 
     environment = Environment()
     environment.dupdate(templates, "mau.visitor.templates.custom")
-    visitor = JinjaVisitor(environment)
+    visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     header_node = HeaderNode(
         level=2,
@@ -246,7 +247,7 @@ def test_inline_image_node():
 
     environment = Environment()
     environment.dupdate(templates, "mau.visitor.templates.custom")
-    visitor = JinjaVisitor(environment)
+    visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     node = MacroImageNode(uri="someuri", alt_text="sometext", width="100", height="400")
 
