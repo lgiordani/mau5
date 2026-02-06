@@ -1,7 +1,7 @@
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauException, MauMessageType
+from mau.message import MauException, MauMessageType
 from mau.lexers.preprocess_variables_lexer import PreprocessVariablesLexer
 from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo

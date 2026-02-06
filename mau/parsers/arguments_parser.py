@@ -8,7 +8,7 @@ from mau.nodes.node import NodeInfo, ValueNode
 from mau.nodes.node_arguments import NodeArguments, set_names
 from mau.parsers.base_parser import BaseParser, create_parser_exception
 from mau.token import Token, TokenType
-from mau.error import BaseMessageHandler
+from mau.message import BaseMessageHandler
 
 INTERNAL_TAG_PREFIX = "mau:"
 

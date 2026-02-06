@@ -1,6 +1,6 @@
 import pytest
 
-from mau.error import MauException, MauMessageType
+from mau.message import MauException, MauMessageType
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.macro import MacroUnicodeNode
 from mau.nodes.node import NodeInfo

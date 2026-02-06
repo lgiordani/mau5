@@ -35,7 +35,7 @@ from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.parsers.text_parser import TextParser
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
-from mau.error import MauException, MauParserErrorMessage, BaseMessageHandler
+from mau.message import MauException, MauParserErrorMessage, BaseMessageHandler
 
 
 @dataclass

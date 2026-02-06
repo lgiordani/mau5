@@ -1,7 +1,7 @@
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauException, MauMessageType
+from mau.message import MauException, MauMessageType
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.node_arguments import NodeArguments
 from mau.parsers.document_parser import DocumentParser

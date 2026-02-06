@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauException, MauMessageType
+from mau.message import MauException, MauMessageType
 from mau.lexers.arguments_lexer import ArgumentsLexer
 from mau.nodes.node import NodeInfo, ValueNode
 from mau.nodes.node_arguments import NodeArguments

@@ -2,7 +2,7 @@ from typing import Type
 from collections.abc import Mapping, Sequence
 
 from mau.environment.environment import Environment
-from mau.error import (
+from mau.message import (
     MauMessage,
     MauException,
     BaseMessageHandler,

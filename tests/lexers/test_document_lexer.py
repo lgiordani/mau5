@@ -1,6 +1,6 @@
 import pytest
 
-from mau.error import MauException, MauMessageType
+from mau.message import MauException, MauMessageType
 from mau.lexers.base_lexer import TokenType
 from mau.lexers.document_lexer import DocumentLexer
 from mau.test_helpers import (

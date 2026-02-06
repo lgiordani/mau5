@@ -2,7 +2,7 @@ import textwrap
 from collections.abc import MutableMapping, MutableSequence, Sequence
 
 
-from mau.error import (
+from mau.message import (
     BaseMessageHandler,
     MauLexerErrorMessage,
     MauParserErrorMessage,

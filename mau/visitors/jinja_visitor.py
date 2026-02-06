@@ -14,7 +14,7 @@ from mau.visitors.base_visitor import (
     create_visitor_exception,
     create_visitor_debug_message,
 )
-from mau.error import MauException, MauVisitorErrorMessage, BaseMessageHandler
+from mau.message import MauException, MauVisitorErrorMessage, BaseMessageHandler
 
 logger = logging.getLogger(__name__)
 

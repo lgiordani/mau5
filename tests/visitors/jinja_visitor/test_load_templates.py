@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauException, MauMessageType
+from mau.message import MauException, MauMessageType
 from mau.visitors.jinja_visitor import (
     load_template_prefixes,
     load_templates_from_environment,

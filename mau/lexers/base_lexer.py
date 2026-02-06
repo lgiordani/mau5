@@ -3,7 +3,7 @@ import re
 from typing import Callable
 
 from mau.environment.environment import Environment
-from mau.error import BaseMessageHandler, MauException, MauLexerErrorMessage
+from mau.message import BaseMessageHandler, MauException, MauLexerErrorMessage
 from mau.text_buffer import Context, Position, TextBuffer
 from mau.token import Token, TokenType
 

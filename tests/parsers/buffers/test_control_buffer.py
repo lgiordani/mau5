@@ -1,7 +1,7 @@
 import pytest
 
 from mau.environment.environment import Environment
-from mau.error import MauException, MauMessageType
+from mau.message import MauException, MauMessageType
 from mau.parsers.buffers.control_buffer import Control, ControlBuffer
 from mau.test_helpers import (
     generate_context,

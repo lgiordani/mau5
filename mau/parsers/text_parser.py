@@ -3,7 +3,7 @@
 import itertools
 import logging
 
-from mau.error import BaseMessageHandler
+from mau.message import BaseMessageHandler
 from mau.environment.environment import Environment
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.footnote import FootnoteNode
