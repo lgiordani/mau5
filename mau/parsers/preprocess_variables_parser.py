@@ -89,7 +89,7 @@ class PreprocessVariablesParser(BaseParser):
         # Check if the token is the opening curly brace.
         opening_bracket = self.tm.get_token(TokenType.LITERAL, "{")
 
-        # Get everything beforethe closing brace.
+        # Get everything before the closing brace.
         variable_name = self.tm.collect_join(
             stop_tokens=[Token.generate(TokenType.LITERAL, "}")]
         )
@@ -102,13 +102,52 @@ class PreprocessVariablesParser(BaseParser):
             opening_bracket.context, closing_bracket.context
         )
 
+        if variable_name.value.startswith("{"):
+            # We might be trying to escape a piece of text
+            # in the form "{text}" that should be kept
+            # as it is, with curly braces surrounding it.
+            # In that case the input would be
+            # {{text}}
+            # and we would have variable_name equal to
+            # {text, as the final } would be mistaken
+            # for the closing bracket.
+
+            # Check if there is another bracket after
+            # the closing one.
+            if not self.tm.peek_token(TokenType.LITERAL, "}"):
+                raise create_parser_exception(
+                    f"Incomplete variable declaration {variable_name.value}. Variable names cannot contain curly braces.",
+                    context=variable_name.context,
+                )
+
+            # There is another bracket. Consume it.
+            actual_closing_bracket = self.tm.get_token(TokenType.LITERAL, "}")
+
+            # The text is not a variable, restore it
+            # adding a final "}"
+            text = variable_name.value + "}"
+
+            # Calculate the final context.
+            context = Context.merge_contexts(
+                opening_bracket.context, actual_closing_bracket.context
+            )
+
+            self._save(
+                TextNode(
+                    text,
+                    info=NodeInfo(context=context),
+                )
+            )
+
+            return True
+
         try:
             # Extract from the environment the variable
             # mentioned between curly braces.
             variable_value = self.environment[variable_name.value]
         except KeyError as exp:
             raise create_parser_exception(
-                f'Variable "{variable_name}" has not been defined.',
+                f'Variable "{variable_name.value}" has not been defined.',
                 context=context,
             ) from exp
 
@@ -130,6 +169,7 @@ class PreprocessVariablesParser(BaseParser):
         # None of the previous functions succeeded,
         # so we are in front of a pure text token.
         # Just store it and move on.
+
         text_token = self.tm.get_token()
 
         self._save(

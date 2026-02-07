@@ -26,7 +26,7 @@ from mau.nodes.macro import (
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.arguments_parser import (
     ArgumentsParser,
-    process_arguments_with_variables,
+    process_arguments,
 )
 from mau.parsers.base_parser import BaseParser, create_parser_exception
 from mau.parsers.buffers.control_buffer import Control
@@ -304,17 +304,8 @@ class TextParser(BaseParser):
         # and macro arguments are not closed correctly.
         closing_bracket = self.tm.get_token(TokenType.LITERAL, ")")
 
-        arguments_parser = process_arguments_with_variables(
+        arguments_parser = process_arguments(
             arguments_token, self.message_handler, self.environment
-        )
-
-        # Parse the arguments.
-        parser = ArgumentsParser.lex_and_parse(
-            arguments_token.value,
-            self.message_handler,
-            self.environment,
-            *arguments_token.context.start_position,
-            arguments_token.context.source,
         )
 
         context = Context.merge_contexts(

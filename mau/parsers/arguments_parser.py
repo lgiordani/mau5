@@ -303,6 +303,30 @@ class ArgumentsParser(BaseParser):
         self._isolate_tags_and_subtype()
 
 
+def process_arguments(
+    arguments_token: Token,
+    message_handler: BaseMessageHandler,
+    environment: Environment | None = None,
+) -> ArgumentsParser:
+    # Unpack the text initial position.
+    start_line, start_column = arguments_token.context.start_position
+
+    # Get the text source.
+    source_filename = arguments_token.context.source
+
+    # Parse the arguments.
+    arguments_parser = ArgumentsParser.lex_and_parse(
+        text=arguments_token.value,
+        message_handler=message_handler,
+        environment=environment,
+        start_line=start_line,
+        start_column=start_column,
+        source_filename=source_filename,
+    )
+
+    return arguments_parser
+
+
 def process_arguments_with_variables(
     arguments_token: Token,
     message_handler: BaseMessageHandler,

@@ -661,3 +661,11 @@ def test_paragraph_parenthood_labels():
     # paragraph it has been assigned to.
     check_parent(paragraph_node, label_title_nodes)
     check_parent(paragraph_node, label_role_nodes)
+
+
+def test_paragraph2():
+    source = """
+    [link]("{{filename}}python-3-oop-part-2-classes-and-members.markdown", "this post").
+    """
+
+    parser = runner(source)

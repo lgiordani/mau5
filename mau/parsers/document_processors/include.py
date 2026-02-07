@@ -161,7 +161,6 @@ def _parse_mau(
         start_column=start_column,
         source_filename=source_filename,
     )
-    content_parser.finalise()
 
     # TODO
     # if update:

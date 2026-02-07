@@ -277,7 +277,6 @@ def parser_runner_factory(lexer_class, parser_class, *args, **kwds):
         parser = init_parser(source, environment, *args, **kwds)
 
         parser.parse()
-        parser.finalise()
 
         return parser
 

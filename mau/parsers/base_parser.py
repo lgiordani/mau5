@@ -111,6 +111,9 @@ class BaseParser:
                     self.tm.peek_token().context,
                 )
 
+        # Complete the parsing operations.
+        self.finalise()
+
     @classmethod
     def lex_and_parse(
         cls,
@@ -120,7 +123,6 @@ class BaseParser:
         start_line: int = 0,
         start_column: int = 0,
         source_filename: str | None = None,
-        **kwargs,
     ):  # pragma: no cover
         # This classmethod lexes and parses the
         # given text using the current class as
@@ -151,14 +153,10 @@ class BaseParser:
             lexer.tokens,
             message_handler,
             environment,
-            **kwargs,
         )
 
         # Parse the tokens found by the lexer.
         parser.parse()
-
-        # Complete the parsing operations.
-        parser.finalise()
 
         return parser
 

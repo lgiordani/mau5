@@ -38,7 +38,7 @@ def test_arguments_empty():
 
     parser = runner(source)
 
-    assert parser.arguments_buffer.pop() is None
+    assert parser.arguments_buffer.pop().asdict() == NodeArguments().asdict()
 
 
 def test_arguments_multiple_subtypes():

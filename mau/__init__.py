@@ -218,7 +218,6 @@ class Mau:  # pragma: no cover
         try:
             parser = DocumentParser(tokens, self.message_handler, self.environment)
             parser.parse()
-            parser.finalise()
         except MauException as exc:
             self.message_handler.process(exc.message)
             raise

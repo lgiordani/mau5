@@ -1,4 +1,3 @@
-from mau.environment.environment import Environment
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.inline import TextNode
 from mau.nodes.macro import MacroNode
@@ -86,35 +85,5 @@ def test_generic_macro_without_arguments():
     ]
 
     parser = runner(source)
-
-    compare_nodes_sequence(parser.nodes, expected)
-
-
-def test_generic_macro_support_variables():
-    environment = Environment.from_dict(
-        {
-            "args": "arg1, arg2",
-            "keyvalue": "key1=value1",
-            "tag_with_prefix": "#tag1",
-            "subtype_with_prefix": "*subtype1",
-        }
-    )
-
-    source = "[macroname]({args}, {tag_with_prefix}, {subtype_with_prefix}, {keyvalue})"
-
-    expected = [
-        MacroNode(
-            "macroname",
-            arguments=NodeArguments(
-                unnamed_args=["arg1", "arg2"],
-                named_args={"key1": "value1"},
-                tags=["tag1"],
-                subtype="subtype1",
-            ),
-            info=NodeInfo(context=generate_context(0, 0, 0, 73)),
-        )
-    ]
-
-    parser = runner(source, environment)
 
     compare_nodes_sequence(parser.nodes, expected)

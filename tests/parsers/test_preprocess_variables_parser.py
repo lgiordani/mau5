@@ -202,6 +202,34 @@ def test_escape_curly_braces():
     )
 
 
+def test_escape_curly_braces_with_double_braces():
+    environment = Environment.from_dict({"attr": "5"})
+    source = r"This is {{attr}}"
+
+    expected = [
+        TextNode(
+            "This is ",
+            info=NodeInfo(context=generate_context(0, 0, 0, 8)),
+        ),
+        TextNode(
+            "{attr}",
+            info=NodeInfo(context=generate_context(0, 8, 0, 16)),
+        ),
+    ]
+
+    parser = runner(source, environment)
+
+    compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            "This is {attr}",
+            generate_context(0, 0, 0, 16),
+        ),
+    )
+
+
 def test_curly_braces_in_verbatim():
     environment = Environment.from_dict({"attr": "5"})
     source = "This is `{attr}`"
