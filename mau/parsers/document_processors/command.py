@@ -12,14 +12,16 @@ from mau.nodes.command import (
     FootnotesNode,
     TocNode,
 )
+from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.nodes.node import NodeInfo
 from mau.nodes.node_arguments import NodeArguments
-from mau.parsers.arguments_parser import ArgumentsParser
+from mau.parsers.arguments_parser import (
+    ArgumentsParser,
+    process_arguments_with_variables,
+)
 from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 from mau.token import TokenType
-
-# TODO The implementation at lines 81-145 is horrendous.
 
 
 def command_processor(parser: DocumentParser):
@@ -62,21 +64,9 @@ def command_processor(parser: DocumentParser):
         # Get the inline arguments.
         arguments_token = parser.tm.get_token(TokenType.TEXT)
 
-        # Unpack the token initial position.
-        start_line, start_column = arguments_token.context.start_position
-
-        # Parse the arguments.
-        with parser.tm:
-            arguments_parser = ArgumentsParser.lex_and_parse(
-                text=arguments_token.value,
-                message_handler=parser.message_handler,
-                environment=parser.environment,
-                start_line=start_line,
-                start_column=start_column,
-                source_filename=arguments_token.context.source,
-            )
-
-        arguments = arguments_parser.arguments
+        arguments = process_arguments_with_variables(
+            arguments_token, parser.message_handler, parser.environment
+        ).arguments
 
     # Build the node info.
     info = NodeInfo(context=context)

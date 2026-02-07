@@ -1,5 +1,9 @@
 import pytest
 
+from mau.nodes.node import NodeInfo
+from mau.nodes.node_arguments import NodeArguments
+from mau.nodes.command import CommandNode
+from mau.environment.environment import Environment
 from mau.message import MauException, MauMessageType
 from mau.lexers.document_lexer import DocumentLexer
 from mau.parsers.document_parser import DocumentParser
@@ -65,3 +69,38 @@ def test_command_control():
     assert parser.arguments_buffer.arguments is None
     assert parser.label_buffer.labels == {}
     assert parser.control_buffer.control is None
+
+
+def test_command_inline_arguments_support_variables():
+    environment = Environment.from_dict(
+        {
+            "args": "arg1, arg2",
+            "keyvalue": "key1=value1",
+            "tag_with_prefix": "#tag1",
+            "subtype_with_prefix": "*subtype1",
+        }
+    )
+
+    source = """
+    ::cmd:{args}, {tag_with_prefix}, {subtype_with_prefix}, {keyvalue}
+    """
+
+    parser = runner(source, environment)
+
+    compare_nodes_sequence(
+        parser.nodes,
+        [
+            CommandNode(
+                name="cmd",
+                arguments=NodeArguments(
+                    unnamed_args=["arg1", "arg2"],
+                    named_args={"key1": "value1"},
+                    tags=["tag1"],
+                    subtype="subtype1",
+                ),
+                info=NodeInfo(
+                    context=generate_context(1, 0, 1, 5),
+                ),
+            )
+        ],
+    )

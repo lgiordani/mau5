@@ -53,6 +53,42 @@ def test_include_content_inline_arguments():
     )
 
 
+def test_include_inline_arguments_support_variables():
+    environment = Environment.from_dict(
+        {
+            "paths": "/path/to/it, /another/path",
+            "keyvalue": "key1=value1",
+            "tag_with_prefix": "#tag1",
+            "subtype_with_prefix": "*subtype1",
+        }
+    )
+
+    source = """
+    << ctype1:{paths}, {tag_with_prefix}, {subtype_with_prefix}, {keyvalue}
+    """
+
+    parser = runner(source, environment)
+
+    compare_nodes_sequence(
+        parser.nodes,
+        [
+            IncludeNode(
+                "ctype1",
+                ["/path/to/it", "/another/path"],
+                arguments=NodeArguments(
+                    unnamed_args=[],
+                    named_args={"key1": "value1"},
+                    tags=["tag1"],
+                    subtype="subtype1",
+                ),
+                info=NodeInfo(
+                    context=generate_context(1, 0, 1, 9),
+                ),
+            ),
+        ],
+    )
+
+
 def test_include_content_boxed_arguments():
     source = """
     [/path/to/it, /another/path, #tag1, *subtype1, key1=value1]

@@ -48,12 +48,6 @@ def arguments_processor(parser: DocumentParser):
     # The preprocess parser outputs a single node.
     text_token = preprocess_parser.get_processed_text()
 
-    # Unpack the text initial position.
-    start_line, start_column = text_token.context.start_position
-
-    # Get the text source.
-    source_filename = text_token.context.source
-
     # Parse the arguments.
     arguments_parser = ArgumentsParser.lex_and_parse(
         text=text_token.value,

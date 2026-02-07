@@ -1,3 +1,4 @@
+from mau.nodes.node_arguments import NodeArguments
 from mau.nodes.footnote import FootnoteNode
 from mau.nodes.header import HeaderNode
 from mau.nodes.macro import (
@@ -33,15 +34,23 @@ def test_macro_node():
 
 
 def test_macro_node_args():
-    node = MacroNode("somename", unnamed_args=["arg1"], named_args={"key1": "value1"})
+    node = MacroNode(
+        "somename",
+        arguments=NodeArguments(
+            unnamed_args=["arg1"],
+            named_args={"key1": "value1"},
+            tags=["tag1"],
+            subtype="subtype1",
+        ),
+    )
 
     expected = {
         "_type": "macro",
         "_context": Context.empty().asdict(),
         "name": "somename",
         "parent": {},
-        "subtype": None,
-        "tags": [],
+        "subtype": "subtype1",
+        "tags": ["tag1"],
         "internal_tags": [],
         "unnamed_args": ["arg1"],
         "named_args": {"key1": "value1"},

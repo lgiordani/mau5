@@ -122,18 +122,49 @@ class BaseParser:
         source_filename: str | None = None,
         **kwargs,
     ):  # pragma: no cover
+        # This classmethod lexes and parses the
+        # given text using the current class as
+        # parser and the associated classes (
+        # class attributes) as text buffer and
+        # lexer.
+
+        # Initialise the text buffer.
         text_buffer = cls.text_buffer_class(
-            text, start_line, start_column, source_filename
+            text,
+            start_line,
+            start_column,
+            source_filename,
         )
 
-        lexer = cls.lexer_class(text_buffer, message_handler, environment)
+        # Initialise the lexer.
+        lexer = cls.lexer_class(
+            text_buffer,
+            message_handler,
+            environment,
+        )
+
+        # Lex the given text.
         lexer.process()
 
-        parser = cls(lexer.tokens, message_handler, environment, **kwargs)
+        # Initialise the parser.
+        parser = cls(
+            lexer.tokens,
+            message_handler,
+            environment,
+            **kwargs,
+        )
+
+        # Parse the tokens found by the lexer.
         parser.parse()
+
+        # Complete the parsing operations.
         parser.finalise()
 
         return parser
 
     def finalise(self):  # pragma: no cover
+        # This code is executed at the end of the
+        # parsing stage. It provides a space for
+        # one-off operations that have to be
+        # done when the whole parsing is completed.
         pass

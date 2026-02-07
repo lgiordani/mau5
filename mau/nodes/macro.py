@@ -66,16 +66,12 @@ class MacroNode(Node):
     def __init__(
         self,
         name: str,
-        unnamed_args: Sequence[str] | None = None,
-        named_args: Mapping[str, str] | None = None,
         parent: Node | None = None,
         arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
         super().__init__(parent=parent, arguments=arguments, info=info)
         self.name = name
-        self.unnamed_args = unnamed_args or []
-        self.named_args = named_args or {}
 
     @property
     def custom_attributes(self) -> list[str]:

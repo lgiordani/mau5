@@ -253,15 +253,14 @@ class DocumentLexer(BaseLexer):
     def _process_control(self) -> list[Token] | None:
         # Detect control logic in the form
         #
-        # @OPERATOR VAR (==|!=) VALUE
+        # @OPERATOR CONDITION
         #
 
         # Try to match the syntax shown above.
         match = rematch(
             (
-                r"^(?P<prefix>@)(?P<operator>[a-z]+)(?P<whitespace1> *)"
-                r"(?P<variable>[a-zA-Z0-9_\.\+\-]+)(?P<whitespace2> *)"
-                r"(?P<comparison>(==|!=))(?P<whitespace3> *)(?P<value>.*)$"
+                r"^(?P<prefix>@)(?P<operator>[a-z]+)(?P<whitespace> *)"
+                r"(?P<condition>.*)$"
             ),
             self._current_line,
         )
@@ -273,29 +272,19 @@ class DocumentLexer(BaseLexer):
         # Extract the values of all groups.
         prefix = match.groupdict().get("prefix")
         operator = match.groupdict().get("operator")
-        whitespace1 = match.groupdict().get("whitespace1")
-        variable = match.groupdict().get("variable")
-        whitespace2 = match.groupdict().get("whitespace2")
-        comparison = match.groupdict().get("comparison")
-        whitespace3 = match.groupdict().get("whitespace3")
-        value = match.groupdict().get("value")
+        whitespace = match.groupdict().get("whitespace")
+        condition = match.groupdict().get("condition")
 
         # Create the tokens we want to keep.
         prefix_token = self._create_token_and_skip(TokenType.CONTROL, prefix)
         operator_token = self._create_token_and_skip(TokenType.TEXT, operator)
-        self._skip(whitespace1)
-        variable_token = self._create_token_and_skip(TokenType.TEXT, variable)
-        self._skip(whitespace2)
-        comparison_token = self._create_token_and_skip(TokenType.TEXT, comparison)
-        self._skip(whitespace3)
-        value_token = self._create_token_and_skip(TokenType.TEXT, value)
+        self._skip(whitespace)
+        condition_token = self._create_token_and_skip(TokenType.TEXT, condition)
 
         tokens = [
             prefix_token,
             operator_token,
-            variable_token,
-            comparison_token,
-            value_token,
+            condition_token,
         ]
 
         # Move to the next line.
@@ -324,7 +313,7 @@ class DocumentLexer(BaseLexer):
         if not match:
             return None
 
-        # Extract the values of all groups.
+        # Extract the conditions of all groups.
         prefix = match.groupdict().get("prefix")
         whitespace = match.groupdict().get("whitespace")
         content_type = match.groupdict().get("type")

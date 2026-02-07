@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
+from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.environment.environment import Environment
 from mau.lexers.arguments_lexer import ArgumentsLexer
 from mau.nodes.node import NodeInfo, ValueNode
@@ -97,7 +98,6 @@ class ArgumentsParser(BaseParser):
         node = ValueNode(
             token.value.strip(),
             info=NodeInfo(context=token.context),
-            # Remove leading and trailing spaces from the value.
             parent=self.parent_node,
         )
 
@@ -264,7 +264,7 @@ class ArgumentsParser(BaseParser):
         )
 
     @property
-    def arguments(self):
+    def arguments(self) -> NodeArguments:
         # Isolate internal tags.
         internal_tag_nodes = [
             node
@@ -301,3 +301,40 @@ class ArgumentsParser(BaseParser):
         super().parse()
 
         self._isolate_tags_and_subtype()
+
+
+def process_arguments_with_variables(
+    arguments_token: Token,
+    message_handler: BaseMessageHandler,
+    environment: Environment | None = None,
+) -> ArgumentsParser:
+    # Unpack the text initial position.
+    start_line, start_column = arguments_token.context.start_position
+
+    # Get the text source.
+    source_filename = arguments_token.context.source
+
+    # Replace variables in the text.
+    preprocess_parser = PreprocessVariablesParser.lex_and_parse(
+        text=arguments_token.value,
+        message_handler=message_handler,
+        environment=environment,
+        start_line=start_line,
+        start_column=start_column,
+        source_filename=source_filename,
+    )
+
+    # The preprocess parser outputs a single node.
+    text_token = preprocess_parser.get_processed_text()
+
+    # Parse the arguments.
+    arguments_parser = ArgumentsParser.lex_and_parse(
+        text=text_token.value,
+        message_handler=message_handler,
+        environment=environment,
+        start_line=start_line,
+        start_column=start_column,
+        source_filename=source_filename,
+    )
+
+    return arguments_parser

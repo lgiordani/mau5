@@ -9,7 +9,11 @@ if TYPE_CHECKING:
 from mau.nodes.include import IncludeImageNode, IncludeMauNode, IncludeNode
 from mau.nodes.node import NodeInfo
 from mau.nodes.node_arguments import NodeArguments
-from mau.parsers.arguments_parser import ArgumentsParser
+from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
+from mau.parsers.arguments_parser import (
+    ArgumentsParser,
+    process_arguments_with_variables,
+)
 from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 from mau.token import TokenType
@@ -48,24 +52,9 @@ def include_processor(parser: DocumentParser):
         # Get the inline arguments.
         arguments_token = parser.tm.get_token(TokenType.TEXT)
 
-        # Unpack the text initial position.
-        start_line, start_column = arguments_token.context.start_position
-
-        # Get the text source.
-        source_filename = arguments_token.context.source
-
-        # Parse the arguments.
-        with parser.tm:
-            arguments_parser = ArgumentsParser.lex_and_parse(
-                text=arguments_token.value,
-                message_handler=parser.message_handler,
-                environment=parser.environment,
-                start_line=start_line,
-                start_column=start_column,
-                source_filename=source_filename,
-            )
-
-        arguments = arguments_parser.arguments
+        arguments = process_arguments_with_variables(
+            arguments_token, parser.message_handler, parser.environment
+        ).arguments
 
     if not arguments:
         raise create_parser_exception(

@@ -3,10 +3,14 @@
 import itertools
 import logging
 
+from mau.message import MauException, MauMessageType
+from mau.parsers.buffers.control_buffer import Control
+from mau.parsers.condition_parser import ConditionParser
 from mau.message import BaseMessageHandler
 from mau.environment.environment import Environment
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.footnote import FootnoteNode
+from mau.nodes.node_arguments import NodeArguments
 from mau.nodes.inline import (
     StyleNode,
     TextNode,
@@ -24,7 +28,10 @@ from mau.nodes.macro import (
     MacroUnicodeNode,
 )
 from mau.nodes.node import Node, NodeInfo
-from mau.parsers.arguments_parser import ArgumentsParser
+from mau.parsers.arguments_parser import (
+    ArgumentsParser,
+    process_arguments_with_variables,
+)
 from mau.parsers.base_parser import BaseParser, create_parser_exception
 from mau.text_buffer import Context
 from mau.token import EOF, EOL, Token, TokenType
@@ -283,7 +290,7 @@ class TextParser(BaseParser):
         # opening bracket to store the context
         # in the resulting node.
         opening_bracket = self.tm.get_token(TokenType.LITERAL, "[")
-        macro_name = self.tm.get_token(TokenType.TEXT).value
+        macro_name_token = self.tm.get_token(TokenType.TEXT)
         self.tm.get_token(TokenType.LITERAL, "]")
 
         # If this is a macro, there should be an
@@ -298,6 +305,10 @@ class TextParser(BaseParser):
         # the closing bracket the next token is EOL
         # and macro arguments are not closed correctly.
         closing_bracket = self.tm.get_token(TokenType.LITERAL, ")")
+
+        arguments_parser = process_arguments_with_variables(
+            arguments_token, self.message_handler, self.environment
+        )
 
         # Parse the arguments.
         parser = ArgumentsParser.lex_and_parse(
@@ -314,43 +325,48 @@ class TextParser(BaseParser):
 
         # Select the specific parsing function
         # according to the name of the macro.
+        # All the parsing functons receive the arguments
+        # parser instead of just the arguments as macro
+        # arguments might contain Mau syntax and thus
+        # might need to be parsed. This means that we
+        # need to have the nodes and not just the text
+        # values of all the arguments.
 
-        if macro_name.startswith("@"):
-            return self._parse_macro_control(macro_name, parser, context=context)
+        if macro_name_token.value.startswith("@"):
+            return self._parse_macro_control(
+                macro_name_token, arguments_parser, context=context
+            )
 
-        if macro_name == "link":
-            return self._parse_macro_link(parser, context=context)
+        if macro_name_token.value == "link":
+            return self._parse_macro_link(arguments_parser, context=context)
 
-        if macro_name == "header":
-            return self._parse_macro_header_link(parser, context=context)
+        if macro_name_token.value == "header":
+            return self._parse_macro_header_link(arguments_parser, context=context)
 
-        if macro_name == "mailto":
-            return self._parse_macro_mailto(parser, context=context)
+        if macro_name_token.value == "mailto":
+            return self._parse_macro_mailto(arguments_parser, context=context)
 
-        if macro_name == "image":
-            return self._parse_macro_image(parser, context=context)
+        if macro_name_token.value == "image":
+            return self._parse_macro_image(arguments_parser, context=context)
 
-        if macro_name == "footnote":
-            return self._parse_macro_footnote(parser, context=context)
+        if macro_name_token.value == "footnote":
+            return self._parse_macro_footnote(arguments_parser, context=context)
 
-        if macro_name == "class":
-            return self._parse_macro_class(parser, context)
+        if macro_name_token.value == "class":
+            return self._parse_macro_class(arguments_parser, context)
 
-        if macro_name == "unicode":
-            return self._parse_macro_unicode(parser, context)
+        if macro_name_token.value == "unicode":
+            return self._parse_macro_unicode(arguments_parser, context)
 
-        if macro_name == "raw":
-            return self._parse_macro_raw(parser, context)
+        if macro_name_token.value == "raw":
+            return self._parse_macro_raw(arguments_parser, context)
 
         # This is a generic macro, there is no
         # special code for it.
         node = MacroNode(
-            name=macro_name,
-            unnamed_args=[node.value for node in parser.unnamed_argument_nodes],
-            named_args={
-                key: node.value for key, node in parser.named_argument_nodes.items()
-            },
+            name=macro_name_token.value,
             parent=self.parent_node,
+            arguments=arguments_parser.arguments,
             info=NodeInfo(
                 context=context,
             ),
@@ -820,17 +836,25 @@ class TextParser(BaseParser):
         raise create_parser_exception(f"Test '{test}' is not supported")
 
     def _parse_macro_control(
-        self, macro_name: str, parser: ArgumentsParser, context: Context
+        self, macro_name_token: Token, parser: ArgumentsParser, context: Context
     ) -> list[Node]:
-        # Parse a class macro in the form [@if:variable:test](true, false).
+        # Parse a class macro in the form [@if:condition](true, false).
         #
         # Example:
         #
         # If the value of flag is 42 return "TRUE", otherwise return "FALSE"
-        # [@if:flag:=42]("TRUE", "FALSE")
+        # [@if:flag==42]("TRUE", "FALSE")
 
         # Skip the initial `@`
-        operator = macro_name[1:]
+        name = macro_name_token.value[1:]
+
+        # Split the name into operator:condition
+        try:
+            operator, condition = name.split(":")
+        except ValueError:
+            raise create_parser_exception(
+                f"Macro name '{name}' must be in the form 'operator:condition'"
+            )
 
         # Check if the operator is supported.
         if operator not in ["if", "ifeval"]:
@@ -838,42 +862,74 @@ class TextParser(BaseParser):
                 f"Control operator '{operator}' is not supported"
             )
 
+        # Remember if we need to evaluate the result.
+        evaluate = operator == "ifeval"
+
+        # Both ifeval and if are checking the same logic.
+        operator = "if"
+
+        # We need to find the context of the condition.
+        # It is the macro name token context shifted
+        # by the legth of the operator plus the colon.
+        shift = len(f"@{operator}:")
+        condition_context = macro_name_token.context.clone()
+        condition_context.start_column += shift
+
+        # Unpack the text initial position.
+        start_line, start_column = condition_context.start_position
+
+        # Get the text source.
+        source_filename = condition_context.source
+
+        # Replace variables
+        try:
+            condition_parser = ConditionParser.lex_and_parse(
+                text=condition,
+                message_handler=parser.message_handler,
+                environment=parser.environment,
+                start_line=start_line,
+                start_column=start_column,
+                source_filename=source_filename,
+            )
+        except MauException as exc:
+            raise create_parser_exception(
+                f"Wrong syntax of condition '{condition}' (probably missing or incorrect comparison)').",
+                condition_context,
+            ) from exc
+
+        # At the moment we support only one condition.
+        condition_node = condition_parser.condition_node
+
+        control = Control(
+            operator,
+            condition_node.variable,
+            condition_node.comparison,
+            condition_node.value,
+            macro_name_token.context,
+        )
+
         # Assign names to arguments.
-        parser.set_names(["variable", "test", "true_case", "false_case"])
+        parser.set_names(["true_case", "false_case"])
 
         # Get the mandatory values
         try:
-            variable = parser.named_argument_nodes["variable"]
-            test = parser.named_argument_nodes["test"]
             true_case = parser.named_argument_nodes["true_case"]
         except KeyError as exc:
             raise create_parser_exception(
-                text=f"Syntax: [{macro_name}](VARIABLE, TEST, TRUE_CASE, false_case)",
+                text="Control macro is missing the mandatory true case",
                 context=context,
             ) from exc
 
         # The false case is not mandatory, default is None.
         false_case = parser.named_argument_nodes.get("false_case")
 
-        variable_value = self.environment.get(
-            variable.value,
-            None,
-        )
-        if variable_value is None:
-            raise create_parser_exception(f"Variable '{variable}' has not been defined")
+        # Check if the condition is true or false.
+        test = control.process(self.environment)
 
-        # Check if the variable value passes the test.
-        test_result = self._process_test(
-            test.value,
-            variable_value,
-        )
+        result = true_case if test else false_case
 
-        # Get the result value according to the test result.
-        result = true_case if test_result is True else false_case
-
-        # The operator `ifeval` uses the result value
-        # as the name of a variable.
-        if operator == "ifeval":
+        # Let's evaluate the result if we need to.
+        if evaluate:
             if result is None:
                 raise create_parser_exception(
                     "Test result negative but evaluation variable has not been defined for that case."

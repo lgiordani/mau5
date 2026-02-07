@@ -571,7 +571,7 @@ def test_named_arguments_followed_by_unnamed():
 
 
 def test_process_arguments_subtype():
-    source = "value1, *value2"
+    source = "value1, *subtype1"
 
     expected_unnamed_nodes = [
         ValueNode(
@@ -581,8 +581,8 @@ def test_process_arguments_subtype():
     ]
 
     expected_subtype = ValueNode(
-        "value2",
-        info=NodeInfo(context=generate_context(0, 8, 0, 15)),
+        "subtype1",
+        info=NodeInfo(context=generate_context(0, 8, 0, 17)),
     )
 
     parser = runner(source)

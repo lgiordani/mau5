@@ -725,9 +725,7 @@ def test_control():
         [
             Token(TokenType.CONTROL, "@", generate_context(0, 0, 0, 1)),
             Token(TokenType.TEXT, "if", generate_context(0, 1, 0, 3)),
-            Token(TokenType.TEXT, "somevar", generate_context(0, 4, 0, 11)),
-            Token(TokenType.TEXT, "==", generate_context(0, 11, 0, 13)),
-            Token(TokenType.TEXT, "value", generate_context(0, 13, 0, 18)),
+            Token(TokenType.TEXT, "somevar==value", generate_context(0, 4, 0, 18)),
             Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )
@@ -741,9 +739,7 @@ def test_control_with_space():
         [
             Token(TokenType.CONTROL, "@", generate_context(0, 0, 0, 1)),
             Token(TokenType.TEXT, "if", generate_context(0, 1, 0, 3)),
-            Token(TokenType.TEXT, "somevar", generate_context(0, 6, 0, 13)),
-            Token(TokenType.TEXT, "!=", generate_context(0, 15, 0, 17)),
-            Token(TokenType.TEXT, "value", generate_context(0, 20, 0, 25)),
+            Token(TokenType.TEXT, "somevar  !=   value", generate_context(0, 6, 0, 25)),
             Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
         ],
     )

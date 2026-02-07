@@ -1,3 +1,4 @@
+from mau.nodes.node_arguments import NodeArguments
 from mau.test_helpers import NullMessageHandler
 from mau.environment.environment import Environment
 from mau.nodes.footnote import FootnoteNode
@@ -138,7 +139,11 @@ def test_inline_macro_node():
     visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     node = MacroNode(
-        "somename", unnamed_args=["arg1", "arg2"], named_args={"key1": "value1"}
+        "somename",
+        arguments=NodeArguments(
+            unnamed_args=["arg1", "arg2"],
+            named_args={"key1": "value1"},
+        ),
     )
 
     result = visitor.visit(node)

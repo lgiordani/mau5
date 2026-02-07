@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from logging import Logger
+from logging import Logger, ERROR, INFO
 
 from mau.environment.environment import Environment
 from mau.text_buffer import Context, Position, adjust_context, adjust_position
@@ -90,8 +90,15 @@ class BaseMessageHandler(ABC):
 class LogMessageHandler(BaseMessageHandler):
     type = "log"
 
-    def __init__(self, logger: Logger):
+    def __init__(
+        self,
+        logger: Logger,
+        prefix: str | None = None,
+        debug_logging_level=INFO,
+    ):
         self.logger = logger
+        self.prefix = prefix or "[MAU] "
+        self.debug_logging_level = debug_logging_level
 
     def process_lexer_error(self, message: MauLexerErrorMessage):
         self.logger.error(f"Lexer error: {message.text}")
@@ -103,7 +110,11 @@ class LogMessageHandler(BaseMessageHandler):
         if message.context:
             self.logger.error(f"Context: {adjust_context(message.context)}")
 
-    def _process_visitor_debug_message(self, message: MauVisitorErrorMessage):
+    def _process_visitor_debug_message(
+        self,
+        message: MauVisitorErrorMessage,
+        logging_level,
+    ):
         values = {}
 
         values["Message"] = message.text
@@ -113,23 +124,19 @@ class LogMessageHandler(BaseMessageHandler):
             values["Node type"] = message.node_type
 
         if message.data:
-            values["Template data"] = message.data
+            for k, v in message.data.items():
+                values[f"Template data - {k}"] = v
 
         if message.additional_info:
             values.update(message.additional_info)
 
-        return values
+        for k, v in values.items():
+            self.logger.log(logging_level, f"{self.prefix}{k}: {v}")
 
     def process_visitor_error(self, message: MauVisitorErrorMessage):
-        values = self._process_visitor_debug_message(message)
-
-        self.logger.error("Visitor error")
-        for k, v in values.items():
-            self.logger.error(f"{k}: {v}")
+        self.logger.log(ERROR, f"{self.prefix}Visitor error")
+        self._process_visitor_debug_message(message, ERROR)
 
     def process_visitor_debug(self, message: MauVisitorDebugMessage):
-        values = self._process_visitor_debug_message(message)
-
-        self.logger.info("Visitor error")
-        for k, v in values.items():
-            self.logger.info(f"{k}: {v}")
+        self.logger.log(self.debug_logging_level, f"{self.prefix}Visitor message")
+        self._process_visitor_debug_message(message, self.debug_logging_level)

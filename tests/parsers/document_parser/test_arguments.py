@@ -63,18 +63,75 @@ def test_arguments_multiple_aliases():
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
-def test_arguments_support_variables():
-    environment = Environment.from_dict({"arg1": "number1", "value1": "42"})
+def test_arguments_support_variables_with_syntax():
+    environment = Environment.from_dict(
+        {
+            "arg": "arg1",
+            "keyvalue": "key1=value1",
+            "tag_with_prefix": "#tag1",
+            "subtype_with_prefix": "*subtype1",
+        }
+    )
+
     source = """
-    [{arg1},key1={value1}]
+    [{arg}, {tag_with_prefix}, {subtype_with_prefix}, {keyvalue}]
     """
 
     parser = runner(source, environment)
 
     assert parser.arguments_buffer.pop() == NodeArguments(
-        unnamed_args=["number1"],
-        named_args={"key1": "42"},
-        tags=[],
+        unnamed_args=["arg1"],
+        named_args={"key1": "value1"},
+        tags=["tag1"],
+        internal_tags=[],
+        subtype="subtype1",
+    )
+
+
+def test_arguments_support_variables_without_syntax():
+    environment = Environment.from_dict(
+        {
+            "arg": "arg1",
+            "key": "key1",
+            "value": "value1",
+            "tag_without_prefix": "tag1",
+            "subtype_without_prefix": "subtype1",
+        }
+    )
+
+    source = """
+    [{arg}, #{tag_without_prefix}, *{subtype_without_prefix}, {key}={value}]
+    """
+
+    parser = runner(source, environment)
+
+    assert parser.arguments_buffer.pop() == NodeArguments(
+        unnamed_args=["arg1"],
+        named_args={"key1": "value1"},
+        tags=["tag1"],
+        internal_tags=[],
+        subtype="subtype1",
+    )
+
+
+def test_arguments_support_variables_with_commas():
+    environment = Environment.from_dict(
+        {
+            "unnamed_args": "arg1, arg2, #tag1",
+            "named_args": "key1=value1",
+        }
+    )
+
+    source = """
+    [{unnamed_args}, otherarg, {named_args}, otherkey=othervalue]
+    """
+
+    parser = runner(source, environment)
+
+    assert parser.arguments_buffer.pop() == NodeArguments(
+        unnamed_args=["arg1", "arg2", "otherarg"],
+        named_args={"key1": "value1", "otherkey": "othervalue"},
+        tags=["tag1"],
         internal_tags=[],
         subtype=None,
     )

@@ -284,8 +284,6 @@ class BaseVisitor:
         result.update(
             {
                 "name": node.name,
-                "unnamed_args": node.unnamed_args,
-                "named_args": node.named_args,
             }
         )
 

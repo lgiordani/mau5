@@ -1,6 +1,8 @@
+from mau.environment.environment import Environment
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.inline import TextNode
 from mau.nodes.macro import MacroNode
+from mau.nodes.node_arguments import NodeArguments
 from mau.nodes.node import NodeInfo
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
@@ -16,45 +18,60 @@ runner = parser_runner_factory(TextLexer, TextParser)
 
 
 def test_generic_macro():
-    source = "[macroname](value1,value2)"
+    source = "[macroname](arg1,arg2)"
 
     expected = [
         MacroNode(
             "macroname",
-            unnamed_args=["value1", "value2"],
-            info=NodeInfo(context=generate_context(0, 0, 0, 26)),
+            arguments=NodeArguments(
+                unnamed_args=["arg1", "arg2"],
+                named_args={},
+                tags=[],
+                subtype=None,
+            ),
+            info=NodeInfo(context=generate_context(0, 0, 0, 22)),
         )
     ]
 
-    compare_nodes_sequence(runner(source).nodes, expected)
+    parser = runner(source)
+
+    compare_nodes_sequence(parser.nodes, expected)
 
 
 def test_generic_macro_incomplete():
-    source = "[macroname](value1"
+    source = "[macroname](arg1"
 
     expected = [
         TextNode(
-            "[macroname](value1",
-            info=NodeInfo(context=generate_context(0, 0, 0, 18)),
+            "[macroname](arg1",
+            info=NodeInfo(context=generate_context(0, 0, 0, 16)),
         ),
     ]
 
-    compare_nodes_sequence(runner(source).nodes, expected)
+    parser = runner(source)
+
+    compare_nodes_sequence(parser.nodes, expected)
 
 
-def test_generic_macro_named_arguments():
-    source = "[macroname](name,arg1=value1)"
+def test_generic_macro_supports_all_argument_types():
+    source = "[macroname](arg1, #tag1, *subtype1, key1=value1)"
 
     expected = [
         MacroNode(
             "macroname",
-            unnamed_args=["name"],
-            named_args={"arg1": "value1"},
-            info=NodeInfo(context=generate_context(0, 0, 0, 29)),
+            arguments=NodeArguments(
+                unnamed_args=["arg1"],
+                named_args={"key1": "value1"},
+                tags=["tag1"],
+                subtype="subtype1",
+            ),
+            info=NodeInfo(context=generate_context(0, 0, 0, 48)),
         )
     ]
 
-    compare_nodes_sequence(runner(source).nodes, expected)
+    parser = runner(source)
+
+    compare_nodes_sequence(parser.nodes, expected)
 
 
 def test_generic_macro_without_arguments():
@@ -63,10 +80,41 @@ def test_generic_macro_without_arguments():
     expected = [
         MacroNode(
             "macroname",
-            unnamed_args=[],
-            named_args={},
+            arguments=NodeArguments(),
             info=NodeInfo(context=generate_context(0, 0, 0, 13)),
         )
     ]
 
-    compare_nodes_sequence(runner(source).nodes, expected)
+    parser = runner(source)
+
+    compare_nodes_sequence(parser.nodes, expected)
+
+
+def test_generic_macro_support_variables():
+    environment = Environment.from_dict(
+        {
+            "args": "arg1, arg2",
+            "keyvalue": "key1=value1",
+            "tag_with_prefix": "#tag1",
+            "subtype_with_prefix": "*subtype1",
+        }
+    )
+
+    source = "[macroname]({args}, {tag_with_prefix}, {subtype_with_prefix}, {keyvalue})"
+
+    expected = [
+        MacroNode(
+            "macroname",
+            arguments=NodeArguments(
+                unnamed_args=["arg1", "arg2"],
+                named_args={"key1": "value1"},
+                tags=["tag1"],
+                subtype="subtype1",
+            ),
+            info=NodeInfo(context=generate_context(0, 0, 0, 73)),
+        )
+    ]
+
+    parser = runner(source, environment)
+
+    compare_nodes_sequence(parser.nodes, expected)
