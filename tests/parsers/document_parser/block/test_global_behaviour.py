@@ -1,7 +1,7 @@
 import pytest
 
-from mau.message import MauException, MauMessageType
 from mau.lexers.document_lexer import DocumentLexer
+from mau.message import MauException, MauMessageType
 from mau.nodes.block import BlockNode
 from mau.nodes.inline import TextNode
 from mau.nodes.node import NodeInfo

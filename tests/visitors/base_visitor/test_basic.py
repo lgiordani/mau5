@@ -3,7 +3,7 @@ from unittest.mock import Mock
 from mau.environment.environment import Environment
 from mau.nodes.node import NodeInfo
 from mau.nodes.node_arguments import NodeArguments
-from mau.test_helpers import ATestNode, generate_context, NullMessageHandler
+from mau.test_helpers import ATestNode, NullMessageHandler, generate_context
 from mau.visitors.base_visitor import BaseVisitor
 
 

@@ -1,6 +1,6 @@
 from mau.environment.environment import Environment
-from mau.message import MauException, MauParserErrorMessage, BaseMessageHandler
 from mau.lexers.base_lexer import BaseLexer
+from mau.message import BaseMessageHandler, MauException, MauParserErrorMessage
 from mau.nodes.node import Node
 from mau.text_buffer import Context, TextBuffer
 from mau.token import Token, TokenType

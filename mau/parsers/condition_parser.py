@@ -1,17 +1,14 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
-
-from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.environment.environment import Environment
 from mau.lexers.condition_lexer import ConditionLexer
-from mau.text_buffer import Context
-from mau.nodes.node import NodeInfo, ValueNode
-from mau.nodes.node_arguments import NodeArguments, set_names
-from mau.nodes.condition import ConditionNode
-from mau.parsers.base_parser import BaseParser, create_parser_exception
-from mau.token import Token, TokenType
 from mau.message import BaseMessageHandler
+from mau.nodes.condition import ConditionNode
+from mau.nodes.node import NodeInfo
+from mau.parsers.base_parser import BaseParser
+from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
+from mau.text_buffer import Context
+from mau.token import Token, TokenType
 
 INTERNAL_TAG_PREFIX = "mau:"
 

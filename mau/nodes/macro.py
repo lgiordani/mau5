@@ -1,4 +1,4 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 
 from mau.nodes.footnote import FootnoteNode
 from mau.nodes.header import HeaderNode

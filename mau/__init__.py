@@ -7,8 +7,8 @@ import yaml
 __version__ = metadata.version("mau")
 
 from mau.environment.environment import Environment
-from mau.message import BaseMessageHandler, MauException
 from mau.lexers.document_lexer import DocumentLexer
+from mau.message import BaseMessageHandler, MauException
 from mau.nodes.node import Node
 from mau.parsers.document_parser import DocumentParser
 from mau.text_buffer import TextBuffer

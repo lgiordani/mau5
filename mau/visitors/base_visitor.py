@@ -1,11 +1,11 @@
-from typing import Type
 from collections.abc import Mapping, Sequence
+from typing import Type
 
 from mau.environment.environment import Environment
 from mau.message import (
-    MauMessage,
-    MauException,
     BaseMessageHandler,
+    MauException,
+    MauMessage,
     MauVisitorDebugMessage,
     MauVisitorErrorMessage,
 )

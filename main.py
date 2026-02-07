@@ -15,8 +15,8 @@ from mau import (
     load_visitors,
 )
 from mau.environment.environment import Environment
-from mau.message import LogMessageHandler, MauException
 from mau.formatter.raw_formatter import RawFormatter
+from mau.message import LogMessageHandler, MauException
 from mau.visitors.base_visitor import BaseVisitor
 
 default_formatter = RawFormatter.type

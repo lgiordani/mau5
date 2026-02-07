@@ -1,8 +1,7 @@
 import logging
 from typing import Callable
 
-from mau.lexers.base_lexer import BaseLexer, create_lexer_exception, rematch
-from mau.text_buffer import Context
+from mau.lexers.base_lexer import BaseLexer, rematch
 from mau.token import Token, TokenType
 
 logger = logging.getLogger(__name__)

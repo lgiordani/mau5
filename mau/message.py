@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from logging import Logger, ERROR, INFO
+from logging import ERROR, INFO, Logger
 
 from mau.environment.environment import Environment
 from mau.text_buffer import Context, Position, adjust_context, adjust_position

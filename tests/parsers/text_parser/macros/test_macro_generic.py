@@ -2,8 +2,8 @@ from mau.environment.environment import Environment
 from mau.lexers.text_lexer import TextLexer
 from mau.nodes.inline import TextNode
 from mau.nodes.macro import MacroNode
-from mau.nodes.node_arguments import NodeArguments
 from mau.nodes.node import NodeInfo
+from mau.nodes.node_arguments import NodeArguments
 from mau.parsers.text_parser import TextParser
 from mau.test_helpers import (
     compare_nodes_sequence,

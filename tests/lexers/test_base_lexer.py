@@ -4,19 +4,19 @@ from unittest.mock import Mock, patch
 import pytest
 
 from mau.environment.environment import Environment
-from mau.message import MauException, MauMessageType
 from mau.lexers.base_lexer import (
     BaseLexer,
     rematch,
 )
+from mau.message import MauException, MauMessageType
 from mau.test_helpers import (
     TEST_CONTEXT_SOURCE,
+    NullMessageHandler,
     compare_asdict_list,
     dedent,
     generate_context,
     init_lexer_factory,
     lexer_runner_factory,
-    NullMessageHandler,
 )
 from mau.text_buffer import TextBuffer
 from mau.token import Token, TokenType

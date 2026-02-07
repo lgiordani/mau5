@@ -1,8 +1,8 @@
 import pytest
 
-from mau.message import MauException, MauMessageType
 from mau.lexers.base_lexer import TokenType
 from mau.lexers.document_lexer import DocumentLexer
+from mau.message import MauException, MauMessageType
 from mau.test_helpers import (
     TEST_CONTEXT_SOURCE,
     compare_asdict_list,

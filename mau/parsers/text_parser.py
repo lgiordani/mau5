@@ -3,14 +3,10 @@
 import itertools
 import logging
 
-from mau.message import MauException, MauMessageType
-from mau.parsers.buffers.control_buffer import Control
-from mau.parsers.condition_parser import ConditionParser
-from mau.message import BaseMessageHandler
 from mau.environment.environment import Environment
 from mau.lexers.text_lexer import TextLexer
+from mau.message import BaseMessageHandler, MauException
 from mau.nodes.footnote import FootnoteNode
-from mau.nodes.node_arguments import NodeArguments
 from mau.nodes.inline import (
     StyleNode,
     TextNode,
@@ -33,6 +29,8 @@ from mau.parsers.arguments_parser import (
     process_arguments_with_variables,
 )
 from mau.parsers.base_parser import BaseParser, create_parser_exception
+from mau.parsers.buffers.control_buffer import Control
+from mau.parsers.condition_parser import ConditionParser
 from mau.text_buffer import Context
 from mau.token import EOF, EOL, Token, TokenType
 

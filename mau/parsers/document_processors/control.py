@@ -7,12 +7,11 @@ if TYPE_CHECKING:
 
 
 from mau.parsers.buffers.control_buffer import Control
-from mau.text_buffer import Context
-from mau.token import TokenType
 from mau.parsers.condition_parser import (
-    ConditionParser,
     process_arguments_with_variables,
 )
+from mau.text_buffer import Context
+from mau.token import TokenType
 
 
 def control_processor(parser: DocumentParser):

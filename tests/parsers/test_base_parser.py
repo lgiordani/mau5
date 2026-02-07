@@ -3,8 +3,8 @@ from unittest.mock import Mock
 import pytest
 
 from mau.environment.environment import Environment
-from mau.message import MauException, MauMessageType
 from mau.lexers.base_lexer import BaseLexer
+from mau.message import MauException, MauMessageType
 from mau.parsers.base_parser import (
     BaseParser,
 )

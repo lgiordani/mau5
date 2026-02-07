@@ -1,15 +1,14 @@
 import textwrap
 from collections.abc import MutableMapping, MutableSequence, Sequence
 
-
+from mau.environment.environment import Environment
 from mau.message import (
     BaseMessageHandler,
     MauLexerErrorMessage,
     MauParserErrorMessage,
-    MauVisitorErrorMessage,
     MauVisitorDebugMessage,
+    MauVisitorErrorMessage,
 )
-from mau.environment.environment import Environment
 from mau.nodes.node import (
     Node,
     NodeArguments,

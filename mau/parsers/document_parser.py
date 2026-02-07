@@ -8,6 +8,7 @@ from functools import partial
 
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
+from mau.message import BaseMessageHandler
 from mau.nodes.document import DocumentNode
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser import BaseParser
@@ -35,7 +36,6 @@ from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.parsers.text_parser import TextParser
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
-from mau.message import MauException, MauParserErrorMessage, BaseMessageHandler
 
 
 @dataclass

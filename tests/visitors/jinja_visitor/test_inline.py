@@ -1,5 +1,3 @@
-from mau.nodes.node_arguments import NodeArguments
-from mau.test_helpers import NullMessageHandler
 from mau.environment.environment import Environment
 from mau.nodes.footnote import FootnoteNode
 from mau.nodes.header import HeaderNode
@@ -12,6 +10,8 @@ from mau.nodes.macro import (
     MacroLinkNode,
     MacroNode,
 )
+from mau.nodes.node_arguments import NodeArguments
+from mau.test_helpers import NullMessageHandler
 from mau.visitors.jinja_visitor import JinjaVisitor
 
 

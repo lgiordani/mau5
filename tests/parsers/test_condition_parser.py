@@ -1,20 +1,12 @@
-from unittest.mock import patch
 
-import pytest
 
-from mau.environment.environment import Environment
-from mau.message import MauException, MauMessageType
 from mau.lexers.condition_lexer import ConditionLexer
-from mau.nodes.node import NodeInfo, ValueNode
 from mau.nodes.condition import ConditionNode
+from mau.nodes.node import NodeInfo
 from mau.parsers.condition_parser import (
     ConditionParser,
-    process_arguments_with_variables,
 )
 from mau.test_helpers import (
-    compare_nodes,
-    compare_nodes_map,
-    compare_nodes_sequence,
     generate_context,
     parser_runner_factory,
 )

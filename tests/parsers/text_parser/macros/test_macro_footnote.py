@@ -1,7 +1,7 @@
 import pytest
 
-from mau.message import MauException, MauMessageType
 from mau.lexers.text_lexer import TextLexer
+from mau.message import MauException, MauMessageType
 from mau.nodes.footnote import FootnoteNode
 from mau.nodes.macro import MacroFootnoteNode
 from mau.nodes.node import NodeInfo

@@ -1,4 +1,3 @@
-from mau.nodes.node_arguments import NodeArguments
 from mau.nodes.footnote import FootnoteNode
 from mau.nodes.header import HeaderNode
 from mau.nodes.macro import (
@@ -11,6 +10,7 @@ from mau.nodes.macro import (
     MacroRawNode,
     MacroUnicodeNode,
 )
+from mau.nodes.node_arguments import NodeArguments
 from mau.test_helpers import check_node_with_content, check_visit_node
 from mau.text_buffer import Context
 
