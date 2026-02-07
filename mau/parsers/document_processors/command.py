@@ -24,6 +24,94 @@ from mau.text_buffer import Context
 from mau.token import TokenType
 
 
+def _process_toc(parser: DocumentParser, info: NodeInfo, arguments: NodeArguments):
+    toc_node = TocNode(info=info, arguments=arguments)
+
+    # Extract labels from the buffer and
+    # store them in the node data.
+    parser.pop_labels(toc_node)
+
+    # Check the stored control
+    if control := parser.control_buffer.pop():
+        # If control is False, we need to stop
+        # processing here and return without
+        # saving any node.
+        if not control.process(parser.environment):
+            return True
+
+    parser._save(toc_node)
+
+    parser.toc_manager.add_toc_node(toc_node)
+
+
+def _process_footnotes(
+    parser: DocumentParser, info: NodeInfo, arguments: NodeArguments
+):
+    footnotes_node = FootnotesNode(info=info, arguments=arguments)
+
+    # Extract labels from the buffer and
+    # store them in the node data.
+    parser.pop_labels(footnotes_node)
+
+    # Check the stored control
+    if control := parser.control_buffer.pop():
+        # If control is False, we need to stop
+        # processing here and return without
+        # saving any node.
+        if not control.process(parser.environment):
+            return True
+
+    parser._save(footnotes_node)
+
+    parser.footnotes_manager.add_footnotes_list(footnotes_node)
+
+
+def _process_blockgroup(
+    parser: DocumentParser, info: NodeInfo, arguments: NodeArguments
+):
+    arguments.set_names(["group"])
+
+    group_name = arguments.named_args.pop("group")
+
+    block_group_node = BlockGroupNode(group_name, info=info, arguments=arguments)
+
+    # Extract labels from the buffer and
+    # store them in the node data.
+    parser.pop_labels(block_group_node)
+
+    # Check the stored control
+    if control := parser.control_buffer.pop():
+        # If control is False, we need to stop
+        # processing here and return without
+        # saving any node.
+        if not control.process(parser.environment):
+            return True
+
+    parser._save(block_group_node)
+
+    parser.block_group_manager.add_group(block_group_node)
+
+
+def _process_generic(
+    parser: DocumentParser, name: str, info: NodeInfo, arguments: NodeArguments
+):
+    command_node = CommandNode(name=name, info=info, arguments=arguments)
+
+    # Extract labels from the buffer and
+    # store them in the node data.
+    parser.pop_labels(command_node)
+
+    # Check the stored control
+    if control := parser.control_buffer.pop():
+        # If control is False, we need to stop
+        # processing here and return without
+        # saving any node.
+        if not control.process(parser.environment):
+            return True
+
+    parser._save(command_node)
+
+
 def command_processor(parser: DocumentParser):
     # Parse a command in the form ::command:arguments
 
@@ -72,81 +160,15 @@ def command_processor(parser: DocumentParser):
     info = NodeInfo(context=context)
 
     if name.value == "toc":
-        toc_node = TocNode(info=info, arguments=arguments)
-
-        # Extract labels from the buffer and
-        # store them in the node data.
-        parser.pop_labels(toc_node)
-
-        # Check the stored control
-        if control := parser.control_buffer.pop():
-            # If control is False, we need to stop
-            # processing here and return without
-            # saving any node.
-            if not control.process(parser.environment):
-                return True
-
-        parser._save(toc_node)
-
-        parser.toc_manager.add_toc_node(toc_node)
+        _process_toc(parser, info, arguments)
 
     elif name.value == "footnotes":
-        footnotes_node = FootnotesNode(info=info, arguments=arguments)
-
-        # Extract labels from the buffer and
-        # store them in the node data.
-        parser.pop_labels(footnotes_node)
-
-        # Check the stored control
-        if control := parser.control_buffer.pop():
-            # If control is False, we need to stop
-            # processing here and return without
-            # saving any node.
-            if not control.process(parser.environment):
-                return True
-
-        parser._save(footnotes_node)
-
-        parser.footnotes_manager.add_footnotes_list(footnotes_node)
+        _process_footnotes(parser, info, arguments)
 
     elif name.value == "blockgroup":
-        arguments.set_names(["group"])
-
-        group_name = arguments.named_args.pop("group")
-
-        block_group_node = BlockGroupNode(group_name, info=info, arguments=arguments)
-
-        # Extract labels from the buffer and
-        # store them in the node data.
-        parser.pop_labels(block_group_node)
-
-        # Check the stored control
-        if control := parser.control_buffer.pop():
-            # If control is False, we need to stop
-            # processing here and return without
-            # saving any node.
-            if not control.process(parser.environment):
-                return True
-
-        parser._save(block_group_node)
-
-        parser.block_group_manager.add_group(block_group_node)
+        _process_blockgroup(parser, info, arguments)
 
     else:
-        command_node = CommandNode(name=name.value, info=info, arguments=arguments)
-
-        # Extract labels from the buffer and
-        # store them in the node data.
-        parser.pop_labels(command_node)
-
-        # Check the stored control
-        if control := parser.control_buffer.pop():
-            # If control is False, we need to stop
-            # processing here and return without
-            # saving any node.
-            if not control.process(parser.environment):
-                return True
-
-        parser._save(command_node)
+        _process_generic(parser, name.value, info, arguments)
 
     return True
