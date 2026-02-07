@@ -7,7 +7,10 @@ from mau.message import MauException, MauMessageType
 from mau.lexers.condition_lexer import ConditionLexer
 from mau.nodes.node import NodeInfo, ValueNode
 from mau.nodes.condition import ConditionNode
-from mau.parsers.condition_parser import ConditionParser
+from mau.parsers.condition_parser import (
+    ConditionParser,
+    process_arguments_with_variables,
+)
 from mau.test_helpers import (
     compare_nodes,
     compare_nodes_map,
@@ -19,7 +22,7 @@ from mau.test_helpers import (
 runner = parser_runner_factory(ConditionLexer, ConditionParser)
 
 
-def test_condition_parse():
+def test_condition_parser():
     source = "variable1==value1"
 
     expected = ConditionNode(
@@ -41,7 +44,7 @@ def test_condition_parse():
     assert parser.condition_node.parent is None
 
 
-def test_condition_parse_with_spaces():
+def test_condition_parser_with_spaces():
     source = "variable1   ==    value1"
 
     expected = ConditionNode(

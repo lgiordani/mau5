@@ -66,3 +66,40 @@ class ConditionParser(BaseParser):
         self.condition_node = node
 
         return True
+
+
+def process_arguments_with_variables(
+    condition_token: Token,
+    message_handler: BaseMessageHandler,
+    environment: Environment | None = None,
+) -> ConditionParser:
+    # Unpack the text initial position.
+    start_line, start_column = condition_token.context.start_position
+
+    # Get the text source.
+    source_filename = condition_token.context.source
+
+    # Replace variables in the text.
+    preprocess_parser = PreprocessVariablesParser.lex_and_parse(
+        text=condition_token.value,
+        message_handler=message_handler,
+        environment=environment,
+        start_line=start_line,
+        start_column=start_column,
+        source_filename=source_filename,
+    )
+
+    # The preprocess parser outputs a single node.
+    text_token = preprocess_parser.get_processed_text()
+
+    # Parse the arguments.
+    condition_parser = ConditionParser.lex_and_parse(
+        text=text_token.value,
+        message_handler=message_handler,
+        environment=environment,
+        start_line=start_line,
+        start_column=start_column,
+        source_filename=source_filename,
+    )
+
+    return condition_parser
