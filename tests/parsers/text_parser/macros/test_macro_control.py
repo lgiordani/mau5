@@ -61,6 +61,10 @@ def test_macro_control_missing_comparison_and_value():
         runner(source, environment=environment)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text
+        == "Wrong condition syntax: 'flag' (probably missing or incorrect comparison)."
+    )
 
 
 def test_macro_control_missing_variable():
@@ -72,6 +76,10 @@ def test_macro_control_missing_variable():
         runner(source, environment=environment)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text
+        == "Macro name 'if' must be in the form 'operator:condition'."
+    )
 
 
 def test_macro_control_unsupported_operator():
@@ -83,6 +91,7 @@ def test_macro_control_unsupported_operator():
         runner(source, environment=environment)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Control operator 'something' is not supported."
 
 
 def test_macro_control_undefined_variable():
@@ -92,6 +101,7 @@ def test_macro_control_undefined_variable():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Variable 'flag' has not been defined."
 
 
 def test_macro_control_invalid_test():
@@ -103,6 +113,10 @@ def test_macro_control_invalid_test():
         runner(source, environment)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text
+        == "Wrong condition syntax: 'flag<>true' (probably missing or incorrect comparison)."
+    )
 
 
 def test_macro_control_ifeval_true():
@@ -234,6 +248,10 @@ def test_macro_control_ifeval_undefined_variable():
         runner(source, environment)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text
+        == "The test result is negative but no value has been defined for that case."
+    )
 
 
 def test_macro_control_ifeval_true_not_defined():
@@ -250,6 +268,7 @@ def test_macro_control_ifeval_true_not_defined():
         runner(source, environment)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Variable 'underscore' has not been defined."
 
 
 def test_macro_control_ifeval_false_not_defined():
@@ -266,6 +285,7 @@ def test_macro_control_ifeval_false_not_defined():
         runner(source, environment)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Variable 'star' has not been defined."
 
 
 def test_macro_control_default_false():
@@ -285,4 +305,8 @@ def test_macro_control_without_true_case():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text
+        == "Control macro is missing the mandatory value for the true case."
+    )
     assert exc.value.message.context == generate_context(0, 0, 0, 19)

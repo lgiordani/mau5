@@ -143,7 +143,7 @@ def command_processor(parser: DocumentParser):
 
         if parser.tm.peek_token().type != TokenType.TEXT:
             raise create_parser_exception(
-                f"Syntax error. If you use the colon after {name.value} you need to specify arguments.",
+                f"Syntax error. If you use the colon after '{name.value}' you need to specify arguments.",
                 context,
             )
 

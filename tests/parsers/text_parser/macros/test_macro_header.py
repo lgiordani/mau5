@@ -63,4 +63,5 @@ def test_macro_header_without_target():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Missing mandatory ID. Syntax: [header](ID, text)."
     assert exc.value.message.context == generate_context(0, 0, 0, 10)

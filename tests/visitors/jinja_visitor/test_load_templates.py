@@ -12,14 +12,14 @@ from mau.visitors.jinja_visitor import (
 )
 
 
-def testload_template_prefixes():
+def test_load_template_prefixes():
     env = Environment.from_dict({"mau.visitor.templates.prefixes": ["prefix1"]})
 
     assert load_template_prefixes(env) == ["prefix1"]
 
 
 @patch("mau.visitors.jinja_visitor.load_available_template_providers")
-def testload_templates_from_providers_defined_empty(
+def test_load_templates_from_providers_defined_empty(
     mockload_available_template_providers,
 ):
     env = Environment.from_dict({"mau.visitor.templates.providers": []})
@@ -30,7 +30,7 @@ def testload_templates_from_providers_defined_empty(
 
 
 @patch("mau.visitors.jinja_visitor.load_available_template_providers")
-def testload_templates_from_providers_undefined(
+def test_load_templates_from_providers_undefined(
     mockload_available_template_providers,
 ):
     env = Environment()
@@ -41,7 +41,7 @@ def testload_templates_from_providers_undefined(
 
 
 @patch("mau.visitors.jinja_visitor.load_available_template_providers")
-def testload_templates_from_providers_provider_available(
+def test_load_templates_from_providers_provider_available(
     mockload_available_template_providers,
 ):
     provider1 = Mock()
@@ -63,7 +63,7 @@ def testload_templates_from_providers_provider_available(
 
 
 @patch("mau.visitors.jinja_visitor.load_available_template_providers")
-def testload_templates_from_providers_provider_unavailable(
+def test_load_templates_from_providers_provider_unavailable(
     mockload_available_template_providers,
 ):
     provider1 = Mock()
@@ -80,11 +80,12 @@ def testload_templates_from_providers_provider_unavailable(
         assert load_templates_from_providers(env)
 
     assert exc.value.message.type == MauMessageType.ERROR_VISITOR
+    assert exc.value.message.text == "Template provider 'provider2' is not available."
     mockload_available_template_providers.assert_called_once()
 
 
 @patch("mau.visitors.jinja_visitor.load_templates_from_path")
-def testload_templates_from_filesystem_empty(mockload_templates_from_path):
+def test_load_templates_from_filesystem_empty(mockload_templates_from_path):
     env = Environment.from_dict({"mau.visitor.templates.paths": []})
 
     assert load_templates_from_filesystem(env).asdict() == {}
@@ -93,7 +94,7 @@ def testload_templates_from_filesystem_empty(mockload_templates_from_path):
 
 
 @patch("mau.visitors.jinja_visitor.load_templates_from_path")
-def testload_templates_from_filesystem_undefined(mockload_templates_from_path):
+def test_load_templates_from_filesystem_undefined(mockload_templates_from_path):
     env = Environment()
 
     assert load_templates_from_filesystem(env).asdict() == {}
@@ -102,7 +103,7 @@ def testload_templates_from_filesystem_undefined(mockload_templates_from_path):
 
 
 @patch("mau.visitors.jinja_visitor.load_templates_from_path")
-def testload_templates_from_filesystem(mockload_templates_from_path):
+def test_load_templates_from_filesystem(mockload_templates_from_path):
     mock_templates = {"template1": "text1"}
     mockload_templates_from_path.return_value = mock_templates
 
@@ -113,19 +114,19 @@ def testload_templates_from_filesystem(mockload_templates_from_path):
     mockload_templates_from_path.assert_called_with("template_path", preprocess=None)
 
 
-def testload_templates_from_environment_empty():
+def test_load_templates_from_environment_empty():
     env = Environment.from_dict({"mau.visitor.templates.custom": {}})
 
     assert load_templates_from_environment(env).asdict() == {}
 
 
-def testload_templates_from_environment_undefined():
+def test_load_templates_from_environment_undefined():
     env = Environment()
 
     assert load_templates_from_environment(env).asdict() == {}
 
 
-def testload_templates_from_environment():
+def test_load_templates_from_environment():
     mock_templates = {"template1": "text1"}
 
     env = Environment.from_dict({"mau.visitor.templates.custom": mock_templates})

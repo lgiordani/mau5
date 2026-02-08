@@ -104,6 +104,9 @@ def test_parse_list_detects_wrong_syntax():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text == "Wrong syntax encountered while processing the list."
+    )
 
 
 def test_parse_list_with_multiple_levels():

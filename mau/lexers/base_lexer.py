@@ -197,7 +197,7 @@ class BaseLexer:
 
     def _process_error(self):
         raise create_lexer_exception(
-            text="Cannot process token",
+            text="Cannot process token.",
             position=self._position,
         )
 

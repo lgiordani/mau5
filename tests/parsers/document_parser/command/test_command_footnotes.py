@@ -502,3 +502,4 @@ def test_footnotes_undefined_footnote():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Footnote 'nope' has not been defined."

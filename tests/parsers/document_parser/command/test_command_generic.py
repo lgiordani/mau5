@@ -47,7 +47,7 @@ def test_command_colon_after_command_requires_arguments():
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
     assert (
         exc.value.message.text
-        == "Syntax error. If you use the colon after cmd you need to specify arguments."
+        == "Syntax error. If you use the colon after 'cmd' you need to specify arguments."
     )
     assert exc.value.message.context == generate_context(1, 0, 1, 5)
 

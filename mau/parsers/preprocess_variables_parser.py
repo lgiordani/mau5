@@ -116,7 +116,7 @@ class PreprocessVariablesParser(BaseParser):
             # the closing one.
             if not self.tm.peek_token_is(TokenType.LITERAL, "}"):
                 raise create_parser_exception(
-                    f"Incomplete variable declaration {variable_name.value}. Variable names cannot contain curly braces.",
+                    f"Incomplete variable declaration '{variable_name.value}'. Variable names cannot contain curly braces.",
                     context=variable_name.context,
                 )
 
@@ -147,7 +147,7 @@ class PreprocessVariablesParser(BaseParser):
             variable_value = self.environment[variable_name.value]
         except KeyError as exp:
             raise create_parser_exception(
-                f'Variable "{variable_name.value}" has not been defined.',
+                f"Variable '{variable_name.value}' has not been defined.",
                 context=context,
             ) from exp
 

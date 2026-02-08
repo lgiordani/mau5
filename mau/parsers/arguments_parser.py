@@ -117,7 +117,7 @@ class ArgumentsParser(BaseParser):
         # Unnamed arguments can't appear after named ones.
         if self._named_arguments_on:
             raise create_parser_exception(
-                text="Unnamed arguments after named arguments are forbidden",
+                text="Unnamed arguments after named arguments are forbidden.",
                 context=self.context,
             )
 
@@ -173,7 +173,7 @@ class ArgumentsParser(BaseParser):
         # Check if We need to enforce the presence of a single node.
         if unique and len(nodes) > 1:
             raise create_parser_exception(
-                text=f"Multiple nodes with prefix {prefix} detected",
+                text=f"Multiple nodes with prefix '{prefix}' detected.",
                 context=self.context,
             )
 
@@ -215,7 +215,7 @@ class ArgumentsParser(BaseParser):
 
             if replacement is None:
                 raise create_parser_exception(
-                    text=f"Alias {self.alias.value} cannot be found in mau.parser.aliases {replacements}",
+                    text=f"Alias '{self.alias.value}' cannot be found in 'mau.parser.aliases': {replacements}.",
                     context=self.context,
                 )
 

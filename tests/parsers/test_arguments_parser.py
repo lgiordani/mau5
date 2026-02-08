@@ -568,6 +568,10 @@ def test_named_arguments_followed_by_unnamed():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text
+        == "Unnamed arguments after named arguments are forbidden."
+    )
 
 
 def test_process_arguments_subtype():
@@ -632,6 +636,7 @@ def test_process_arguments_multiple_subtypes():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Multiple nodes with prefix '*' detected."
 
 
 def test_arguments():
@@ -766,6 +771,10 @@ def test_process_arguments_alias_not_present():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text
+        == "Alias 'alias1' cannot be found in 'mau.parser.aliases': {}."
+    )
 
 
 def test_process_arguments_alias_replacement_does_not_overwrite_arguments():

@@ -75,7 +75,7 @@ class BaseParser:
                 and next_token.context == self.last_processed_token.context
             ):
                 raise create_parser_exception(
-                    f"Loop detected, cannot parse token {next_token}",
+                    f"Loop detected, cannot parse token: {next_token}.",
                     next_token.context,
                 )  # pragma: no cover
             else:
@@ -107,7 +107,7 @@ class BaseParser:
             # current token.
             if result is False:
                 raise create_parser_exception(
-                    "Cannot parse token",
+                    "Cannot parse token.",
                     self.tm.peek_token().context,
                 )
 

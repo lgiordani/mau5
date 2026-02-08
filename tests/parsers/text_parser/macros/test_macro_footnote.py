@@ -41,4 +41,5 @@ def test_macro_footnote_without_name():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Missing mandatory NAME. Syntax: [footnote](NAME)."
     assert exc.value.message.context == generate_context(0, 0, 0, 12)

@@ -67,4 +67,8 @@ def test_macro_image_without_uri():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text
+        == "Missing mandatory URI. Syntax: [image](URI, alt_text, width, height)."
+    )
     assert exc.value.message.context == generate_context(0, 0, 0, 9)

@@ -119,4 +119,8 @@ def test_macro_class_without_text():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text
+        == "Missing mandatory TEXT. Syntax: [class](TEXT, class1, class2, ...)."
+    )
     assert exc.value.message.context == generate_context(0, 0, 0, 9)

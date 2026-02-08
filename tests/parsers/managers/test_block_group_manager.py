@@ -43,6 +43,10 @@ def test_block_group_manager_same_position():
         bgm.add_block("group1", "position1", block_node2)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text
+        == "Position 'position1' is already taken in group 'group1'."
+    )
 
 
 def test_block_group_manager_add_group_node():
@@ -90,3 +94,4 @@ def test_block_group_manager_process_group_does_not_exist():
         bgm.process()
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "The group 'group1' does not exist."

@@ -49,7 +49,7 @@ def _process_list_nodes(parser: DocumentParser, parent: Node):
             # so we expect a new list item, but the
             # token is not LIST.
             raise create_parser_exception(
-                "Wrong syntax encountered while processing a list",
+                "Wrong syntax encountered while processing the list.",
                 context=parser.tm.peek_token().context,
             )
 

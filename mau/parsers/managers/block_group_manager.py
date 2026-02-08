@@ -27,7 +27,7 @@ class BlockGroupManager:
         # block is already taken.
         if block_group.get(position):
             raise create_parser_exception(
-                text=f"Position {position} is already taken in group {group}",
+                text=f"Position '{position}' is already taken in group '{group}'.",
                 context=node.info.context,
             )
 
@@ -51,7 +51,7 @@ class BlockGroupManager:
             # Check if the requested group exists.
             if group_name not in self.blocks:
                 raise create_parser_exception(
-                    f"The group named {group_name} does not exist.",
+                    f"The group '{group_name}' does not exist.",
                     group_node.info.context,
                 )
 

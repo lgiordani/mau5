@@ -61,6 +61,9 @@ def test_control_process_wrong_operator():
         )
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text == "Control operator 'notanoperator' is not supported."
+    )
     assert exc.value.message.context == generate_context(1, 2, 1, 20)
 
 
@@ -73,6 +76,7 @@ def test_control_process_if_operator_variable_not_defined_equality():
         c.process(environment)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Variable 'answer' has not been defined."
 
 
 def test_control_process_if_operator_variable_defined_equality():
@@ -92,6 +96,7 @@ def test_control_process_if_operator_variable_not_defined_inequality():
         c.process(environment)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Variable 'answer' has not been defined."
 
 
 def test_control_process_if_operator_variable_defined_inequality():

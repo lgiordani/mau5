@@ -63,6 +63,10 @@ def test_macro_link_without_target():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text
+        == "Missing mandatory TARGET. Syntax: [link](TARGET, text)."
+    )
     assert exc.value.message.context == generate_context(0, 0, 0, 8)
 
 
@@ -142,4 +146,8 @@ def test_macro_mailto_without_target():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text
+        == "Missing mandatory EMAIL. Syntax: [mailto](EMAIL, text)."
+    )
     assert exc.value.message.context == generate_context(0, 0, 0, 10)

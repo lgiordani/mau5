@@ -479,7 +479,8 @@ class TextParser(BaseParser):
             target = parser.named_argument_nodes["target"]
         except KeyError as exc:
             raise create_parser_exception(
-                text="Syntax: [link](TARGET, text)", context=context
+                text="Missing mandatory TARGET. Syntax: [link](TARGET, text).",
+                context=context,
             ) from exc
 
         # Extract the text of the link if present.
@@ -537,7 +538,8 @@ class TextParser(BaseParser):
             header_id = parser.named_argument_nodes["header_id"]
         except KeyError as exc:
             raise create_parser_exception(
-                text="Syntax: [header](ID, text)", context=context
+                text="Missing mandatory ID. Syntax: [header](ID, text).",
+                context=context,
             ) from exc
 
         # Extract the text of the link if present.
@@ -591,7 +593,8 @@ class TextParser(BaseParser):
             target = parser.named_argument_nodes["email"]
         except KeyError as exc:
             raise create_parser_exception(
-                text="Syntax: [mailto](EMAIL, text)", context=context
+                text="Missing mandatory EMAIL. Syntax: [mailto](EMAIL, text).",
+                context=context,
             ) from exc
 
         # Extract the text of the link if present.
@@ -651,7 +654,8 @@ class TextParser(BaseParser):
             text = parser.named_argument_nodes["text"]
         except KeyError as exc:
             raise create_parser_exception(
-                text="Syntax: [class](TEXT, class1, class2, ...)", context=context
+                text="Missing mandatory TEXT. Syntax: [class](TEXT, class1, class2, ...).",
+                context=context,
             ) from exc
 
         # Unpack the text initial position.
@@ -692,7 +696,8 @@ class TextParser(BaseParser):
             value = parser.named_argument_nodes["value"]
         except KeyError as exc:
             raise create_parser_exception(
-                text="Syntax: [unicode](VALUE)", context=context
+                text="Missing mandatory VALUE. Syntax: [unicode](VALUE).",
+                context=context,
             ) from exc
 
         node = MacroUnicodeNode(
@@ -714,7 +719,7 @@ class TextParser(BaseParser):
             value = parser.named_argument_nodes["value"]
         except KeyError as exc:
             raise create_parser_exception(
-                text="Syntax: [raw](VALUE)", context=context
+                text="Missing mandatory VALUE. Syntax: [raw](VALUE).", context=context
             ) from exc
 
         node = MacroRawNode(
@@ -738,7 +743,8 @@ class TextParser(BaseParser):
             uri = parser.named_argument_nodes["uri"]
         except KeyError as exc:
             raise create_parser_exception(
-                text="Syntax: [image](URI, alt_text, width, height)", context=context
+                text="Missing mandatory URI. Syntax: [image](URI, alt_text, width, height).",
+                context=context,
             ) from exc
 
         # Get the remaining parameters
@@ -775,7 +781,8 @@ class TextParser(BaseParser):
             name_node = parser.named_argument_nodes["name"]
         except KeyError as exc:
             raise create_parser_exception(
-                text="Syntax: [footnote](NAME)", context=context
+                text="Missing mandatory NAME. Syntax: [footnote](NAME).",
+                context=context,
             ) from exc
 
         name = name_node.value
@@ -810,13 +817,13 @@ class TextParser(BaseParser):
             operator, condition = name.split(":")
         except ValueError:
             raise create_parser_exception(
-                f"Macro name '{name}' must be in the form 'operator:condition'"
+                f"Macro name '{name}' must be in the form 'operator:condition'."
             )
 
         # Check if the operator is supported.
         if operator not in ["if", "ifeval"]:
             raise create_parser_exception(
-                f"Control operator '{operator}' is not supported"
+                f"Control operator '{operator}' is not supported."
             )
 
         # Remember if we need to evaluate the result.
@@ -850,7 +857,7 @@ class TextParser(BaseParser):
             )
         except MauException as exc:
             raise create_parser_exception(
-                f"Wrong syntax of condition '{condition}' (probably missing or incorrect comparison)').",
+                f"Wrong condition syntax: '{condition}' (probably missing or incorrect comparison).",
                 condition_context,
             ) from exc
 
@@ -873,7 +880,7 @@ class TextParser(BaseParser):
             true_case = parser.named_argument_nodes["true_case"]
         except KeyError as exc:
             raise create_parser_exception(
-                text="Control macro is missing the mandatory true case",
+                text="Control macro is missing the mandatory value for the true case.",
                 context=context,
             ) from exc
 
@@ -889,7 +896,7 @@ class TextParser(BaseParser):
         if evaluate:
             if result is None:
                 raise create_parser_exception(
-                    "Test result negative but evaluation variable has not been defined for that case."
+                    "The test result is negative but no value has been defined for that case."
                 )
 
             # Find the value of the variable.
@@ -900,7 +907,7 @@ class TextParser(BaseParser):
             # If the variable wasn't defined yell at the user.
             if variable_value is None:
                 raise create_parser_exception(
-                    f"Variable '{result.value}' has not been defined"
+                    f"Variable '{result.value}' has not been defined."
                 )
 
             result.value = variable_value

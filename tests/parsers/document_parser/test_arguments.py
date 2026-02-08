@@ -50,17 +50,19 @@ def test_arguments_multiple_subtypes():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Multiple nodes with prefix '*' detected."
 
 
 def test_arguments_multiple_aliases():
     source = """
-    [*alias1, *alias2]
+    [@alias1, @alias2]
     """
 
     with pytest.raises(MauException) as exc:
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Multiple nodes with prefix '@' detected."
 
 
 def test_arguments_support_variables_with_syntax():

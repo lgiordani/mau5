@@ -298,6 +298,7 @@ def test_include_image_without_uri():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Syntax error. You need to specify a list of URIs."
     assert exc.value.message.context == generate_context(1, 0, 1, 8)
 
 

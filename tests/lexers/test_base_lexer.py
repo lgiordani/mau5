@@ -110,6 +110,7 @@ def test_process_error():
         lex._process_error()
 
     assert exc.value.message.type == MauMessageType.ERROR_LEXER
+    assert exc.value.message.text == "Cannot process token."
 
 
 def test_process_eof_if_true():

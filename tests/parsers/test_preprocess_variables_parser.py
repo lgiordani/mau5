@@ -237,6 +237,10 @@ def test_unclosed_double_braces():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text
+        == "Incomplete variable declaration '{attr'. Variable names cannot contain curly braces."
+    )
 
 
 def test_curly_braces_in_verbatim():
@@ -407,6 +411,7 @@ def test_variable_not_existing():
         runner(source, environment)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Variable 'attr' has not been defined."
     assert exc.value.message.context == generate_context(0, 15, 0, 21)
 
 

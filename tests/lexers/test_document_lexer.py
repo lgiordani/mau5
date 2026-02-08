@@ -343,6 +343,7 @@ def test_multiline_comment_unclosed():
         runner("////")
 
     assert exc.value.message.type == MauMessageType.ERROR_LEXER
+    assert exc.value.message.text == "Unclosed multiline comment."
 
 
 def test_include_content():
@@ -622,6 +623,7 @@ def test_block_unclosed():
         runner("----")
 
     assert exc.value.message.type == MauMessageType.ERROR_LEXER
+    assert exc.value.message.text == "Unclosed block."
 
 
 def test_block_with_header():

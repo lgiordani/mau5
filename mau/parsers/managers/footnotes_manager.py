@@ -83,7 +83,7 @@ class FootnotesManager:
                 body = self.bodies[footnote.name]
             except KeyError:
                 raise create_parser_exception(
-                    text=f"Footnote {footnote.name} has not been defined",
+                    text=f"Footnote '{footnote.name}' has not been defined.",
                 )
 
             # Store the body inside the footnote.

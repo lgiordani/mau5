@@ -117,4 +117,5 @@ def test_block_engine():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Engine 'doesnotexist' is not available."
     assert exc.value.message.context == generate_context(2, 0, 3, 4)

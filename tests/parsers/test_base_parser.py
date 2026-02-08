@@ -39,7 +39,7 @@ def test_unknown_token():
         parser.parse()
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
-    assert exc.value.message.text == "Cannot parse token"
+    assert exc.value.message.text == "Cannot parse token."
     assert exc.value.message.context == generate_context(0, 0, 0, 0)
 
 
@@ -60,6 +60,7 @@ def test_process_functions_token_error():
         parser.parse()
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Cannot parse token."
     process_test.assert_called()
 
 
@@ -80,4 +81,8 @@ def test_process_functions_success():
         parser.parse()
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text
+        == """Loop detected, cannot parse token: Token(TokenType.EOL, "", test.py:0,0-0,0)."""
+    )
     process_test.assert_called()

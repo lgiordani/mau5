@@ -39,4 +39,7 @@ def test_macro_unicode_without_value():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text == "Missing mandatory VALUE. Syntax: [unicode](VALUE)."
+    )
     assert exc.value.message.context == generate_context(0, 0, 0, 11)

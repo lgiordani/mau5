@@ -212,7 +212,7 @@ def load_templates_from_providers(environment: Environment) -> Environment:
         # Check if the provider is available.
         if provider not in available_providers:
             raise create_visitor_exception(
-                text=f"Template provider {provider} is not available"
+                text=f"Template provider '{provider}' is not available."
             )
 
         templates.dupdate(available_providers[provider].templates)
