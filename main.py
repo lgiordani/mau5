@@ -268,10 +268,10 @@ def main():
     ###############################################
 
     # Run the parser.
-    # try:
-    parser = mau.run_parser(lexer.tokens)
-    # except MauException:
-    #     sys.exit(1)
+    try:
+        parser = mau.run_parser(lexer.tokens)
+    except MauException:
+        sys.exit(1)
 
     ###############################################
     # VISITOR

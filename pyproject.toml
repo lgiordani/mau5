@@ -27,6 +27,12 @@ dependencies = [
   "rich-gradient",
   "jinja2",
   "pyyaml",
+  # The HTML visitor code contains a custom
+  # formatter that is based on the internal
+  # mechanisms of Pygments highlighting.
+  # This means that unfortunately we need
+  # to be careful with any Pygments update.
+  "Pygments==2.19.2"
 ]
 readme = "README.md"
 

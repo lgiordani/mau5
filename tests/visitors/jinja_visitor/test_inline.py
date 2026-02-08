@@ -16,18 +16,8 @@ from mau.visitors.jinja_visitor import JinjaVisitor
 
 
 def test_inline_text_node():
-    visitor = JinjaVisitor(NullMessageHandler(), Environment())
-
-    node = TextNode("Just some text.")
-
-    result = visitor.visit(node)
-
-    assert result == "Just some text."
-
-
-def test_inline_text_node_custom_template():
     templates = {
-        "text.j2": "##{{ value }}##",
+        "text.j2": "#{{ value }}#",
     }
 
     environment = Environment()
@@ -38,12 +28,12 @@ def test_inline_text_node_custom_template():
 
     result = visitor.visit(node)
 
-    assert result == "##Just some text.##"
+    assert result == "#Just some text.#"
 
 
 def test_inline_verbatim_node():
     templates = {
-        "verbatim.j2": "{{ value }}",
+        "verbatim.j2": "`{{ value }}`",
     }
 
     environment = Environment()
@@ -54,7 +44,7 @@ def test_inline_verbatim_node():
 
     result = visitor.visit(node)
 
-    assert result == "Just some text."
+    assert result == "`Just some text.`"
 
 
 def test_inline_style_node_star():
