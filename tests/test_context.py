@@ -1,5 +1,5 @@
 from mau.test_helpers import generate_context
-from mau.text_buffer import Context
+from mau.text_buffer import Context, adjust_context, adjust_context_dict
 
 
 def test_context():
@@ -96,3 +96,15 @@ def test_context_move_to():
         "end_column": 15,
         "source": "main",
     }
+
+
+def test_adjust_context():
+    context = generate_context(1, 2, 3, 4)
+
+    assert adjust_context(context) == generate_context(2, 3, 4, 5)
+
+
+def test_adjust_context_dict():
+    context_dict = generate_context(1, 2, 3, 4).asdict()
+
+    assert adjust_context_dict(context_dict) == generate_context(2, 3, 4, 5)

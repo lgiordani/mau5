@@ -230,6 +230,15 @@ def test_escape_curly_braces_with_double_braces():
     )
 
 
+def test_unclosed_double_braces():
+    source = r"This is {{attr}"
+
+    with pytest.raises(MauException) as exc:
+        runner(source)
+
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+
+
 def test_curly_braces_in_verbatim():
     environment = Environment.from_dict({"attr": "5"})
     source = "This is `{attr}`"

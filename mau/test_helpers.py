@@ -170,10 +170,6 @@ def compare_nodes_map(
     assert visit_nodes == visit_expected
 
 
-# def compare_text_lines(left: str, right: str):
-#     assert left.split("\n") == right.split("\n")
-
-
 def init_lexer_factory(lexer_class):
     """
     A factory that returns a lexer initialiser.

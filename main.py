@@ -204,7 +204,7 @@ def main():
     config = {}
     if args.config_file:
         with open(args.config_file, "r", encoding="utf-8") as config_file:
-            config = yaml.load(config_file, Loader=yaml.FullLoader)
+            config = yaml.safe_load(config_file)
 
     # Build the inital environment.
     environment = Environment.from_dict(config, BASE_NAMESPACE)

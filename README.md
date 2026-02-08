@@ -1,38 +1,76 @@
-# Mau v4
+# Mau v5
 
 Mau is a lightweight markup language heavily inspired by [AsciiDoc](https://asciidoctor.org/docs/what-is-asciidoc), [Asciidoctor](https://asciidoctor.org/) and [Markdown](https://daringfireball.net/projects/markdown/).
 
-As I wasn't satisfied by the results I got with those tools I decided to try to write my own language and the tool to render it.
+It is built on **Jinja** and designed for authors who want the simplicity of Markdown with the expressive power of templating. You can use Mau to create blog posts, books, documentation.
 
-I am currently using Mau to render posts on my blog [The Digital Cat](https://www.thedigitalcatonline.com) and the online version of my book ["Clean Architectures in Python"](https://www.thedigitalcatbooks.com). I also used it to transpile the code of the book to Markua, to be able to publish the book on Leanpub using their toolchain.
+## Why Mau?
 
-## Quick start
+Mau combines:
+- **Readable plain text** similar to Markdown.
+- **Jinja templating** that allow to easily affect the rendering of Mau syntax.
+- **Flexible output** via pluggable visitors (HTML, YAML, etc.)
 
-To install Mau use `pip`
+## Backward compatibility
+
+Mau v5 changed some parts of the Mau syntax in a non-backward compatible way. For example, now `source` and `footnote` are aliases that should be used with `@source` in blocks, while before they were mere subtypes used with `*source`.
+
+The file `MAJOR_CHANGES.md` contains a list of the major changes that occurred.
+
+## Installation
+
+Mau is available on PyPI:
 
 ``` sh
 pip install mau
 ```
 
-Then install at least one visitor plugin. You probably want to start with `mau-html-visitor`
+## Plugins
+
+Mau parses the source into an abstract tree and then transforms it into the final output using a visitor.
+
+To render Mau syntax into HTML you need the HTML visitor
 
 ``` sh
 pip install mau-html-visitor
 ```
 
-To convert Mau sources into HTML just run
+To render Mau syntax into TeX you need the TeX visitor
 
 ``` sh
-mau -i source.mau -o destination.html -f html
+pip install mau-tex-visitor
 ```
 
-Check out Mau [documentation](https://project-mau.github.io/) for further information.
+## Quick Start
 
-## Pelican plugin
+You can render a demo of Mau capabilities cloning this repository and running
 
-There is a Pelican plugin that enables you to use Mau in your blog. Check it at https://github.com/pelican-plugins/mau-reader.
+``` sh
+mau -c demo/config.yaml -i demo/demo.mau -t core:HtmlVisitor -o demo/demo.html
+```
+
+You can then open the file `demo/demo.html` with any browser.
+
+## Documentation
+
+The full documentation is available here:
+
+https://project-mau.github.io/
+
+## Pelican Plugin
+
+There’s a Pelican plugin to use Mau directly in your blog:
+
+https://github.com/pelican-plugins/mau-reader
+
+Make sure to read the instructions in that repository to configure the plugin correctly.
 
 ## Support
 
-You may report bugs or missing features use the [issues page](https://github.com/Project-Mau/mau/issues).
-If you want to ask for help or discuss ideas use the [discussions page](https://github.com/Project-Mau/mau/discussions)
+Bug reports and feature requests: https://github.com/Project-Mau/mau/issues
+
+Discussions and Q&A: https://github.com/Project-Mau/mau/discussions
+
+## License
+
+MIT License.

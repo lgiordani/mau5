@@ -1,6 +1,9 @@
+import pytest
+
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.inline import TextNode
 from mau.nodes.list import ListItemNode, ListNode
+from mau.message import MauException, MauMessageType
 from mau.nodes.node import NodeInfo
 from mau.nodes.node_arguments import NodeArguments
 from mau.parsers.document_parser import DocumentParser
@@ -88,6 +91,19 @@ def test_parse_list_with_multiple_items():
             ),
         ],
     )
+
+
+def test_parse_list_detects_wrong_syntax():
+    source = """
+    * Item 1
+    * Item 2
+    Something wrong here.
+    """
+
+    with pytest.raises(MauException) as exc:
+        runner(source)
+
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
 
 
 def test_parse_list_with_multiple_levels():

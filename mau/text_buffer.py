@@ -26,10 +26,7 @@ def adjust_context_dict(context_dict: dict):
     This function moves the given context
     to 1,1, making it readable by a human.
     """
-    context = Context(**context_dict)
-    new_context = context.clone().move_to(1, 1)
-
-    return new_context
+    return Context(**context_dict).move_to(1, 1)
 
 
 def adjust_position(position: Position):

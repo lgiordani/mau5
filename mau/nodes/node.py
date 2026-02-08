@@ -33,7 +33,6 @@ class NodeInfo:
 
 class Node:
     type: str = "none"
-    custom_attributes: list[str] = []
 
     def __init__(
         self,
@@ -72,6 +71,10 @@ class Node:
             method = getattr(visitor, "_visit_default")
 
         return method(self, *args, **kwargs)
+
+    @property
+    def custom_attributes(self) -> list[str]:
+        return []
 
 
 class NodeContentMixin:

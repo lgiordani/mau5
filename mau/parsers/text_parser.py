@@ -792,38 +792,6 @@ class TextParser(BaseParser):
 
         return [node]
 
-    def _process_test(self, test: str, value: str) -> bool:
-        # Check if the given value passes the test.
-
-        # Checking equality.
-        if test.startswith("="):
-            test_value = test[1:]
-            return value == test_value
-
-        # Checking inequality.
-        if test.startswith("!="):
-            test_value = test[2:]
-            return value != test_value
-
-        # Checking a boolean value.
-        if test.startswith("&"):
-            test_value = test[1:]
-
-            if test_value not in ["true", "false"]:
-                raise create_parser_exception(
-                    f"Boolean value '{test_value}' is invalid"
-                )
-
-            # pylint: disable=simplifiable-if-expression
-            boolean_test_value = True if test_value == "true" else False
-
-            # Boolean AND to check if the boolean
-            # value in the test and the provided
-            # value match.
-            return bool(value) and boolean_test_value
-
-        raise create_parser_exception(f"Test '{test}' is not supported")
-
     def _parse_macro_control(
         self, macro_name_token: Token, parser: ArgumentsParser, context: Context
     ) -> list[Node]:

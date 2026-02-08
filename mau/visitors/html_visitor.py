@@ -1,15 +1,11 @@
 import html
 from importlib.resources import files
 from typing import Callable
-from collections.abc import Sequence
-from collections import defaultdict
 
 from bs4 import BeautifulSoup
 from pygments import highlight
-from pygments.formatters import get_formatter_by_name
 from pygments.formatters.html import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
-from pygments.token import Text
 
 from mau.environment.environment import Environment
 from mau.nodes.node import Node

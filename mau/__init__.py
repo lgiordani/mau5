@@ -73,26 +73,6 @@ def load_visitors():  # pragma: no cover
     return visitors
 
 
-# def load_visitors_dict():  # pragma: no cover
-#     """
-#     Loads the visitors as `load_visitors`, but
-#     returns a dictionary in the form
-#     {format_code: visitor}
-#     where `format_code` is the name of the
-#     output format as specified inside
-#     the visitor. Examples: `python`, `html`.
-#     """
-
-#     # Load all the available visitor classes.
-#     visitor_classes = load_visitors()
-
-#     # Store them in a dictionary
-#     # according to their format code.
-#     visitors = {i.format_code: i for i in visitor_classes}
-
-#     return visitors
-
-
 def load_environment_files(
     environment: Environment,
     files: list[str],

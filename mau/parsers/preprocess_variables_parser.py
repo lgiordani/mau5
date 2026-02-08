@@ -114,7 +114,7 @@ class PreprocessVariablesParser(BaseParser):
 
             # Check if there is another bracket after
             # the closing one.
-            if not self.tm.peek_token(TokenType.LITERAL, "}"):
+            if not self.tm.peek_token_is(TokenType.LITERAL, "}"):
                 raise create_parser_exception(
                     f"Incomplete variable declaration {variable_name.value}. Variable names cannot contain curly braces.",
                     context=variable_name.context,
@@ -150,11 +150,6 @@ class PreprocessVariablesParser(BaseParser):
                 f'Variable "{variable_name.value}" has not been defined.',
                 context=context,
             ) from exp
-
-        # Boolean variables shouldn't be printed.
-        # Replace them with an empty string.
-        if variable_value in [True, False]:
-            variable_value = ""
 
         self._save(
             TextNode(

@@ -1,5 +1,11 @@
 from mau.test_helpers import dedent
-from mau.text_buffer import TextBuffer
+from mau.text_buffer import (
+    TextBuffer,
+    adjust_context,
+    adjust_context_dict,
+    adjust_position,
+    Position,
+)
 
 
 def test_text_buffer_current_line():
@@ -251,3 +257,9 @@ def test_text_buffer_skip_can_go_beyond_eol():
     text_buffer.skip(25)
 
     assert text_buffer.column == 25
+
+
+def test_adjust_position():
+    position: Position = (11, 22)
+
+    assert adjust_position(position) == (12, 23)

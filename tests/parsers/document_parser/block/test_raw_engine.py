@@ -47,6 +47,27 @@ def test_raw_engine():
     )
 
 
+def test_raw_engine_no_content():
+    source = """
+    [engine=raw]
+    ----
+    ----
+    """
+
+    parser = runner(source)
+
+    compare_nodes_sequence(
+        parser.nodes,
+        [
+            RawNode(
+                classes=[],
+                content=[],
+                info=NodeInfo(context=generate_context(2, 0, 3, 4)),
+            ),
+        ],
+    )
+
+
 def test_raw_parenthood():
     source = """
     [engine=raw]
