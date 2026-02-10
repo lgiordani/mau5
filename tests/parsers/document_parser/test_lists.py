@@ -1,9 +1,9 @@
 import pytest
 
 from mau.lexers.document_lexer import DocumentLexer
+from mau.message import MauException, MauMessageType
 from mau.nodes.inline import TextNode
 from mau.nodes.list import ListItemNode, ListNode
-from mau.message import MauException, MauMessageType
 from mau.nodes.node import NodeInfo
 from mau.nodes.node_arguments import NodeArguments
 from mau.parsers.document_parser import DocumentParser

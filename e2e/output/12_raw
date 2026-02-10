@@ -1,0 +1,69 @@
+_context:
+  end_column: 4
+  end_line: 26
+  source: e2e/source/12_raw.mau
+  start_column: 0
+  start_line: 24
+_type: document
+content:
+- _context:
+    end_column: 4
+    end_line: 26
+    source: e2e/source/12_raw.mau
+    start_column: 0
+    start_line: 24
+  _type: raw
+  classes: []
+  content:
+  - _context:
+      end_column: 24
+      end_line: 25
+      source: e2e/source/12_raw.mau
+      start_column: 0
+      start_line: 25
+    _type: raw-line
+    internal_tags: []
+    named_args: {}
+    parent:
+      _context:
+        end_column: 4
+        end_line: 26
+        source: e2e/source/12_raw.mau
+        start_column: 0
+        start_line: 24
+      _type: raw
+      internal_tags: []
+      named_args: {}
+      subtype: null
+      tags: []
+      unnamed_args: []
+    subtype: null
+    tags: []
+    unnamed_args: []
+    value: <p>An HTML paragraph</p>
+  internal_tags: []
+  labels: {}
+  named_args: {}
+  parent:
+    _context:
+      end_column: 4
+      end_line: 26
+      source: e2e/source/12_raw.mau
+      start_column: 0
+      start_line: 24
+    _type: document
+    internal_tags: []
+    named_args: {}
+    subtype: null
+    tags: []
+    unnamed_args: []
+  subtype: null
+  tags: []
+  unnamed_args: []
+internal_tags: []
+named_args: {}
+parent: {}
+subtype: null
+tags: []
+unnamed_args: []
+

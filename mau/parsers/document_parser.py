@@ -10,7 +10,8 @@ from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.message import BaseMessageHandler
 from mau.nodes.document import DocumentNode
-from mau.nodes.node import Node, NodeInfo
+from mau.nodes.command import TocNode
+from mau.nodes.node import Node, NodeInfo, WrapperNode
 from mau.parsers.base_parser import BaseParser
 from mau.parsers.buffers.arguments_buffer import ArgumentsBuffer
 from mau.parsers.buffers.control_buffer import ControlBuffer
@@ -41,8 +42,7 @@ from mau.token import Token, TokenType
 @dataclass
 class DocumentParserOutput:
     document: Node | None = None
-    nested_toc: Sequence[Node] = field(default_factory=list)
-    plain_toc: Sequence[Node] = field(default_factory=list)
+    toc: TocNode | None = None
 
 
 # The DocumentParser is in charge of parsing
@@ -247,5 +247,7 @@ class DocumentParser(BaseParser):
 
         self.output.document = self.parent_node
 
-        self.output.nested_toc = self.toc_manager.nested_headers
-        self.output.plain_toc = self.toc_manager.headers
+        self.output.toc = TocNode(
+            plain_entries=self.toc_manager.headers,
+            nested_entries=self.toc_manager.nested_headers,
+        )

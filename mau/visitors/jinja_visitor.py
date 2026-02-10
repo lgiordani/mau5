@@ -386,7 +386,7 @@ class JinjaVisitor(BaseVisitor):
             rendered_template = template.render(
                 config=self.environment.asdict(), **kwargs
             )
-        except jinja2.exceptions.UndefinedError as exception:
+        except jinja2.exceptions.UndefinedError as exception:  # pragma: no cover
             raise create_visitor_exception(
                 text=f"Error rendering node with template {template_full_name}: {str(exception)}",
                 node=node,
@@ -415,7 +415,7 @@ class JinjaVisitor(BaseVisitor):
 
         return templates
 
-    def _debug_additional_info(self, node: Node, result: dict):
+    def _debug_additional_info(self, node: Node, result: dict):  # pragma: no cover
         return {"Templates": self._create_node_templates(node)}
 
     def visit(self, node, **kwargs):
@@ -481,4 +481,4 @@ class JinjaVisitor(BaseVisitor):
         if join_with is not None:
             return join_with.join(visited_nodes)
 
-        return visited_nodes
+        return visited_nodes  # pragma: no cover

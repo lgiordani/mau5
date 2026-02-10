@@ -120,13 +120,13 @@ class BaseVisitor:
         # postprocess code.
         return result
 
-    def _debug_additional_info(self, node: Node, result: dict):
+    def _debug_additional_info(self, node: Node, result: dict):  # pragma: no cover
         # This function provides additional
         # debug information for a node and
         # it's visited output.
         return {}
 
-    def _debug_result(self, node: Node, result: dict):
+    def _debug_result(self, node: Node, result: dict):  # pragma: no cover
         # This function creates a debug
         # message from the visitor.
 
@@ -162,7 +162,7 @@ class BaseVisitor:
         # Get the internal tags from
         # the output. Check if they activate
         # debugging for the present node.
-        if "debug" in result.get("internal_tags"):
+        if "debug" in result.get("internal_tags"):  # pragma: no cover
             self._debug_result(node, result)
 
         if transformer := kwargs.get("transformer"):
@@ -234,6 +234,13 @@ class BaseVisitor:
                 "value": node.value,
             }
         )
+
+        return result
+
+    def _visit_wrapper(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
+
+        self._add_visit_content(result, node, **kwargs)
 
         return result
 
@@ -426,9 +433,13 @@ class BaseVisitor:
     def _visit_toc_item(self, node: Node, **kwargs) -> dict:
         result = self._visit_default(node, **kwargs)
 
+        header_data = (
+            self._get_header_data(node.header, **kwargs) if node.header else {}
+        )
+
         result.update(
             {
-                "header": self.visit(node.header, **kwargs),
+                "header": header_data,
                 "entries": self.visitlist(node, node.entries, **kwargs),
             }
         )

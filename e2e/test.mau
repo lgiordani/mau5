@@ -1,17 +1,1 @@
-[@source, rust]
-----
-struct Item {:@+:
-    pub value: u16,:@+:
-}:@-:
-
-fn process(item: Item) -> u16{
-    item.value:3:
-}
-
-fn main() {
-    let i = Item { value: 42 };:1:
-
-    process(i);:2:
-}
-----
-
+::footnotes:

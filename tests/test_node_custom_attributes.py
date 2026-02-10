@@ -31,7 +31,6 @@ from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.nodes.raw import RawLineNode, RawNode
 from mau.nodes.source import SourceLineNode, SourceMarkerNode, SourceNode
 
-
 CASES = [
     (Node(), []),
     (ValueNode("value"), []),

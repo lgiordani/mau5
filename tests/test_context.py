@@ -101,10 +101,10 @@ def test_context_move_to():
 def test_adjust_context():
     context = generate_context(1, 2, 3, 4)
 
-    assert adjust_context(context) == generate_context(2, 3, 4, 5)
+    assert adjust_context(context) == generate_context(2, 2, 4, 4)
 
 
 def test_adjust_context_dict():
     context_dict = generate_context(1, 2, 3, 4).asdict()
 
-    assert adjust_context_dict(context_dict) == generate_context(2, 3, 4, 5)
+    assert adjust_context_dict(context_dict) == generate_context(2, 2, 4, 4)

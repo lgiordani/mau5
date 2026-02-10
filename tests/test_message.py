@@ -76,7 +76,7 @@ def test_log_message_handler_lexer_error_logs_position(caplog):
         handler.process_lexer_error(MauLexerErrorMessage(text="nope", position=(0, 1)))
 
     assert "Lexer error: nope" in caplog.text
-    assert "Position: (1, 2)" in caplog.text
+    assert "Position: (1, 1)" in caplog.text
 
 
 def test_log_message_handler_parser_error_logs_context(caplog):
@@ -90,7 +90,7 @@ def test_log_message_handler_parser_error_logs_context(caplog):
         )
 
     assert "Parser error: nope" in caplog.text
-    assert "Context: doc.mau:1,1-2,2" in caplog.text
+    assert "Context: doc.mau:1,0-2,1" in caplog.text
 
 
 def test_log_message_handler_visitor_error_logs_details(caplog):

@@ -337,7 +337,8 @@ def block_processor(parser: DocumentParser):
         engine: EngineType = EngineType(engine_name)
     except ValueError as exc:
         raise create_parser_exception(
-            f"Engine '{engine_name}' is not available.", context=context
+            f"Engine '{engine_name}' is not available.",
+            context=context,
         ) from exc
 
     match engine:

@@ -1,10 +1,8 @@
 from mau.test_helpers import dedent
 from mau.text_buffer import (
-    TextBuffer,
-    adjust_context,
-    adjust_context_dict,
-    adjust_position,
     Position,
+    TextBuffer,
+    adjust_position,
 )
 
 
@@ -262,4 +260,4 @@ def test_text_buffer_skip_can_go_beyond_eol():
 def test_adjust_position():
     position: Position = (11, 22)
 
-    assert adjust_position(position) == (12, 23)
+    assert adjust_position(position) == (12, 22)

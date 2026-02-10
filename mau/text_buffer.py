@@ -14,7 +14,7 @@ def adjust_context(context: Context):
     This function moves the given context
     to 1,1, making it readable by a human.
     """
-    return context.clone().move_to(1, 1)
+    return context.clone().move_to(1, 0)
 
 
 def adjust_context_dict(context_dict: dict):
@@ -26,7 +26,7 @@ def adjust_context_dict(context_dict: dict):
     This function moves the given context
     to 1,1, making it readable by a human.
     """
-    return Context(**context_dict).move_to(1, 1)
+    return Context(**context_dict).move_to(1, 0)
 
 
 def adjust_position(position: Position):
@@ -39,7 +39,7 @@ def adjust_position(position: Position):
     by 1 both vertically and horizontally,
     making it readable by a human.
     """
-    return (position[0] + 1, position[1] + 1)
+    return (position[0] + 1, position[1])
 
 
 @dataclass

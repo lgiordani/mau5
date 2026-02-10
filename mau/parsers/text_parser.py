@@ -719,7 +719,8 @@ class TextParser(BaseParser):
             value = parser.named_argument_nodes["value"]
         except KeyError as exc:
             raise create_parser_exception(
-                text="Missing mandatory VALUE. Syntax: [raw](VALUE).", context=context
+                text="Missing mandatory VALUE. Syntax: [raw](VALUE).",
+                context=context,
             ) from exc
 
         node = MacroRawNode(
@@ -817,13 +818,15 @@ class TextParser(BaseParser):
             operator, condition = name.split(":")
         except ValueError:
             raise create_parser_exception(
-                f"Macro name '{name}' must be in the form 'operator:condition'."
+                f"Macro name '{name}' must be in the form 'operator:condition'.",
+                context=context,
             )
 
         # Check if the operator is supported.
         if operator not in ["if", "ifeval"]:
             raise create_parser_exception(
-                f"Control operator '{operator}' is not supported."
+                f"Control operator '{operator}' is not supported.",
+                context=context,
             )
 
         # Remember if we need to evaluate the result.
@@ -896,7 +899,8 @@ class TextParser(BaseParser):
         if evaluate:
             if result is None:
                 raise create_parser_exception(
-                    "The test result is negative but no value has been defined for that case."
+                    "The test result is negative but no value has been defined for that case.",
+                    context=context,
                 )
 
             # Find the value of the variable.
@@ -907,7 +911,8 @@ class TextParser(BaseParser):
             # If the variable wasn't defined yell at the user.
             if variable_value is None:
                 raise create_parser_exception(
-                    f"Variable '{result.value}' has not been defined."
+                    f"Variable '{result.value}' has not been defined.",
+                    context=context,
                 )
 
             result.value = variable_value

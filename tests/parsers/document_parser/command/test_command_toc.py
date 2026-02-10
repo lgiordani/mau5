@@ -172,6 +172,7 @@ def test_command_toc_with_entries():
             )
         ],
         info=NodeInfo(context=generate_context(2, 0, 2, 13)),
+        parent=parser.parent_node,
     )
 
     header_1 = HeaderNode(
@@ -185,6 +186,7 @@ def test_command_toc_with_entries():
             )
         ],
         info=NodeInfo(context=generate_context(1, 0, 1, 10)),
+        parent=parser.parent_node,
     )
 
     header_2 = HeaderNode(
@@ -198,6 +200,7 @@ def test_command_toc_with_entries():
             )
         ],
         info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+        parent=parser.parent_node,
     )
 
     toc_item_1_1 = TocItemNode(header=header_1_1)

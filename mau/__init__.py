@@ -14,7 +14,6 @@ from mau.parsers.document_parser import DocumentParser
 from mau.text_buffer import TextBuffer
 from mau.token import Token
 from mau.visitors.base_visitor import BaseVisitor
-from mau.visitors.html_visitor import HtmlVisitor
 from mau.visitors.jinja_visitor import JinjaVisitor
 from mau.visitors.yaml_visitor import YamlVisitor
 
@@ -64,11 +63,10 @@ def load_visitors():  # pragma: no cover
     # Load the available visitors.
     visitors = {i.value: i.load() for i in discovered_plugins}
 
-    # Add the visitors defined
+    # addg the visitors defined
     # in this codebase.
     visitors["core:YamlVisitor"] = YamlVisitor
     visitors["core:JinjaVisitor"] = JinjaVisitor
-    visitors["core:HtmlVisitor"] = HtmlVisitor
 
     return visitors
 
