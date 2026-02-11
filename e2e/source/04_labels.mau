@@ -27,7 +27,8 @@ visitors.
 
 // The label buffer contains one single slot
 // per role, so defining two labels with the same
-// role results in the definition overwriting the first.
+// role results in the second definition overwriting
+// the first.
 .details This is the first label
 .details This overwrites the previous label
 .title This doesn't overwrite any label

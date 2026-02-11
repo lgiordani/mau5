@@ -21,12 +21,12 @@ runner = parser_runner_factory(TextLexer, TextParser)
 def test_macro_control_if_equal():
     environment = Environment.from_dict({"flag": "true"})
 
-    source = '[@if:flag==true]("TRUE", "FALSE")'
+    source = '[if:flag==true]("TRUE", "FALSE")'
 
     expected = [
         TextNode(
             "TRUE",
-            info=NodeInfo(context=generate_context(0, 18, 0, 22)),
+            info=NodeInfo(context=generate_context(0, 17, 0, 21)),
         )
     ]
 
@@ -38,12 +38,12 @@ def test_macro_control_if_equal():
 def test_macro_control_if_not_equal():
     environment = Environment.from_dict({"flag": "true"})
 
-    source = '[@if:flag==false]("TRUE", "FALSE")'
+    source = '[if:flag==false]("TRUE", "FALSE")'
 
     expected = [
         TextNode(
             "FALSE",
-            info=NodeInfo(context=generate_context(0, 27, 0, 32)),
+            info=NodeInfo(context=generate_context(0, 26, 0, 31)),
         )
     ]
 
@@ -55,7 +55,7 @@ def test_macro_control_if_not_equal():
 def test_macro_control_missing_comparison_and_value():
     environment = Environment.from_dict({"flag": "true"})
 
-    source = '[@if:flag]("TRUE", "FALSE")'
+    source = '[if:flag]("TRUE", "FALSE")'
 
     with pytest.raises(MauException) as exc:
         runner(source, environment=environment)
@@ -70,7 +70,7 @@ def test_macro_control_missing_comparison_and_value():
 def test_macro_control_missing_variable():
     environment = Environment.from_dict({"flag": "true"})
 
-    source = '[@if]("TRUE", "FALSE")'
+    source = '[if]("TRUE", "FALSE")'
 
     with pytest.raises(MauException) as exc:
         runner(source, environment=environment)
@@ -82,20 +82,8 @@ def test_macro_control_missing_variable():
     )
 
 
-def test_macro_control_unsupported_operator():
-    environment = Environment.from_dict({"flag": "true"})
-
-    source = '[@something:flag==true]("TRUE", "FALSE")'
-
-    with pytest.raises(MauException) as exc:
-        runner(source, environment=environment)
-
-    assert exc.value.message.type == MauMessageType.ERROR_PARSER
-    assert exc.value.message.text == "Control operator 'something' is not supported."
-
-
 def test_macro_control_undefined_variable():
-    source = '[@if:flag==true]("TRUE", "FALSE")'
+    source = '[if:flag==true]("TRUE", "FALSE")'
 
     with pytest.raises(MauException) as exc:
         runner(source)
@@ -107,7 +95,7 @@ def test_macro_control_undefined_variable():
 def test_macro_control_invalid_test():
     environment = Environment.from_dict({"flag": "true"})
 
-    source = '[@if:flag<>true]("TRUE", "FALSE")'
+    source = '[if:flag<>true]("TRUE", "FALSE")'
 
     with pytest.raises(MauException) as exc:
         runner(source, environment)
@@ -132,7 +120,7 @@ def test_macro_control_ifeval_true():
         }
     )
 
-    source = "[@ifeval:flag==true](underscore, star)"
+    source = "[ifeval:flag==true](underscore, star)"
 
     expected = [
         StyleNode(
@@ -140,10 +128,10 @@ def test_macro_control_ifeval_true():
             content=[
                 TextNode(
                     "sometext",
-                    info=NodeInfo(context=generate_context(0, 22, 0, 30)),
+                    info=NodeInfo(context=generate_context(0, 21, 0, 29)),
                 ),
             ],
-            info=NodeInfo(context=generate_context(0, 21, 0, 31)),
+            info=NodeInfo(context=generate_context(0, 20, 0, 30)),
         )
     ]
 
@@ -161,7 +149,7 @@ def test_macro_control_ifeval_false():
         }
     )
 
-    source = "[@ifeval:flag==false](underscore, star)"
+    source = "[ifeval:flag==false](underscore, star)"
 
     expected = [
         StyleNode(
@@ -169,10 +157,10 @@ def test_macro_control_ifeval_false():
             content=[
                 TextNode(
                     "othertext",
-                    info=NodeInfo(context=generate_context(0, 35, 0, 44)),
+                    info=NodeInfo(context=generate_context(0, 34, 0, 43)),
                 ),
             ],
-            info=NodeInfo(context=generate_context(0, 34, 0, 45)),
+            info=NodeInfo(context=generate_context(0, 33, 0, 44)),
         )
     ]
 
@@ -190,7 +178,7 @@ def test_macro_control_ifeval_false_delayed_evaluation():
         }
     )
 
-    source = "[@ifeval:flag==true](style, header)"
+    source = "[ifeval:flag==true](style, header)"
 
     expected = [
         StyleNode(
@@ -198,10 +186,10 @@ def test_macro_control_ifeval_false_delayed_evaluation():
             content=[
                 TextNode(
                     "sometext",
-                    info=NodeInfo(context=generate_context(0, 22, 0, 30)),
+                    info=NodeInfo(context=generate_context(0, 21, 0, 29)),
                 ),
             ],
-            info=NodeInfo(context=generate_context(0, 21, 0, 31)),
+            info=NodeInfo(context=generate_context(0, 20, 0, 30)),
         )
     ]
 
@@ -210,7 +198,7 @@ def test_macro_control_ifeval_false_delayed_evaluation():
     compare_nodes_sequence(parser.nodes, expected)
 
 
-def test_macro_control_ifeval_true_deplayed_evaluation():
+def test_macro_control_ifeval_true_delayed_evaluation():
     environment = Environment.from_dict(
         {
             "flag": "true",
@@ -219,7 +207,7 @@ def test_macro_control_ifeval_true_deplayed_evaluation():
         }
     )
 
-    source = "[@ifeval:flag==false](header, style)"
+    source = "[ifeval:flag==false](header, style)"
 
     expected = [
         StyleNode(
@@ -227,10 +215,10 @@ def test_macro_control_ifeval_true_deplayed_evaluation():
             content=[
                 TextNode(
                     "sometext",
-                    info=NodeInfo(context=generate_context(0, 31, 0, 39)),
+                    info=NodeInfo(context=generate_context(0, 30, 0, 38)),
                 ),
             ],
-            info=NodeInfo(context=generate_context(0, 30, 0, 40)),
+            info=NodeInfo(context=generate_context(0, 29, 0, 39)),
         )
     ]
 
@@ -242,7 +230,7 @@ def test_macro_control_ifeval_true_deplayed_evaluation():
 def test_macro_control_ifeval_undefined_variable():
     environment = Environment.from_dict({"flag": "false"})
 
-    source = "[@ifeval:flag==true](var)"
+    source = "[ifeval:flag==true](var)"
 
     with pytest.raises(MauException) as exc:
         runner(source, environment)
@@ -262,7 +250,7 @@ def test_macro_control_ifeval_true_not_defined():
         }
     )
 
-    source = "[@ifeval:flag==true](underscore, star)"
+    source = "[ifeval:flag==true](underscore, star)"
 
     with pytest.raises(MauException) as exc:
         runner(source, environment)
@@ -279,7 +267,7 @@ def test_macro_control_ifeval_false_not_defined():
         }
     )
 
-    source = "[@ifeval:flag==false](underscore, star)"
+    source = "[ifeval:flag==false](underscore, star)"
 
     with pytest.raises(MauException) as exc:
         runner(source, environment)
@@ -291,7 +279,7 @@ def test_macro_control_ifeval_false_not_defined():
 def test_macro_control_default_false():
     environment = Environment.from_dict({"flag": "true"})
 
-    source = '[@if:flag==false]("TRUE")'
+    source = '[if:flag==false]("TRUE")'
 
     nodes = runner(source, environment=environment).nodes
 
@@ -299,7 +287,7 @@ def test_macro_control_default_false():
 
 
 def test_macro_control_without_true_case():
-    source = "[@if:flag==false]()"
+    source = "[if:flag==false]()"
 
     with pytest.raises(MauException) as exc:
         runner(source)
@@ -309,4 +297,4 @@ def test_macro_control_without_true_case():
         exc.value.message.text
         == "Control macro is missing the mandatory value for the true case."
     )
-    assert exc.value.message.context == generate_context(0, 0, 0, 19)
+    assert exc.value.message.context == generate_context(0, 0, 0, 18)

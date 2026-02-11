@@ -321,7 +321,7 @@ class TextParser(BaseParser):
         # need to have the nodes and not just the text
         # values of all the arguments.
 
-        if macro_name_token.value.startswith("@"):
+        if macro_name_token.value.startswith("if"):
             return self._parse_macro_control(
                 macro_name_token, arguments_parser, context=context
             )
@@ -803,15 +803,16 @@ class TextParser(BaseParser):
     def _parse_macro_control(
         self, macro_name_token: Token, parser: ArgumentsParser, context: Context
     ) -> list[Node]:
-        # Parse a class macro in the form [@if:condition](true, false).
+        # Parse a class macro in the form [if:condition](true, false) or
+        # [ifeval:condition](var1, var2).
         #
         # Example:
         #
         # If the value of flag is 42 return "TRUE", otherwise return "FALSE"
-        # [@if:flag==42]("TRUE", "FALSE")
+        # [if:flag==42]("TRUE", "FALSE")
 
-        # Skip the initial `@`
-        name = macro_name_token.value[1:]
+        # Get the name of the macro.
+        name = macro_name_token.value
 
         # Split the name into operator:condition
         try:
