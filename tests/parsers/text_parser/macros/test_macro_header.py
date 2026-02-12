@@ -43,17 +43,14 @@ def test_macro_header():
 def test_macro_header_without_text():
     source = "[header](id)"
 
-    expected = [
-        MacroHeaderNode(
-            "id",
-            info=NodeInfo(context=generate_context(0, 0, 0, 12)),
-        )
-    ]
+    with pytest.raises(MauException) as exc:
+        runner(source)
 
-    parser = runner(source)
-
-    compare_nodes_sequence(parser.nodes, expected)
-    compare_nodes_sequence(parser.header_links, expected)
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert (
+        exc.value.message.text == "Missing mandatory TEXT. Syntax: [header](ID, TEXT)."
+    )
+    assert exc.value.message.context == generate_context(0, 0, 0, 12)
 
 
 def test_macro_header_without_target():
@@ -63,5 +60,5 @@ def test_macro_header_without_target():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
-    assert exc.value.message.text == "Missing mandatory ID. Syntax: [header](ID, text)."
+    assert exc.value.message.text == "Missing mandatory ID. Syntax: [header](ID, TEXT)."
     assert exc.value.message.context == generate_context(0, 0, 0, 10)

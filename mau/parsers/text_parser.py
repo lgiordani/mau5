@@ -538,39 +538,40 @@ class TextParser(BaseParser):
             header_id = parser.named_argument_nodes["header_id"]
         except KeyError as exc:
             raise create_parser_exception(
-                text="Missing mandatory ID. Syntax: [header](ID, text).",
+                text="Missing mandatory ID. Syntax: [header](ID, TEXT).",
                 context=context,
             ) from exc
 
         # Extract the text of the link if present.
-        text = parser.named_argument_nodes.get("text")
+        try:
+            text = parser.named_argument_nodes["text"]
+        except KeyError as exc:
+            raise create_parser_exception(
+                text="Missing mandatory TEXT. Syntax: [header](ID, TEXT).",
+                context=context,
+            ) from exc
 
-        # If the text is present we need to parse it
-        # as it might contain Mau syntax.
-        # If the text is not present we use the
-        # link as text.
-        nodes = []
-        if text is not None:
-            # Unpack the text initial position.
-            start_line, start_column = text.info.context.start_position
+        # We need to parse the text as it might contain Mau syntax.
 
-            # Get the text source.
-            source_filename = text.info.context.source
+        # Unpack the text initial position.
+        start_line, start_column = text.info.context.start_position
 
-            # Parse the text
-            parser = self.lex_and_parse(
-                text.value,
-                self.message_handler,
-                self.environment,
-                start_line=start_line,
-                start_column=start_column,
-                source_filename=source_filename,
-            )
-            nodes = parser.nodes
+        # Get the text source.
+        source_filename = text.info.context.source
+
+        # Parse the text
+        parser = self.lex_and_parse(
+            text.value,
+            self.message_handler,
+            self.environment,
+            start_line=start_line,
+            start_column=start_column,
+            source_filename=source_filename,
+        )
 
         node = MacroHeaderNode(
             header_id.value,
-            content=nodes,
+            content=parser.nodes,
             parent=self.parent_node,
             info=NodeInfo(context=context),
         )
