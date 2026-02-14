@@ -21,17 +21,15 @@ runner = parser_runner_factory(TextLexer, TextParser)
 def test_macro_footnote():
     source = "[footnote](notename)"
 
-    footnote_node = FootnoteNode(name="notename")
-
     footnote_macro_node = MacroFootnoteNode(
-        footnote=footnote_node,
+        name="notename",
         info=NodeInfo(context=generate_context(0, 0, 0, 20)),
     )
 
     parser = runner(source)
 
     compare_nodes_sequence(parser.nodes, [footnote_macro_node])
-    compare_nodes_sequence(parser.footnotes, [footnote_node])
+    compare_nodes_sequence(parser.footnote_macros, [footnote_macro_node])
 
 
 def test_macro_footnote_without_name():

@@ -198,7 +198,7 @@ class DocumentParser(BaseParser):
 
         # Extract the footnote mentions
         # found in this piece of text.
-        self.footnotes_manager.add_footnotes(text_parser.footnotes)
+        self.footnotes_manager.add_footnote_macros(text_parser.footnote_macros)
 
         # Extract the header links found in this piece of text.
         self.header_links_manager.add_macros(text_parser.header_links)

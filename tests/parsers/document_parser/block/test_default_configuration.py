@@ -41,7 +41,7 @@ def test_default_block_configuration_does_not_add_footnotes_to_global_list():
 
     parser = runner(source)
 
-    assert len(parser.footnotes_manager.footnotes) == 0
+    assert len(parser.footnotes_manager.footnotes_dict) == 0
     assert len(parser.footnotes_manager.bodies) == 0
 
 
@@ -83,7 +83,7 @@ def test_default_block_does_not_add_footnotes_to_global_list():
 
     parser = runner(source)
 
-    assert len(parser.footnotes_manager.footnotes) == 0
+    assert len(parser.footnotes_manager.footnotes_dict) == 0
     assert len(parser.footnotes_manager.bodies) == 0
 
 

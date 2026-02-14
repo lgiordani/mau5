@@ -61,7 +61,7 @@ CASES = [
     (MacroLinkNode(target="https://example.com"), []),
     (MacroImageNode(uri="image.png"), []),
     (MacroHeaderNode(target_name="section"), []),
-    (MacroFootnoteNode(footnote=FootnoteNode(name="fn3")), []),
+    (MacroFootnoteNode(name="fn3"), []),
     (MacroUnicodeNode("1f600"), []),
     (MacroRawNode("raw"), []),
     (ParagraphLineNode(), []),

@@ -18,6 +18,7 @@ from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     check_parent,
     compare_nodes_sequence,
+    compare_nodes_map,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -43,6 +44,8 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
 
     parser = runner(source)
 
+    footnote_name = "somename"
+
     footnote_body_nodes = [
         ParagraphNode(
             lines=[
@@ -63,7 +66,7 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
     footnote_block_data = BlockNode(content=footnote_body_nodes)
 
     footnote_data = FootnoteNode(
-        name="somename",
+        name=footnote_name,
         public_id="1",
         internal_id="XXYY",
         content=footnote_body_nodes,
@@ -81,6 +84,7 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
                                 info=NodeInfo(context=generate_context(1, 0, 1, 24)),
                             ),
                             MacroFootnoteNode(
+                                name=footnote_name,
                                 footnote=footnote_data,
                                 info=NodeInfo(context=generate_context(1, 24, 1, 44)),
                             ),
@@ -98,13 +102,121 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
     )
 
     compare_nodes_sequence(
-        [parser.footnotes_manager.bodies["somename"]],
+        [parser.footnotes_manager.bodies[footnote_name]],
         [footnote_block_data],
     )
 
+    compare_nodes_map(
+        parser.footnotes_manager.footnotes_dict,
+        {footnote_name: footnote_data},
+    )
+
+
+@patch("mau.parsers.managers.footnotes_manager.default_footnote_unique_id")
+def test_footnotes_mention_the_same_footnote_twice(mock_footnote_unique_id):
+    mock_footnote_unique_id.return_value = "XXYY"
+
+    source = """
+    This contains a footnote[footnote](somename).
+
+    This contains the same footnote[footnote](somename).
+
+    [footnote=somename]
+    ----
+    Some text.
+    ----
+    """
+
+    parser = runner(source)
+
+    footnote_name = "somename"
+
+    footnote_body_nodes = [
+        ParagraphNode(
+            lines=[
+                ParagraphLineNode(
+                    content=[
+                        TextNode(
+                            "Some text.",
+                            info=NodeInfo(context=generate_context(7, 0, 7, 10)),
+                        )
+                    ],
+                    info=NodeInfo(context=generate_context(7, 0, 7, 10)),
+                )
+            ],
+            info=NodeInfo(context=generate_context(7, 0, 7, 10)),
+        )
+    ]
+
+    footnote_block_data = BlockNode(content=footnote_body_nodes)
+
+    footnote_data = FootnoteNode(
+        name=footnote_name,
+        public_id="1",
+        internal_id="XXYY",
+        content=footnote_body_nodes,
+    )
+
     compare_nodes_sequence(
-        parser.footnotes_manager.footnotes,
-        [footnote_data],
+        parser.nodes,
+        [
+            ParagraphNode(
+                lines=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This contains a footnote",
+                                info=NodeInfo(context=generate_context(1, 0, 1, 24)),
+                            ),
+                            MacroFootnoteNode(
+                                name=footnote_name,
+                                footnote=footnote_data,
+                                info=NodeInfo(context=generate_context(1, 24, 1, 44)),
+                            ),
+                            TextNode(
+                                ".",
+                                info=NodeInfo(context=generate_context(1, 44, 1, 45)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(1, 0, 1, 45)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(1, 0, 1, 45)),
+            ),
+            ParagraphNode(
+                lines=[
+                    ParagraphLineNode(
+                        content=[
+                            TextNode(
+                                "This contains the same footnote",
+                                info=NodeInfo(context=generate_context(3, 0, 3, 31)),
+                            ),
+                            MacroFootnoteNode(
+                                name=footnote_name,
+                                footnote=footnote_data,
+                                info=NodeInfo(context=generate_context(3, 31, 3, 51)),
+                            ),
+                            TextNode(
+                                ".",
+                                info=NodeInfo(context=generate_context(3, 51, 3, 52)),
+                            ),
+                        ],
+                        info=NodeInfo(context=generate_context(3, 0, 3, 52)),
+                    )
+                ],
+                info=NodeInfo(context=generate_context(3, 0, 3, 52)),
+            ),
+        ],
+    )
+
+    compare_nodes_sequence(
+        [parser.footnotes_manager.bodies[footnote_name]],
+        [footnote_block_data],
+    )
+
+    compare_nodes_map(
+        parser.footnotes_manager.footnotes_dict,
+        {footnote_name: footnote_data},
     )
 
 
@@ -123,6 +235,8 @@ def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
 
     parser = runner(source)
 
+    footnote_name = "somename"
+
     footnote_body_nodes = [
         ParagraphNode(
             lines=[
@@ -143,7 +257,7 @@ def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
     footnote_block_data = BlockNode(content=footnote_body_nodes)
 
     footnote_data = FootnoteNode(
-        name="somename",
+        name=footnote_name,
         public_id="1",
         internal_id="XXYY",
         content=footnote_body_nodes,
@@ -164,6 +278,7 @@ def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
                                 info=NodeInfo(context=generate_context(1, 2, 1, 26)),
                             ),
                             MacroFootnoteNode(
+                                name=footnote_name,
                                 footnote=footnote_data,
                                 info=NodeInfo(context=generate_context(1, 26, 1, 46)),
                             ),
@@ -181,13 +296,13 @@ def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
     )
 
     compare_nodes_sequence(
-        [parser.footnotes_manager.bodies["somename"]],
+        [parser.footnotes_manager.bodies[footnote_name]],
         [footnote_block_data],
     )
 
-    compare_nodes_sequence(
-        parser.footnotes_manager.footnotes,
-        [footnote_data],
+    compare_nodes_map(
+        parser.footnotes_manager.footnotes_dict,
+        {footnote_name: footnote_data},
     )
 
 
@@ -208,6 +323,8 @@ def test_command_footnotes(mock_footnote_unique_id):
 
     parser = runner(source)
 
+    footnote_name = "somename"
+
     footnote_body_nodes = [
         ParagraphNode(
             lines=[
@@ -226,7 +343,7 @@ def test_command_footnotes(mock_footnote_unique_id):
     ]
 
     footnote_node = FootnoteNode(
-        name="somename",
+        name=footnote_name,
         public_id="1",
         internal_id="XXYY",
         content=footnote_body_nodes,
@@ -244,6 +361,7 @@ def test_command_footnotes(mock_footnote_unique_id):
                                 info=NodeInfo(context=generate_context(1, 0, 1, 24)),
                             ),
                             MacroFootnoteNode(
+                                name=footnote_name,
                                 footnote=footnote_node,
                                 info=NodeInfo(context=generate_context(1, 24, 1, 44)),
                             ),
@@ -377,6 +495,8 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
 
     parser = runner(source)
 
+    footnote_name = "somename"
+
     footnote_body_nodes = [
         ParagraphNode(
             lines=[
@@ -397,7 +517,7 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
     footnote_block_data = BlockNode(content=footnote_body_nodes)
 
     footnote_data = FootnoteNode(
-        name="somename",
+        name=footnote_name,
         public_id="1",
         internal_id="XXYY",
         content=footnote_body_nodes,
@@ -415,6 +535,7 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
                                 info=NodeInfo(context=generate_context(1, 0, 1, 24)),
                             ),
                             MacroFootnoteNode(
+                                name=footnote_name,
                                 footnote=footnote_data,
                                 info=NodeInfo(context=generate_context(1, 24, 1, 44)),
                             ),
@@ -432,13 +553,13 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
     )
 
     compare_nodes_sequence(
-        [parser.footnotes_manager.bodies["somename"]],
+        [parser.footnotes_manager.bodies[footnote_name]],
         [footnote_block_data],
     )
 
-    compare_nodes_sequence(
-        parser.footnotes_manager.footnotes,
-        [footnote_data],
+    compare_nodes_map(
+        parser.footnotes_manager.footnotes_dict,
+        {footnote_name: footnote_data},
     )
 
 
@@ -503,3 +624,4 @@ def test_footnotes_undefined_footnote():
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
     assert exc.value.message.text == "Footnote 'nope' has not been defined."
+    assert exc.value.message.context == generate_context(1, 23, 1, 39)

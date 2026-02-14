@@ -224,7 +224,7 @@ def test_macro_header_node_parameters():
 
 
 def test_macro_footnote_node_parameters():
-    node = MacroFootnoteNode(footnote=FootnoteNode(name="somename"))
+    node = MacroFootnoteNode(name="somename", footnote=FootnoteNode(name="somename"))
 
     expected = {
         "_type": "macro.footnote",

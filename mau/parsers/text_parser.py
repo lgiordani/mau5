@@ -56,8 +56,8 @@ class TextParser(BaseParser):
     ):
         super().__init__(tokens, message_handler, environment, parent_node)
 
-        # These are the footnotes found in this piece of text.
-        self.footnotes: list[FootnoteNode] = []
+        # These are the footnote macros found in this piece of text.
+        self.footnote_macros: list[MacroFootnoteNode] = []
 
         # These are the internal links found
         # in this piece of text.
@@ -789,15 +789,13 @@ class TextParser(BaseParser):
 
         name = name_node.value
 
-        footnote_data = FootnoteNode(name=name)
-
         node = MacroFootnoteNode(
-            footnote=footnote_data,
+            name=name,
             parent=self.parent_node,
             info=NodeInfo(context=context),
         )
 
-        self.footnotes.append(footnote_data)
+        self.footnote_macros.append(node)
 
         return [node]
 

@@ -44,7 +44,7 @@ def test_non_isolated_block_adds_footnotes_to_global_list():
 
     parser = runner(source)
 
-    assert len(parser.footnotes_manager.footnotes) == 1
+    assert len(parser.footnotes_manager.footnotes_dict) == 1
     assert len(parser.footnotes_manager.bodies) == 1
     assert "note" in parser.footnotes_manager.bodies
 

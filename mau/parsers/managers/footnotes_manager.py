@@ -4,6 +4,16 @@ from mau.nodes.block import BlockNode
 from mau.nodes.command import FootnotesItemNode, FootnotesNode
 from mau.nodes.footnote import FootnoteNode
 from mau.parsers.base_parser import create_parser_exception
+from mau.nodes.macro import (
+    MacroClassNode,
+    MacroFootnoteNode,
+    MacroHeaderNode,
+    MacroImageNode,
+    MacroLinkNode,
+    MacroNode,
+    MacroRawNode,
+    MacroUnicodeNode,
+)
 
 
 def default_footnote_unique_id(
@@ -28,34 +38,42 @@ class FootnotesManager:
 
     def __init__(self, footnote_unique_id_function=None):
         # This dictionary containes the footnotes created
+        # when processing macros and definitions.
+        self.footnotes_dict: dict[str, FootnoteNode] = {}
+
+        # This dictionary containes the footnotes created
         # through macros.
-        self.footnotes: list[FootnoteNode] = []
+        self.footnote_macros: list[MacroFootnoteNode] = []
 
         # This dictionary contains the body of each footnote
         # created through blocks.
         self.bodies: dict[str, BlockNode] = {}
 
+        # The list of footnote lists created through commands.
         self.footnotes_list_nodes: list[FootnotesNode] = []
 
         self.footnote_unique_id_function = (
             footnote_unique_id_function or default_footnote_unique_id
         )
 
-    def add_footnote(self, footnote: FootnoteNode):
-        """Add a single footnote to the list
-        of managed footnotes."""
-        self.footnotes.append(footnote)
+    # def add_footnote(self, footnote: FootnoteNode):
+    #     """Add a single footnote to the list
+    #     of managed footnotes."""
+    #     self.footnotes.append(footnote)
 
-    def add_footnotes(self, footnotes: list[FootnoteNode]):
-        """Add a list of footnotes to the list
-        of managed footnotes."""
-        self.footnotes.extend(footnotes)
+    def add_footnote_macros(self, footnote_macros: list[MacroFootnoteNode]):
+        """Add a list of footnote macros to the list
+        of managed footnote macros."""
+        self.footnote_macros.extend(footnote_macros)
 
     def add_body(self, name: str, data: BlockNode):
         """Add the content of a footnote to
         the list of contents."""
         if name in self.bodies:
-            raise ValueError(f"Footnote {name} has been already defined.")
+            raise create_parser_exception(
+                text=f"Footnote '{name}' has been already defined.",
+                context=data.info.context,
+            )
 
         self.bodies[name] = data
 
@@ -68,45 +86,56 @@ class FootnotesManager:
         """Update footnotes, data, and footnotes nodes
         with those contained in another
         Footnotes Manager."""
-        self.footnotes.extend(other.footnotes)
+        self.footnote_macros.extend(other.footnote_macros)
         self.bodies.update(other.bodies)
         self.footnotes_list_nodes.extend(other.footnotes_list_nodes)
 
     def process(self):
-        # Process all footnotes. For each footnote
-        # find the relative content, calculate
+        # Find all footnote names that have been
+        # mentioned in macros.
+        # mentioned_footnote_names = set([macro.name for macro in self.footnote_macros])
+
+        # Find all footnote names that have been
+        # used in footnote blocks.
+        # defined_footnote_names = set(self.bodies.keys())
+
+        # Process all bodies. For each body
+        # create a footnote, calculate
         # the public and explicit IDs, then
-        # connect footnote and content.
-        for number, footnote in enumerate(self.footnotes, start=1):
-            try:
-                # Find the content for this footnote.
-                body = self.bodies[footnote.name]
-            except KeyError:
-                raise create_parser_exception(
-                    text=f"Footnote '{footnote.name}' has not been defined.",
-                )
-
-            # Store the body inside the footnote.
-            footnote.content = body.content
-
-            # The public ID is the value
-            # we will render in the document.
-            footnote.public_id = str(number)
+        # macros to it.
+        for number, (name, body) in enumerate(self.bodies.items(), start=1):
+            # Create a new footnote.
+            footnote = FootnoteNode(
+                name=name,
+                content=body.content,
+                public_id=str(number),
+            )
 
             # Create the internal ID.
             footnote.internal_id = self.footnote_unique_id_function(footnote)
 
-        # TODO The problem here is that all footnotes commands
-        # share the same list of footnotes. Items cannot be children
-        # of one of them only.
-        # I need to generate a list of footnotes items per footnotes
-        # list, so that all footnotes contained are children of the
-        # document and the items themselves are children of the
-        # footnotes list.
+            # Add the footnote to the list of
+            # all footnotes.
+            self.footnotes_dict[name] = footnote
 
-        # Update all the nodes that list footnotes.
+        # For each macro, find the footnote it
+        # mentions in the list of footnotes
+        # and link the macro to it.
+        for footnote_macro in self.footnote_macros:
+            try:
+                footnote_macro.footnote = self.footnotes_dict[footnote_macro.name]
+            except KeyError:
+                raise create_parser_exception(
+                    text=f"Footnote '{footnote_macro.name}' has not been defined.",
+                    context=footnote_macro.info.context,
+                )
+
+        # For each footnotes list, add the
+        # list of all known footnotes to it.
+        # Each footnote in the list is wrapped by
+        # a FootnotesItemNode.
         for footnotes_list_node in self.footnotes_list_nodes:
             footnotes_list_node.footnotes = [
                 FootnotesItemNode(footnote=footnote, parent=footnotes_list_node)
-                for footnote in self.footnotes
+                for footnote in self.footnotes_dict.values()
             ]

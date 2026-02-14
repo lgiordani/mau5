@@ -171,13 +171,15 @@ class MacroFootnoteNode(Node):
 
     def __init__(
         self,
-        footnote: FootnoteNode,
+        name: str,
+        footnote: FootnoteNode | None = None,
         parent: Node | None = None,
         arguments: NodeArguments | None = None,
         info: NodeInfo | None = None,
     ):
         super().__init__(parent=parent, arguments=arguments, info=info)
 
+        self.name = name
         self.footnote = footnote
 
 

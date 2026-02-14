@@ -155,12 +155,13 @@ def test_inline_macro_footnote_node():
     visitor = JinjaVisitor(NullMessageHandler(), environment)
 
     node = MacroFootnoteNode(
+        name="somenote",
         footnote=FootnoteNode(
             content=[TextNode("Just some text.")],
             name="somenote",
             public_id="public_id",
             internal_id="internal_id",
-        )
+        ),
     )
 
     result = visitor.visit(node)
