@@ -204,7 +204,7 @@ class DocumentLexer(BaseLexer):
         return tokens
 
     def _process_command(self) -> list[Token] | None:
-        # Detect a command or directive in the form
+        # Detect a command in the form
         #
         # ::COMMAND[:ARGUMENTS]
         # or

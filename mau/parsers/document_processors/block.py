@@ -163,14 +163,6 @@ def parse_source_engine(
     arguments.set_names(["language"])
     language = arguments.named_args.pop("language", "text")
 
-    # Source blocks must preserve the content literally.
-    # However, there might be code that looks like a Mau directive,
-    # and thus the user needs to escape it.
-    # Which means that here we need to remove escaped characters
-    # from directive-like code only.
-    # Escape characters are preserved by source blocks as anything
-    # else, but in this case the character should be removed.
-
     # A list of content lines (raw).
     content_lines = content.value.split("\n")
 
@@ -186,11 +178,6 @@ def parse_source_engine(
         line_context.start_line += number - 1
         line_context.end_line = line_context.start_line
         line_context.end_column = line_context.start_column + len(line_content)
-
-        # A simple way to remove escapes from
-        # directive-like code.
-        if line_content.startswith(r"\::#"):
-            line_content = line_content[1:]
 
         marker: str | None = None
         highlight_style: str | None = None

@@ -110,35 +110,6 @@ def test_source_engine_contains_mau_code():
     )
 
 
-def test_source_engine_removes_escape_from_directive_like_text():
-    source = r"""
-    [engine=source]
-    ----
-    \::#looks like a directive
-    ----
-    """
-
-    parser = runner(source)
-
-    compare_nodes_sequence(
-        parser.nodes,
-        [
-            SourceNode(
-                "text",
-                classes=[],
-                content=[
-                    SourceLineNode(
-                        line_number="1",
-                        line_content="::#looks like a directive",
-                        info=NodeInfo(context=generate_context(3, 0, 3, 26)),
-                    ),
-                ],
-                info=NodeInfo(context=generate_context(2, 0, 4, 4)),
-            )
-        ],
-    )
-
-
 def test_source_engine_with_code():
     source = """
     [python, engine=source]
