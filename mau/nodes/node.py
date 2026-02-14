@@ -30,6 +30,15 @@ class NodeInfo:
             "context": self.context.asdict(),
         }
 
+    def __eq__(self, other: NodeInfo):
+        if not isinstance(other, NodeInfo):
+            return NotImplemented
+
+        return self.asdict() == other.asdict()
+
+    def __repr__(self):
+        return f"{self.asdict()}"
+
 
 class Node:
     type: str = "none"

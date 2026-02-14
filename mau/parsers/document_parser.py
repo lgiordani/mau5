@@ -22,7 +22,7 @@ from mau.parsers.document_processors.command import command_processor
 from mau.parsers.document_processors.control import control_processor
 from mau.parsers.document_processors.header import header_processor
 from mau.parsers.document_processors.horizontal_rule import horizontal_rule_processor
-from mau.parsers.document_processors.include import include_processor
+from mau.parsers.document_processors.include import include_processor, IncludeCall
 from mau.parsers.document_processors.label import label_processor
 from mau.parsers.document_processors.list import list_processor
 from mau.parsers.document_processors.paragraph import paragraph_processor
@@ -44,6 +44,9 @@ class DocumentParserOutput:
     document: Node | None = None
     toc: TocNode | None = None
 
+    # The list of included calls.
+    include_calls: list[IncludeCall] = field(default_factory=list)
+
 
 # The DocumentParser is in charge of parsing
 # the whole input, calling other parsers
@@ -58,6 +61,7 @@ class DocumentParser(BaseParser):
         message_handler: BaseMessageHandler,
         environment: Environment | None = None,
         parent_node=None,
+        forbidden_includes: list[str] | None = None,
     ):
         super().__init__(tokens, message_handler, environment, parent_node)
 
@@ -103,6 +107,14 @@ class DocumentParser(BaseParser):
         # used to calculate the beginning value of them
         # next one when start=auto
         self.latest_ordered_list_index = 0
+
+        # This is a list of files that cannot
+        # be included by this file. This is a
+        # simple mechanism to avoid infinite
+        # recursive inclusion.
+        # This is a list as we need to keep the
+        # order of calls.
+        self.forbidden_includes = forbidden_includes or []
 
         # This is the final output of the parser
         self.output = DocumentParserOutput()

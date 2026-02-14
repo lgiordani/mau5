@@ -123,6 +123,7 @@ class BaseParser:
         start_line: int = 0,
         start_column: int = 0,
         source_filename: str | None = None,
+        **kwds,
     ):  # pragma: no cover
         # This classmethod lexes and parses the
         # given text using the current class as
@@ -153,6 +154,7 @@ class BaseParser:
             lexer.tokens,
             message_handler,
             environment,
+            **kwds,
         )
 
         # Parse the tokens found by the lexer.

@@ -6,6 +6,8 @@ if TYPE_CHECKING:
     from mau.parsers.document_parser import DocumentParser
 
 
+from dataclasses import dataclass, field
+from mau.environment.environment import Environment
 from mau.nodes.include import IncludeImageNode, IncludeMauNode, IncludeNode
 from mau.nodes.node import NodeInfo
 from mau.nodes.node_arguments import NodeArguments
@@ -15,6 +17,26 @@ from mau.parsers.arguments_parser import (
 from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 from mau.token import TokenType
+
+
+@dataclass
+class IncludeCall:
+    # The URI of the includer file.
+    caller_uri: str
+
+    # The URI of the included file.
+    callee_uri: str
+
+    # The arguments passed to the call.
+    # These are used to populate the
+    # environment before the included file
+    # is parsed.
+    call_arguments: dict[str, str] = field(default_factory=dict)
+
+    # This is the include node info,
+    # that keeps trace of where this
+    # inclusion happened.
+    info: NodeInfo | None = None
 
 
 def include_processor(parser: DocumentParser):
@@ -135,17 +157,62 @@ def _parse_image(
 
 def _parse_mau(
     parser: DocumentParser, arguments: NodeArguments, context: Context
-) -> IncludeImageNode:
+) -> IncludeMauNode:
     arguments.set_names(["uri"])
 
     uri = arguments.named_args.pop("uri")
 
+    # Add this very file to the list of forbidden
+    # inclusions. It's 1984 and Farenheit 451
+    # all together!
+    # We check if the element is already there to
+    # prevent double inclusion but still preserve
+    # the order.
+    if context.source not in parser.forbidden_includes:
+        parser.forbidden_includes.append(context.source)
+
+    # Make sure we are not trying to include a file that
+    # included this file. It's called infinite recursion,
+    # sweetheart.
+    if uri in parser.forbidden_includes:
+        raise create_parser_exception(
+            f"To avoid recursion, you cannot include the following files: {parser.forbidden_includes}.",
+            context,
+        )
+
+    # This is the dictioanry of call arguments.
+    call_arguments = {}
+
+    # Get all keys that have to be passed to
+    # the included file as environment variables.
+    keys = [k for k in arguments.named_args if k.startswith("call:")]
+
+    # Remove the prefix from all the call variables
+    # and remove the original item from the include node.
+    for key in keys:
+        new_key = key.removeprefix("call:")
+        call_arguments[new_key] = arguments.named_args.pop(key)
+
+    # Add the included URI to the list of forbidden
+    # inclusions. More censorship!
+    # We check if the element is already there to
+    # prevent double inclusion but still preserve
+    # the order.
+    if uri not in parser.forbidden_includes:
+        parser.forbidden_includes.append(uri)
+
+    # Open the given URI and read the text.
     with open(uri, "r", encoding="utf-8") as f:
         text = f.read()
 
     # The parsing environment is
     # that of the external parser.
-    environment = parser.environment
+    # We clone it because we need
+    # to add the call variables.
+    environment = Environment.from_environment(parser.environment)
+
+    # Update the environment with call variables.
+    environment.dupdate(call_arguments)
 
     # Unpack the token initial position.
     start_line, start_column = context.start_position
@@ -160,7 +227,24 @@ def _parse_mau(
         start_line=start_line,
         start_column=start_column,
         source_filename=source_filename,
+        forbidden_includes=parser.forbidden_includes,
     )
+
+    # Add the include call to the parser output.
+    # The key is (includer file, included file)
+    parser.output.include_calls.append(
+        IncludeCall(
+            caller_uri=context.source,
+            callee_uri=uri,
+            call_arguments=call_arguments,
+            info=NodeInfo(context=context),
+        )
+    )
+
+    # Inherit all the calls made by the recursive
+    # parser that processed the content to the
+    # included file.
+    parser.output.include_calls.extend(content_parser.output.include_calls)
 
     return IncludeMauNode(
         uri,

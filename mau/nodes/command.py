@@ -9,6 +9,7 @@ from mau.nodes.node import (
     Node,
     NodeArguments,
     NodeInfo,
+    NodeContentMixin,
     NodeLabelsMixin,
 )
 
