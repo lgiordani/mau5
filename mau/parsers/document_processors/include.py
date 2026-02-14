@@ -7,6 +7,7 @@ if TYPE_CHECKING:
 
 
 from dataclasses import dataclass, field
+
 from mau.environment.environment import Environment
 from mau.nodes.include import IncludeImageNode, IncludeMauNode, IncludeNode
 from mau.nodes.node import NodeInfo

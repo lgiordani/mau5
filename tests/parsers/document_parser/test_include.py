@@ -1,4 +1,4 @@
-from unittest.mock import mock_open, patch, call
+from unittest.mock import call, mock_open, patch
 
 import pytest
 
@@ -12,15 +12,14 @@ from mau.nodes.node_arguments import NodeArguments
 from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.parsers.document_processors.include import IncludeCall
-from mau.text_buffer import Context
 from mau.test_helpers import (
+    TEST_CONTEXT_SOURCE,
     check_parent,
     compare_nodes_sequence,
     dedent,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
-    TEST_CONTEXT_SOURCE,
 )
 from mau.text_buffer import Context
 

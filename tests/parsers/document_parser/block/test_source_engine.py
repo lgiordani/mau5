@@ -1,3 +1,4 @@
+from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.node import NodeInfo
 from mau.nodes.node_arguments import NodeArguments
@@ -479,13 +480,15 @@ def test_source_engine_highlight_marker_change_default_highlight_style():
     )
 
 
-def test_source_engine_highlight_marker_custom_highlight_style():
+def test_source_engine_highlight_marker_use_default_aliases():
     source = """
     [engine=source]
     ----
-    import sys
-    import os:@green:
-    import enum:@+:
+    default:@:
+    add:@+:
+    remove:@-:
+    important:@!:
+    error:@x:
     ----
     """
 
@@ -500,23 +503,179 @@ def test_source_engine_highlight_marker_custom_highlight_style():
                 content=[
                     SourceLineNode(
                         line_number="1",
-                        line_content="import sys",
+                        line_content="default",
+                        highlight_style="default",
                         info=NodeInfo(context=generate_context(3, 0, 3, 10)),
                     ),
                     SourceLineNode(
                         line_number="2",
-                        line_content="import os",
-                        highlight_style="green",
-                        info=NodeInfo(context=generate_context(4, 0, 4, 17)),
+                        line_content="add",
+                        highlight_style="add",
+                        info=NodeInfo(context=generate_context(4, 0, 4, 7)),
                     ),
                     SourceLineNode(
                         line_number="3",
-                        line_content="import enum",
-                        highlight_style="+",
-                        info=NodeInfo(context=generate_context(5, 0, 5, 15)),
+                        line_content="remove",
+                        highlight_style="remove",
+                        info=NodeInfo(context=generate_context(5, 0, 5, 10)),
+                    ),
+                    SourceLineNode(
+                        line_number="4",
+                        line_content="important",
+                        highlight_style="important",
+                        info=NodeInfo(context=generate_context(6, 0, 6, 13)),
+                    ),
+                    SourceLineNode(
+                        line_number="5",
+                        line_content="error",
+                        highlight_style="error",
+                        info=NodeInfo(context=generate_context(7, 0, 7, 9)),
                     ),
                 ],
-                info=NodeInfo(context=generate_context(2, 0, 6, 4)),
+                info=NodeInfo(context=generate_context(2, 0, 8, 4)),
+            ),
+        ],
+    )
+
+
+def test_source_engine_highlight_marker_can_define_new_aliases():
+    environment = Environment.from_dict(
+        {
+            "mau.parser": {
+                "source_highligh_style_aliases": {
+                    "*": "special",
+                },
+            }
+        }
+    )
+
+    source = """
+    [engine=source]
+    ----
+    default:@:
+    add:@+:
+    remove:@-:
+    important:@!:
+    error:@x:
+    special:@*:
+    ----
+    """
+
+    parser = runner(source, environment)
+
+    compare_nodes_sequence(
+        parser.nodes,
+        [
+            SourceNode(
+                "text",
+                classes=[],
+                content=[
+                    SourceLineNode(
+                        line_number="1",
+                        line_content="default",
+                        highlight_style="default",
+                        info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+                    ),
+                    SourceLineNode(
+                        line_number="2",
+                        line_content="add",
+                        highlight_style="add",
+                        info=NodeInfo(context=generate_context(4, 0, 4, 7)),
+                    ),
+                    SourceLineNode(
+                        line_number="3",
+                        line_content="remove",
+                        highlight_style="remove",
+                        info=NodeInfo(context=generate_context(5, 0, 5, 10)),
+                    ),
+                    SourceLineNode(
+                        line_number="4",
+                        line_content="important",
+                        highlight_style="important",
+                        info=NodeInfo(context=generate_context(6, 0, 6, 13)),
+                    ),
+                    SourceLineNode(
+                        line_number="5",
+                        line_content="error",
+                        highlight_style="error",
+                        info=NodeInfo(context=generate_context(7, 0, 7, 9)),
+                    ),
+                    SourceLineNode(
+                        line_number="6",
+                        line_content="special",
+                        highlight_style="special",
+                        info=NodeInfo(context=generate_context(8, 0, 8, 11)),
+                    ),
+                ],
+                info=NodeInfo(context=generate_context(2, 0, 9, 4)),
+            ),
+        ],
+    )
+
+
+def test_source_engine_highlight_marker_can_override_default_aliases():
+    environment = Environment.from_dict(
+        {
+            "mau.parser": {
+                "source_highligh_style_aliases": {
+                    "+": "addition",
+                },
+            }
+        }
+    )
+
+    source = """
+    [engine=source]
+    ----
+    default:@:
+    addition:@+:
+    remove:@-:
+    important:@!:
+    error:@x:
+    ----
+    """
+
+    parser = runner(source, environment)
+
+    compare_nodes_sequence(
+        parser.nodes,
+        [
+            SourceNode(
+                "text",
+                classes=[],
+                content=[
+                    SourceLineNode(
+                        line_number="1",
+                        line_content="default",
+                        highlight_style="default",
+                        info=NodeInfo(context=generate_context(3, 0, 3, 10)),
+                    ),
+                    SourceLineNode(
+                        line_number="2",
+                        line_content="addition",
+                        highlight_style="addition",
+                        info=NodeInfo(context=generate_context(4, 0, 4, 12)),
+                    ),
+                    SourceLineNode(
+                        line_number="3",
+                        line_content="remove",
+                        highlight_style="remove",
+                        info=NodeInfo(context=generate_context(5, 0, 5, 10)),
+                    ),
+                    SourceLineNode(
+                        line_number="4",
+                        line_content="important",
+                        highlight_style="important",
+                        info=NodeInfo(context=generate_context(6, 0, 6, 13)),
+                    ),
+                    SourceLineNode(
+                        line_number="5",
+                        line_content="error",
+                        highlight_style="error",
+                        info=NodeInfo(context=generate_context(7, 0, 7, 9)),
+                    ),
+                ],
+                info=NodeInfo(context=generate_context(2, 0, 8, 4)),
             ),
         ],
     )

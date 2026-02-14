@@ -2,16 +2,15 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
 from dataclasses import dataclass, field
 from functools import partial
 
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.message import BaseMessageHandler
-from mau.nodes.document import DocumentNode
 from mau.nodes.command import TocNode
-from mau.nodes.node import Node, NodeInfo, WrapperNode
+from mau.nodes.document import DocumentNode
+from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser import BaseParser
 from mau.parsers.buffers.arguments_buffer import ArgumentsBuffer
 from mau.parsers.buffers.control_buffer import ControlBuffer
@@ -22,7 +21,7 @@ from mau.parsers.document_processors.command import command_processor
 from mau.parsers.document_processors.control import control_processor
 from mau.parsers.document_processors.header import header_processor
 from mau.parsers.document_processors.horizontal_rule import horizontal_rule_processor
-from mau.parsers.document_processors.include import include_processor, IncludeCall
+from mau.parsers.document_processors.include import IncludeCall, include_processor
 from mau.parsers.document_processors.label import label_processor
 from mau.parsers.document_processors.list import list_processor
 from mau.parsers.document_processors.paragraph import paragraph_processor
@@ -37,6 +36,24 @@ from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
 from mau.parsers.text_parser import TextParser
 from mau.text_buffer import Context
 from mau.token import Token, TokenType
+
+DEFAULT_STYLE_ALIASES = {
+    "+": "add",
+    "-": "remove",
+    "!": "important",
+    "x": "error",
+}
+
+DEFAULT_ARGUMENT_ALIASES = {
+    "footnote": {
+        "args": {},
+        "names": ["footnote"],
+    },
+    "source": {
+        "args": {"engine": "source"},
+        "names": ["language"],
+    },
+}
 
 
 @dataclass
@@ -68,16 +85,10 @@ class DocumentParser(BaseParser):
         # Define the default block aliases.
         base_environment = Environment.from_dict(
             {
-                "footnote": {
-                    "args": {},
-                    "names": ["footnote"],
-                },
-                "source": {
-                    "args": {"engine": "source"},
-                    "names": ["language"],
-                },
+                "source_highligh_style_aliases": DEFAULT_STYLE_ALIASES,
+                "aliases": DEFAULT_ARGUMENT_ALIASES,
             },
-            "mau.parser.aliases",
+            "mau.parser",
         )
 
         # Update the environment without
