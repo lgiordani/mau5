@@ -145,6 +145,13 @@ class PreprocessVariablesParser(BaseParser):
             # Extract from the environment the variable
             # mentioned between curly braces.
             variable_value = self.environment[variable_name.value]
+
+            # Make sure the variable value is text.
+            # When the environment is created externally,
+            # all sorts of Python types can be passed
+            # but once we enter the Mau space, it has to
+            # be a string. Not string no party.
+            variable_value = str(variable_value)
         except KeyError as exp:
             raise create_parser_exception(
                 f"Variable '{variable_name.value}' has not been defined.",

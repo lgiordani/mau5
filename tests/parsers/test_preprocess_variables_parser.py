@@ -105,6 +105,34 @@ def test_replace_variable():
     )
 
 
+def test_replace_variable_coerce_string_type():
+    environment = Environment.from_dict({"attr": 5})
+    source = "This is number {attr}"
+
+    expected = [
+        TextNode(
+            "This is number ",
+            info=NodeInfo(context=generate_context(0, 0, 0, 15)),
+        ),
+        TextNode(
+            "5",
+            info=NodeInfo(context=generate_context(0, 15, 0, 21)),
+        ),
+    ]
+
+    parser = runner(source, environment)
+
+    compare_nodes_sequence(parser.nodes, expected)
+    compare_asdict_object(
+        parser.get_processed_text(),
+        Token(
+            TokenType.TEXT,
+            "This is number 5",
+            generate_context(0, 0, 0, 21),
+        ),
+    )
+
+
 def test_manage_unclosed_curly_braces():
     environment = Environment.from_dict({"attr": "5"})
     source = "This is {attr"
