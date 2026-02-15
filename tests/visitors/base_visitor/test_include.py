@@ -4,13 +4,12 @@ from mau.text_buffer import Context
 
 
 def test_include_node():
-    node = IncludeNode("ctype", ["uri1", "uri2"])
+    node = IncludeNode("ctype")
 
     expected = {
         "_type": "include",
         "_context": Context.empty().asdict(),
         "content_type": "ctype",
-        "uris": ["uri1", "uri2"],
         "labels": {},
         "named_args": {},
         "parent": {},

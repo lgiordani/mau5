@@ -40,12 +40,37 @@ def test_include_content_inline_arguments():
         [
             IncludeNode(
                 "ctype1",
-                ["/path/to/it", "/another/path"],
                 arguments=NodeArguments(
-                    unnamed_args=[],
+                    unnamed_args=["/path/to/it", "/another/path"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
+                ),
+                info=NodeInfo(
+                    context=generate_context(1, 0, 1, 9),
+                ),
+            ),
+        ],
+    )
+
+
+def test_include_content_without_arguments():
+    source = """
+    << ctype1
+    """
+
+    parser = runner(source)
+
+    compare_nodes_sequence(
+        parser.nodes,
+        [
+            IncludeNode(
+                "ctype1",
+                arguments=NodeArguments(
+                    unnamed_args=[],
+                    named_args={},
+                    tags=[],
+                    subtype=None,
                 ),
                 info=NodeInfo(
                     context=generate_context(1, 0, 1, 9),
@@ -76,9 +101,8 @@ def test_include_inline_arguments_support_variables():
         [
             IncludeNode(
                 "ctype1",
-                ["/path/to/it", "/another/path"],
                 arguments=NodeArguments(
-                    unnamed_args=[],
+                    unnamed_args=["/path/to/it", "/another/path"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
@@ -104,9 +128,8 @@ def test_include_content_boxed_arguments():
         [
             IncludeNode(
                 "ctype1",
-                ["/path/to/it", "/another/path"],
                 arguments=NodeArguments(
-                    unnamed_args=[],
+                    unnamed_args=["/path/to/it", "/another/path"],
                     named_args={"key1": "value1"},
                     tags=["tag1"],
                     subtype="subtype1",
@@ -136,32 +159,6 @@ def test_include_content_boxed_and_inline_arguments_are_forbidden():
     assert exc.value.message.context == generate_context(2, 0, 2, 9)
 
 
-def test_include_content_without_arguments_is_forbidden():
-    source = """
-    << ctype1
-    """
-
-    with pytest.raises(MauException) as exc:
-        runner(source)
-
-    assert exc.value.message.type == MauMessageType.ERROR_PARSER
-    assert exc.value.message.text == "Syntax error. You need to specify a list of URIs."
-    assert exc.value.message.context == generate_context(1, 0, 1, 9)
-
-
-def test_include_content_without_unnamed_arguments_is_forbidden():
-    source = """
-    << ctype1:key1=value1
-    """
-
-    with pytest.raises(MauException) as exc:
-        runner(source)
-
-    assert exc.value.message.type == MauMessageType.ERROR_PARSER
-    assert exc.value.message.text == "Syntax error. You need to specify a list of URIs."
-    assert exc.value.message.context == generate_context(1, 0, 1, 9)
-
-
 def test_include_content_with_label():
     source = """
     . A title
@@ -175,7 +172,12 @@ def test_include_content_with_label():
         [
             IncludeNode(
                 "ctype1",
-                ["/path/to/it", "/another/path"],
+                arguments=NodeArguments(
+                    unnamed_args=["/path/to/it", "/another/path"],
+                    named_args={},
+                    tags=[],
+                    subtype=None,
+                ),
                 labels={
                     "title": [
                         TextNode(
@@ -206,9 +208,8 @@ def test_header_uses_control_positive():
         [
             IncludeNode(
                 "ctype1",
-                ["/path/to/it"],
                 arguments=NodeArguments(
-                    unnamed_args=[],
+                    unnamed_args=["/path/to/it"],
                     named_args={},
                     tags=[],
                     subtype=None,
@@ -300,7 +301,7 @@ def test_include_image_without_uri():
         runner(source)
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
-    assert exc.value.message.text == "Syntax error. You need to specify a list of URIs."
+    assert exc.value.message.text == "Syntax error. You need to specify a URI."
     assert exc.value.message.context == generate_context(1, 0, 1, 8)
 
 
@@ -337,7 +338,7 @@ def test_list_parenthood_labels():
     check_parent(include_node, label_role_nodes)
 
 
-def test_include_file():
+def test_include_mau():
     # This tests that Mau can include
     # a file that contains Mau code
     # and add the parsed tree of that
@@ -438,7 +439,20 @@ def test_include_file():
     ]
 
 
-def test_include_file_recursively():
+def test_include_mau_without_uri():
+    source = """
+    << mau"
+    """
+
+    with pytest.raises(MauException) as exc:
+        runner(source)
+
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Syntax error. You need to specify a URI."
+    assert exc.value.message.context == generate_context(1, 0, 1, 6)
+
+
+def test_include_mau_recursively():
     # This tests that Mau inclusion can
     # be done recursively, with the
     # included file containing
@@ -545,7 +559,7 @@ def test_include_file_recursively():
     ]
 
 
-def test_include_file_environment():
+def test_include_mau_environment():
     # This tests that included files
     # have access to the full
     # environment of the includer.
@@ -613,7 +627,7 @@ def test_include_file_environment():
     ]
 
 
-def test_include_file_custom_arguments():
+def test_include_mau_custom_arguments():
     # This tests that included files
     # can be given custom arguments
     # that are added to their environment.
@@ -681,7 +695,7 @@ def test_include_file_custom_arguments():
     ]
 
 
-def test_include_file_custom_arguments_passed_recursively_automatic():
+def test_include_mau_custom_arguments_passed_recursively_automatic():
     # This tests that included files automatically
     # pass the arguments they have been given to
     # other files that they include.
@@ -792,7 +806,7 @@ def test_include_file_custom_arguments_passed_recursively_automatic():
     ]
 
 
-def test_include_file_custom_arguments_passed_recursively_explicitly():
+def test_include_mau_custom_arguments_passed_recursively_explicitly():
     # This tests that included files can explicitly
     # pass the arguments they have been given to
     # other files that they include.
@@ -900,7 +914,7 @@ def test_include_file_custom_arguments_passed_recursively_explicitly():
     ]
 
 
-def test_include_file_custom_arguments_passed_recursively_overwrite():
+def test_include_mau_custom_arguments_passed_recursively_overwrite():
     # This tests that included files can overwrite
     # the arguments they have been given when passing
     # arguments to other files that they include.
@@ -1008,7 +1022,7 @@ def test_include_file_custom_arguments_passed_recursively_overwrite():
     ]
 
 
-def test_include_file_self_inclusion_is_forbidden():
+def test_include_mau_self_inclusion_is_forbidden():
     # This tests that Mau files cannot
     # include themselves.
 
@@ -1029,7 +1043,7 @@ def test_include_file_self_inclusion_is_forbidden():
     assert exc.value.message.context == generate_context(1, 0, 1, 6)
 
 
-def test_include_file_loop_is_forbidden():
+def test_include_mau_loop_is_forbidden():
     # This tests that Mau inclusion detects if
     # a loop occurs, where an included file
     # includes one of the callers.

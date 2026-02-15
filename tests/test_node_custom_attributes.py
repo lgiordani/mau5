@@ -47,7 +47,7 @@ CASES = [
     (DocumentNode(), []),
     (FootnoteNode(name="fn2"), []),
     (HeaderNode(level=2), ["level2"]),
-    (IncludeNode(content_type="mau", uris=["file.mau"]), ["mau"]),
+    (IncludeNode(content_type="mau"), ["mau"]),
     (IncludeImageNode(uri="image.png"), []),
     (IncludeMauNode(uri="doc.mau"), []),
     (WordNode("word"), []),

@@ -56,7 +56,6 @@ class IncludeNode(Node, NodeLabelsMixin):
     def __init__(
         self,
         content_type: str,
-        uris: Sequence[str],
         labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
         arguments: NodeArguments | None = None,
@@ -66,7 +65,6 @@ class IncludeNode(Node, NodeLabelsMixin):
         NodeLabelsMixin.__init__(self, labels)
 
         self.content_type = content_type
-        self.uris = uris
 
     @property
     def custom_attributes(self) -> list[str]:

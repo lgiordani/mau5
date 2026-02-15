@@ -77,11 +77,7 @@ def include_processor(parser: DocumentParser):
             arguments_token, parser.message_handler, parser.environment
         ).arguments
 
-    if not arguments:
-        raise create_parser_exception(
-            "Syntax error. You need to specify a list of URIs.",
-            context,
-        )
+    arguments = arguments or NodeArguments()
 
     # Check the stored control
     if control := parser.control_buffer.pop():
@@ -99,7 +95,7 @@ def include_processor(parser: DocumentParser):
         case "mau":
             node = _parse_mau(parser, arguments, context)
         case _:
-            node = _parse_generic(parser, content_type.value, arguments, context)
+            node = IncludeNode(content_type.value)
 
     # Build the node info.
     node.info = NodeInfo(context=context)
@@ -114,31 +110,18 @@ def include_processor(parser: DocumentParser):
     return True
 
 
-def _parse_generic(
-    parser: DocumentParser,
-    content_type: str,
-    arguments: NodeArguments,
-    context: Context,
-) -> IncludeNode:
-    # Get the URIs list and empty the unnamed arguments
-    uris = arguments.unnamed_args[:]
-    arguments.unnamed_args = []
-
-    if not uris:
-        raise create_parser_exception(
-            "Syntax error. You need to specify a list of URIs.",
-            context,
-        )
-
-    return IncludeNode(content_type, uris)
-
-
 def _parse_image(
     parser: DocumentParser, arguments: NodeArguments, context: Context
 ) -> IncludeImageNode:
     arguments.set_names(["uri", "alt_text", "classes"])
 
-    uri = arguments.named_args.pop("uri")
+    uri = arguments.named_args.pop("uri", None)
+
+    if not uri:
+        raise create_parser_exception(
+            "Syntax error. You need to specify a URI.",
+            context,
+        )
 
     alt_text = arguments.named_args.pop("alt_text", None)
     classes_arg = arguments.named_args.pop("classes", None)
@@ -161,7 +144,13 @@ def _parse_mau(
 ) -> IncludeMauNode:
     arguments.set_names(["uri"])
 
-    uri = arguments.named_args.pop("uri")
+    uri = arguments.named_args.pop("uri", None)
+
+    if not uri:
+        raise create_parser_exception(
+            "Syntax error. You need to specify a URI.",
+            context,
+        )
 
     # Add this very file to the list of forbidden
     # inclusions. It's 1984 and Farenheit 451

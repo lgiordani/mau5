@@ -521,7 +521,6 @@ class BaseVisitor:
         result.update(
             {
                 "content_type": node.content_type,
-                "uris": node.uris,
             }
         )
 
