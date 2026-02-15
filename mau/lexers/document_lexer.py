@@ -15,7 +15,6 @@ class DocumentLexer(BaseLexer):
             self._process_comment,
             self._process_horizontal_rule,
             self._process_block,
-            self._process_command,
             self._process_control,
             self._process_include,
             self._process_variable,
@@ -197,53 +196,6 @@ class DocumentLexer(BaseLexer):
         tokens.append(
             Token(TokenType.BLOCK, self._current_line, closing_delimiter.context)
         )
-
-        # Move to the next line.
-        self._nextline()
-
-        return tokens
-
-    def _process_command(self) -> list[Token] | None:
-        # Detect a command in the form
-        #
-        # ::COMMAND[:ARGUMENTS]
-        # or
-        # :: COMMAND[:ARGUMENTS]
-
-        # Try to match the syntax shown above.
-        # The separator and arguments are optional.
-        match = rematch(
-            r"^(?P<prefix>::)(?P<whitespace> *)(?P<command>[a-z0-9_#]+)(?P<separator>:)?(?P<arguments>.*)?",
-            self._current_line,
-        )
-
-        # If the current line does not match just move on.
-        if not match:
-            return None
-
-        # Extract the values of all groups.
-        prefix = match.groupdict().get("prefix")
-        whitespace = match.groupdict().get("whitespace")
-        command = match.groupdict().get("command")
-        separator = match.groupdict().get("separator")
-        arguments = match.groupdict().get("arguments")
-
-        # Create the tokens we want to keep.
-        prefix_token = self._create_token_and_skip(TokenType.COMMAND, prefix)
-        self._skip(whitespace)
-        command_token = self._create_token_and_skip(TokenType.TEXT, command)
-        separator_token = self._create_token_and_skip(TokenType.LITERAL, separator)
-        arguments_token = self._create_token_and_skip(TokenType.TEXT, arguments)
-
-        tokens = [prefix_token, command_token]
-
-        # The separator is optional, the value can be None.
-        if separator:
-            tokens.append(separator_token)
-
-        # The arguments are optional, the value can be None.
-        if arguments:
-            tokens.append(arguments_token)
 
         # Move to the next line.
         self._nextline()

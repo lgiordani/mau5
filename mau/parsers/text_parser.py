@@ -6,7 +6,6 @@ import logging
 from mau.environment.environment import Environment
 from mau.lexers.text_lexer import TextLexer
 from mau.message import BaseMessageHandler, MauException
-from mau.nodes.footnote import FootnoteNode
 from mau.nodes.inline import (
     StyleNode,
     TextNode,

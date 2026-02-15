@@ -8,8 +8,8 @@ from functools import partial
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.message import BaseMessageHandler
-from mau.nodes.command import TocNode
 from mau.nodes.document import DocumentNode
+from mau.nodes.include import TocNode
 from mau.nodes.node import Node, NodeInfo
 from mau.parsers.base_parser import BaseParser
 from mau.parsers.buffers.arguments_buffer import ArgumentsBuffer
@@ -17,7 +17,6 @@ from mau.parsers.buffers.control_buffer import ControlBuffer
 from mau.parsers.buffers.label_buffer import LabelBuffer
 from mau.parsers.document_processors.arguments import arguments_processor
 from mau.parsers.document_processors.block import block_processor
-from mau.parsers.document_processors.command import command_processor
 from mau.parsers.document_processors.control import control_processor
 from mau.parsers.document_processors.header import header_processor
 from mau.parsers.document_processors.horizontal_rule import horizontal_rule_processor
@@ -28,7 +27,7 @@ from mau.parsers.document_processors.paragraph import paragraph_processor
 from mau.parsers.document_processors.variable_definition import (
     variable_definition_processor,
 )
-from mau.parsers.managers.block_group_manager import BlockGroupManager
+from mau.parsers.managers.blockgroup_manager import BlockGroupManager
 from mau.parsers.managers.footnotes_manager import FootnotesManager
 from mau.parsers.managers.header_links_manager import HeaderLinksManager
 from mau.parsers.managers.toc_manager import TocManager
@@ -144,7 +143,6 @@ class DocumentParser(BaseParser):
             self._process_eol,
             partial(horizontal_rule_processor, self),
             partial(variable_definition_processor, self),
-            partial(command_processor, self),
             partial(label_processor, self),
             partial(control_processor, self),
             partial(arguments_processor, self),

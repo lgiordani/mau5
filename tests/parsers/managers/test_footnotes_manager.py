@@ -4,20 +4,11 @@ import pytest
 
 from mau.message import MauException, MauMessageType
 from mau.nodes.block import BlockNode
-from mau.nodes.command import FootnotesItemNode, FootnotesNode
-from mau.nodes.footnote import FootnoteNode
-from mau.parsers.managers.footnotes_manager import FootnotesManager
-from mau.test_helpers import compare_nodes_sequence, generate_context
+from mau.nodes.include import FootnotesNode
 from mau.nodes.macro import (
-    MacroClassNode,
     MacroFootnoteNode,
-    MacroHeaderNode,
-    MacroImageNode,
-    MacroLinkNode,
-    MacroNode,
-    MacroRawNode,
-    MacroUnicodeNode,
 )
+from mau.parsers.managers.footnotes_manager import FootnotesManager
 
 
 def test_footnotes_manager_init():

@@ -1,13 +1,13 @@
 from mau.nodes.block import BlockNode
-from mau.nodes.command import (
+from mau.nodes.footnote import FootnoteNode
+from mau.nodes.header import HeaderNode
+from mau.nodes.include import (
     BlockGroupNode,
     FootnotesItemNode,
     FootnotesNode,
     TocItemNode,
     TocNode,
 )
-from mau.nodes.footnote import FootnoteNode
-from mau.nodes.header import HeaderNode
 from mau.test_helpers import check_visit_node
 from mau.text_buffer import Context
 

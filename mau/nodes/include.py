@@ -1,5 +1,10 @@
+from __future__ import annotations
+
 from collections.abc import Mapping, Sequence
 
+from mau.nodes.block import BlockNode
+from mau.nodes.footnote import FootnoteNode
+from mau.nodes.header import HeaderNode
 from mau.nodes.node import (
     Node,
     NodeArguments,
@@ -122,3 +127,99 @@ class IncludeMauNode(Node, NodeContentMixin, NodeLabelsMixin):
         NodeLabelsMixin.__init__(self, labels)
 
         self.uri = uri
+
+
+class FootnotesItemNode(Node):
+    type = "footnotes-item"
+
+    def __init__(
+        self,
+        footnote: FootnoteNode,
+        parent: Node | None = None,
+        arguments: NodeArguments | None = None,
+        info: NodeInfo | None = None,
+    ):
+        super().__init__(parent=parent, arguments=arguments, info=info)
+
+        self.footnote = footnote
+
+
+class FootnotesNode(Node, NodeLabelsMixin):
+    """The list of footnotes."""
+
+    type = "footnotes"
+
+    def __init__(
+        self,
+        footnotes: Sequence[FootnotesItemNode] | None = None,
+        labels: Mapping[str, Sequence[Node]] | None = None,
+        parent: Node | None = None,
+        arguments: NodeArguments | None = None,
+        info: NodeInfo | None = None,
+    ):
+        super().__init__(parent=parent, arguments=arguments, info=info)
+        NodeLabelsMixin.__init__(self, labels)
+
+        self.footnotes = footnotes or []
+
+
+class TocItemNode(Node):
+    """A Table of Contents.
+
+    This node contains the headers that go into the ToC.
+    """
+
+    type = "toc-item"
+
+    def __init__(
+        self,
+        header: HeaderNode,
+        entries: Sequence[TocItemNode] | None = None,
+        parent: Node | None = None,
+        arguments: NodeArguments | None = None,
+        info: NodeInfo | None = None,
+    ):
+        super().__init__(parent=parent, arguments=arguments, info=info)
+
+        self.header = header
+        self.entries = entries or []
+
+
+class TocNode(Node, NodeLabelsMixin):
+    """The list of footnotes."""
+
+    type = "toc"
+
+    def __init__(
+        self,
+        plain_entries: Sequence[HeaderNode] | None = None,
+        nested_entries: Sequence[TocItemNode] | None = None,
+        labels: Mapping[str, Sequence[Node]] | None = None,
+        parent: Node | None = None,
+        arguments: NodeArguments | None = None,
+        info: NodeInfo | None = None,
+    ):
+        super().__init__(parent=parent, arguments=arguments, info=info)
+        NodeLabelsMixin.__init__(self, labels)
+
+        self.plain_entries = plain_entries or []
+        self.nested_entries = nested_entries or []
+
+
+class BlockGroupNode(Node, NodeLabelsMixin):
+    type = "block-group"
+
+    def __init__(
+        self,
+        name: str,
+        blocks: Mapping[str, BlockNode] | None = None,
+        labels: Mapping[str, Sequence[Node]] | None = None,
+        parent: Node | None = None,
+        arguments: NodeArguments | None = None,
+        info: NodeInfo | None = None,
+    ):
+        super().__init__(parent=parent, arguments=arguments, info=info)
+        NodeLabelsMixin.__init__(self, labels)
+
+        self.name = name
+        self.blocks = blocks or {}

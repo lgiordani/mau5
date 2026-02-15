@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import defaultdict
 
 from mau.nodes.block import BlockNode
-from mau.nodes.command import BlockGroupNode
+from mau.nodes.include import BlockGroupNode
 from mau.parsers.base_parser import create_parser_exception
 
 

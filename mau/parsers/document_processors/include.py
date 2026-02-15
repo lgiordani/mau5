@@ -9,7 +9,14 @@ if TYPE_CHECKING:
 from dataclasses import dataclass, field
 
 from mau.environment.environment import Environment
-from mau.nodes.include import IncludeImageNode, IncludeMauNode, IncludeNode
+from mau.nodes.include import (
+    BlockGroupNode,
+    FootnotesNode,
+    IncludeImageNode,
+    IncludeMauNode,
+    IncludeNode,
+    TocNode,
+)
 from mau.nodes.node import NodeInfo
 from mau.nodes.node_arguments import NodeArguments
 from mau.parsers.arguments_parser import (
@@ -18,13 +25,6 @@ from mau.parsers.arguments_parser import (
 from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 from mau.token import TokenType
-from mau.message import (
-    BaseMessageHandler,
-    MauException,
-    MauMessage,
-    MauVisitorDebugMessage,
-    MauVisitorErrorMessage,
-)
 
 
 @dataclass
@@ -86,14 +86,6 @@ def include_processor(parser: DocumentParser):
 
     arguments = arguments or NodeArguments()
 
-    # Check the stored control
-    if control := parser.control_buffer.pop():
-        # If control is False, we need to stop
-        # processing here and return without
-        # saving any node.
-        if not control.process(parser.environment):
-            return True
-
     node: IncludeImageNode | IncludeNode
 
     match content_type.value:
@@ -101,6 +93,12 @@ def include_processor(parser: DocumentParser):
             node = _parse_image(parser, arguments, context)
         case "mau":
             node = _parse_mau(parser, arguments, context)
+        case "toc":
+            node = _parse_toc(parser, arguments, context)
+        case "footnotes":
+            node = _parse_footnotes(parser, arguments, context)
+        case "blockgroup":
+            node = _parse_blockgroup(parser, arguments, context)
         case _:
             node = IncludeNode(content_type.value)
 
@@ -111,6 +109,14 @@ def include_processor(parser: DocumentParser):
     # Extract labels from the buffer and
     # store them in the node data.
     parser.pop_labels(node)
+
+    # Check the stored control
+    if control := parser.control_buffer.pop():
+        # If control is False, we need to stop
+        # processing here and return without
+        # saving any node.
+        if not control.process(parser.environment):
+            return True
 
     parser._save(node)
 
@@ -257,3 +263,37 @@ def _parse_mau(
         uri,
         content=content_parser.nodes,
     )
+
+
+def _parse_toc(
+    parser: DocumentParser, arguments: NodeArguments, context: Context
+) -> TocNode:
+    toc_node = TocNode()
+
+    parser.toc_manager.add_toc_node(toc_node)
+
+    return toc_node
+
+
+def _parse_footnotes(
+    parser: DocumentParser, arguments: NodeArguments, context: Context
+):
+    footnotes_node = FootnotesNode()
+
+    parser.footnotes_manager.add_footnotes_list(footnotes_node)
+
+    return footnotes_node
+
+
+def _parse_blockgroup(
+    parser: DocumentParser, arguments: NodeArguments, context: Context
+):
+    arguments.set_names(["group"])
+
+    group_name = arguments.named_args.pop("group")
+
+    blockgroup_node = BlockGroupNode(group_name)
+
+    parser.block_group_manager.add_group(blockgroup_node)
+
+    return blockgroup_node

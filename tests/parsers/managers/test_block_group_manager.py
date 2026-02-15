@@ -2,8 +2,8 @@ import pytest
 
 from mau.message import MauException, MauMessageType
 from mau.nodes.block import BlockNode
-from mau.nodes.command import BlockGroupNode
-from mau.parsers.managers.block_group_manager import (
+from mau.nodes.include import BlockGroupNode
+from mau.parsers.managers.blockgroup_manager import (
     BlockGroupManager,
 )
 from mau.test_helpers import compare_nodes

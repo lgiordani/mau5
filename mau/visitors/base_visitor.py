@@ -474,19 +474,6 @@ class BaseVisitor:
 
         return result
 
-    def _visit_command(self, node: Node, **kwargs) -> dict:
-        result = self._visit_default(node, **kwargs)
-
-        result.update(
-            {
-                "name": node.name,
-            }
-        )
-
-        self._add_visit_labels(result, node, **kwargs)
-
-        return result
-
     def _visit_block(self, node: Node, **kwargs) -> dict:
         result = self._visit_default(node, **kwargs)
 

@@ -3,11 +3,11 @@ from __future__ import annotations
 import hashlib
 import re
 
-from mau.nodes.command import (
+from mau.nodes.header import HeaderNode
+from mau.nodes.include import (
     TocItemNode,
     TocNode,
 )
-from mau.nodes.header import HeaderNode
 from mau.nodes.node import Node
 
 
@@ -105,7 +105,7 @@ class TocManager:
         # found parsing a document
         self.headers: list[HeaderNode] = []
 
-        # This is the list of ::toc commands
+        # This is the list of toc nodes
         # that need to be updated once the ToC
         # has been processed
         self.toc_nodes: list[TocNode] = []
@@ -171,7 +171,7 @@ class TocManager:
             # Each toc node receives a new
             # set of nested header because they
             # need to be children of the
-            # toc command and not of the document.
+            # toc node and not of the document.
             nested_headers: list[TocItemNode] = []
 
             # Create the nodes hierarchy

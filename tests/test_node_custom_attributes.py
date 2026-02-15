@@ -1,19 +1,20 @@
 import pytest
 
 from mau.nodes.block import BlockNode
-from mau.nodes.command import (
-    BlockGroupNode,
-    CommandNode,
-    FootnotesItemNode,
-    FootnotesNode,
-    TocItemNode,
-    TocNode,
-)
 from mau.nodes.condition import ConditionNode
 from mau.nodes.document import DocumentNode, HorizontalRuleNode
 from mau.nodes.footnote import FootnoteNode
 from mau.nodes.header import HeaderNode
-from mau.nodes.include import IncludeImageNode, IncludeMauNode, IncludeNode
+from mau.nodes.include import (
+    BlockGroupNode,
+    FootnotesItemNode,
+    FootnotesNode,
+    IncludeImageNode,
+    IncludeMauNode,
+    IncludeNode,
+    TocItemNode,
+    TocNode,
+)
 from mau.nodes.inline import StyleNode, TextNode, VerbatimNode, WordNode
 from mau.nodes.list import ListItemNode, ListNode
 from mau.nodes.macro import (
@@ -36,7 +37,6 @@ CASES = [
     (ValueNode("value"), []),
     (WrapperNode(), []),
     (BlockNode(classes=["alpha", "beta"]), ["alpha", "beta"]),
-    (CommandNode(name="command"), []),
     (FootnotesItemNode(footnote=FootnoteNode(name="fn1")), []),
     (FootnotesNode(), []),
     (TocItemNode(header=HeaderNode(level=1)), []),

@@ -1,19 +1,12 @@
 from __future__ import annotations
 
 from mau.nodes.block import BlockNode
-from mau.nodes.command import FootnotesItemNode, FootnotesNode
 from mau.nodes.footnote import FootnoteNode
-from mau.parsers.base_parser import create_parser_exception
+from mau.nodes.include import FootnotesItemNode, FootnotesNode
 from mau.nodes.macro import (
-    MacroClassNode,
     MacroFootnoteNode,
-    MacroHeaderNode,
-    MacroImageNode,
-    MacroLinkNode,
-    MacroNode,
-    MacroRawNode,
-    MacroUnicodeNode,
 )
+from mau.parsers.base_parser import create_parser_exception
 
 
 def default_footnote_unique_id(
@@ -49,7 +42,7 @@ class FootnotesManager:
         # created through blocks.
         self.bodies: dict[str, BlockNode] = {}
 
-        # The list of footnote lists created through commands.
+        # The list of footnote lists created through includes.
         self.footnotes_list_nodes: list[FootnotesNode] = []
 
         self.footnote_unique_id_function = (

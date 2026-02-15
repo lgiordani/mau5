@@ -6,8 +6,8 @@ from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.message import MauException, MauMessageType
 from mau.nodes.block import BlockNode
-from mau.nodes.command import FootnotesItemNode, FootnotesNode
 from mau.nodes.footnote import FootnoteNode
+from mau.nodes.include import FootnotesItemNode, FootnotesNode
 from mau.nodes.inline import TextNode
 from mau.nodes.list import ListItemNode, ListNode
 from mau.nodes.macro import MacroFootnoteNode
@@ -17,8 +17,8 @@ from mau.nodes.paragraph import ParagraphLineNode, ParagraphNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     check_parent,
-    compare_nodes_sequence,
     compare_nodes_map,
+    compare_nodes_sequence,
     generate_context,
     init_parser_factory,
     parser_runner_factory,
@@ -30,7 +30,7 @@ runner = parser_runner_factory(DocumentLexer, DocumentParser)
 
 
 @patch("mau.parsers.managers.footnotes_manager.default_footnote_unique_id")
-def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
+def test_include_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
     mock_footnote_unique_id.return_value = "XXYY"
 
     source = """
@@ -113,7 +113,7 @@ def test_footnotes_in_paragraphs_are_detected(mock_footnote_unique_id):
 
 
 @patch("mau.parsers.managers.footnotes_manager.default_footnote_unique_id")
-def test_footnotes_mention_the_same_footnote_twice(mock_footnote_unique_id):
+def test_include_footnotes_mention_the_same_footnote_twice(mock_footnote_unique_id):
     mock_footnote_unique_id.return_value = "XXYY"
 
     source = """
@@ -221,7 +221,7 @@ def test_footnotes_mention_the_same_footnote_twice(mock_footnote_unique_id):
 
 
 @patch("mau.parsers.managers.footnotes_manager.default_footnote_unique_id")
-def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
+def test_include_footnotes_in_lists_are_processed(mock_footnote_unique_id):
     mock_footnote_unique_id.return_value = "XXYY"
 
     source = """
@@ -307,7 +307,7 @@ def test_footnotes_in_lists_are_processed(mock_footnote_unique_id):
 
 
 @patch("mau.parsers.managers.footnotes_manager.default_footnote_unique_id")
-def test_command_footnotes(mock_footnote_unique_id):
+def test_include_footnotes(mock_footnote_unique_id):
     mock_footnote_unique_id.return_value = "XXYY"
 
     source = """
@@ -318,7 +318,7 @@ def test_command_footnotes(mock_footnote_unique_id):
     Some text.
     ----
 
-    ::footnotes
+    << footnotes
     """
 
     parser = runner(source)
@@ -377,16 +377,16 @@ def test_command_footnotes(mock_footnote_unique_id):
             ),
             FootnotesNode(
                 footnotes=[FootnotesItemNode(footnote=footnote_node)],
-                info=NodeInfo(context=generate_context(8, 0, 8, 11)),
+                info=NodeInfo(context=generate_context(8, 0, 8, 12)),
             ),
         ],
     )
 
 
-def test_command_footnotes_supports_boxed_arguments():
+def test_include_footnotes_supports_boxed_arguments():
     source = """
     [arg1, *subtype1, #tag1, key1=value1]
-    ::footnotes
+    << footnotes
     """
 
     parser = runner(source)
@@ -402,16 +402,16 @@ def test_command_footnotes_supports_boxed_arguments():
                     tags=["tag1"],
                 ),
                 info=NodeInfo(
-                    context=generate_context(2, 0, 2, 11),
+                    context=generate_context(2, 0, 2, 12),
                 ),
             ),
         ],
     )
 
 
-def test_command_footnotes_supports_inline_arguments():
+def test_include_footnotes_supports_inline_arguments():
     source = """
-    ::footnotes:arg1, *subtype1, #tag1, key1=value1
+    << footnotes:arg1, *subtype1, #tag1, key1=value1
     """
 
     parser = runner(source)
@@ -427,17 +427,17 @@ def test_command_footnotes_supports_inline_arguments():
                     tags=["tag1"],
                 ),
                 info=NodeInfo(
-                    context=generate_context(1, 0, 1, 11),
+                    context=generate_context(1, 0, 1, 12),
                 ),
             ),
         ],
     )
 
 
-def test_command_footnotes_supports_labels():
+def test_include_footnotes_supports_labels():
     source = """
     . Some label
-    ::footnotes
+    << footnotes
     """
 
     parser = runner(source)
@@ -454,13 +454,13 @@ def test_command_footnotes_supports_labels():
                         )
                     ]
                 },
-                info=NodeInfo(context=generate_context(2, 0, 2, 11)),
+                info=NodeInfo(context=generate_context(2, 0, 2, 12)),
             ),
         ],
     )
 
 
-def test_command_footnotes_supports_control():
+def test_include_footnotes_supports_control():
     environment = Environment()
     environment["answer"] = "24"
 
@@ -468,7 +468,7 @@ def test_command_footnotes_supports_control():
     @if answer==42
     [arg1, arg2]
     . Some title
-    ::footnotes
+    << footnotes
     """
 
     parser = runner(source, environment)
@@ -481,7 +481,7 @@ def test_command_footnotes_supports_control():
 
 
 @patch("mau.parsers.managers.footnotes_manager.default_footnote_unique_id")
-def test_footnotes_block_alias(mock_footnote_unique_id):
+def test_include_footnotes_block_alias(mock_footnote_unique_id):
     mock_footnote_unique_id.return_value = "XXYY"
 
     source = """
@@ -563,7 +563,7 @@ def test_footnotes_block_alias(mock_footnote_unique_id):
     )
 
 
-def test_footnotes_parenthood():
+def test_include_footnotes_parenthood():
     source = """
     This contains a footnote[footnote](somename).
 
@@ -572,7 +572,7 @@ def test_footnotes_parenthood():
     Some text.
     ----
 
-    ::footnotes
+    << footnotes
     """
 
     parser = runner(source)
@@ -587,7 +587,7 @@ def test_footnotes_parenthood():
     check_parent(document_node, parser.nodes)
 
     # All nodes inside the footnotes list must be
-    # children of the command.
+    # children of the included node.
     check_parent(footnotes_node, footnotes_node.footnotes)
 
     # The footnote inside the footnotes item are
@@ -595,11 +595,11 @@ def test_footnotes_parenthood():
     check_parent(None, [footnotes_item_node.footnote])
 
 
-def test_footnotes_parenthood_labels():
+def test_include_footnotes_parenthood_labels():
     source = """
     . A label
     .role Another label
-    ::footnotes
+    << footnotes
     """
 
     parser = runner(source)
@@ -614,7 +614,7 @@ def test_footnotes_parenthood_labels():
     check_parent(footnotes_node, label_role_nodes)
 
 
-def test_footnotes_undefined_footnote():
+def test_include_footnotes_undefined_footnote():
     source = """
     This is a non existing [footnote](nope).
     """

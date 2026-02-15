@@ -8,7 +8,6 @@ from mau.text_buffer import Context
 class TokenType(Enum):
     ARGUMENTS = "ARGUMENTS"
     BLOCK = "BLOCK"
-    COMMAND = "COMMAND"
     COMMENT = "COMMENT"
     CONTROL = "CONTROL"
     EMPTY = "EMPTY"

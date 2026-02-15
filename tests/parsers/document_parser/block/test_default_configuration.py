@@ -1,8 +1,8 @@
 from unittest.mock import patch
 
 from mau.lexers.document_lexer import DocumentLexer
-from mau.nodes.command import FootnotesNode, TocNode
 from mau.nodes.header import HeaderNode
+from mau.nodes.include import FootnotesNode, TocNode
 from mau.parsers.document_parser import DocumentParser
 from mau.test_helpers import (
     check_parent,
@@ -55,7 +55,7 @@ def test_default_block_toc_contains_block_headers_only(mock_header_internal_id):
     ----
     = Block header
 
-    ::toc
+    << toc
     ----
     """
 
@@ -104,7 +104,7 @@ def test_default_block_footnotes_contains_block_footnotes_only():
     Some text.
     ####
 
-    ::footnotes
+    << footnotes
     ----
     """
 

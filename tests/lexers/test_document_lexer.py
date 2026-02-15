@@ -265,47 +265,6 @@ def test_label_with_role():
     )
 
 
-def test_command():
-    lex = runner("::command:arg0,arg1")
-
-    compare_asdict_list(
-        lex.tokens,
-        [
-            Token(TokenType.COMMAND, "::", generate_context(0, 0, 0, 2)),
-            Token(TokenType.TEXT, "command", generate_context(0, 2, 0, 9)),
-            Token(TokenType.LITERAL, ":", generate_context(0, 9, 0, 10)),
-            Token(TokenType.TEXT, "arg0,arg1", generate_context(0, 10, 0, 19)),
-            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
-        ],
-    )
-
-
-def test_command_without_arguments():
-    lex = runner("::command")
-
-    compare_asdict_list(
-        lex.tokens,
-        [
-            Token(TokenType.COMMAND, "::", generate_context(0, 0, 0, 2)),
-            Token(TokenType.TEXT, "command", generate_context(0, 2, 0, 9)),
-            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
-        ],
-    )
-
-
-def test_command_with_space():
-    lex = runner("::  command")
-
-    compare_asdict_list(
-        lex.tokens,
-        [
-            Token(TokenType.COMMAND, "::", generate_context(0, 0, 0, 2)),
-            Token(TokenType.TEXT, "command", generate_context(0, 4, 0, 11)),
-            Token(TokenType.EOF, "", generate_context(1, 0, 1, 0)),
-        ],
-    )
-
-
 def test_comment():
     lex = runner("// Some comment")
 
