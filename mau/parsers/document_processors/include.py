@@ -18,6 +18,13 @@ from mau.parsers.arguments_parser import (
 from mau.parsers.base_parser import create_parser_exception
 from mau.text_buffer import Context
 from mau.token import TokenType
+from mau.message import (
+    BaseMessageHandler,
+    MauException,
+    MauMessage,
+    MauVisitorDebugMessage,
+    MauVisitorErrorMessage,
+)
 
 
 @dataclass
@@ -145,6 +152,7 @@ def _parse_mau(
     arguments.set_names(["uri"])
 
     uri = arguments.named_args.pop("uri", None)
+    pass_environment = arguments.named_args.pop("pass_environment", "true")
 
     if not uri:
         raise create_parser_exception(
@@ -192,14 +200,23 @@ def _parse_mau(
         parser.forbidden_includes.append(uri)
 
     # Open the given URI and read the text.
-    with open(uri, "r", encoding="utf-8") as f:
-        text = f.read()
+    try:
+        with open(uri, "r", encoding="utf-8") as f:
+            text = f.read()
+    except FileNotFoundError as exc:
+        raise create_parser_exception(
+            f"File '{uri}' cannot be read.",
+            context,
+        ) from exc
 
-    # The parsing environment is
-    # that of the external parser.
-    # We clone it because we need
-    # to add the call variables.
-    environment = Environment.from_environment(parser.environment)
+    if pass_environment == "true":
+        # The parsing environment is
+        # that of the external parser.
+        # We clone it because we need
+        # to add the call variables.
+        environment = Environment.from_environment(parser.environment)
+    else:
+        environment = Environment()
 
     # Update the environment with call variables.
     environment.dupdate(call_arguments)
@@ -214,8 +231,8 @@ def _parse_mau(
         text=text,
         message_handler=parser.message_handler,
         environment=environment,
-        start_line=start_line,
-        start_column=start_column,
+        start_line=0,
+        start_column=0,
         source_filename=source_filename,
         forbidden_includes=parser.forbidden_includes,
     )

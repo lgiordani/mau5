@@ -380,12 +380,12 @@ def test_include_mau():
                                     TextNode(
                                         "This is a paragraph.",
                                         info=NodeInfo(
-                                            context=Context(1, 0, 1, 20, "/path/to/it")
+                                            context=Context(0, 0, 0, 20, "/path/to/it")
                                         ),
                                     ),
                                 ],
                                 info=NodeInfo(
-                                    context=Context(1, 0, 1, 20, "/path/to/it")
+                                    context=Context(0, 0, 0, 20, "/path/to/it")
                                 ),
                             ),
                             ParagraphLineNode(
@@ -393,16 +393,16 @@ def test_include_mau():
                                     TextNode(
                                         "This is part of the same paragraph.",
                                         info=NodeInfo(
-                                            context=Context(2, 0, 2, 35, "/path/to/it")
+                                            context=Context(1, 0, 1, 35, "/path/to/it")
                                         ),
                                     ),
                                 ],
                                 info=NodeInfo(
-                                    context=Context(2, 0, 2, 35, "/path/to/it")
+                                    context=Context(1, 0, 1, 35, "/path/to/it")
                                 ),
                             ),
                         ],
-                        info=NodeInfo(context=Context(1, 0, 2, 35, "/path/to/it")),
+                        info=NodeInfo(context=Context(0, 0, 1, 35, "/path/to/it")),
                     ),
                     ParagraphNode(
                         lines=[
@@ -411,16 +411,16 @@ def test_include_mau():
                                     TextNode(
                                         "This is another paragraph.",
                                         info=NodeInfo(
-                                            context=Context(4, 0, 4, 26, "/path/to/it")
+                                            context=Context(3, 0, 3, 26, "/path/to/it")
                                         ),
                                     ),
                                 ],
                                 info=NodeInfo(
-                                    context=Context(4, 0, 4, 26, "/path/to/it")
+                                    context=Context(3, 0, 3, 26, "/path/to/it")
                                 ),
                             )
                         ],
-                        info=NodeInfo(context=Context(4, 0, 4, 26, "/path/to/it")),
+                        info=NodeInfo(context=Context(3, 0, 3, 26, "/path/to/it")),
                     ),
                 ],
             ),
@@ -449,6 +449,19 @@ def test_include_mau_without_uri():
 
     assert exc.value.message.type == MauMessageType.ERROR_PARSER
     assert exc.value.message.text == "Syntax error. You need to specify a URI."
+    assert exc.value.message.context == generate_context(1, 0, 1, 6)
+
+
+def test_include_mau_invalid_uri():
+    source = """
+    << mau:doesnotexist.mau
+    """
+
+    with pytest.raises(MauException) as exc:
+        runner(source)
+
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "File 'doesnotexist.mau' cannot be read."
     assert exc.value.message.context == generate_context(1, 0, 1, 6)
 
 
@@ -502,7 +515,7 @@ def test_include_mau_recursively():
                             subtype=None,
                         ),
                         info=NodeInfo(
-                            context=Context(1, 0, 1, 6, source="/path/to/it"),
+                            context=Context(0, 0, 0, 6, source="/path/to/it"),
                         ),
                         content=[
                             ParagraphNode(
@@ -513,20 +526,20 @@ def test_include_mau_recursively():
                                                 "This is a paragraph.",
                                                 info=NodeInfo(
                                                     context=Context(
-                                                        1, 0, 1, 20, "/another/path"
+                                                        0, 0, 0, 20, "/another/path"
                                                     )
                                                 ),
                                             ),
                                         ],
                                         info=NodeInfo(
                                             context=Context(
-                                                1, 0, 1, 20, "/another/path"
+                                                0, 0, 0, 20, "/another/path"
                                             )
                                         ),
                                     ),
                                 ],
                                 info=NodeInfo(
-                                    context=Context(1, 0, 1, 20, "/another/path")
+                                    context=Context(0, 0, 0, 20, "/another/path")
                                 ),
                             )
                         ],
@@ -554,7 +567,7 @@ def test_include_mau_recursively():
             caller_uri="/path/to/it",
             callee_uri="/another/path",
             call_arguments={},
-            info=NodeInfo(context=Context(1, 0, 1, 6, source="/path/to/it")),
+            info=NodeInfo(context=Context(0, 0, 0, 6, source="/path/to/it")),
         ),
     ]
 
@@ -599,16 +612,16 @@ def test_include_mau_environment():
                                     TextNode(
                                         "The answer is 42.",
                                         info=NodeInfo(
-                                            context=Context(3, 0, 3, 17, "/path/to/it")
+                                            context=Context(0, 0, 0, 17, "/path/to/it")
                                         ),
                                     ),
                                 ],
                                 info=NodeInfo(
-                                    context=Context(3, 0, 3, 23, "/path/to/it")
+                                    context=Context(0, 0, 0, 23, "/path/to/it")
                                 ),
                             ),
                         ],
-                        info=NodeInfo(context=Context(3, 0, 3, 23, "/path/to/it")),
+                        info=NodeInfo(context=Context(0, 0, 0, 23, "/path/to/it")),
                     )
                 ],
             ),
@@ -625,6 +638,30 @@ def test_include_mau_environment():
             info=NodeInfo(context=generate_context(3, 0, 3, 6)),
         )
     ]
+
+
+def test_include_mau_prevent_environment_inclusion():
+    # This tests that included files
+    # can be prevented access to the
+    # environment of the includer.
+
+    source = """
+    :answer:42
+    
+    << mau:/path/to/it, pass_environment=false
+    """
+
+    MAU_TEXT = dedent("""
+    The answer is {answer}.
+    """)
+
+    with pytest.raises(MauException) as exc:
+        with patch("builtins.open", mock_open(read_data=MAU_TEXT)):
+            runner(source)
+
+    assert exc.value.message.type == MauMessageType.ERROR_PARSER
+    assert exc.value.message.text == "Variable 'answer' has not been defined."
+    assert exc.value.message.context == Context(0, 14, 0, 22, "/path/to/it")
 
 
 def test_include_mau_custom_arguments():
@@ -667,16 +704,16 @@ def test_include_mau_custom_arguments():
                                     TextNode(
                                         "The answer to Life, the Universe, and Everything is 42.",
                                         info=NodeInfo(
-                                            context=Context(3, 0, 3, 55, "/path/to/it")
+                                            context=Context(0, 0, 0, 55, "/path/to/it")
                                         ),
                                     ),
                                 ],
                                 info=NodeInfo(
-                                    context=Context(3, 0, 3, 35, "/path/to/it")
+                                    context=Context(0, 0, 0, 35, "/path/to/it")
                                 ),
                             ),
                         ],
-                        info=NodeInfo(context=Context(3, 0, 3, 35, "/path/to/it")),
+                        info=NodeInfo(context=Context(0, 0, 0, 35, "/path/to/it")),
                     )
                 ],
             ),
@@ -749,7 +786,7 @@ def test_include_mau_custom_arguments_passed_recursively_automatic():
                             subtype=None,
                         ),
                         info=NodeInfo(
-                            context=Context(3, 0, 3, 6, source="/path/to/it"),
+                            context=Context(0, 0, 0, 6, source="/path/to/it"),
                         ),
                         content=[
                             ParagraphNode(
@@ -760,20 +797,20 @@ def test_include_mau_custom_arguments_passed_recursively_automatic():
                                                 "The answer to Life, the Universe, and Everything is 42.",
                                                 info=NodeInfo(
                                                     context=Context(
-                                                        3, 0, 3, 55, "/another/path"
+                                                        0, 0, 0, 55, "/another/path"
                                                     )
                                                 ),
                                             ),
                                         ],
                                         info=NodeInfo(
                                             context=Context(
-                                                3, 0, 3, 35, "/another/path"
+                                                0, 0, 0, 35, "/another/path"
                                             )
                                         ),
                                     ),
                                 ],
                                 info=NodeInfo(
-                                    context=Context(3, 0, 3, 35, "/another/path")
+                                    context=Context(0, 0, 0, 35, "/another/path")
                                 ),
                             )
                         ],
@@ -801,7 +838,7 @@ def test_include_mau_custom_arguments_passed_recursively_automatic():
             caller_uri="/path/to/it",
             callee_uri="/another/path",
             call_arguments={"target": "Life, the Universe, and Everything"},
-            info=NodeInfo(context=Context(3, 0, 3, 6, source="/path/to/it")),
+            info=NodeInfo(context=Context(0, 0, 0, 6, source="/path/to/it")),
         ),
     ]
 
@@ -857,7 +894,7 @@ def test_include_mau_custom_arguments_passed_recursively_explicitly():
                             subtype=None,
                         ),
                         info=NodeInfo(
-                            context=Context(3, 0, 3, 6, source="/path/to/it"),
+                            context=Context(0, 0, 0, 6, source="/path/to/it"),
                         ),
                         content=[
                             ParagraphNode(
@@ -868,20 +905,20 @@ def test_include_mau_custom_arguments_passed_recursively_explicitly():
                                                 "The answer to Life, the Universe, and Everything is 42.",
                                                 info=NodeInfo(
                                                     context=Context(
-                                                        3, 0, 3, 55, "/another/path"
+                                                        0, 0, 0, 55, "/another/path"
                                                     )
                                                 ),
                                             ),
                                         ],
                                         info=NodeInfo(
                                             context=Context(
-                                                3, 0, 3, 35, "/another/path"
+                                                0, 0, 0, 35, "/another/path"
                                             )
                                         ),
                                     ),
                                 ],
                                 info=NodeInfo(
-                                    context=Context(3, 0, 3, 35, "/another/path")
+                                    context=Context(0, 0, 0, 35, "/another/path")
                                 ),
                             )
                         ],
@@ -909,7 +946,7 @@ def test_include_mau_custom_arguments_passed_recursively_explicitly():
             caller_uri="/path/to/it",
             callee_uri="/another/path",
             call_arguments={"target": "Life, the Universe, and Everything"},
-            info=NodeInfo(context=Context(3, 0, 3, 6, source="/path/to/it")),
+            info=NodeInfo(context=Context(0, 0, 0, 6, source="/path/to/it")),
         ),
     ]
 
@@ -965,7 +1002,7 @@ def test_include_mau_custom_arguments_passed_recursively_overwrite():
                             subtype=None,
                         ),
                         info=NodeInfo(
-                            context=Context(3, 0, 3, 6, source="/path/to/it"),
+                            context=Context(0, 0, 0, 6, source="/path/to/it"),
                         ),
                         content=[
                             ParagraphNode(
@@ -976,20 +1013,20 @@ def test_include_mau_custom_arguments_passed_recursively_overwrite():
                                                 "The answer to the Question is 42.",
                                                 info=NodeInfo(
                                                     context=Context(
-                                                        3, 0, 3, 33, "/another/path"
+                                                        0, 0, 0, 33, "/another/path"
                                                     )
                                                 ),
                                             ),
                                         ],
                                         info=NodeInfo(
                                             context=Context(
-                                                3, 0, 3, 35, "/another/path"
+                                                0, 0, 0, 35, "/another/path"
                                             )
                                         ),
                                     ),
                                 ],
                                 info=NodeInfo(
-                                    context=Context(3, 0, 3, 35, "/another/path")
+                                    context=Context(0, 0, 0, 35, "/another/path")
                                 ),
                             )
                         ],
@@ -1017,7 +1054,7 @@ def test_include_mau_custom_arguments_passed_recursively_overwrite():
             caller_uri="/path/to/it",
             callee_uri="/another/path",
             call_arguments={"target": "the Question"},
-            info=NodeInfo(context=Context(3, 0, 3, 6, source="/path/to/it")),
+            info=NodeInfo(context=Context(0, 0, 0, 6, source="/path/to/it")),
         ),
     ]
 
@@ -1078,4 +1115,4 @@ def test_include_mau_loop_is_forbidden():
         exc.value.message.text
         == f"To avoid recursion, you cannot include the following files: ['{TEST_CONTEXT_SOURCE}', '/path/to/it', '/another/path']."
     )
-    assert exc.value.message.context == Context(1, 0, 1, 6, source="/another/path")
+    assert exc.value.message.context == Context(0, 0, 0, 6, source="/another/path")
