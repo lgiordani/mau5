@@ -1,7 +1,7 @@
 from mau.environment.environment import Environment
 from mau.lexers.document_lexer import DocumentLexer
 from mau.nodes.header import HeaderNode
-from mau.nodes.inline import TextNode
+from mau.nodes.inline import TextNode, StyleNode
 from mau.nodes.node import NodeInfo
 from mau.nodes.node_arguments import NodeArguments
 from mau.parsers.document_parser import DocumentParser
@@ -64,6 +64,43 @@ def test_header_level_3():
                     "Title of a subsection",
                     info=NodeInfo(context=generate_context(1, 4, 1, 25)),
                 )
+            ],
+            info=NodeInfo(context=generate_context(1, 0, 1, 25)),
+        )
+    ]
+
+    compare_nodes_sequence(parser.nodes, expected_nodes)
+
+
+def test_header_text_styles():
+    environment = Environment()
+    environment["mau.parser.header_internal_id_function"] = lambda node: "XXXXXY"
+
+    source = """
+    === Header with *a style*
+    """
+
+    parser = runner(source, environment)
+
+    expected_nodes = [
+        HeaderNode(
+            3,
+            internal_id="XXXXXY",
+            content=[
+                TextNode(
+                    "Header with ",
+                    info=NodeInfo(context=generate_context(1, 4, 1, 16)),
+                ),
+                StyleNode(
+                    "star",
+                    content=[
+                        TextNode(
+                            "a style",
+                            info=NodeInfo(context=generate_context(1, 17, 1, 24)),
+                        ),
+                    ],
+                    info=NodeInfo(context=generate_context(1, 16, 1, 25)),
+                ),
             ],
             info=NodeInfo(context=generate_context(1, 0, 1, 25)),
         )

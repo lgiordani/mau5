@@ -10,6 +10,7 @@ from mau.nodes.header import HeaderNode
 from mau.nodes.node import NodeInfo
 from mau.nodes.node_arguments import NodeArguments
 from mau.parsers.preprocess_variables_parser import PreprocessVariablesParser
+from mau.parsers.text_parser import TextParser
 from mau.text_buffer import Context
 from mau.token import TokenType
 
@@ -34,24 +35,20 @@ def header_processor(parser: DocumentParser):
     # Calculate the level of the header.
     level = len(header.value)
 
-    # Unpack the text initial position.
-    start_line, start_column = text_token.context.start_position
+    # Create the header node.
+    node = HeaderNode(level)
 
-    # Get the text source.
-    source_filename = text_token.context.source
+    # Process the text of the header.
+    text_nodes = parser._parse_text(text_token.value, text_token.context, node)
 
-    # Replace variables
-    preprocess_parser = PreprocessVariablesParser.lex_and_parse(
-        text=text_token.value,
-        message_handler=parser.message_handler,
-        environment=parser.environment,
-        start_line=start_line,
-        start_column=start_column,
-        source_filename=source_filename,
-    )
+    # Add the resulting nodes to the header.
+    node.content = text_nodes
 
-    # The output of the preprocess parser.
-    text_nodes = preprocess_parser.nodes
+    # Add the original source to the header.
+    # This will be userd to create the unique
+    # hash, which can't be easily done using the
+    # resulting text nodes.
+    node.source_text = text_token.value
 
     # Get the stored arguments.
     # Headers can receive arguments
@@ -69,33 +66,24 @@ def header_processor(parser: DocumentParser):
     # Create the internal ID.
     # This uses the actual text contained in
     # the TextNode object.
-    internal_id = arguments.named_args.pop("internal_id", None)
+    node.internal_id = arguments.named_args.pop("internal_id", None)
 
     # Extract the header id if specified.
-    name = arguments.named_args.pop("name", None)
+    node.name = arguments.named_args.pop("name", None)
 
     # Find the context of the text.
     text_context = Context.merge_contexts(
         text_nodes[0].info.context, text_nodes[-1].info.context
     )
 
+    # Add the arguments to the header.
+    node.arguments = NodeArguments(**arguments.asdict())
+
     # Find the context of the whole node.
-    context = Context.merge_contexts(header.context, text_context)
+    node.info = NodeInfo(context=Context.merge_contexts(header.context, text_context))
 
-    # The final node created by this parser.
-    node = HeaderNode(
-        level,
-        internal_id=internal_id,
-        name=name,
-        content=text_nodes,
-        source_text=text_token.value,
-        info=NodeInfo(context=context),
-        arguments=NodeArguments(**arguments.asdict()),
-    )
-
-    # Assign the given parent to each node.
-    for i in text_nodes:
-        i.parent = node
+    # Add the remaining arguments to the header.
+    node.arguments = NodeArguments(**arguments.asdict())
 
     # Extract labels from the buffer and
     # store them in the node data.
@@ -111,9 +99,10 @@ def header_processor(parser: DocumentParser):
 
     # If there is an id store the header node
     # to be matched with potential header links.
-    if name:
+    if node.name:
         parser.header_links_manager.add_header(node)
 
+    # Add the header to the ToC manager.
     parser.toc_manager.add_header(node)
 
     parser._save(node)
