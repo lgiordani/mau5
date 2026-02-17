@@ -1,1 +1,14 @@
-::footnotes:
+This paragraph mentions a footnote[footnote](somenote).
+
+[footnote=somenote]
+----
+This is some text.
+
+[@source, python]
+####
+def sum(a, b):
+    return a + b
+####
+----
+
+<< footnotes

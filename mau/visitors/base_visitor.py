@@ -409,9 +409,13 @@ class BaseVisitor:
     def _visit_footnotes_item(self, node: Node, **kwargs) -> dict:
         result = self._visit_default(node, **kwargs)
 
+        footnote_data = (
+            self._get_footnote_data(node.footnote, **kwargs) if node.footnote else None
+        )
+
         result.update(
             {
-                "footnote": self._get_footnote_data(node.footnote, **kwargs),
+                "footnote": footnote_data,
             }
         )
 
