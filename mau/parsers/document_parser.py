@@ -44,10 +44,6 @@ DEFAULT_STYLE_ALIASES = {
 }
 
 DEFAULT_ARGUMENT_ALIASES = {
-    "footnote": {
-        "args": {},
-        "names": ["footnote"],
-    },
     "source": {
         "args": {"engine": "source"},
         "names": ["language"],

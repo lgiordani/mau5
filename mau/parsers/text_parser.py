@@ -448,6 +448,11 @@ class TextParser(BaseParser):
             info=NodeInfo(context=context),
         )
 
+        # Make the style node the parent
+        # of each text node in it.
+        for i in content:
+            i.parent = node
+
         return [node]
 
     def _parse_word(self) -> list[Node]:

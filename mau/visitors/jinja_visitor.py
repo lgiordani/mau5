@@ -33,49 +33,54 @@ def _create_templates(
 ):
     # Given the following parameters
     #
-    # prefix* - Custom prefixes
-    # pprefix - The prefix of the parent
-    # type    - The node type
-    # stype   - The node subtype
-    # custom* - Custom attributes
+    # [prefix] - List of custom prefixes
+    # pprefix  - The prefix of the parent
+    # type     - The node type
+    # stype    - The node subtype
+    # [tag]    - The node subtype
+    # [custom] - Custom attributes
     #
-    # we want to build the following list
+    # this function builds the equivalent of
+    # the following meta code
     #
-    # ${PREFIX}.pprefix.type.stype.custom1.custom2.custom3.ext
-    # ${PREFIX}.pprefix.type.stype.custom1.custom2.ext
-    # ${PREFIX}.pprefix.type.stype.custom1.custom3.ext
-    # ${PREFIX}.pprefix.type.stype.custom2.custom3.ext
-    # ${PREFIX}.pprefix.type.stype.custom1.ext
-    # ${PREFIX}.pprefix.type.stype.custom2.ext
-    # ${PREFIX}.pprefix.type.stype.custom3.ext
-    # ${PREFIX}.pprefix.type.stype.ext
-    # ${PREFIX}.pprefix.type.custom1.custom2.custom3.ext
-    # ${PREFIX}.pprefix.type.custom1.custom2.ext
-    # ${PREFIX}.pprefix.type.custom1.custom3.ext
-    # ${PREFIX}.pprefix.type.custom2.custom3.ext
-    # ${PREFIX}.pprefix.type.custom1.ext
-    # ${PREFIX}.pprefix.type.custom2.ext
-    # ${PREFIX}.pprefix.type.custom3.ext
-    # ${PREFIX}.pprefix.type.ext
-    # ${PREFIX}.type.stype.custom1.custom2.custom3.ext
-    # ${PREFIX}.type.stype.custom1.custom2.ext
-    # ${PREFIX}.type.stype.custom1.custom3.ext
-    # ${PREFIX}.type.stype.custom2.custom3.ext
-    # ${PREFIX}.type.stype.custom1.ext
-    # ${PREFIX}.type.stype.custom2.ext
-    # ${PREFIX}.type.stype.custom3.ext
-    # ${PREFIX}.type.stype.ext
-    # ${PREFIX}.type.custom1.custom2.custom3.ext
-    # ${PREFIX}.type.custom1.custom2.ext
-    # ${PREFIX}.type.custom1.custom3.ext
-    # ${PREFIX}.type.custom2.custom3.ext
-    # ${PREFIX}.type.custom1.ext
-    # ${PREFIX}.type.custom2.ext
-    # ${PREFIX}.type.custom3.ext
-    # ${PREFIX}.type.ext
+    # LOOP prefixes
+    #  LOOP pprefix
+    #    type
+    #      LOOP stype
+    #        LOOP tags
+    #          LOOP custom
     #
-    # For each PREFIX in prefix*, including
-    # the empty prefix.
+    # to build the template name in the form
+    #
+    # [prefix.][pprefix.]type[.stype][#tag][.custom]
+    #
+    # where `LOOP` means a loop through all
+    # the possible values plus the empty
+    # string.
+    # So, for the prefixes `[A, B]` it looks for
+    #
+    # * A.pprefix.type.stype.#tag.custom
+    # * B.pprefix.type.stype.#tag.custom
+    # * pprefix.type.stype.#tag.custom
+    #
+    # and for the subtype `STP` it looks for
+    #
+    # * type.STP#tag.custom
+    # * type#tag.custom
+    #
+    # Custom attributes create a combinatorial
+    # list of suffixes. The attributes
+    # `[A, B, C`] generate the following list
+    #
+    # [
+    #   ".A.B.C",
+    #   ".A.B",
+    #   ".A.C",
+    #   ".B.C",
+    #   ".A",
+    #   ".B",
+    #   ".C",
+    # ]
 
     node_tags = node_tags or []
     custom_attributes = custom_attributes or []
@@ -132,16 +137,6 @@ def _create_templates(
     # Custom attributes
 
     # Calculate all custom suffixes.
-    # This generates out of A,B,C
-    # [
-    #   ".A.B.C",
-    #   ".A.B",
-    #   ".A.C",
-    #   ".B.C",
-    #   ".A",
-    #   ".B",
-    #   ".C",
-    # ]
     custom_suffixes_list = [
         "." + ".".join(c)
         for r in range(len(custom_attributes), 0, -1)
