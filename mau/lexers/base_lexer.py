@@ -4,7 +4,7 @@ from typing import Callable
 
 from mau.environment.environment import Environment
 from mau.message import BaseMessageHandler, MauException, MauLexerErrorMessage
-from mau.text_buffer import Context, Position, TextBuffer
+from mau.text_buffer import Context, Position, TextBuffer, adjust_context
 from mau.token import Token, TokenType
 
 logger = logging.getLogger(__name__)
@@ -19,6 +19,11 @@ def create_lexer_exception(text: str, position: Position | None = None):
     message = MauLexerErrorMessage(text=text, position=position)
 
     return MauException(message)
+
+
+def print_tokens(tokens: list[Token]):
+    for token in tokens:
+        print(f"{token.type} {repr(token.value)} {adjust_context(token.context)}")
 
 
 class BaseLexer:

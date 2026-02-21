@@ -15,12 +15,9 @@ from mau import (
     load_visitors,
 )
 from mau.environment.environment import Environment
-from mau.formatter.raw_formatter import RawFormatter
 from mau.message import LogMessageHandler, MauException
 from mau.visitors.base_visitor import BaseVisitor
-
-default_formatter = RawFormatter.type
-available_formatters = {formatter.type: formatter for formatter in [RawFormatter]}
+from mau.lexers.base_lexer import print_tokens
 
 install(show_locals=True)
 
@@ -141,14 +138,6 @@ def create_parser():
     )
 
     parser.add_argument(
-        "--formatter",
-        action="store",
-        choices=available_formatters.keys(),
-        default=default_formatter,
-        help="Formatter object to use",
-    )
-
-    parser.add_argument(
         "--lexer-print-output",
         dest="lexer_print_output",
         help="print the output of the lexer",
@@ -187,9 +176,6 @@ def main():
     # Get arguments and logging set up.
     args = argparser.parse_args()
     setup_logging(args.loglevel)
-
-    # Initialise the formatter.
-    formatter = available_formatters[args.formatter]
 
     # Initialise the message handler.
     message_handler = LogMessageHandler(logger)
@@ -256,7 +242,7 @@ def main():
     # The user wants us print the resulting tokens.
     if args.lexer_print_output:
         # Print the tokens collected by the lexer.
-        formatter.print_tokens(lexer.tokens)
+        print_tokens(lexer.tokens)
 
     # The user wants us to run the lexer only.
     if args.lexer_only:
