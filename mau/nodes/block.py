@@ -36,7 +36,3 @@ class BlockNode(Node, NodeLabelsMixin, NodeContentMixin):
         NodeLabelsMixin.__init__(self, labels)
 
         self.classes = classes or []
-
-    @property
-    def custom_attributes(self) -> list[str]:
-        return self.classes

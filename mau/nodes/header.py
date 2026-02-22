@@ -64,7 +64,3 @@ class HeaderNode(Node, NodeLabelsMixin, NodeContentMixin):
 
         NodeContentMixin.__init__(self, content)
         NodeLabelsMixin.__init__(self, labels)
-
-    @property
-    def custom_attributes(self) -> list[str]:
-        return [f"level{self.level}"]

@@ -73,15 +73,14 @@ class MacroNode(Node):
         super().__init__(parent=parent, arguments=arguments, info=info)
         self.name = name
 
-    @property
-    def custom_attributes(self) -> list[str]:
-        return [self.name]
+    def template_type(self) -> str:
+        return f"{self.type}-{self.name}"
 
 
 class MacroClassNode(Node, NodeContentMixin):
     """Text with one or more classes."""
 
-    type = "macro.class"
+    type = "macro-class"
 
     def __init__(
         self,
@@ -99,7 +98,7 @@ class MacroClassNode(Node, NodeContentMixin):
 class MacroLinkNode(Node, NodeContentMixin):
     """This node contains a link."""
 
-    type = "macro.link"
+    type = "macro-link"
 
     def __init__(
         self,
@@ -118,7 +117,7 @@ class MacroLinkNode(Node, NodeContentMixin):
 class MacroImageNode(Node):
     """This node contains an inline image."""
 
-    type = "macro.image"
+    type = "macro-image"
 
     def __init__(
         self,
@@ -141,7 +140,7 @@ class MacroImageNode(Node):
 class MacroHeaderNode(Node, NodeContentMixin):
     """This node contains a link to a header node."""
 
-    type = "macro.header"
+    type = "macro-header"
 
     def __init__(
         self,
@@ -167,7 +166,7 @@ class MacroHeaderNode(Node, NodeContentMixin):
 class MacroFootnoteNode(Node):
     """This node contains a link to a footnote node."""
 
-    type = "macro.footnote"
+    type = "macro-footnote"
 
     def __init__(
         self,
@@ -186,10 +185,10 @@ class MacroFootnoteNode(Node):
 class MacroUnicodeNode(ValueNode):
     """This node contains a unicode code point."""
 
-    type = "macro.unicode"
+    type = "macro-unicode"
 
 
 class MacroRawNode(ValueNode):
     """This node contains a unicode code point."""
 
-    type = "macro.raw"
+    type = "macro-raw"

@@ -50,7 +50,7 @@ def test_inline_verbatim_node():
 def test_inline_style_node_star():
     templates = {
         "text.j2": "{{ value }}",
-        "style.star.j2": "*{{ content }}*",
+        "style-star.j2": "*{{ content }}*",
     }
 
     environment = Environment()
@@ -67,7 +67,7 @@ def test_inline_style_node_star():
 def test_inline_style_node_underscore():
     templates = {
         "text.j2": "{{ value }}",
-        "style.underscore.j2": "_{{ content }}_",
+        "style-underscore.j2": "_{{ content }}_",
     }
 
     environment = Environment()
@@ -84,7 +84,7 @@ def test_inline_style_node_underscore():
 def test_inline_style_node_tilde():
     templates = {
         "text.j2": "{{ value }}",
-        "style.tilde.j2": "~{{ content }}~",
+        "style-tilde.j2": "~{{ content }}~",
     }
 
     environment = Environment()
@@ -101,7 +101,7 @@ def test_inline_style_node_tilde():
 def test_inline_style_node_caret():
     templates = {
         "text.j2": "{{ value }}",
-        "style.caret.j2": "^{{ content }}^",
+        "style-caret.j2": "^{{ content }}^",
     }
 
     environment = Environment()
@@ -118,7 +118,7 @@ def test_inline_style_node_caret():
 def test_inline_macro_node():
     templates = {
         "text.j2": "{{ value }}",
-        "macro.j2": (
+        "macro-somename.j2": (
             "{{ name }} - {{ unnamed_args | join(',') }} - "
             "{% for key, value in named_args|items %}{{ key }}:{{ value }}{% endfor %}"
         ),
@@ -144,7 +144,7 @@ def test_inline_macro_node():
 def test_inline_macro_footnote_node():
     templates = {
         "text.j2": "{{ value }}",
-        "macro.footnote.j2": (
+        "macro-footnote.j2": (
             "{{ footnote.content }} - {{ footnote.name }} - "
             "{{ footnote.public_id }} - {{ footnote.internal_id }}"
         ),
@@ -172,7 +172,7 @@ def test_inline_macro_footnote_node():
 def test_inline_class_node():
     templates = {
         "text.j2": "{{ value }}",
-        "macro.class.j2": "{{ classes | join(',') }} - {{ content }}",
+        "macro-class.j2": "{{ classes | join(',') }} - {{ content }}",
     }
 
     environment = Environment()
@@ -189,7 +189,7 @@ def test_inline_class_node():
 def test_inline_link_node():
     templates = {
         "text.j2": "{{ value }}",
-        "macro.link.j2": "{{ target }} - {{ content }}",
+        "macro-link.j2": "{{ target }} - {{ content }}",
     }
 
     environment = Environment()
@@ -207,7 +207,7 @@ def test_inline_header_node():
     templates = {
         "text.j2": "{{ value }}",
         "sentence.j2": "{{ content }}",
-        "macro.header.j2": "#{{ header.internal_id }} - {{ content }}",
+        "macro-header.j2": "#{{ header.internal_id }} - {{ content }}",
         "header.j2": "#{{ internal_id }}  {{ content }}",
     }
 
@@ -238,7 +238,7 @@ def test_inline_header_node():
 def test_inline_image_node():
     templates = {
         "text.j2": "{{ value }}",
-        "macro.image.j2": "{{ uri }} - {{ alt_text }} - {{ width }}x{{ height }}",
+        "macro-image.j2": "{{ uri }} - {{ alt_text }} - {{ width }}x{{ height }}",
     }
 
     environment = Environment()

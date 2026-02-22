@@ -45,6 +45,5 @@ class StyleNode(Node, NodeContentMixin):
 
         self.style = style
 
-    @property
-    def custom_attributes(self) -> list[str]:
-        return [self.style]
+    def template_type(self) -> str:
+        return f"{self.type}-{self.style}"

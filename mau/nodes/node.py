@@ -61,6 +61,12 @@ class Node:
 
         return self
 
+    def template_type(self) -> str:
+        # Return the type of this node
+        # that should be used to find
+        # templates.
+        return self.type
+
     def accept(self, visitor: BaseVisitor, *args, **kwargs) -> dict:
         # Simple implementation of the visitor pattern.
         # Here, the node accepts a visitor and
@@ -70,7 +76,7 @@ class Node:
         # Some node types contain a dot to allow templates
         # to be created in a hierarchy of directories
         # but dots are not allowed in function names
-        method_name = f"_visit_{self.type.replace('.', '__').replace('-', '_')}"
+        method_name = f"_visit_{self.type.replace('-', '_')}"
 
         # Try to call the computed method. If not
         # available, call a default method.
@@ -80,10 +86,6 @@ class Node:
             method = getattr(visitor, "_visit_default")
 
         return method(self, *args, **kwargs)
-
-    @property
-    def custom_attributes(self) -> list[str]:
-        return []
 
 
 class NodeContentMixin:

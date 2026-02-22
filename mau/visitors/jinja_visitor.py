@@ -27,7 +27,6 @@ def _create_templates(
     extension: str | None = None,
     node_subtype: str | None = None,
     node_tags: list[str] | None = None,
-    custom_attributes: list[str] | None = None,
     global_prefixes: list[str] | None = None,
     parent_prefix: str | None = None,
 ):
@@ -83,7 +82,6 @@ def _create_templates(
     # ]
 
     node_tags = node_tags or []
-    custom_attributes = custom_attributes or []
     global_prefixes = global_prefixes or []
 
     ####################################
@@ -134,28 +132,14 @@ def _create_templates(
     node_tags_list.append("")
 
     ####################################
-    # Custom attributes
-
-    # Calculate all custom suffixes.
-    custom_suffixes_list = [
-        "." + ".".join(c)
-        for r in range(len(custom_attributes), 0, -1)
-        for c in itertools.combinations(custom_attributes, r)
-    ]
-
-    # Add the empty suffix.
-    custom_suffixes_list.append("")
-
-    ####################################
     # All templates
 
     # Put everything together.
     templates = [
-        f"{global_prefix}{parent_prefix}{node_component}{custom_suffix}{node_tag}"
+        f"{global_prefix}{parent_prefix}{node_component}{node_tag}"
         for global_prefix in global_prefixes_list
         for parent_prefix in parent_prefixes_list
         for node_component in node_components_list
-        for custom_suffix in custom_suffixes_list
         for node_tag in node_tags_list
     ]
 
@@ -396,14 +380,17 @@ class JinjaVisitor(BaseVisitor):
         if node.parent:
             parent_prefix = f"{node.parent.type}"
 
+        # Get the actual type we
+        # need to use for templates.
+        node_type = node.template_type()
+
         # Create the template names for the
         # current node.
         templates = _create_templates(
-            node.type,
+            node_type,
             self.extension,
             node.arguments.subtype,
             node.arguments.tags,
-            node.custom_attributes,
             self.template_prefixes,
             parent_prefix,
         )

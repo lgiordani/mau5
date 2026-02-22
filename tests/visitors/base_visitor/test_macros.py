@@ -63,7 +63,7 @@ def test_macro_class_node_without_content():
     node = MacroClassNode(["class1", "class2"])
 
     expected = {
-        "_type": "macro.class",
+        "_type": "macro-class",
         "_context": Context.empty().asdict(),
         "classes": ["class1", "class2"],
         "content": [],
@@ -87,7 +87,7 @@ def test_macro_link_node_without_content():
     node = MacroLinkNode("sometarget")
 
     expected = {
-        "_type": "macro.link",
+        "_type": "macro-link",
         "_context": Context.empty().asdict(),
         "target": "sometarget",
         "content": [],
@@ -111,7 +111,7 @@ def test_macro_image_node():
     node = MacroImageNode("someuri")
 
     expected = {
-        "_type": "macro.image",
+        "_type": "macro-image",
         "_context": Context.empty().asdict(),
         "uri": "someuri",
         "alt_text": None,
@@ -132,7 +132,7 @@ def test_macro_image_node_parameters():
     node = MacroImageNode("someuri", "alt_text", "width", "height")
 
     expected = {
-        "_type": "macro.image",
+        "_type": "macro-image",
         "_context": Context.empty().asdict(),
         "uri": "someuri",
         "alt_text": "alt_text",
@@ -153,7 +153,7 @@ def test_macro_header_node():
     node = MacroHeaderNode("someid")
 
     expected = {
-        "_type": "macro.header",
+        "_type": "macro-header",
         "_context": Context.empty().asdict(),
         "target_name": "someid",
         "content": [],
@@ -173,7 +173,7 @@ def test_macro_header_node_with_header():
     node = MacroHeaderNode("someid", header=HeaderNode(level=1))
 
     expected = {
-        "_type": "macro.header",
+        "_type": "macro-header",
         "_context": Context.empty().asdict(),
         "target_name": "someid",
         "content": [],
@@ -207,7 +207,7 @@ def test_macro_header_node_parameters():
     node = MacroHeaderNode(target_name="somename")
 
     expected = {
-        "_type": "macro.header",
+        "_type": "macro-header",
         "_context": Context.empty().asdict(),
         "target_name": "somename",
         "content": [],
@@ -227,7 +227,7 @@ def test_macro_footnote_node_parameters():
     node = MacroFootnoteNode(name="somename", footnote=FootnoteNode(name="somename"))
 
     expected = {
-        "_type": "macro.footnote",
+        "_type": "macro-footnote",
         "_context": Context.empty().asdict(),
         "footnote": {
             "_type": "footnote",
@@ -258,7 +258,7 @@ def test_macro_unicode():
     node = MacroUnicodeNode("1F30B")
 
     expected = {
-        "_type": "macro.unicode",
+        "_type": "macro-unicode",
         "_context": Context.empty().asdict(),
         "value": "1F30B",
         "named_args": {},
@@ -276,7 +276,7 @@ def test_macro_raw():
     node = MacroRawNode("somevalue")
 
     expected = {
-        "_type": "macro.raw",
+        "_type": "macro-raw",
         "_context": Context.empty().asdict(),
         "value": "somevalue",
         "named_args": {},

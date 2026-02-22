@@ -22,38 +22,6 @@ def test_create_templates_type_and_subtype():
     ]
 
 
-def test_create_templates_custom_attributes():
-    result = _create_templates(
-        "ntype",
-        extension="ext",
-        node_subtype="nstype",
-        custom_attributes=[
-            "custom1",
-            "custom2",
-            "custom3",
-        ],
-    )
-
-    assert result == [
-        "ntype.nstype.custom1.custom2.custom3.ext",
-        "ntype.nstype.custom1.custom2.ext",
-        "ntype.nstype.custom1.custom3.ext",
-        "ntype.nstype.custom2.custom3.ext",
-        "ntype.nstype.custom1.ext",
-        "ntype.nstype.custom2.ext",
-        "ntype.nstype.custom3.ext",
-        "ntype.nstype.ext",
-        "ntype.custom1.custom2.custom3.ext",
-        "ntype.custom1.custom2.ext",
-        "ntype.custom1.custom3.ext",
-        "ntype.custom2.custom3.ext",
-        "ntype.custom1.ext",
-        "ntype.custom2.ext",
-        "ntype.custom3.ext",
-        "ntype.ext",
-    ]
-
-
 def test_create_templates_prefixes():
     result = _create_templates(
         "ntype",

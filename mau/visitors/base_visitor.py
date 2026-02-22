@@ -296,7 +296,7 @@ class BaseVisitor:
 
         return result
 
-    def _visit_macro__class(self, node: Node, **kwargs) -> dict:
+    def _visit_macro_class(self, node: Node, **kwargs) -> dict:
         result = self._visit_default(node, **kwargs)
 
         result.update(
@@ -309,7 +309,7 @@ class BaseVisitor:
 
         return result
 
-    def _visit_macro__link(self, node: Node, **kwargs) -> dict:
+    def _visit_macro_link(self, node: Node, **kwargs) -> dict:
         result = self._visit_default(node, **kwargs)
 
         result.update(
@@ -322,7 +322,7 @@ class BaseVisitor:
 
         return result
 
-    def _visit_macro__unicode(self, node: Node, **kwargs) -> dict:
+    def _visit_macro_unicode(self, node: Node, **kwargs) -> dict:
         result = self._visit_default(node, **kwargs)
 
         result.update(
@@ -333,7 +333,7 @@ class BaseVisitor:
 
         return result
 
-    def _visit_macro__raw(self, node: Node, **kwargs) -> dict:
+    def _visit_macro_raw(self, node: Node, **kwargs) -> dict:
         result = self._visit_default(node, **kwargs)
 
         result.update(
@@ -344,7 +344,7 @@ class BaseVisitor:
 
         return result
 
-    def _visit_macro__image(self, node: Node, **kwargs) -> dict:
+    def _visit_macro_image(self, node: Node, **kwargs) -> dict:
         result = self._visit_default(node, **kwargs)
 
         result.update(
@@ -358,7 +358,7 @@ class BaseVisitor:
 
         return result
 
-    def _visit_macro__header(self, node: Node, **kwargs) -> dict:
+    def _visit_macro_header(self, node: Node, **kwargs) -> dict:
         result = self._visit_default(node, **kwargs)
 
         header_data = (
@@ -391,7 +391,7 @@ class BaseVisitor:
 
         return result
 
-    def _visit_macro__footnote(self, node: Node, **kwargs) -> dict:
+    def _visit_macro_footnote(self, node: Node, **kwargs) -> dict:
         result = self._visit_default(node, **kwargs)
 
         footnote_data = (
