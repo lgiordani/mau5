@@ -150,13 +150,7 @@ def _create_templates(
     return templates
 
 
-def load_template_prefixes(environment: Environment) -> list[str]:
-    # Load all the template prefixes that
-    # have been configured for this execution.
-    return environment.get("mau.visitor.templates.prefixes", [])
-
-
-def load_available_template_providers():  # pragma: no cover
+def _load_available_template_providers():  # pragma: no cover
     # Load all the template providers belonging
     # to the group "mau.templates".
 
@@ -184,7 +178,7 @@ def load_templates_from_providers(environment: Environment) -> Environment:
     templates = Environment()
 
     # Load available template provider plugins.
-    available_providers = load_available_template_providers()
+    available_providers = _load_available_template_providers()
 
     # Load requested providers.
     for provider in requested_providers:
@@ -199,7 +193,7 @@ def load_templates_from_providers(environment: Environment) -> Environment:
     return templates
 
 
-def load_templates_from_path(
+def _load_templates_from_path(
     path_str: str | None,
     preprocess: Callable[[str], str] | None = None,
 ) -> dict[str, dict | str]:  # pragma: no cover
@@ -235,7 +229,7 @@ def load_templates_from_path(
         if obj.is_file():
             result[obj.name] = preprocess(obj.read_text())
         else:
-            result[obj.name] = load_templates_from_path(
+            result[obj.name] = _load_templates_from_path(
                 obj.as_posix(), preprocess=preprocess
             )
 
@@ -268,23 +262,13 @@ def load_templates_from_filesystem(
     # to load templates from there.
     for templates_path_str in templates_path_str_list:
         templates.dupdate(
-            load_templates_from_path(
+            _load_templates_from_path(
                 templates_path_str,
                 preprocess=preprocess,
             )
         )
 
     return templates
-
-
-def load_templates_from_environment(environment: Environment) -> Environment:
-    templates_from_env: Environment = environment.get("mau.visitor.templates.custom")
-
-    # If there are no templates return and empty environment.
-    if not templates_from_env:
-        return Environment()
-
-    return Environment.from_environment(templates_from_env)
 
 
 class JinjaVisitor(BaseVisitor):
@@ -316,7 +300,7 @@ class JinjaVisitor(BaseVisitor):
         super().__init__(message_handler, environment)
 
         # Load the template prefixes from the configuration.
-        self.template_prefixes = load_template_prefixes(self.environment)
+        self.template_prefixes = environment.get("mau.visitor.templates.prefixes", [])
 
         # Load default templates.
         # A custom implementation of this visitor might
