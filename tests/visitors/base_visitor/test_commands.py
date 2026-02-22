@@ -232,7 +232,7 @@ def test_block_group_node_empty():
     node = BlockGroupNode("somename")
 
     expected = {
-        "_type": "block-group",
+        "_type": "blockgroup",
         "_context": Context.empty().asdict(),
         "name": "somename",
         "blocks": {},
@@ -257,7 +257,7 @@ def test_block_group_node_with_blocks():
     )
 
     expected = {
-        "_type": "block-group",
+        "_type": "blockgroup",
         "_context": Context.empty().asdict(),
         "name": "somename",
         "labels": {},

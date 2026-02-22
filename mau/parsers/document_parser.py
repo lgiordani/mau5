@@ -101,7 +101,7 @@ class DocumentParser(BaseParser):
         )
 
         self.header_links_manager: HeaderLinksManager = HeaderLinksManager()
-        self.block_group_manager = BlockGroupManager()
+        self.blockgroup_manager = BlockGroupManager()
         self.footnotes_manager = FootnotesManager(self.footnote_unique_id_function)
         self.toc_manager: TocManager = TocManager(self.header_internal_id_function)
 
@@ -249,7 +249,7 @@ class DocumentParser(BaseParser):
         self.header_links_manager.process()
 
         # Process block groups.
-        self.block_group_manager.process()
+        self.blockgroup_manager.process()
 
         if not self.nodes:
             return self.output

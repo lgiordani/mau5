@@ -100,7 +100,7 @@ def block_processor(parser: DocumentParser):
     node.arguments = NodeArguments(**arguments.asdict())
 
     if group_name and position:
-        parser.block_group_manager.add_block(group_name, position, node)
+        parser.blockgroup_manager.add_block(group_name, position, node)
 
         return True
 

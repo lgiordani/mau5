@@ -21,17 +21,17 @@ class BlockGroupManager:
 
     def add_block(self, group: str, position: str, node: BlockNode):
         """Add a block to the list of managed blocks."""
-        block_group = self.blocks[group]
+        blockgroup = self.blocks[group]
 
         # Check if the position in the
         # block is already taken.
-        if block_group.get(position):
+        if blockgroup.get(position):
             raise create_parser_exception(
                 text=f"Position '{position}' is already taken in group '{group}'.",
                 context=node.info.context,
             )
 
-        block_group[position] = node
+        blockgroup[position] = node
 
     def add_group(self, data: BlockGroupNode):
         """Add a group data to the list of

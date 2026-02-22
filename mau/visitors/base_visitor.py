@@ -464,7 +464,7 @@ class BaseVisitor:
 
         return result
 
-    def _visit_block_group(self, node: Node, **kwargs) -> dict:
+    def _visit_blockgroup(self, node: Node, **kwargs) -> dict:
         result = self._visit_default(node, **kwargs)
 
         result.update(

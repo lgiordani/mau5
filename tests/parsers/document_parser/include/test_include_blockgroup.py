@@ -322,7 +322,7 @@ def test_include_blockgroup_supports_control():
     assert parser.control_buffer.control is None
 
 
-def test_block_group_parenthood():
+def test_blockgroup_parenthood():
     source = """
     [group=group1, position=position1]
     ----
@@ -341,7 +341,7 @@ def test_block_group_parenthood():
 
     document_node = parser.output.document
 
-    block_group_node = parser.nodes[0]
+    blockgroup_node = parser.nodes[0]
 
     # All parser nodes must be
     # children of the document node.
@@ -349,10 +349,10 @@ def test_block_group_parenthood():
 
     # All nodes inside the block group must be
     # children of the included node.
-    check_parent(block_group_node, block_group_node.blocks.values())
+    check_parent(blockgroup_node, blockgroup_node.blocks.values())
 
 
-def test_block_group_parenthood_labels():
+def test_blockgroup_parenthood_labels():
     source = """
     [group=group1, position=position1]
     ----
@@ -371,11 +371,11 @@ def test_block_group_parenthood_labels():
 
     parser = runner(source)
 
-    block_group_node = parser.nodes[0]
-    label_title_nodes = block_group_node.labels["title"]
-    label_role_nodes = block_group_node.labels["role"]
+    blockgroup_node = parser.nodes[0]
+    label_title_nodes = blockgroup_node.labels["title"]
+    label_role_nodes = blockgroup_node.labels["role"]
 
     # Each label must be a child of the
     # block group it has been assigned to.
-    check_parent(block_group_node, label_title_nodes)
-    check_parent(block_group_node, label_role_nodes)
+    check_parent(blockgroup_node, label_title_nodes)
+    check_parent(blockgroup_node, label_role_nodes)

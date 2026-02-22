@@ -294,6 +294,6 @@ def _parse_blockgroup(
 
     blockgroup_node = BlockGroupNode(group_name)
 
-    parser.block_group_manager.add_group(blockgroup_node)
+    parser.blockgroup_manager.add_group(blockgroup_node)
 
     return blockgroup_node

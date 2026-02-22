@@ -207,7 +207,7 @@ class TocNode(Node, NodeLabelsMixin):
 
 
 class BlockGroupNode(Node, NodeLabelsMixin):
-    type = "block-group"
+    type = "blockgroup"
 
     def __init__(
         self,

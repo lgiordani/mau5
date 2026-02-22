@@ -9,7 +9,7 @@ from mau.parsers.managers.blockgroup_manager import (
 from mau.test_helpers import compare_nodes
 
 
-def test_block_group_manager():
+def test_blockgroup_manager():
     bgm = BlockGroupManager()
 
     block_node1 = BlockNode()
@@ -31,7 +31,7 @@ def test_block_group_manager():
     }
 
 
-def test_block_group_manager_same_position():
+def test_blockgroup_manager_same_position():
     bgm = BlockGroupManager()
 
     block_node1 = BlockNode()
@@ -49,7 +49,7 @@ def test_block_group_manager_same_position():
     )
 
 
-def test_block_group_manager_add_group_node():
+def test_blockgroup_manager_add_group_node():
     bgm = BlockGroupManager()
 
     group_node = BlockGroupNode("somename")
@@ -59,7 +59,7 @@ def test_block_group_manager_add_group_node():
     assert bgm.groups == [group_node]
 
 
-def test_block_group_manager_process():
+def test_blockgroup_manager_process():
     bgm = BlockGroupManager()
 
     block_node1 = BlockNode()
@@ -83,7 +83,7 @@ def test_block_group_manager_process():
     compare_nodes(group_node, expected_node)
 
 
-def test_block_group_manager_process_group_does_not_exist():
+def test_blockgroup_manager_process_group_does_not_exist():
     bgm = BlockGroupManager()
 
     group_node = BlockGroupNode("group1")
