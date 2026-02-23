@@ -1,6 +1,10 @@
+from __future__ import annotations
+
+from dataclasses import dataclass, field
 import itertools
 import logging
 import sys
+from collections import defaultdict
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Callable
@@ -22,132 +26,99 @@ class TemplateNotFound(ValueError):
     pass
 
 
-def _create_templates(
-    node_type: str,
-    extension: str | None = None,
-    node_subtype: str | None = None,
-    node_tags: list[str] | None = None,
-    global_prefixes: list[str] | None = None,
-    parent_prefix: str | None = None,
-):
-    # Given the following parameters
-    #
-    # [prefix] - List of custom prefixes
-    # pprefix  - The prefix of the parent
-    # type     - The node type
-    # stype    - The node subtype
-    # [tag]    - The node subtype
-    # [custom] - Custom attributes
-    #
-    # this function builds the equivalent of
-    # the following meta code
-    #
-    # LOOP prefixes
-    #  LOOP pprefix
-    #    type
-    #      LOOP stype
-    #        LOOP tags
-    #          LOOP custom
-    #
-    # to build the template name in the form
-    #
-    # [prefix.][pprefix.]type[.stype][#tag][.custom]
-    #
-    # where `LOOP` means a loop through all
-    # the possible values plus the empty
-    # string.
-    # So, for the prefixes `[A, B]` it looks for
-    #
-    # * A.pprefix.type.stype.#tag.custom
-    # * B.pprefix.type.stype.#tag.custom
-    # * pprefix.type.stype.#tag.custom
-    #
-    # and for the subtype `STP` it looks for
-    #
-    # * type.STP#tag.custom
-    # * type#tag.custom
-    #
-    # Custom attributes create a combinatorial
-    # list of suffixes. The attributes
-    # `[A, B, C`] generate the following list
-    #
-    # [
-    #   ".A.B.C",
-    #   ".A.B",
-    #   ".A.C",
-    #   ".B.C",
-    #   ".A",
-    #   ".B",
-    #   ".C",
-    # ]
+@dataclass
+class Template:
+    # This object represents a template
+    # and its claims.
+    # For subtpye, prefix, and ptype,
+    # None means that there is no claim.
+    # A value means that the node the
+    # template is applied to must match
+    # that value.
+    # For tags, an empty list means no
+    # claim, while values in the list
+    # mean that the set of node tags
+    # must be a superset of the
+    # template tags.
+    type: str
+    content: str
+    name: str
+    subtype: str | None = None
+    prefix: str | None = None
+    ptype: str | None = None
+    tags: list[str] = field(default_factory=list)
 
-    node_tags = node_tags or []
-    global_prefixes = global_prefixes or []
+    @property
+    def specificity(self):
+        # A tuple that represents
+        # the cardinality of the
+        # template claims.
+        # This will be used to order
+        # templates lexicographically.
+        return (
+            1 if self.subtype else 0,
+            1 if self.prefix else 0,
+            1 if self.ptype else 0,
+            len(self.tags),
+        )
 
-    ####################################
-    # Global prefixes
+    @classmethod
+    def from_name(cls, name: str, content: str) -> Template:
+        # Create the class from a given
+        # template name in the form
+        #
+        # TYPE[.SUBTPYE][.tg__TAG][.pt__PARENT][.pf__PREFIX]
+        #
+        # where the elements between
+        # square brackets can be in any order.
 
-    # This will be
-    # ["prefix1.", "prefix2.", ..., "prefixN.", ""]
-    global_prefixes_list = [f"{prefix}." for prefix in global_prefixes]
+        # Split the name into parts
+        # separated by dots.
+        parts = name.split(".")
 
-    # Add the empty prefix.
-    global_prefixes_list.append("")
+        # Get the mandatory first part.
+        _type = parts[0]
 
-    ####################################
-    # Parent prefixes
+        # If the node type is not in the
+        # name (which means the string is
+        # empty) we need to stop the process.
+        if not _type:
+            raise ValueError
 
-    # Calculate the parent prefixes.
-    parent_prefixes_list = []
+        # Build the template object.
+        template = Template(type=_type, content=content, name=name)
 
-    # If there is a parent prefix add it.
-    if parent_prefix:
-        parent_prefixes_list.append(f"{parent_prefix}.")
+        # Loop through all remaining parts
+        # and use them to assign values to
+        # the template.
+        for part in parts[1:]:
+            if (v := part.removeprefix("pt_")) != part:
+                template.ptype = v
+            elif (v := part.removeprefix("pf_")) != part:
+                template.prefix = v
+            elif (v := part.removeprefix("tg_")) != part:
+                template.tags.append(v)
+            else:
+                template.subtype = part
 
-    # Add the empty parent prefix.
-    parent_prefixes_list.append("")
+        return template
 
-    ####################################
-    # Node components
+    def match(self, node: Node, prefix: str | None = None) -> bool:
+        # Check if the given node matches the
+        # template claims.
+        if self.subtype and not self.subtype == node.arguments.subtype:
+            return False
 
-    # This will be
-    # ["type.stype.", "type."]
-    node_components_list = []
+        if self.prefix and not self.prefix == prefix:
+            return False
 
-    # If there is a subtype add "type.stype.".
-    if node_subtype:
-        node_components_list.append(f"{node_type}.{node_subtype}")
+        if self.ptype and node.parent and not self.ptype == node.parent.type:
+            return False
 
-    # Add "type.".
-    node_components_list.append(f"{node_type}")
+        if self.tags and not set(self.tags).issubset(set(node.arguments.tags)):
+            return False
 
-    ####################################
-    # Node tags
-
-    # This will be
-    # ["#tag1", "#tag2", ""]
-    node_tags_list = [f"#{tag}" for tag in node_tags]
-
-    # Add the empty suffix.
-    node_tags_list.append("")
-
-    ####################################
-    # All templates
-
-    # Put everything together.
-    templates = [
-        f"{global_prefix}{parent_prefix}{node_component}{node_tag}"
-        for global_prefix in global_prefixes_list
-        for parent_prefix in parent_prefixes_list
-        for node_component in node_components_list
-        for node_tag in node_tags_list
-    ]
-
-    # Add the extension if present.
-    if extension:
-        templates = [f"{template}.{extension}" for template in templates]
-
-    return templates
+        return True
 
 
 def _load_available_template_providers():  # pragma: no cover
@@ -195,10 +166,13 @@ def load_templates_from_providers(environment: Environment) -> Environment:
 
 def _load_templates_from_path(
     path_str: str | None,
+    extension: str,
     preprocess: Callable[[str], str] | None = None,
 ) -> dict[str, dict | str]:  # pragma: no cover
     # Recursively loads templates from the given path
     # and all its subpaths.
+    # Rejects files that do not end with the
+    # given extension.
 
     # If the path string is empty just stop.
     if not path_str:
@@ -222,26 +196,45 @@ def _load_templates_from_path(
 
     # Scan all directories in the given path.
     for obj in templates_path.iterdir():
-        # If we found a file, read the content,
-        # preprocess and store it.
-        # Otherwise it's a directory,
+        # If the object is a directory,
         # recursively load templates from there.
-        if obj.is_file():
-            result[obj.name] = preprocess(obj.read_text())
-        else:
-            result[obj.name] = _load_templates_from_path(
-                obj.as_posix(), preprocess=preprocess
+        if obj.is_dir():
+            # Collect all templates recursively.
+            templates = _load_templates_from_path(
+                obj.as_posix(), extension, preprocess=preprocess
             )
+
+            # If we found templates, add them
+            # to the results dictionary.
+            if templates:
+                result[obj.name] = templates
+
+            continue
+
+        # If we found a file, first check
+        # if the extension is the one we want.
+        # If not, discard and continue.
+        if not obj.name.endswith(extension):
+            continue
+
+        # If we found a file with the proper
+        # extension, read the content,
+        # preprocess and store it.
+        result[obj.name] = preprocess(obj.read_text())
 
     return result
 
 
 def load_templates_from_filesystem(
     environment: Environment,
+    extension: str,
     preprocess: Callable[[str], str] | None = None,
 ) -> Environment:
     # Scan a configured list of paths
     # for templates.
+    # Load every file that ends with the
+    # given extension, looking recursively
+    # into subdirectories.
 
     # Get the templates path from
     # the configuration environment.
@@ -264,6 +257,7 @@ def load_templates_from_filesystem(
         templates.dupdate(
             _load_templates_from_path(
                 templates_path_str,
+                extension=extension,
                 preprocess=preprocess,
             )
         )
@@ -273,7 +267,7 @@ def load_templates_from_filesystem(
 
 class JinjaVisitor(BaseVisitor):
     format_code = "jinja"
-    extension = "j2"
+    extension = ".j2"
     templates_preprocess: Callable[[str], str] | None = None
 
     join_with = {
@@ -285,12 +279,7 @@ class JinjaVisitor(BaseVisitor):
     join_with_default = ""
 
     jinja_environment_options = {}
-    default_templates = Environment().from_dict(
-        {
-            # "document.j2": "{{ content }}",
-            # "text.j2": "{{ value }}",
-        }
-    )
+    default_templates = Environment()
 
     def __init__(
         self,
@@ -306,32 +295,78 @@ class JinjaVisitor(BaseVisitor):
         # A custom implementation of this visitor might
         # provide default templates that can be overridden
         # by user-defined ones.
-        self.templates = Environment.from_environment(self.default_templates)
+        templates_env = Environment.from_environment(self.default_templates)
 
         # Load the requested template providers from the configuration.
-        templates_from_providers = load_templates_from_providers(self.environment)
-        self.templates.update(templates_from_providers)
+        templates_env.update(load_templates_from_providers(self.environment))
 
         # Load user-defined templates from files.
         templates_from_filesystem = load_templates_from_filesystem(
             self.environment,
+            extension=self.extension,
             preprocess=self.__class__.templates_preprocess,
         )
-        self.templates.update(templates_from_filesystem)
+        templates_env.update(templates_from_filesystem)
 
         # Load custom templates provided as a dictionary.
-        self.templates.update(
+        templates_env.update(
             environment.get(
                 "mau.visitor.templates.custom",
                 Environment(),
             )
         )
 
+        # Here, the environment as a flat dict
+        # contains all the templates we defined.
+        # We also took care of the hierarchy
+        # between sources, as later sources
+        # updated might have overwritten what
+        # earlier sources created.
+
+        # Here, we need to filter the templates
+        # we found keeping only those with the
+        # correct extension, remove the latter
+        # (so that it doesn't get interpreted
+        # as a component of the template name).
+        # Then, for all selected templates, we
+        # need to devise what type of node they
+        # address, and build the MauTemplate
+        # object that will allow us to
+        # order them by specificity.
+        templates = []
+        for name, content in templates_env.asflatdict().items():
+            # The extension is not the one we
+            # requested, skip the template.
+            if not name.endswith(self.extension):
+                continue
+
+            # Devise the template name
+            # without extension.
+            name = name.removesuffix(self.extension)
+
+            # Create a template object and
+            # add it to the list of templates.
+            templates.append(Template.from_name(name, content))
+
+        # Order templates by specificity
+        templates.sort(key=lambda t: t.specificity, reverse=True)
+
+        # This dictionary contains list of templates
+        # for each node type. The list is sorted
+        # in order of specificity.
+        self.templates = defaultdict(list)
+        for template in templates:
+            self.templates[template.type].append(template)
+
+        # A dictionary in the form {'name': 'source'}
+        # that Jinja will use to host templates.
+        jinja_templates = {t.name: t.content for t in templates}
+
         # This is the Jinja environment.
         # We prepare it with all the templates we loaded
         # in the previous section of the function.
         self._dict_env = jinja2.Environment(
-            loader=jinja2.DictLoader(self.templates.asflatdict()),
+            loader=jinja2.DictLoader(jinja_templates),
             **self.jinja_environment_options,
         )
 
@@ -358,28 +393,6 @@ class JinjaVisitor(BaseVisitor):
             ) from exception
 
         return rendered_template
-
-    def _create_node_templates(self, node: Node):
-        parent_prefix = None
-        if node.parent:
-            parent_prefix = f"{node.parent.type}"
-
-        # Get the actual type we
-        # need to use for templates.
-        node_type = node.template_type()
-
-        # Create the template names for the
-        # current node.
-        templates = _create_templates(
-            node_type,
-            self.extension,
-            node.arguments.subtype,
-            node.arguments.tags,
-            self.template_prefixes,
-            parent_prefix,
-        )
-
-        return templates
 
     def _debug_additional_info(self, node: Node, result: dict):  # pragma: no cover
         return {"Templates": self._create_node_templates(node)}
@@ -410,30 +423,37 @@ class JinjaVisitor(BaseVisitor):
         if node is None:
             return ""
 
-        # Create the template names for the current node.
-        templates = self._create_node_templates(node)
+        # # Create the template names for the current node.
+        # templates = self._create_node_templates(node)
 
         # Visit the node.
         result = super().visit(node, **kwargs)
 
-        # Scan all potential templates, trying to render
-        # the given data with each of them.
-        # Stop as soon as we find a working template.
-        for template in templates:
-            try:
-                return self._render(node, self.environment, template, **result)
-            except TemplateNotFound:
-                continue
+        # Find all templates available for
+        # this type of node in specificity order.
+        templates = self.templates[node.template_type()]
 
-        # No templates were found, stop with an error.
-        raise create_visitor_exception(
-            text="Cannot find a suitable template.",
-            data=result,
-            environment=self.environment,
-            additional_info={
-                "Accepted templates": templates,
-            },
-        )
+        # Test all templates to find the matching ones.
+        matching_templates = [t for t in templates if t.match(node)]
+
+        # If there are no matching templates
+        # we are in trouble. Let's print out
+        # a message to help the user to debug.
+        if not matching_templates:
+            raise create_visitor_exception(
+                text="Cannot find a suitable template.",
+                data=result,
+                environment=self.environment,
+                additional_info={
+                    "Templates found": templates,
+                },
+            )
+
+        # Select the first template that
+        # matches and render it.
+        template = matching_templates[0]
+
+        return self._render(node, self.environment, template.name, **result)
 
     def visitlist(self, current_node: Node, nodes_list: Sequence[Node], **kwargs):
         # Find the string this visitor uses to join

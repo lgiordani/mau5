@@ -39,7 +39,7 @@ def test_paragraph_with_single_tag():
     templates = {
         "text.j2": "{{ value }}",
         "paragraph-line.j2": "{{ content }}",
-        "paragraph#tag1.j2": "##{{ lines }}##",
+        "paragraph.tg_tag1.j2": "##{{ lines }}##",
         "paragraph.j2": "{{ lines }}",
     }
 
@@ -71,7 +71,7 @@ def test_paragraph_with_multiple_tags():
     templates = {
         "text.j2": "{{ value }}",
         "paragraph-line.j2": "{{ content }}",
-        "paragraph#tag2.j2": "##{{ lines }}##",
+        "paragraph.tg_tag2.j2": "##{{ lines }}##",
         "paragraph.j2": "{{ lines }}",
     }
 
@@ -134,7 +134,7 @@ def test_paragraph_with_subtype_and_tags():
     templates = {
         "text.j2": "{{ value }}",
         "paragraph-line.j2": "{{ content }}",
-        "paragraph.somesubtype#tag2.j2": "##{{ lines }}##",
+        "paragraph.somesubtype.tg_tag2.j2": "##{{ lines }}##",
         "paragraph.somesubtype.j2": "{{ lines }}",
         "paragraph.j2": "{{ lines }}",
     }
@@ -169,7 +169,7 @@ def test_paragraph_with_parent():
     templates = {
         "text.j2": "{{ value }}",
         "paragraph-line.j2": "{{ content }}",
-        "block.paragraph.j2": "##{{ lines }}##",
+        "paragraph.pt_block.j2": "##{{ lines }}##",
         "paragraph.j2": "{{ lines }}",
     }
 
