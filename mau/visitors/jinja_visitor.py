@@ -106,10 +106,11 @@ class Template:
     def match(self, node: Node, prefix: str | None = None) -> bool:
         # Check if the given node matches the
         # template claims.
-        if self.subtype and not self.subtype == node.arguments.subtype:
+
+        if prefix and not self.prefix == prefix:
             return False
 
-        if self.prefix and not self.prefix == prefix:
+        if self.subtype and not self.subtype == node.arguments.subtype:
             return False
 
         if self.ptype and node.parent and not self.ptype == node.parent.type:
@@ -374,12 +375,16 @@ class JinjaVisitor(BaseVisitor):
         self, node: Node, environment: Environment, template_full_name, **kwargs
     ) -> str:
         # This renders a template using the current
-        # environment and the given parameters
+        # environment and the given parameters.
+
+        # Get the template from the Jinja environment.
         try:
             template = self._dict_env.get_template(template_full_name)
         except jinja2.exceptions.TemplateNotFound as exception:
             raise TemplateNotFound(exception) from exception
 
+        # Render the template using the values
+        # retrieved visiting the node.
         try:
             rendered_template = template.render(
                 config=self.environment.asdict(), **kwargs
@@ -395,46 +400,27 @@ class JinjaVisitor(BaseVisitor):
         return rendered_template
 
     def _debug_additional_info(self, node: Node, result: dict):  # pragma: no cover
-        return {"Templates": self._create_node_templates(node)}
+        node_templates = self.templates[node.template_type()]
 
-    def visit(self, node, **kwargs):
-        # The visitor has to define functions for each node type
-        # and those shall return a dictionary of keys.
-        #
-        # The node types are a list made of the key `node_types` and the node type.
-        # This allows a function to return one or more types that have to
-        # be used instead of the standard type, which also allows to write
-        # generic functions. See _visit_style in HTMLVisitor which works for
-        # multiple styles.
-        #
-        # The rest of the returned keys are passed to the _render function
-        # as keys and are thus available in the template.
+        return {"Available templates": [t.name for t in node_templates]}
 
-        # Template names are created with this schema
-
-        # [prefix.][parent_type.][parent_subtype.][parent_position.][node_template][.node_subtype][.ext]
-
-        # If the node is None we don't need to process
-        # anything. If we did, we would get an empty
-        # dictionary as a result, and it would be
-        # pointless to process it anyway.
-        # If the node is None we just return an
-        # empty string.
-        if node is None:
-            return ""
-
-        # # Create the template names for the current node.
-        # templates = self._create_node_templates(node)
-
-        # Visit the node.
-        result = super().visit(node, **kwargs)
-
+    def _find_matching_template(self, node: Node, data: dict) -> Template:
         # Find all templates available for
         # this type of node in specificity order.
         templates = self.templates[node.template_type()]
 
+        # The list of all matching templates.
+        matching_templates: list[Template] = []
+
         # Test all templates to find the matching ones.
-        matching_templates = [t for t in templates if t.match(node)]
+        # The test is performed on all given prefixes first.
+        for prefix in self.template_prefixes:
+            matching_templates.extend(
+                [t for t in templates if t.match(node, prefix)],
+            )
+
+        # Now let's add the matching templates without prefix.
+        matching_templates.extend([t for t in templates if t.match(node)])
 
         # If there are no matching templates
         # we are in trouble. Let's print out
@@ -442,18 +428,37 @@ class JinjaVisitor(BaseVisitor):
         if not matching_templates:
             raise create_visitor_exception(
                 text="Cannot find a suitable template.",
-                data=result,
+                data=data,
                 environment=self.environment,
                 additional_info={
                     "Templates found": templates,
                 },
             )
 
-        # Select the first template that
-        # matches and render it.
-        template = matching_templates[0]
+        # Select the first template that matches.
+        return matching_templates[0]
 
-        return self._render(node, self.environment, template.name, **result)
+    def visit(self, node: Node | None, **kwargs):
+        # Visit the node and extract a dictionary of
+        # values. Then, extract all templates that
+        # target the node type, find the matching
+        # ones, select the first and render the
+        # node using it.
+
+        # If the node is None we don't need to process
+        # anything. If we did, we would get an empty
+        # dictionary as a result, and it would be
+        # pointless to process it anyway.
+        if node is None:
+            return ""
+
+        # Visit the node.
+        data = super().visit(node, **kwargs)
+
+        # Find a matching template.
+        template = self._find_matching_template(node, data)
+
+        return self._render(node, self.environment, template.name, **data)
 
     def visitlist(self, current_node: Node, nodes_list: Sequence[Node], **kwargs):
         # Find the string this visitor uses to join
