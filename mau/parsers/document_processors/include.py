@@ -9,11 +9,13 @@ if TYPE_CHECKING:
 from dataclasses import dataclass, field
 
 from mau.environment.environment import Environment
+from mau.nodes.raw import RawLineNode
 from mau.nodes.include import (
     BlockGroupNode,
     FootnotesNode,
     IncludeImageNode,
     IncludeMauNode,
+    IncludeRawNode,
     IncludeNode,
     TocNode,
 )
@@ -93,6 +95,8 @@ def include_processor(parser: DocumentParser):
             node = _parse_image(parser, arguments, context)
         case "mau":
             node = _parse_mau(parser, arguments, context)
+        case "raw":
+            node = _parse_raw(parser, arguments, context)
         case "toc":
             node = _parse_toc(parser, arguments, context)
         case "footnotes":
@@ -150,6 +154,48 @@ def _parse_image(
     )
 
     return content
+
+
+def _parse_raw(
+    parser: DocumentParser, arguments: NodeArguments, context: Context
+) -> IncludeMauNode:
+    arguments.set_names(["uri"])
+
+    uri = arguments.named_args.pop("uri", None)
+
+    if not uri:
+        raise create_parser_exception(
+            "Syntax error. You need to specify a URI.",
+            context,
+        )
+
+    # Open the given URI and read the text.
+    try:
+        with open(uri, "r", encoding="utf-8") as f:
+            content_lines = f.readlines()
+    except FileNotFoundError as exc:
+        raise create_parser_exception(
+            f"File '{uri}' cannot be read.",
+            context,
+        ) from exc
+
+    # A list of raw content lines.
+    raw_lines: list[RawLineNode] = []
+
+    node = IncludeRawNode(uri, info=NodeInfo(context=context))
+
+    for content_line in content_lines:
+        raw_lines.append(
+            RawLineNode(
+                content_line,
+                info=NodeInfo(context=context),
+                parent=node,
+            )
+        )
+
+    node.content = raw_lines
+
+    return node
 
 
 def _parse_mau(

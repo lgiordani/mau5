@@ -433,6 +433,7 @@ class JinjaVisitor(BaseVisitor):
         if not matching_templates:
             raise create_visitor_exception(
                 text="Cannot find a suitable template.",
+                node=node,
                 data=data,
                 environment=self.environment,
                 additional_info={

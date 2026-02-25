@@ -548,6 +548,20 @@ class BaseVisitor:
 
         return result
 
+    def _visit_include_raw(self, node: Node, **kwargs) -> dict:
+        result = self._visit_default(node, **kwargs)
+
+        result.update(
+            {
+                "uri": node.uri,
+            }
+        )
+
+        self._add_visit_content(result, node, **kwargs)
+        self._add_visit_labels(result, node, **kwargs)
+
+        return result
+
     def _visit_list_item(self, node: Node, **kwargs) -> dict:
         result = self._visit_default(node, **kwargs)
 

@@ -5,6 +5,7 @@ from collections.abc import Mapping, Sequence
 from mau.nodes.block import BlockNode
 from mau.nodes.footnote import FootnoteNode
 from mau.nodes.header import HeaderNode
+from mau.nodes.raw import RawLineNode
 from mau.nodes.node import (
     Node,
     NodeArguments,
@@ -113,6 +114,32 @@ class IncludeMauNode(Node, NodeContentMixin, NodeLabelsMixin):
         self,
         uri: str,
         content: Sequence[Node] | None = None,
+        labels: Mapping[str, Sequence[Node]] | None = None,
+        parent: Node | None = None,
+        arguments: NodeArguments | None = None,
+        info: NodeInfo | None = None,
+    ):
+        super().__init__(parent=parent, arguments=arguments, info=info)
+        NodeContentMixin.__init__(self, content)
+        NodeLabelsMixin.__init__(self, labels)
+
+        self.uri = uri
+
+
+class IncludeRawNode(Node, NodeContentMixin, NodeLabelsMixin):
+    """Raw content included in the page.
+
+    This represents raw content included
+    in the page from an external file.
+    """
+
+    type = "include-raw"
+    long_help = INCLUDE_MAU_HELP
+
+    def __init__(
+        self,
+        uri: str,
+        content: Sequence[RawLineNode] | None = None,
         labels: Mapping[str, Sequence[Node]] | None = None,
         parent: Node | None = None,
         arguments: NodeArguments | None = None,

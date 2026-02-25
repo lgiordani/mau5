@@ -6,7 +6,6 @@ if TYPE_CHECKING:
     from mau.parsers.document_parser import DocumentParser
 
 
-from mau.parsers.text_parser import TextParser
 from mau.token import TokenType
 
 
@@ -28,23 +27,14 @@ def label_processor(parser: DocumentParser):
     # Get the text of the label
     text_token = parser.tm.get_token(TokenType.TEXT)
 
-    # Unpack the text initial position.
-    start_line, start_column = text_token.context.start_position
-
-    # Get the text source.
-    source_filename = text_token.context.source
-
-    # Parse the text of the label.
-    text_parser = TextParser.lex_and_parse(
-        text=text_token.value,
-        message_handler=parser.message_handler,
-        environment=parser.environment,
-        start_line=start_line,
-        start_column=start_column,
-        source_filename=source_filename,
+    # Process the text of the header.
+    text_nodes = parser._parse_text(
+        text_token.value,
+        text_token.context,
+        parser.parent_node,
     )
 
     # Store the label node in the buffer.
-    parser.label_buffer.push(role, text_parser.nodes)
+    parser.label_buffer.push(role, text_nodes)
 
     return True
