@@ -106,14 +106,19 @@ class Template:
     def match(self, node: Node, prefix: str | None = None) -> bool:
         # Check if the given node matches the
         # template claims.
+        if self.type and self.type != node.template_type:
+            return False
 
         if prefix and not self.prefix == prefix:
             return False
 
-        if self.subtype and not self.subtype == node.arguments.subtype:
+        if self.subtype and self.subtype != node.arguments.subtype:
             return False
 
-        if self.ptype and node.parent and not self.ptype == node.parent.type:
+        if self.ptype and not node.parent:
+            return False
+
+        if self.ptype and self.ptype != node.parent.type:
             return False
 
         if self.tags and not set(self.tags).issubset(set(node.arguments.tags)):
@@ -407,7 +412,7 @@ class JinjaVisitor(BaseVisitor):
     def _find_matching_template(self, node: Node, data: dict) -> Template:
         # Find all templates available for
         # this type of node in specificity order.
-        templates = self.templates[node.template_type()]
+        templates = self.templates[node.template_type]
 
         # The list of all matching templates.
         matching_templates: list[Template] = []

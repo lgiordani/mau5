@@ -30,7 +30,7 @@ def create_visitor_message(
     return message_class(
         text=text,
         context=context,
-        node_type=node.template_type() if node else None,
+        node_type=node.template_type if node else None,
         data=data,
         environment=environment,
         additional_info=additional_info,

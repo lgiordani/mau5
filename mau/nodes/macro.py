@@ -73,6 +73,7 @@ class MacroNode(Node):
         super().__init__(parent=parent, arguments=arguments, info=info)
         self.name = name
 
+    @property
     def template_type(self) -> str:
         return f"{self.type}-{self.name}"
 

@@ -45,5 +45,6 @@ class StyleNode(Node, NodeContentMixin):
 
         self.style = style
 
+    @property
     def template_type(self) -> str:
         return f"{self.type}-{self.style}"

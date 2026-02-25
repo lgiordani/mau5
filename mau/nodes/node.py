@@ -61,6 +61,7 @@ class Node:
 
         return self
 
+    @property
     def template_type(self) -> str:
         # Return the type of this node
         # that should be used to find
