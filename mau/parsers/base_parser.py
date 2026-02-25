@@ -11,6 +11,7 @@ from .managers.tokens_manager import TokensManager
 def create_parser_exception(
     text: str,
     context: Context | None = None,
+    help_text: str | None = None,
 ):
     message = MauParserErrorMessage(text=text, context=context)
 

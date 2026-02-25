@@ -5,6 +5,7 @@ from logging import ERROR, INFO, Logger
 
 from mau.environment.environment import Environment
 from mau.text_buffer import Context, Position, adjust_context, adjust_position
+from mau.nodes.node import Node
 
 
 class MauMessageType(Enum):
@@ -30,6 +31,7 @@ class MauLexerErrorMessage(MauMessage):
 class MauParserErrorMessage(MauMessage):
     type: MauMessageType = field(init=False, default=MauMessageType.ERROR_PARSER)
     context: Context | None = None
+    help_text: str | None = None
 
 
 @dataclass
@@ -40,6 +42,7 @@ class MauVisitorErrorMessage(MauMessage):
     data: dict | None = None
     environment: Environment | None = None
     additional_info: dict[str, str] | None = None
+    help_text: str | None = None
 
 
 @dataclass
@@ -109,6 +112,8 @@ class LogMessageHandler(BaseMessageHandler):
         self.logger.error(f"Parser error: {message.text}")
         if message.context:
             self.logger.error(f"Context: {adjust_context(message.context)}")
+        if message.help_text:
+            self.logger.error(message.help_text)
 
     def _process_visitor_debug_message(
         self,

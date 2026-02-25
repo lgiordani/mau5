@@ -5,7 +5,7 @@ from collections.abc import Mapping, Sequence
 from mau.nodes.block import BlockNode
 from mau.nodes.footnote import FootnoteNode
 from mau.nodes.header import HeaderNode
-from mau.nodes.raw import RawLineNode
+from mau.nodes.raw import RawLineNode, RawNode
 from mau.nodes.node import (
     Node,
     NodeArguments,
@@ -45,8 +45,20 @@ Syntax:
 (. LABEL)*
 << mau(:URI, ARGS)?
 
-The include operator `<< mau` includes an external Mau file image using the provided URI.
+The include operator `<< mau` includes an external Mau file using the provided URI.
 The file will be read and the content parsed and added to the parse tree of the document.
+"""
+
+INCLUDE_RAW_HELP = """
+Syntax:
+
+([URI, ARGS])?
+(@CONTROL)?
+(. LABEL)*
+<< raw(:URI, ARGS)?
+
+The include operator `<< raw` includes an external raw file using the provided URI.
+The file will be read and the content added to the parse tree of the document as raw lines.
 """
 
 
@@ -57,7 +69,6 @@ class IncludeNode(Node, NodeLabelsMixin):
     """
 
     type = "include"
-    long_help = INCLUDE_HELP
 
     def __init__(
         self,
@@ -80,7 +91,6 @@ class IncludeImageNode(Node, NodeLabelsMixin):
     """
 
     type = "include-image"
-    long_help = INCLUDE_IMAGE_HELP
 
     def __init__(
         self,
@@ -108,7 +118,6 @@ class IncludeMauNode(Node, NodeContentMixin, NodeLabelsMixin):
     """
 
     type = "include-mau"
-    long_help = INCLUDE_MAU_HELP
 
     def __init__(
         self,
@@ -134,7 +143,6 @@ class IncludeRawNode(Node, NodeContentMixin, NodeLabelsMixin):
     """
 
     type = "include-raw"
-    long_help = INCLUDE_MAU_HELP
 
     def __init__(
         self,

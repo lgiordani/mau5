@@ -18,6 +18,10 @@ from mau.nodes.include import (
     IncludeRawNode,
     IncludeNode,
     TocNode,
+    INCLUDE_HELP,
+    INCLUDE_IMAGE_HELP,
+    INCLUDE_MAU_HELP,
+    INCLUDE_RAW_HELP,
 )
 from mau.nodes.node import NodeInfo
 from mau.nodes.node_arguments import NodeArguments
@@ -74,6 +78,7 @@ def include_processor(parser: DocumentParser):
             raise create_parser_exception(
                 "Syntax error. You cannot specify both boxed and inline arguments.",
                 context,
+                help_text=INCLUDE_HELP,
             )
 
         # Get the colon.
@@ -138,6 +143,7 @@ def _parse_image(
         raise create_parser_exception(
             "Syntax error. You need to specify a URI.",
             context,
+            help_text=INCLUDE_IMAGE_HELP,
         )
 
     alt_text = arguments.named_args.pop("alt_text", None)
@@ -156,48 +162,6 @@ def _parse_image(
     return content
 
 
-def _parse_raw(
-    parser: DocumentParser, arguments: NodeArguments, context: Context
-) -> IncludeMauNode:
-    arguments.set_names(["uri"])
-
-    uri = arguments.named_args.pop("uri", None)
-
-    if not uri:
-        raise create_parser_exception(
-            "Syntax error. You need to specify a URI.",
-            context,
-        )
-
-    # Open the given URI and read the text.
-    try:
-        with open(uri, "r", encoding="utf-8") as f:
-            content_lines = f.readlines()
-    except FileNotFoundError as exc:
-        raise create_parser_exception(
-            f"File '{uri}' cannot be read.",
-            context,
-        ) from exc
-
-    # A list of raw content lines.
-    raw_lines: list[RawLineNode] = []
-
-    node = IncludeRawNode(uri, info=NodeInfo(context=context))
-
-    for content_line in content_lines:
-        raw_lines.append(
-            RawLineNode(
-                content_line,
-                info=NodeInfo(context=context),
-                parent=node,
-            )
-        )
-
-    node.content = raw_lines
-
-    return node
-
-
 def _parse_mau(
     parser: DocumentParser, arguments: NodeArguments, context: Context
 ) -> IncludeMauNode:
@@ -210,6 +174,7 @@ def _parse_mau(
         raise create_parser_exception(
             "Syntax error. You need to specify a URI.",
             context,
+            help_text=INCLUDE_MAU_HELP,
         )
 
     # Add this very file to the list of forbidden
@@ -309,6 +274,56 @@ def _parse_mau(
         uri,
         content=content_parser.nodes,
     )
+
+
+def _parse_raw(
+    parser: DocumentParser, arguments: NodeArguments, context: Context
+) -> IncludeMauNode:
+    arguments.set_names(["uri"])
+
+    uri = arguments.named_args.pop("uri", None)
+
+    if not uri:
+        raise create_parser_exception(
+            "Syntax error. You need to specify a URI.",
+            context,
+        )
+
+    # Open the given URI and read the text.
+    try:
+        with open(uri, "r", encoding="utf-8") as f:
+            content = f.read()
+    except FileNotFoundError as exc:
+        raise create_parser_exception(
+            f"File '{uri}' cannot be read.",
+            context,
+            help_text=INCLUDE_RAW_HELP,
+        ) from exc
+
+    # A list of content lines (raw).
+    content_lines = content.split("\n")
+
+    # A list of raw content lines.
+    raw_lines: list[RawLineNode] = []
+
+    # Create the include node.
+    node = IncludeRawNode(uri, info=NodeInfo(context=context))
+
+    # Create a raw line for each line
+    # in the inlcuded file.
+    for content_line in content_lines:
+        raw_lines.append(
+            RawLineNode(
+                content_line,
+                info=NodeInfo(context=context),
+                parent=node,
+            )
+        )
+
+    # Assign the raw lines to the include node.
+    node.content = raw_lines
+
+    return node
 
 
 def _parse_toc(
